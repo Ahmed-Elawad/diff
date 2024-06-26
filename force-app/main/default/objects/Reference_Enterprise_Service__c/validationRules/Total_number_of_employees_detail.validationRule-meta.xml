@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Total_number_of_employees_detail</fullName>
+    <active>true</active>
+    <errorConditionFormula>(ISPICKVAL( Total_Number_of_EE_s__c , &quot;Red: 4000 +&quot;) ||
+ISPICKVAL( Total_Number_of_EE_s__c , &quot;Yellow: 2,000 - 3999&quot;))&amp;&amp;
+
+OR(
+ISBLANK( Total_Number_of_Employees_Detail__c ))</errorConditionFormula>
+    <errorDisplayField>Total_Number_of_Employees_Detail__c</errorDisplayField>
+    <errorMessage>Total Number of Employees Detail is required when otal number of employees selected as Red or Yellow</errorMessage>
+</ValidationRule>

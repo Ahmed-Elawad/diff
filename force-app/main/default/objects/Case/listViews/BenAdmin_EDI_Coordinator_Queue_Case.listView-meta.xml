@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BenAdmin_EDI_Coordinator_Queue_Case</fullName>
+    <columns>OWNER_NAME</columns>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>BeneTrac_Category_1__c</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>CASES.PRIORITY</columns>
+    <columns>CASES.CREATED_DATE_DATE_ONLY</columns>
+    <columns>Age_Excluding_Weekends__c</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Cancelled,Complete,Completed</value>
+    </filters>
+    <filters>
+        <field>BeneTrac_Category_1__c</field>
+        <operation>notEqual</operation>
+        <value>Flock New EDI Connection</value>
+    </filters>
+    <filters>
+        <field>CORE.USERS.ALIAS</field>
+        <operation>equals</operation>
+        <value>,BenAdmin EDI Coordinator Queue</value>
+    </filters>
+    <label>BenAdmin EDI Coordinator Queue</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+        <group>BenAdmin_EDI_Coordinator</group>
+    </sharedTo>
+</ListView>

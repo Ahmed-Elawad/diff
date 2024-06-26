@@ -1,0 +1,113 @@
+<aura:component description="BannerAccountDNC">
+    <aura:attribute name="account" type="Object" />
+    <aura:attribute name="accountWrapper" type="Object" />
+    
+    <div class="box" title="Do Not Contact?">
+        <div class="banner-header slds-align_absolute-center">
+            <h4 class="slds-item_label slds-text-color_weak slds-truncate slds-text-align_center">DNC</h4>
+        </div>
+        
+        <div class="banner-body column">
+            
+            <aura:if isTrue="{!or(v.account.Do_Not_Call__c, v.account.Email_Opt_Out__c)}">
+                
+                <!-- Account is marked as DNC and EOO -->
+                <aura:if isTrue="{!and(v.account.Do_Not_Call__c, v.account.Email_Opt_Out__c)}">
+                    <img src="{!$Resource.BannerIcons + '/LightningIcons/redandredflag.png'}" />
+                    <div class="slds-item_detail slds-truncate slds-text-color_error slds-align_absolute-center" title="Do Not Call or Email anyone on this Account">
+                        Do Not Call or Email anyone on this Account
+                    </div>
+                    <aura:set attribute="else"> 
+                        <!-- Account is marked as DNC but not EOO -->
+                        <aura:if isTrue="{!and(v.account.Do_Not_Call__c,not(v.account.Email_Opt_Out__c))}" >
+                            <img src="{!$Resource.BannerIcons + '/LightningIcons/redflag.png'}" />
+                            <div class="slds-item_detail slds-truncate slds-text-color_error slds-align_absolute-center" title="Do Not Call">
+                                Do Not Call anyone on this Account
+                            </div>
+                        </aura:if>
+                        <!-- Account is marked as EOO but not DNC -->
+                        <aura:if isTrue="{!and(v.account.Email_Opt_Out__c,not(v.account.Do_Not_Call__c))}">
+                            <img src="{!$Resource.BannerIcons + '/LightningIcons/redflag.png'}" />
+                            <div class="slds-item_detail slds-truncate slds-text-color_error slds-align_absolute-center" title="Email Opt Out">
+                                Do Not Email anyone on this Account
+                            </div>
+                        </aura:if> 
+                    </aura:set>
+                </aura:if>  
+           
+           
+            <aura:set attribute="else">
+                
+                <aura:if isTrue="{!and(or(v.accountWrapper.DNCContacts.length > 0, v.accountWrapper.EmailOptOutContacts.length > 0),not(v.account.Do_Not_Call__c),not(v.account.Email_Opt_Out__c))}">
+                    
+                    <!-- Account is NOT marked as DNC and EOO, all contacts has DNC and EOO  -->
+                    <aura:if isTrue="{!and(v.accountWrapper.DNCContacts.length == v.accountWrapper.AllContacts.length, v.accountWrapper.EmailOptOutContacts.length == v.accountWrapper.AllContacts.length)}">
+                        <img src="{!$Resource.BannerIcons + '/LightningIcons/redandredflag.png'}" />
+                        <div class="slds-item_detail slds-truncate slds-text-color_error slds-align_absolute-center" title="Do Not Call and Email">
+                            Do Not Call or Email anyone on this Account 
+                        </div>
+                    </aura:if>
+                    <!-- Account is NOT marked as DNC and EOO, all contacts has DNC but not EOO  -->
+                    <aura:if isTrue="{!and(v.accountWrapper.DNCContacts.length == v.accountWrapper.AllContacts.length, v.accountWrapper.EmailOptOutContacts.length == 0)}">
+                        <img src="{!$Resource.BannerIcons + '/LightningIcons/redflag.png'}" />
+                       <div class="slds-item_detail slds-truncate slds-text-color_error slds-align_absolute-center" title="Do Not Call">
+                            Do Not Call anyone on this Account 
+                        </div>
+                    </aura:if>
+                    <!-- Account is NOT marked as DNC and EOO, all contacts has EOO but not DNC  -->
+                    <aura:if isTrue="{!and(v.accountWrapper.EmailOptOutContacts.length == v.accountWrapper.AllContacts.length,v.accountWrapper.DNCContacts.length ==0)}">
+                        <img src="{!$Resource.BannerIcons + '/LightningIcons/redflag.png'}" />
+                        <div class="slds-item_detail slds-truncate slds-text-color_error slds-align_absolute-center" title="Do Not Email">
+                            Do Not Email anyone on this Account 
+                        </div>
+                    </aura:if>
+                    
+                    <!-- Account is NOT marked as DNC and EOO, has 1 or more contacts as DNC but not all  -->
+                    <aura:if isTrue="{!and(and(v.accountWrapper.DNCContacts.length > 0,v.accountWrapper.DNCContacts.length != v.accountWrapper.AllContacts.length),v.accountWrapper.EmailOptOutContacts.length == 0)}">
+                       
+                        <img src="{!$Resource.BannerIcons + '/LightningIcons/yellowflag.png'}" />
+                        <div style="color:#E1B900" title="Do Not Call">
+                            Check First! Some Contacts on this Account cannot be called
+                        </div>
+                    </aura:if>
+                    <!-- Account is NOT marked as DNC and EOO, has 1 or more Email as EOO but not all-->
+                    <aura:if isTrue="{!and(and(v.accountWrapper.EmailOptOutContacts.length > 0,v.accountWrapper.EmailOptOutContacts.length != v.accountWrapper.AllContacts.length),v.accountWrapper.DNCContacts.length ==0)}">
+                        <img src="{!$Resource.BannerIcons + '/LightningIcons/yellowflag.png'}" />
+                        <div style="color:#E1B900" title="Email Opt Out">
+                            Check First! Some Contacts on this Account cannot be emailed
+                        </div>
+                    </aura:if>
+                    <!-- Account is NOT marked as DNC and EOO, has 1 or more contacts as DNC and EOO but not all-->
+                    <aura:if isTrue="{!and(and (v.accountWrapper.DNCContacts.length > 0,v.accountWrapper.DNCContacts.length !=v.accountWrapper.AllContacts.length),and(v.accountWrapper.EmailOptOutContacts.length > 0,
+                                     v.accountWrapper.EmailOptOutContacts.length !=v.accountWrapper.AllContacts.length))}">                                
+                        <img src="{!$Resource.BannerIcons + '/LightningIcons/yellowandyellowflag.png'}" />
+                        <div style="color:#E1B900" title="Do Not Call and Email">
+                            Check First! Some Contacts on this Account cannot be called and/or emailed
+                        </div>
+                    </aura:if>
+                    <!--Account is NOT marked as DNC and EOO, has ALL contacts as DNC and 1 or more contacts as EOO  -->
+                    <aura:if isTrue="{!and(v.accountWrapper.DNCContacts.length == v.accountWrapper.AllContacts.length, and(v.accountWrapper.EmailOptOutContacts.length > 0,v.accountWrapper.EmailOptOutContacts.length != v.accountWrapper.AllContacts.length))}">
+                        <img src="{!$Resource.BannerIcons + '/LightningIcons/redandyellowflag.png'}" />
+                        <div class="slds-item_detail slds-truncate slds-text-color_error slds-align_absolute-center" title="Do Not Call">
+                            Do Not Call anyone on this Account
+                        </div>
+                        <div style="color:#E1B900" title="Do Not Call">
+                            Check First! Some Contacts on this Account cannot be emailed
+                        </div>
+                    </aura:if>
+                    <!--Account is NOT marked as DNC and EOO, has ALL contacts as EOO and 1 or more contacts as DNC  -->
+                    <aura:if isTrue="{!and(v.accountWrapper.EmailOptOutContacts.length == v.accountWrapper.AllContacts.length, and(v.accountWrapper.DNCContacts.length > 0,v.accountWrapper.DNCContacts.length != v.accountWrapper.AllContacts.length))}">
+                        <img src="{!$Resource.BannerIcons + '/LightningIcons/redandyellowflag.png'}" />
+                        <div class="slds-item_detail slds-truncate slds-text-color_error slds-align_absolute-center" title="Do Not Call">
+                            Do Not Email anyone on this Account
+                        </div>
+                        <div style="color:#E1B900" title="Do Not Call">
+                            Check First! Some Contacts on this Account cannot be called 
+                        </div>
+                    </aura:if>
+                </aura:if>
+            </aura:set>
+                 </aura:if> 
+        </div>
+    </div>
+</aura:component>

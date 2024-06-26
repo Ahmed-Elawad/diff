@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Local_Competitors_Required</fullName>
+    <active>true</active>
+    <description>Require &apos;Local Competitor&apos; when &apos;Local Competitor&apos; is chosen in Payroll Current-Prior Method. NSS is excluded from this rule.</description>
+    <errorConditionFormula>AND(OR(RecordTypeId=&apos;012500000000nCj&apos;,RecordTypeId=&apos;01270000000UNXq&apos;,RecordTypeId=&apos;012300000000hNv&apos;), ISPICKVAL( Current_Prior_Method__c , &apos;Local Competitor&apos;) ,  ISCHANGED(Current_Prior_Method__c), ISBLANK( Local_Competitors__c ), NOT (CONTAINS($Profile.Name , &apos;NSS&apos;)), NOT (CONTAINS($Profile.Name , &apos;System Admin&apos;))  )</errorConditionFormula>
+    <errorMessage>You must populate &apos;Local Competitors&apos; field when &apos;Local Competitor&apos; is chosen in the Payroll Current-Prior Method field value.</errorMessage>
+</ValidationRule>

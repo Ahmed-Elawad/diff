@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>OS_TAA_Billing_Emails_Case</fullName>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>NAME</columns>
+    <columns>Branch_Client_ID__c</columns>
+    <columns>OWNER_NAME</columns>
+    <filterScope>Queue</filterScope>
+    <filters>
+        <field>CASES.CLOSED</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>CASES.SUBJECT</field>
+        <operation>notContain</operation>
+        <value>[PRODUCTION] TAA ASO Setup Fees Needed</value>
+    </filters>
+    <label>OS TAA Billing Emails</label>
+    <queue>OS_TAA_Billing_Emails</queue>
+    <sharedTo>
+        <group>MPSC_TAA_New_Orders</group>
+        <group>OS_TAA_New_Orders</group>
+        <group>TAA_Billing_Temporary_Access</group>
+        <group>TAA_Billing_YE_Backup</group>
+        <group>TimeAttendanceBilling174361</group>
+        <role>TimeAttendanceBilling</role>
+        <roleAndSubordinates>TimeAttendanceBilling</roleAndSubordinates>
+        <roleAndSubordinatesInternal>TimeAttendanceBilling</roleAndSubordinatesInternal>
+    </sharedTo>
+</ListView>

@@ -1,0 +1,102 @@
+<aura:component controller="WebexGuestController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:lightningQuickAction,force:hasRecordId,lightning:utilityItem" access="global">
+    <aura:html tag="style">
+        .toastMessage.forceActionsText{ white-space : pre-line !important; }
+    </aura:html>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="hasFormAccess" type="Boolean" default="false"/>
+    <aura:attribute name="showAddAttendees" type="Boolean" default="true"/>
+    <aura:attribute name="addAttendees" type="Boolean" default="false"/>
+    <aura:attribute name="host" type="User"/>
+    <aura:attribute name="hostName" type="String"/>
+    <aura:attribute name="attendee" type="String"/>
+    <aura:attribute name="title" type="String"/>
+    <aura:attribute name="attendeeEmail" type="String"/>
+    <aura:attribute name="addAttendeeName1" type="String"/>
+    <aura:attribute name="addAttendeeName2" type="String"/>
+    <aura:attribute name="addAttendeeName3" type="String"/>
+    <aura:attribute name="addAttendeeEmail1" type="String"/>
+    <aura:attribute name="addAttendeeEmail2" type="String"/>
+    <aura:attribute name="addAttendeeEmail3" type="String"/>
+    <aura:attribute name="addAttendeeNames" type="String"/>
+    <aura:attribute name="addAttendeeEmails" type="String"/>
+    <aura:attribute name="objectRecId" type="String"/>
+    <aura:attribute name="buttonDisabled" type="Boolean" default="false"/>
+    <aura:attribute name="newRecordId" type="String" default="{!v.recordId}"/>
+    <aura:handler name="change" value="{!v.recordId}" action="{!c.onRecordIdChange}"/>   
+    <aura:attribute name="showSpinner" type="Boolean" default="false" />
+        <aura:if isTrue="{!v.showSpinner}">
+        <lightning:spinner />
+    </aura:if>
+    <aura:if isTrue="{!v.hasFormAccess}">
+        <lightning:card class="slds-p-around_medium">
+            <div class="slds-align_absolute-center slds-text-heading_medium"><b>Initiate a Meeting</b></div>
+            <lightning:layout multipleRows="true">
+                <lightning:layoutItem size="12" padding="around-medium">
+                    <div class="slds-text-heading_small">
+                        <b>Host: </b>{!v.hostName}</div>
+                </lightning:layoutItem>
+                <aura:if isTrue="{!v.showAddAttendees}">
+                    <lightning:layoutItem size="6" padding="horizontal-medium">
+                        <div class="slds-text-heading_small">
+                            <b>Attendee: </b></div>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="6" padding="horizontal-medium">
+                        <div class="slds-text-heading_small">
+                            <b>Attendee Email: </b></div>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="6" padding="horizontal-medium">
+                        <div class="slds-text-heading_small">
+                            {!v.attendee}</div>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="6" padding="horizontal-medium">
+                        <div class="slds-text-heading_small">
+                            {!v.attendeeEmail}</div>
+                    </lightning:layoutItem>
+                </aura:if>
+                <lightning:layoutItem size="12" padding="around-small">
+                    <lightning:input name="meetingTopic" aura:id="meetingTopic" label="Meeting Topic:" required="true" value="{!v.title}"/>
+                </lightning:layoutItem>
+                <!--<lightning:layoutItem size="6" padding="around-small">
+                <lightning:input type="datetime" name="meetingDateTime" aura:id="meetingDateTime"/>
+            </lightning:layoutItem>-->
+                <aura:if isTrue="{!v.showAddAttendees}">
+                    <lightning:layoutItem size="12" padding="around-small">
+                        <lightning:button variant="neutral" label="Add Attendees" onclick="{!c.addAttendee}" />
+                    </lightning:layoutItem>
+                </aura:if>
+                <aura:if isTrue="{!v.addAttendees}">
+                    <lightning:layoutItem size="12" padding="around-small">
+                        <div class="slds-align_absolute-center slds-text-heading_small">
+                            Enter Name and Email of up to 3 attendees</div>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="8" padding="around-small">
+                        <lightning:input label="First and Last Name:" aura:id="attendName" name="attendName" value="{!v.addAttendeeName1}" />
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="4" padding="around-small">
+                        <lightning:input label="Email:" aura:id="email" type="attendEmail" name="email1" value="{!v.addAttendeeEmail1}" />
+                    </lightning:layoutItem><br/>
+                    <lightning:layoutItem size="8" padding="around-small">
+                        <lightning:input label="First and Last Name:" aura:id="attendName2" name="attendName2" value="{!v.addAttendeeName2}" />
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="4" padding="around-small">
+                        <lightning:input label="Email:" aura:id="email2" type="attendEmail2" name="email2" value="{!v.addAttendeeEmail2}" />
+                    </lightning:layoutItem><br/>
+                    <lightning:layoutItem size="8" padding="around-small">
+                        <lightning:input label="First and Last Name:" aura:id="attendName3" name="attendName3" value="{!v.addAttendeeName3}" />
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="4" padding="around-small">
+                        <lightning:input label="Email:" aura:id="email3" type="attendEmail3" name="email3"  value="{!v.addAttendeeEmail3}"/>
+                    </lightning:layoutItem>
+                </aura:if>
+                <lightning:layoutItem size="12" padding="around-small">
+                    <div class="slds-align_absolute-center">
+                        <lightning:button variant="brand" type="submit" label="Create Webex Meeting Space" disabled="{!v.buttonDisabled}" onclick="{!c.validateForm}" />
+                    </div>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </lightning:card>
+        <aura:set attribute="else">
+            <div class="slds-align_absolute-center slds-text-heading_medium"><br/><br/><br/><br/><br/><b>This functionality is only available for pilot users at this time.</b></div>
+        </aura:set>
+    </aura:if>
+</aura:component>

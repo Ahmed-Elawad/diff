@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>all_Core_LostClients_d_3</fullName>
+    <columns>ACCOUNT.ACCOUNT_NUMBER</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ACCOUNT.PHONE1</columns>
+    <columns>Lost_Date__c</columns>
+    <columns>Reason_Lost__c</columns>
+    <columns>ACCOUNT.EMPLOYEES</columns>
+    <columns>Frequency__c</columns>
+    <columns>Current_Prior_Method__c</columns>
+    <columns>ACCOUNT.ADDRESS2_STREET</columns>
+    <columns>ACCOUNT.ADDRESS2_CITY</columns>
+    <columns>ACCOUNT.ADDRESS2_ZIP</columns>
+    <columns>ACCOUNT.LAST_ACTIVITY</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>equals</operation>
+        <value>Lost Client</value>
+    </filters>
+    <filters>
+        <field>Reason_Lost__c</field>
+        <operation>notContain</operation>
+        <value>out of business</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Account.CoreAccountRecordType</value>
+    </filters>
+    <label>All Core Lost Clients</label>
+    <sharedTo>
+        <group>CORE</group>
+    </sharedTo>
+</ListView>

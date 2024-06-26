@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRS_My_Clients_Likely_to_Refer</fullName>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ACCOUNT.ADDRESS2_CITY</columns>
+    <columns>ACCOUNT.ADDRESS2_ZIP</columns>
+    <columns>ACCOUNT.EMPLOYEES</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>ACCOUNT.PHONE1</columns>
+    <columns>First_Run_Date__c</columns>
+    <columns>X401_k__c</columns>
+    <columns>ACCOUNT.ACCOUNT_NUMBER</columns>
+    <columns>FSA__c</columns>
+    <columns>SUI_Rate__c</columns>
+    <columns>ACCOUNT.ADDRESS1_ZIP</columns>
+    <columns>Likely_to_Purchase_TAA__c</columns>
+    <columns>Likely_to_Refer__c</columns>
+    <filterScope>Team</filterScope>
+    <filters>
+        <field>Bis_ID__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>notContain</operation>
+        <value>Lost Client</value>
+    </filters>
+    <filters>
+        <field>Likely_to_Refer__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <filters>
+        <field>Out_of_Business__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <label>HRS - My Clients Likely to Refer</label>
+    <sharedTo>
+        <group>HRSSales</group>
+    </sharedTo>
+</ListView>

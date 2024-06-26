@@ -1,0 +1,999 @@
+<aura:component controller="CommunityWorkersCompController" implements="forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable,lightning:utilityItem,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:appHostable" access="global">
+    
+    <aura:registerEvent name="discrepancyEvt" type="c:markPeoUwFormDiscrepancy"/>
+    <aura:attribute name='formName' type='String' default='Workers Comp Questionnaire' />
+    <aura:handler name='init' value="{!this}" action="{!c.setupFields}" />
+    
+    <!-- auto save attributes-->
+    <aura:registerEvent name='autoSave' type='c:CommunityFormsAutoSave' />
+    <aura:attribute name='autoSaveRecords' type='map' />
+    <aura:attribute name='saveAction' type='Object' />
+    
+    <!-- reference to save functionality -->
+    <aura:attribute name='saveFunc' type='Object' />
+    
+    <!-- form nav -->
+    <aura:attribute name='parentTabs' type='String[]' />
+    <aura:attribute name='activeTab' type='String' />
+    
+    <aura:attribute name='yesNoSelection' type='List' default="[{'label': 'Yes', 'value':'Yes'},{'label':'No','value':'No'}]" />
+    <aura:attribute name='empEmplrSubjectivityList' type='List' default="[{'label': 'State Rules', 'value':'State Rules'},{'label':'Private Employer Rules','value':'Private Employer Rules'}]" />
+    <aura:attribute name='stdOrmiltiList' type='List' default="[{'label': 'Standard', 'value':'Standard'},{'label':'Multiple','value':'Multiple'}]" />
+	<aura:attribute name='yesNoSelectionWithNAOption' type='List' default="[{'label': '', 'value':'Choose one...'},{'label': 'Yes', 'value':'Yes'},{'label':'No','value':'No'},{'label':'N/A','value':'N/A'}]" />
+    <aura:attribute name='PEOChecklist' type='Map' />
+    <aura:attribute name='answersChanged' type='boolean' />
+    <aura:attribute name="readOnly" type="boolean" default="true"/>
+    <aura:attribute name="readOnlyString" type="String" default="" />
+    <aura:attribute name='communityUser' type='boolean' />
+    <aura:attribute name='user' type='User' />
+    <aura:attribute name='allowDiscLog' type='Boolean' />
+    <aura:attribute name='FastPassRequired' type='Boolean' />
+    <aura:attribute name='account' type='Map' />
+    <aura:attribute name='noIndustryFound' type='Boolean' />
+    <!-- flag attributes for conditional rendering of child questions -->
+    <aura:attribute name='showemp_drive_for_business_purposes__c' type='boolean'  />
+    <aura:attribute name='showPersonalemp_drive_for_business_purposes__c' type='boolean'  />
+    
+    <!-- end flag attributes -->
+    <aura:attribute name='formSubmitted' type='boolean' default='false' />
+    <aura:attribute name='buttonLabel' type='String' />
+    <aura:attribute name='errMsg' type='String' />
+    <aura:attribute name='addressRecs' type='Object[]' />
+    <aura:attribute name='multiShiftRecs' type='Object[]' />
+    <aura:attribute name='relatedFieldList' type='String[]' />
+    <!-- This attribute is used to provide delay-->
+    <aura:attribute name='timeoutId' type='Integer'/>
+    <lightning:card>
+        <!--aura:if isTrue="{!greaterthan(v.readOnlyString.length, 1)}">
+            <div style="width:100%; padding-right: 10%">
+                <ui:message title="Submission Under Review" severity="info" closable="false" >
+                    {!v.readOnlyString}
+                </ui:message>
+            </div>
+        </aura:if-->
+        
+        <!--div class='slds-size_1-of-1 slds-p-around_small' style="padding-right: 10%">
+            <lightning:textarea aura:id="nature_of_business__c"
+                                name="nature_of_business__c" 
+                                onchange="{!c.changeSubFieldView}"
+                                label="Please provide a detailed description of the nature of business and operations." 
+                                value="{!v.PEOChecklist.nature_of_business__c}"
+                                disabled='{!v.readOnly}'/>
+        </div-->
+        
+        <!-- start record edit form contains all input fields in two layout columns -->
+        
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                <!--div>
+                    <lightning:radioGroup name="had_wrkrs_comp_claim_past_3_yrs__c"
+                                          aura:id='had_wrkrs_comp_claim_past_3_yrs__c'
+                                          onchange="{!c.changeSubFieldView}"
+                                          value="{!v.PEOChecklist.had_wrkrs_comp_claim_past_3_yrs__c}"
+                                          label='Have there been any Workers’ Compensation claims in the last 3 years?'
+                                          disabled='{!v.readOnly}'
+                                          options="{!v.yesNoSelection}" />
+                </div-->
+                <div>
+                    <lightning:radioGroup name='has_Union_Employees_on_Payroll__c' 
+                                          onchange='{!c.changeSubFieldView}' 	
+                                          value="{!v.PEOChecklist.has_Union_Employees_on_Payroll__c}"
+                                          label="Are any employees union workers or under a collective bargaining agreement (CBA)?"
+                                          disabled='{!v.readOnly}'
+                                          options="{!v.yesNoSelection}"/>
+                    <lightning:radioGroup name="bid_or_do_government_work__c"
+                                          onchange="{!c.changeSubFieldView}"
+                                          value="{!v.PEOChecklist.bid_or_do_government_work__c}"
+                                          label='Are you a government contractor, a government agency, or part of a government?'
+                                          disabled='{!v.readOnly}'
+                                          options="{!v.yesNoSelection}" />
+                    <aura:if isTrue="{!v.PEOChecklist.bid_or_do_government_work__c=='Yes'}">
+                        <lightning:select aura:id='employees_employer_rule_subjectivity__c'
+                                          name="employees_employer_rule_subjectivity__c"
+                                          onchange="{!c.changeSubFieldView}"
+                                          value="{!v.PEOChecklist.employees_employer_rule_subjectivity__c}"
+                                          label='Are your employees subject to rules for government employees or private sector employees?'
+                                          disabled='{!v.readOnly}'>
+                            <option value="">Choose one...</option>
+                            <!--<aura:iteration items="{!v.empEmplrSubjectivityList}" var="sbjctListItem" indexVar="key">
+                                <option text="{!sbjctListItem.value}" value="{!sbjctListItem.key}" selected="{!sbjctListItem.key==v.PEOChecklist.employees_employer_rule_subjectivity__c}" />
+                            </aura:iteration>-->
+                            <option value='Private Employer Rules'>Private Employer Rules</option>
+                            <option value='Government Rules'>Government Rules</option>
+                        </lightning:select> 
+                        <!--lightning:radioGroup name="exposure_to_gvt_rules_or_sovrgn_immunity__c"
+                                              onchange="{!c.changeSubFieldView}"
+                                              value="{!v.PEOChecklist.exposure_to_gvt_rules_or_sovrgn_immunity__c}"
+                                              label='Would contracting with Paychex subject Paychex to government contracting rules?'
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" /-->
+                        <lightning:radioGroup name="default_gvt_contractor_decision__c"
+                                              onchange="{!c.changeSubFieldView}"
+                                              value="{!v.PEOChecklist.default_gvt_contractor_decision__c}"
+                                              label='If you contracted with Paychex for PEO services, would Paychex be treated as a government contractor?'
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                        <lightning:radioGroup name="use_of_service_disqualifies_emp__c"
+                                              onchange="{!c.changeSubFieldView}"
+                                              value="{!v.PEOChecklist.use_of_service_disqualifies_emp__c}"
+                                              label='Would contracting with Paychex for PEO services prevent your employees from participating in a government employee benefit plan (like a retirement or health plan)?'
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                        <lightning:radioGroup name="Assert_sovereign_immunity__c"
+                                              onchange="{!c.changeSubFieldView}"
+                                              value="{!v.PEOChecklist.Assert_sovereign_immunity__c}"
+                                              label='Do you have the ability to assert sovereign immunity?'
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                    </aura:if>
+                </div>
+                <div>
+                    <lightning:radioGroup name="has_non_w2_wrkrs__c"
+                                          onchange="{!c.changeSubFieldView}"
+                                          value="{!v.PEOChecklist.has_non_w2_wrkrs__c}"
+                                          label='Does your business have any volunteers or donated labor or seasonal workers?'
+                                          disabled='{!v.readOnly}'
+                                          options="{!v.yesNoSelection}" />
+                    <aura:if isTrue="{!v.PEOChecklist.has_non_w2_wrkrs__c=='Yes'}">
+                        <div>
+                            <p>If yes, how many and what type?</p>
+                        </div>
+                        <lightning:input aura:id='number_of_volunteers__c' 
+                                           type='Number' max='999999999'
+                                         onchange="{!c.changeSubFieldView}"
+                                         name='number_of_volunteers__c'
+                                         value="{!v.PEOChecklist.number_of_volunteers__c}"
+                                         label='How many volunteers/donated labor'
+                                         disabled='{!v.readOnly}'/>
+                        <lightning:radioGroup  name="has_sprt_policy_for_donated_labor__c"
+                                              onchange="{!c.changeSubFieldView}"
+                                              value="{!v.PEOChecklist.has_sprt_policy_for_donated_labor__c}"
+                                              label='If you have volunteers or donated labor, do you have a separate policy for your volunteer exposure?'
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                        <lightning:input aura:id='number_of_seasonal_wrkrs__c'
+                                         type='Number' max='999999999'
+                                         onchange="{!c.changeSubFieldView}"
+                                         name='number_of_seasonal_wrkrs__c'
+                                         value="{!v.PEOChecklist.number_of_seasonal_wrkrs__c}"
+                                         label='How many seasonal workers'
+                                         disabled='{!v.readOnly}'/>
+                    </aura:if>
+                </div>
+                <div>
+                    <lightning:radioGroup name="Has_active_Ohio_WC_Policy__c" onchange="{!c.changeSubFieldView}"
+                        value="{!v.PEOChecklist.Has_active_Ohio_WC_Policy__c}" disabled='{!v.readOnly}'
+                        label='Does your business have an active Ohio Workers Compensation Policy?' options="{!v.yesNoSelection}" />
+                    <!-- <aura:if isTrue="{!v.PEOChecklist.Has_active_Ohio_WC_Policy__c=='No'}">
+                        <lightning:radioGroup name="Allow_PEO_admin_OH_WC_Policy__c" onchange="{!c.changeSubFieldView}"
+                            value="{!v.PEOChecklist.Allow_PEO_admin_OH_WC_Policy__c}" disabled='{!v.readOnly}'
+                            label='Does your business agree to allow the PEO to administer your OH WC Policy?'
+                            options="{!v.yesNoSelection}" />
+                    </aura:if> -->
+                    <aura:if isTrue="{!v.PEOChecklist.Has_active_Ohio_WC_Policy__c=='Yes'}">
+                        <lightning:input aura:id='OH_WC_Policy_number__c' onchange="{!c.changeSubFieldView}"
+                            name='OH_WC_Policy_number__c' value="{!v.PEOChecklist.OH_WC_Policy_number__c}"
+                            label='What is the OH WC Policy number?' disabled='{!v.readOnly}'/>
+                        <lightning:radioGroup name="Allow_PEO_admin_OH_WC_Policy__c" onchange="{!c.changeSubFieldView}"
+                            value="{!v.PEOChecklist.Allow_PEO_admin_OH_WC_Policy__c}"
+                            label='Does your business agree to allow the PEO to administer your OH WC Policy?'
+                            options="{!v.yesNoSelection}" disabled='{!v.readOnly}'/>
+                    </aura:if>
+                </div>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                <div>
+                    <lightning:radioGroup  name="Subcontractors_1099_ind_contractors__c"
+                                          onchange="{!c.changeSubFieldView}"
+                                          value="{!v.PEOChecklist.Subcontractors_1099_ind_contractors__c}"
+                                          label='Does your business use subcontractors / 1099 independent contractors?'
+                                          disabled='{!v.readOnly}'
+                                          options="{!v.yesNoSelection}" />
+                    <aura:if isTrue="{!v.PEOChecklist.Subcontractors_1099_ind_contractors__c=='Yes'}">
+                        <lightning:input aura:id='Percentage_of_subcontracted_work__c'
+                                         type='Number' 
+                                         onchange="{!c.changeSubFieldView}"
+                                         name='Percentage_of_subcontracted_work__c'
+                                         value="{!v.PEOChecklist.Percentage_of_subcontracted_work__c}"
+                                         label='What is the percentage of subcontracted work?'
+                                         disabled='{!v.readOnly}'/>
+                        <lightning:input aura:id='How_many_subcontractors__c'
+                                         type='Number' max='999999999'
+                                         onchange="{!c.changeSubFieldView}"
+                                         name='How_many_subcontractors__c'
+                                         value="{!v.PEOChecklist.How_many_subcontractors__c}"
+                                         label='How many different subcontractors are being used?'
+                                         disabled='{!v.readOnly}'/>
+                        <lightning:input aura:id='What_services_are_subcontracted__c'
+                                         onchange="{!c.changeSubFieldView}"
+                                         name="What_services_are_subcontracted__c"
+                                         value="{!v.PEOChecklist.What_services_are_subcontracted__c}"
+                                         label='What operations are being subcontracted?'
+                                         disabled='{!v.readOnly}'/>
+                        <lightning:radioGroup name="subcntractrs_insured_wrkrs_comp__c"
+                                              onchange="{!c.changeSubFieldView}"
+                                              value="{!v.PEOChecklist.subcntractrs_insured_wrkrs_comp__c}"
+                                              label='Are all subcontractors and their employees insured for workers’ compensation?'
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                        <aura:if isTrue="{!v.PEOChecklist.subcntractrs_insured_wrkrs_comp__c=='Yes'}">
+                            <lightning:input aura:id='occurance_of_coi_updates__c'
+                                             name="occurance_of_coi_updates__c"
+                                             onchange="{!c.changeSubFieldView}"
+                                             value="{!v.PEOChecklist.occurance_of_coi_updates__c}"
+                                             label='How often are updated COIs requested and received?'
+                                             disabled='{!v.readOnly}'/>
+                       
+                        <lightning:radioGroup name="Subcontractors_req_to_provide_a_foreman__c"
+                                              onchange="{!c.changeSubFieldView}"
+                                              value="{!v.PEOChecklist.Subcontractors_req_to_provide_a_foreman__c}"
+                                              label='If yes, are subcontractors required to provide a foreman or supervisor for each jobsite?'
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                       </aura:if>
+                    </aura:if>
+                </div>
+                
+                <div>
+                    <lightning:radioGroup name="wrk_underground_or_10_ft_above__c"
+                                          onchange="{!c.changeSubFieldView}"
+                                          value="{!v.PEOChecklist.wrk_underground_or_10_ft_above__c}"
+                                          label='Is there work performed underground or higher than 10 ft.?'
+                                          disabled='{!v.readOnly}'
+                                          options="{!v.yesNoSelection}" />
+                    <aura:if isTrue="{!v.PEOChecklist.wrk_underground_or_10_ft_above__c=='Yes'}">
+                        <lightning:input aura:id='Type_of_work_is_done_at_these_places__c'
+                                         name='Type_of_work_is_done_at_these_places__c'
+                                         onchange="{!c.changeSubFieldView}"
+                                         value="{!v.PEOChecklist.Type_of_work_is_done_at_these_places__c}"
+                                         label='Please describe what type of work is done at these depths/heights' 
+                                         disabled='{!v.readOnly}'/>
+                        <lightning:input aura:id='Maximum_height_applicants_work_from__c'
+                                         disabled='{!or(v.dontAllowChanges,v.readOnly)}' 
+                                         type='Number' max='999999999'
+                                         name='Maximum_height_applicants_work_from__c'
+                                         label="In feet, what is the maximum height or depth at which employees may work?"
+                                         value="{!v.PEOChecklist.Maximum_height_applicants_work_from__c}"
+                                         onchange="{!c.changeSubFieldView}"/>
+                        <lightning:radioGroup name="Any_bucket_trucks_or_scaffolding_used__c"
+                                              value="{!v.PEOChecklist.Any_bucket_trucks_or_scaffolding_used__c}"
+                                              label='Any bucket trucks, or scaffolding used?' 
+                                              onchange="{!c.changeSubFieldView}"
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                        <aura:if isTrue="{!v.PEOChecklist.Any_bucket_trucks_or_scaffolding_used__c=='Yes'}">
+                            <lightning:input aura:id='info_wrk_underground_or_10_ft_above__c'
+                                             name='info_wrk_underground_or_10_ft_above__c'
+                                             onchange="{!c.changeSubFieldView}"
+                                             value="{!v.PEOChecklist.info_wrk_underground_or_10_ft_above__c}"
+                                             label='If yes, please explain' 
+                                             disabled='{!v.readOnly}'/>
+                        </aura:if>
+                        <lightning:input aura:id='Safety_Equipment_and_training_provided__c'
+                                         name="Safety_Equipment_and_training_provided__c"
+                                         onchange="{!c.changeSubFieldView}"
+                                         value="{!v.PEOChecklist.Safety_Equipment_and_training_provided__c}"
+                                         label='What safety equipment is used and what training is required for use?' 
+                                         disabled='{!v.readOnly}'/>
+                    </aura:if>
+                </div>
+                <div>
+                    <lightning:select aura:id='emp_drive_for_business_purposes__c'
+                                      name="emp_drive_for_business_purposes__c"
+                                      onchange="{!c.changeSubFieldView}"
+                                      value="{!v.PEOChecklist.emp_drive_for_business_purposes__c}"
+                                      label='Do any of your employees drive for business purposes?'
+                                      disabled='{!v.readOnly}'>
+                        <!-- consider a flag of two values to use as stnd inputs -->
+                        <option value="default">choose one...</option>
+                        <option value="No">No</option>
+                        <option value="Yes, company vehicle only">Yes, company vehicles only</option>
+                        <option value='Yes, personal vehicles only'>Yes, personal vehicles only</option>
+                        <option value='Yes, both company and personal vehicles'>Yes, both company and personal vehicles</option>
+                    </lightning:select>
+                    <aura:if isTrue="{!v.showemp_drive_for_business_purposes__c}">
+                        <lightning:radioGroup name='prsnl_driver_record_verification__c'
+                                              onchange="{!c.changeSubFieldView}"
+                                              value="{!v.PEOChecklist.prsnl_driver_record_verification__c}"
+                                              label='Do you perform MVR’s (driver record verification)?' 
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                        <lightning:input aura:id='prsnl_driver_driving_radius__c'
+                                         name='prsnl_driver_driving_radius__c'
+                                         value="{!v.PEOChecklist.prsnl_driver_driving_radius__c}"
+                                         label='What is the driving radius?' 
+                                         onchange="{!c.changeSubFieldView}"
+                                         disabled='{!v.readOnly}'/>
+                        <lightning:input aura:id='Max_num_of_employees_allowed_per_vehicle__c'
+                                         type='Number'
+                                         name='Max_num_of_employees_allowed_per_vehicle__c'
+                                         value="{!v.PEOChecklist.Max_num_of_employees_allowed_per_vehicle__c}"
+                                         label='What is the maximum number of employees allowed per vehicle?' 
+                                         onchange="{!c.changeSubFieldView}"
+                                         disabled='{!v.readOnly}'/>
+                    </aura:if>
+                </div>
+            </lightning:layoutItem>
+        </lightning:layout>
+        
+        
+        <!--div class='slds-size_1-of-1 slds-p-around_small' style="padding-right: 10%">
+            <<lightning:textarea aura:id="natureOfBusiness"
+                                name="nature_of_business__c" 
+                                onchange="{!c.changeSubFieldView}"
+                                Id='formChildField'
+                                label="Please provide a detailed description of the nature of business and operations." 
+                                value="{!v.PEOChecklist.description_principle_product_business__c}"
+                                disabled='{!v.readOnly}'/>-->
+            <!--lightning:textarea aura:id="natureOfBusiness"
+                                name="nature_of_business__c" 
+                                onchange="{!c.changeSubFieldView}"
+                                Id='formChildField'
+                                label="Please provide a detailed description of the nature of business and operations." 
+                                value="{!v.PEOChecklist.nature_of_business__c}"
+                                disabled='{!v.readOnly}'/>
+        </div>  
+       <lightning:layout multipleRows="true">
+        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                <lightning:radioGroup disabled='{!v.readOnly}'
+                                      aura:id='questionnaireFields More_than_50_Emp_in_NY_or_CA__c'
+                                      label='Do you have more than 50 employees that work in NY or CA?'
+                                      name="More_than_50_Emp_in_NY_or_CA__c"
+                                      onchange="{!c.changeSubFieldView}"
+                                      options="{!v.yesNoSelection}"
+                                      value="{!v.PEOChecklist.More_than_50_Emp_in_NY_or_CA__c}"
+                                      />  
+                <aura:if isTrue="{!v.PEOChecklist.More_than_50_Emp_in_NY_or_CA__c == 'Yes'}">
+                    <div>
+                        <lightning:radioGroup disabled='{!v.readOnly}'
+                                              aura:id='questionnaireFields PEO_employees_work_in_one_location__c'
+                                              label='Do you have a single location with more than 50 employees ?'
+                                              name="PEO_employees_work_in_one_location__c"
+                                              onchange="{!c.changeSubFieldView}"
+                                              options="{!v.yesNoSelection}"
+                                              value="{!v.PEOChecklist.PEO_employees_work_in_one_location__c}"
+                                              />                        
+                        <aura:if isTrue="{!v.PEOChecklist.PEO_employees_work_in_one_location__c == 'Yes'}">
+                            <div class="slds-text-heading_small">If Yes, please provide the address for each, and the number of employees working at each site.</div>
+                            <div class="slds-p-around_small">
+                                <div class="slds-grid slds-gutters slds-wrap">
+                                    <div class="slds-col slds-size_6-of-6" style="padding-bottom:25px">
+                                        <table class="shiftInfoTable" border="0" cellpadding="5">
+                                            <thead border="1">
+                                                <tr>
+                                                    <th></th>
+                                                    <th class="shiftInfoCell">Address</th>
+                                                    <th class="shiftInfoCell">Number of Employees</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <aura:iteration items="{!v.addressRecs}" var="addrRec" indexVar="addRecIndex">  
+                                                    <tr> 
+                                                        <td class="shiftInfoCell">
+                                                            {!addRecIndex + 1})
+                                                        </td>
+                                                        <td class="shiftInfoCell">
+                                                            <lightning:textarea name="{!addRecIndex}" class="shiftInfoInput" disabled='{!v.readOnlyPermission}' variant="label-hidden" label="Address" placeholder="Enter text..." onchange="{!c.handleAddressChange}" value="{!addrRec.address}"/>
+                                                        </td>  
+                                                        <td class="shiftInfoCell">
+                                                            <lightning:input class="shiftInfoInput" disabled='{!v.readOnlyPermission}' label="Number of Employees" variant="label-hidden" placeholder="Enter Number..." onchange="{!c.handleCountChange}" value="{!addrRec.numberOfemployees}" type="number" name="{!addRecIndex}" />
+                                                        </td>
+                                                        <td class="shiftInfoCell">
+                                                            <aura:if isTrue="{!greaterthan(v.addressRecs.length, 1)}">
+                                                                <a name="{!addRecIndex}" onclick="{!c.removeRow}">
+                                                                    <lightning:icon iconName="utility:delete" alternativeText="delete" size="x-small"/>
+                                                                </a>
+                                                            </aura:if>
+                                                        </td>
+                                                    </tr>  
+                                                </aura:iteration>
+                                            </tbody>
+                                        </table>
+                                        <aura:if isTrue="{!lessthan(v.addressRecs.length, 5)}">
+                                            <lightning:button disabled='{!v.readOnlyPermission}' class="slds-m-top_small" variant="brand" type="button" label="Add Row" onclick="{!c.addNewLocInfo}"></lightning:button>
+                                        </aura:if>
+                                    </div>
+                                </div>
+                            </div>
+                            <lightning:select aura:id='Emp_wrk_std_biz_hrs_or_mltple_shfts__c'
+                                              name="Emp_wrk_std_biz_hrs_or_mltple_shfts__c"
+                                              onchange="{!c.changeSubFieldView}"
+                                              value="{!v.PEOChecklist.Emp_wrk_std_biz_hrs_or_mltple_shfts__c}"
+                                              label='Do all employees work standard business hours, or are there multiple shifts?'
+                                              disabled='{!v.readOnly}'>
+                                <option value="">Choose one...</option>
+                                <aura:iteration items="{!v.stdOrmiltiList}" var="sbjctListItem" indexVar="key">
+                                    <option text="{!sbjctListItem.value}" value="{!sbjctListItem.key}" selected="{!sbjctListItem.key==v.PEOChecklist.Emp_wrk_std_biz_hrs_or_mltple_shfts__c}" />
+                                </aura:iteration>
+                            </lightning:select> 
+                            <aura:if isTrue="{!v.PEOChecklist.Emp_wrk_std_biz_hrs_or_mltple_shfts__c == 'Multiple'}">
+                                <div class="slds-text-heading_small">If multiple shifts, please provide the number of employees working each shift and confirm a manager / supervisor is on site during all operational hours.</div>
+                                <div class="slds-p-around_small">
+                                    <div class="slds-grid slds-gutters slds-wrap">
+                                        <div class="slds-col slds-size_6-of-6" style="padding-bottom:25px">
+                                            <table class="shiftInfoTable" border="0" cellpadding="5">
+                                                <thead border="1">
+                                                    <tr>
+                                                        <th></th>
+                                                        <th class="shiftInfoCell">Number of Employees working each shift</th>
+                                                        <th class="shiftInfoCell">Manager</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <aura:iteration items="{!v.multiShiftRecs}" var="multiShiftRec" indexVar="multiShiftRecIndex">  
+                                                        <tr> 
+                                                            <td class="shiftInfoCell">
+                                                                {!multiShiftRecIndex + 1})
+                                                            </td>
+                                                            <td class="shiftInfoCell ManagerCell">
+                                                                <lightning:input name="{!multiShiftRecIndex}" class="shiftInfoInput" disabled='{!v.readOnlyPermission}' variant="label-hidden" label="Number of Employees working each shift" placeholder="Enter Number..." type="number"  onchange="{!c.handleShiftCountChange}" value="{!multiShiftRec.numberOfemployees}"/>
+                                                            </td >  
+                                                            <td class="shiftInfoCell">
+                                                                <lightning:select aura:id='Manager'
+                                                                                  class="shiftInfoInput"
+                                                                                  name="{!multiShiftRecIndex}"
+                                                                                  onchange="{!c.handleManagerChange}"
+                                                                                  value="{!multiShiftRec.manager}"
+                                                                                  label='Manager'
+                                                                                  variant="label-hidden"
+                                                                                  disabled='{!v.readOnly}'>
+                                                                    <option value="">Choose one...</option>
+                                                                    <aura:iteration items="{!v.yesNoSelection}" var="sbjctListItem" indexVar="key">
+                                                                        <option text="{!sbjctListItem.value}" value="{!sbjctListItem.key}" selected="{!sbjctListItem.key == multiShiftRec.manager}" />
+                                                                    </aura:iteration>
+                                                                </lightning:select> 
+                                                            </td>
+                                                            <td class="shiftInfoCell">
+                                                                <aura:if isTrue="{!greaterthan(v.multiShiftRecs.length, 1)}">
+                                                                    <a name="{!multiShiftRecIndex}" onclick="{!c.removeShiftRow}">
+                                                                        <lightning:icon iconName="utility:delete" alternativeText="delete" size="x-small"/>
+                                                                    </a>
+                                                                </aura:if>
+                                                            </td>
+                                                        </tr>  
+                                                    </aura:iteration>
+                                                </tbody>
+                                            </table>
+                                            <aura:if isTrue="{!lessthan(v.multiShiftRecs.length, 5)}">
+                                                <lightning:button disabled='{!v.readOnlyPermission}' class="slds-m-top_small" variant="brand" type="button" label="Add Row" onclick="{!c.addNewShiftInfo}"></lightning:button>
+                                            </aura:if>
+                                        </div>
+                                    </div>
+                                </div>
+                            </aura:if>
+                        </aura:if>
+                    </div>
+                </aura:if>
+                
+                <aura:if isTrue="{!not(v.FastPassRequired)}">
+                    <div>
+                        <lightning:radioGroup disabled='{!v.readOnly}'
+                                              aura:id='questionnaireFields parent-past_3_year_entity_ownership_chng__c'
+                                              label='Has the ownership of this entity changed within the past 3 years?'
+                                              name="past_3_year_entity_ownership_chng__c"
+                                              onchange="{!c.changeSubFieldView}"
+                                              options="{!v.yesNoSelection}"
+                                              value="{!v.PEOChecklist.past_3_year_entity_ownership_chng__c}"
+                                              />                        
+                        <aura:if isTrue="{!v.PEOChecklist.past_3_year_entity_ownership_chng__c == 'Yes'}">
+                            <lightning:input aura:id='questionnaireFields child-past_3_year_entity_ownership_chng__c'
+                                             onchange="{!c.changeSubFieldView}"
+                                             name='info_past_3_year_entity_ownership_chng__c'
+                                             label='If yes, please provide details (former names, predecessor entities, including FEINs)' 
+                                             value="{!v.PEOChecklist.info_past_3_year_entity_ownership_chng__c}"
+                                             disabled='{!v.readOnly}'/>
+                        </aura:if>
+                    </div>
+                </aura:if>
+                <div>
+                    <lightning:radioGroup aura:id='parent-other_business_type_engagement__c'
+                                          label='Are you engaged in any other type of business?'
+                                          name="other_business_type_engagement__c"
+                                          onchange="{!c.changeSubFieldView}"
+                                          options="{!v.yesNoSelection}"
+                                          value="{!v.PEOChecklist.other_business_type_engagement__c}"
+                                          disabled='{!v.readOnly}' />
+                    <aura:if isTrue="{!v.PEOChecklist.other_business_type_engagement__c == 'Yes'}">
+                        <lightning:input aura:id='child-other_business_type_engagement__c'
+                                         name='info_other_business_type_engagement__c'
+                                         label='If yes, please explain' 
+                                         onchange="{!c.changeSubFieldView}"
+                                         value="{!v.PEOChecklist.info_other_business_type_engagement__c}"
+                                         disabled='{!v.readOnly}'/>
+                        <lightning:radioGroup aura:id='child-other_business_type_engagement__c'
+                                              name='interchange_of_labor__c'
+                                              onchange="{!c.changeSubFieldView}"
+                                              label=' If yes, is there any interchange of labor between your businesses?' 
+                                              value="{!v.PEOChecklist.interchange_of_labor__c}"
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                        <lightning:radioGroup name='other_engagement_has_seperate_fein__c'
+                                              label='If yes, does it have a separate FEIN?' 
+                                              onchange="{!c.changeSubFieldView}"
+                                              value="{!v.PEOChecklist.other_engagement_has_seperate_fein__c}"
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                    </aura:if>
+                </div>
+                <aura:if isTrue="{!not(v.FastPassRequired)}">
+                    <div>
+                        <lightning:radioGroup name="major_changes_to_business_3_yrs__c"
+                                              onchange="{!c.changeSubFieldView}"
+                                              value="{!v.PEOChecklist.major_changes_to_business_3_yrs__c}"
+                                              label='Has your business had any major changes in business operations in the past three years?'
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                        <aura:if isTrue="{!v.PEOChecklist.major_changes_to_business_3_yrs__c =='Yes'}">
+                            <lightning:input aura:id='child-major_changes_to_business_3_yrs__c'
+                                             name='info_major_changes_to_business_3_yrs__c'
+                                             value="{!v.PEOChecklist.info_major_changes_to_business_3_yrs__c}"
+                                             label='Please explain' 
+                                             onchange="{!c.changeSubFieldView}"
+                                             disabled='{!v.readOnly}'/>
+                        </aura:if>
+                    </div>
+                </aura:if>
+                <div>
+                    <lightning:radioGroup name="had_prior_wrks_comp_cvg_declined__c"
+                                          onchange="{!c.changeSubFieldView}"
+                                          value="{!v.PEOChecklist.had_prior_wrks_comp_cvg_declined__c}"
+                                          label='Did you have any prior workers’ compensation coverage declined, canceled, or non-renewed in the past 3 years?'
+                                          disabled='{!v.readOnly}'
+                                          options="{!v.yesNoSelection}" />
+                    <aura:if isTrue="{!v.PEOChecklist.had_prior_wrks_comp_cvg_declined__c=='Yes'}">
+                        <lightning:input aura:id='child-had_prior_wrks_comp_cvg_declined__c'
+                                         name='info_had_prior_wrks_comp_cvg_declined__c'
+                                         value="{!v.PEOChecklist.info_had_prior_wrks_comp_cvg_declined__c}"
+                                         label='Please explain' 
+                                         onchange="{!c.changeSubFieldView}"
+                                         disabled='{!v.readOnly}'/>
+                    </aura:if>
+                </div>
+                <div>
+                    <lightning:radioGroup name="had_wrkrs_comp_claim_past_3_yrs__c"
+                                          aura:id='parent-had_wrkrs_comp_claim_past_3_yrs__c'
+                                          onchange="{!c.changeSubFieldView}"
+                                          value="{!v.PEOChecklist.had_wrkrs_comp_claim_past_3_yrs__c}"
+                                          label='Have there been any Workers’ Compensation claims in the last 3 years?'
+                                          disabled='{!v.readOnly}'
+                                          options="{!v.yesNoSelection}" />
+                </div>
+                <aura:if isTrue="{!not(v.FastPassRequired)}">
+                    <div>
+                        <lightning:radioGroup name="multiple_worksite_locations__c"
+                                              onchange="{!c.changeSubFieldView}"
+                                              value="{!v.PEOChecklist.multiple_worksite_locations__c}"
+                                              label='Do you have multiple worksite locations?'
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                        <aura:if isTrue="{!v.PEOChecklist.multiple_worksite_locations__c=='Yes'}">
+                            <lightning:input aura:id='child-multiple_worksite_locations__c'
+                                             name='info_multiple_worksite_locations__c'
+                                             onchange="{!c.changeSubFieldView}"
+                                             value="{!v.PEOChecklist.info_multiple_worksite_locations__c}"
+                                             label='If yes, please provide the full list of all states in which employees work' 
+                                             disabled='{!v.readOnly}'/>
+                        </aura:if>
+                    </div>
+                    <div>
+                        <lightning:radioGroup name="employees_work_from_home__c"
+                                              onchange="{!c.changeSubFieldView}"
+                                              value="{!v.PEOChecklist.employees_work_from_home__c}"
+                                              label='Do any of your employees work predominantly at home?'
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                        <aura:if isTrue="{!v.PEOChecklist.employees_work_from_home__c=='yes'}">
+                            <lightning:input aura:id='child-employees_work_from_home__c'
+                                             type='number'
+                                             onchange="{!c.changeSubFieldView}"
+                                             name='number_employees_work_from_home__c'
+                                             value="{!v.PEOChecklist.number_employees_work_from_home__c}"
+                                             label='If yes, how many?' 
+                                             disabled='{!v.readOnly}'/>
+                        </aura:if>
+                    </div>
+                </aura:if>
+                <div>
+                    <lightning:radioGroup name="employees_travel_out_of_state__c"
+                                          onchange="{!c.changeSubFieldView}"
+                                          value="{!v.PEOChecklist.employees_travel_out_of_state__c}"
+                                          label='Do your employees travel out of the state in the scope of their employment?'
+                                          disabled='{!v.readOnly}'
+                                          options="{!v.yesNoSelection}" />
+                    <aura:if isTrue="{!v.PEOChecklist.employees_travel_out_of_state__c=='Yes'}">
+                        <lightning:input aura:id='child-employees_travel_out_of_state__c'
+                                         name='info_employees_travel_out_of_state__c'
+                                         onchange="{!c.changeSubFieldView}"
+                                         value="{!v.PEOChecklist.info_employees_travel_out_of_state__c}"
+                                         label='If yes, please explain'
+                                         disabled='{!v.readOnly}'/>
+                        <lightning:radioGroup name="employees_travel_out_of_state_overnight__c"
+                                              onchange="{!c.changeSubFieldView}"
+                                              value="{!v.PEOChecklist.employees_travel_out_of_state_overnight__c}"
+                                              label='If yes, do they stay overnight for business purposes?'
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                    </aura:if>
+                </div>
+                <div>
+                    <lightning:radioGroup name="employees_travel_out_of_country__c"
+                                          onchange="{!c.changeSubFieldView}"
+                                          value="{!v.PEOChecklist.employees_travel_out_of_country__c}"
+                                          label='Do your employees travel out of the country in the scope of their employment?' 
+                                          disabled='{!v.readOnly}'
+                                          options="{!v.yesNoSelection}" />
+                    <aura:if isTrue="{!v.PEOChecklist.employees_travel_out_of_country__c=='Yes'}">
+                        <lightning:input aura:id='child-employees_travel_out_of_country__c'
+                                         name='names_travling_employees__c'
+                                         onchange="{!c.changeSubFieldView}"
+                                         value="{!v.PEOChecklist.names_travling_employees__c}"
+                                         label='Which employees travel?'
+                                         disabled='{!v.readOnly}'/>
+                        <lightning:input aura:id='child-employees_travel_out_of_country__c'
+                                         name='list_host_contries_travling_employees__c'
+                                         onchange="{!c.changeSubFieldView}"
+                                         value="{!v.PEOChecklist.list_host_contries_travling_employees__c}"
+                                         label='To which countries?'
+                                         disabled='{!v.readOnly}'/>
+                        <lightning:input aura:id='child-employees_travel_out_of_country__c'
+                                         type='number'
+                                         onchange="{!c.changeSubFieldView}"
+                                         value="{!v.PEOChecklist.annual_number_of_out_of_country_travel__c}"
+                                         name='annual_number_of_out_of_country_travel__c'
+                                         label='How many times per year?'
+                                         disabled='{!v.readOnly}'/>
+                        <lightning:input aura:id='child-employees_travel_out_of_country__c'
+                                         name='average_out_of_country_travel_time__c'
+                                         type='Number'
+                                         fieldLevelHelp="Please enter a number"
+                                         onchange="{!c.changeSubFieldView}"
+                                         value="{!v.PEOChecklist.average_out_of_country_travel_time__c}"
+                                         label='How long per average visit?'
+                                         disabled='{!v.readOnly}'/>
+                        <lightning:input aura:id='child-employees_travel_out_of_country__c'
+                                         name='job_duties_out_of_country_travel__c'
+                                         onchange="{!c.changeSubFieldView}"
+                                         value="{!v.PEOChecklist.job_duties_out_of_country_travel__c}"
+                                         label='What are the “job duties” during the visit?'
+                                         disabled='{!v.readOnly}'/>
+                    </aura:if>
+                </div>
+                <div>
+                    <lightning:radioGroup name="bid_or_do_government_work__c"
+                                          onchange="{!c.changeSubFieldView}"
+                                          value="{!v.PEOChecklist.bid_or_do_government_work__c}"
+                                          label='Do you bid or do government work?'
+                                          disabled='{!v.readOnly}'
+                                          options="{!v.yesNoSelection}" />
+                    <aura:if isTrue="{!v.PEOChecklist.bid_or_do_government_work__c=='Yes'}">
+                        <lightning:select aura:id='employees_employer_rule_subjectivity__c'
+                                          name="employees_employer_rule_subjectivity__c"
+                                          onchange="{!c.changeSubFieldView}"
+                                          value="{!v.PEOChecklist.employees_employer_rule_subjectivity__c}"
+                                          label='If yes, are the employees subject to state employee rules or private employer rules?'
+                                          disabled='{!v.readOnly}'>
+                            <option value="">Choose one...</option>
+                            <aura:iteration items="{!v.empEmplrSubjectivityList}" var="sbjctListItem" indexVar="key">
+                                <option text="{!sbjctListItem.value}" value="{!sbjctListItem.key}" selected="{!sbjctListItem.key==v.PEOChecklist.employees_employer_rule_subjectivity__c}" />
+                            </aura:iteration>
+                        </lightning:select> 
+                        <lightning:radioGroup name="exposure_to_gvt_rules_or_sovrgn_immunity__c"
+                                              onchange="{!c.changeSubFieldView}"
+                                              value="{!v.PEOChecklist.exposure_to_gvt_rules_or_sovrgn_immunity__c}"
+                                              label='If yes, would contracting with the client subject us to government contracting rules or the client asserting sovereign immunity in the event of a dispute?'
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                        <lightning:radioGroup name="use_of_service_disqualifies_emp__c"
+                                              onchange="{!c.changeSubFieldView}"
+                                              value="{!v.PEOChecklist.use_of_service_disqualifies_emp__c}"
+                                              label='If yes, would using our service prevent employees from participating in a public employee benefit like a state retirement system?'
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                        <lightning:radioGroup name="default_gvt_contractor_decision__c"
+                                              onchange="{!c.changeSubFieldView}"
+                                              value="{!v.PEOChecklist.default_gvt_contractor_decision__c}"
+                                              label='If yes, if we contract with them would we be deemed a government contractor?'
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                    </aura:if>
+                </div>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                <aura:if isTrue="{!not(v.FastPassRequired)}">
+                    <div>
+                        <lightning:radioGroup  name="union_or_emp_collective_brgn_agrmnt__c"
+                                              onchange="{!c.changeSubFieldView}"
+                                              value="{!v.PEOChecklist.union_or_emp_collective_brgn_agrmnt__c}"
+                                              label='Do you have any union workers or employees under a collective bargaining agreement?'
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                        <aura:if isTrue="{!v.PEOChecklist.union_or_emp_collective_brgn_agrmnt__c=='Yes'}">
+                            <lightning:radioGroup name="union_rps_aware_of_co_emp_relation_req__c"
+                                                  onchange="{!c.changeSubFieldView}"
+                                                  value="{!v.PEOChecklist.union_rps_aware_of_co_emp_relation_req__c}"
+                                                  label='If yes, are the union representatives aware of the potential co-employer relationship and requirements?'
+                                                  disabled='{!v.readOnly}'
+                                                  options="{!v.yesNoSelection}" />
+                        </aura:if>
+                    </div>
+                </aura:if>
+                <div>
+                    <lightning:radioGroup name="written_saftey_program_in_place__c"
+                                          onchange="{!c.changeSubFieldView}"
+                                          value="{!v.PEOChecklist.written_saftey_program_in_place__c}"
+                                          label='Do you have a written safety program in place?'
+                                          disabled='{!v.readOnly}'
+                                          options="{!v.yesNoSelection}" />
+                    <aura:if isTrue="{!v.PEOChecklist.written_saftey_program_in_place__c=='Yes'}">
+                        <lightning:input aura:id='child-written_saftey_program_in_place__c'
+                                         name='info_written_saftey_program_in_place__c'
+                                         onchange="{!c.changeSubFieldView}"
+                                         value="{!v.PEOChecklist.info_written_saftey_program_in_place__c}"
+                                         label='If yes, please explain?'
+                                         disabled='{!v.readOnly}'/>
+                    </aura:if>
+                    <lightning:radioGroup name="has_return_to_wrk_program__c"
+                                          onchange="{!c.changeSubFieldView}"
+                                          value="{!v.PEOChecklist.has_return_to_wrk_program__c}"
+                                          label='If yes, do you have a return to work program?'
+                                          disabled='{!v.readOnly}'
+                                          options="{!v.yesNoSelection}" />
+                </div>
+                <div>
+                    <lightning:radioGroup name="has_non_w2_wrkrs__c"
+                                          onchange="{!c.changeSubFieldView}"
+                                          value="{!v.PEOChecklist.has_non_w2_wrkrs__c}"
+                                          label='Does your business have any volunteers or donated labor or seasonal workers?'
+                                          disabled='{!v.readOnly}'
+                                          options="{!v.yesNoSelection}" />
+                    <aura:if isTrue="{!v.PEOChecklist.has_non_w2_wrkrs__c=='Yes'}">
+                        <div>
+                            <p>If yes, how many and what type?</p>
+                        </div>
+                        <lightning:input aura:id='child-has_non_w2_wrkrs__c'
+                                         type='Number'
+                                         onchange="{!c.changeSubFieldView}"
+                                         name='number_of_volunteers__c'
+                                         value="{!v.PEOChecklist.number_of_volunteers__c}"
+                                         label='How many volunteers/donated labor'
+                                         disabled='{!v.readOnly}'/>
+                        <lightning:radioGroup  name="has_sprt_policy_for_donated_labor__c"
+                                              onchange="{!c.changeSubFieldView}"
+                                              value="{!v.PEOChecklist.has_sprt_policy_for_donated_labor__c}"
+                                              label='If you have volunteers or donated labor, do you have a separate policy for your volunteer exposure?'
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                        <lightning:input aura:id='child-has_non_w2_wrkrs__c'
+                                         type='Number'
+                                         onchange="{!c.changeSubFieldView}"
+                                         name='number_of_seasonal_wrkrs__c'
+                                         value="{!v.PEOChecklist.number_of_seasonal_wrkrs__c}"
+                                         label='How many seasonal workers'
+                                         disabled='{!v.readOnly}'/>
+                    </aura:if>
+                </div>
+                <div>
+                    <lightning:radioGroup  name="Subcontractors_1099_ind_contractors__c"
+                                          onchange="{!c.changeSubFieldView}"
+                                          value="{!v.PEOChecklist.Subcontractors_1099_ind_contractors__c}"
+                                          label='Does your business use Subcontractors / 1099 independent contractors?'
+                                          disabled='{!v.readOnly}'
+                                          options="{!v.yesNoSelection}" />
+                    <aura:if isTrue="{!v.PEOChecklist.Subcontractors_1099_ind_contractors__c=='Yes'}">
+                        <lightning:input aura:id='child-Percentage_of_subcontracted_work__c'
+                                         type='Number'
+                                         onchange="{!c.changeSubFieldView}"
+                                         name='Percentage_of_subcontracted_work__c'
+                                         value="{!v.PEOChecklist.Percentage_of_subcontracted_work__c}"
+                                         label='What is the percentage of subcontracted work?'
+                                         disabled='{!v.readOnly}'/>
+                        
+                        <lightning:input aura:id='child-How_many_subcontractors__c'
+                                         type='Number'
+                                         onchange="{!c.changeSubFieldView}"
+                                         name='How_many_subcontractors__c'
+                                         value="{!v.PEOChecklist.How_many_subcontractors__c}"
+                                         label='How many different subcontractors are being used?'
+                                         disabled='{!v.readOnly}'/>
+                        
+                        <lightning:input aura:id='child-What_services_are_subcontracted__c'
+                                         onchange="{!c.changeSubFieldView}"
+                                         name="What_services_are_subcontracted__c"
+                                         value="{!v.PEOChecklist.What_services_are_subcontracted__c}"
+                                         label='What operations are being subcontracted?'
+                                         disabled='{!v.readOnly}'/>
+                        <lightning:radioGroup name="subcntractrs_insured_wrkrs_comp__c"
+                                              onchange="{!c.changeSubFieldView}"
+                                              value="{!v.PEOChecklist.subcntractrs_insured_wrkrs_comp__c}"
+                                              label='Are all subcontractors and their employees insured for workers’ compensation?'
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                        <aura:if isTrue="{!v.PEOChecklist.subcntractrs_insured_wrkrs_comp__c=='Yes'}">
+                            <lightning:radioGroup name="retains_copies_of_1099_certs_of_insurnc__c"
+                                                  onchange="{!c.changeSubFieldView}"
+                                                  value="{!v.PEOChecklist.retains_copies_of_1099_certs_of_insurnc__c}"
+                                                  label='If yes, do you keep copies of their certificates of insurance?'
+                                                  disabled='{!v.readOnly}'
+                                                  options="{!v.yesNoSelection}" />
+                            <lightning:input aura:id='child-subcntractrs_insured_wrkrs_comp__c'
+                                             name="occurance_of_coi_updates__c"
+                                             onchange="{!c.changeSubFieldView}"
+                                             value="{!v.PEOChecklist.occurance_of_coi_updates__c}"
+                                             label='If yes, how often are updated COIs requested and received?'
+                                             disabled='{!v.readOnly}'/>
+                        </aura:if>
+                        
+                        
+                    </aura:if>
+                    
+                </div>
+                
+                <div>
+                    <lightning:radioGroup name="owns_oprts_leases_aircrft_watrcrft__c"
+                                          onchange="{!c.changeSubFieldView}"
+                                          value="{!v.PEOChecklist.owns_oprts_leases_aircrft_watrcrft__c}"
+                                          label='Does your business own, operate, or lease aircraft and/or watercraft?'
+                                          disabled='{!v.readOnly}'
+                                          options="{!v.yesNoSelection}" />
+                    <aura:if isTrue="{!v.PEOChecklist.owns_oprts_leases_aircrft_watrcrft__c=='Yes'}">
+                        <lightning:input aura:id='child-owns_oprts_leases_aircrft_watrcrft__c'
+                                         onchange="{!c.changeSubFieldView}"
+                                         name="info_owns_oprts_leases_aircrft_watrcrft__c"
+                                         value="{!v.PEOChecklist.info_owns_oprts_leases_aircrft_watrcrft__c}"
+                                         label='If yes, please explain'
+                                         disabled='{!v.readOnly}'/>
+                    </aura:if>
+                </div>
+                <aura:if isTrue="{!not(v.FastPassRequired)}">
+                    <div>
+                        <lightning:radioGroup name="past_or_curr_discontinued_opps__c"
+                                              onchange="{!c.changeSubFieldView}"
+                                              value="{!v.PEOChecklist.past_or_curr_discontinued_opps__c}"
+                                              label='Do you have any past, present, or discontinued operations that involve exposure to storing, treating, discharging, applying, disposing or transporting of chemicals, painting, mold, asbestos, or hazardous materials? (e.g., landfills, wastes, fuel tanks, etc.)'
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                        <aura:if isTrue="{!v.PEOChecklist.showpast_or_curr_discontinued_opps__c=='Yes'}">
+                            <lightning:input aura:id='child-past_or_curr_discontinued_opps__c'
+                                             name="info_past_or_curr_discontinued_opps__c"
+                                             onchange="{!c.changeSubFieldView}"
+                                             value="{!v.PEOChecklist.info_past_or_curr_discontinued_opps__c}"
+                                             label='If yes, please explain' 
+                                             disabled='{!v.readOnly}'/>
+                            
+                        </aura:if>
+                    </div>
+                    <div>
+                        <lightning:radioGroup name="exposure_to_water_work_features__c"
+                                              onchange="{!c.changeSubFieldView}"
+                                              value="{!v.PEOChecklist.exposure_to_water_work_features__c}"
+                                              label='Do you have exposure to barges, vessels, docks, or a bridge over water work?' 
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                    </div>
+                </aura:if>
+                <div>
+                    <lightning:radioGroup name="wrk_underground_or_10_ft_above__c"
+                                          onchange="{!c.changeSubFieldView}"
+                                          value="{!v.PEOChecklist.wrk_underground_or_10_ft_above__c}"
+                                          label='Is there work performed underground or higher than 10 ft ?'
+                                          disabled='{!v.readOnly}'
+                                          options="{!v.yesNoSelection}" />
+                    <aura:if isTrue="{!v.PEOChecklist.wrk_underground_or_10_ft_above__c=='Yes'}">
+                        
+                        <lightning:input aura:id='child-Maximum_height_applicants_work_from__c'
+                                         disabled='{!v.dontAllowChanges}' 
+                                         type='Number'
+                                         name='Maximum_height_applicants_work_from__c'
+                                         label="What is the maximum height or depth work is performed?"
+                                         value="{!v.PEOChecklist.Maximum_height_applicants_work_from__c}"
+                                         onchange="{!c.changeSubFieldView}"/>
+                        <lightning:radioGroup name="Any_bucket_trucks_or_scaffolding_used__c"
+                                              value="{!v.PEOChecklist.Any_bucket_trucks_or_scaffolding_used__c}"
+                                              label='Any bucket trucks, or scaffolding used?' 
+                                              onchange="{!c.changeSubFieldView}"
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                        <lightning:input aura:id='child-Safety_Equipment_and_training_provided__c'
+                                         name="Safety_Equipment_and_training_provided__c"
+                                         onchange="{!c.changeSubFieldView}"
+                                         value="{!v.PEOChecklist.Safety_Equipment_and_training_provided__c}"
+                                         label='Description of Safety Equipment used and training provided.' 
+                                         disabled='{!v.readOnly}'/>
+                        <lightning:input aura:id='child-wrk_underground_or_10_ft_above__c'
+                                         name='info_wrk_underground_or_10_ft_above__c'
+                                         onchange="{!c.changeSubFieldView}"
+                                         value="{!v.PEOChecklist.info_wrk_underground_or_10_ft_above__c}"
+                                         label='If yes, please explain' 
+                                         disabled='{!v.readOnly}'/>
+                    </aura:if>
+                </div>
+                
+                <div>
+                    <lightning:radioGroup name="employee_carpooling_group_transport__c"
+                                          onchange="{!c.changeSubFieldView}"
+                                          label=' Do you have any group transportation or carpooling of employees?'
+                                          value="{!v.PEOChecklist.employee_carpooling_group_transport__c}"
+                                          disabled='{!v.readOnly}'
+                                          options="{!v.yesNoSelection}" />
+                    <aura:if isTrue="{!v.showemployee_carpooling_group_transport__c=='Yes'}">
+                        <lightning:input aura:id='child-employee_carpooling_group_transport__c'
+                                         name='carpooling_group_transport_trvl_method__c'
+                                         onchange="{!c.changeSubFieldView}"
+                                         value="{!v.PEOChecklist.carpooling_group_transport_trvl_method__c}"
+                                         label='If yes, what is their method of travel?'
+                                         disabled='{!v.readOnly}'/>
+                        <lightning:input aura:id='child-employee_carpooling_group_transport__c'
+                                         type='number'
+                                         onchange="{!c.changeSubFieldView}"
+                                         name='max_allowed_in_group_trnsprt_vehicle__c'
+                                         value="{!v.PEOChecklist.max_allowed_in_group_trnsprt_vehicle__c}"
+                                         label='If yes, what is the maximum number of employees allowed per vehicle at one time?' 
+                                         disabled='{!v.readOnly}'/>
+                    </aura:if>
+                </div>
+                <div>
+                    <lightning:select aura:id='parent-emp_drive_for_business_purposes__c'
+                                      name="emp_drive_for_business_purposes__c"
+                                      onchange="{!c.changeSubFieldView}"
+                                      value="{!v.PEOChecklist.emp_drive_for_business_purposes__c}"
+                                      label='Do any of your employees drive for business purposes?'
+                                      disabled='{!v.readOnly}'>
+                        < consider a flag of two values to use as stnd inputs -->
+                        <!--option value="default">choose one...</option>
+                        <option value="Yes, company vehicle only">Yes, company vehicle only</option>
+                        <option value='Yes, personal vehicles only'>Yes, personal vehicles only</option>
+                        <option value='Yes, both company and personal vehicles'>Yes, both company and personal vehicles</option>
+                        <option value="No">No</option>
+                    </lightning:select>
+                    <aura:if isTrue="{!v.showPersonalemp_drive_for_business_purposes__c}">
+                        <lightning:radioGroup name='prsnl_driver_record_verification__c'
+                                              onchange="{!c.changeSubFieldView}"
+                                              value="{!v.PEOChecklist.prsnl_driver_record_verification__c}"
+                                              label='Do you perform driver record verification?' 
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                        <lightning:input aura:id='child-emp_drive_for_business_purposes__c'
+                                         name='prsnl_driver_driving_radius__c'
+                                         value="{!v.PEOChecklist.prsnl_driver_driving_radius__c}"
+                                         label='What is the driving radius?' 
+                                         onchange="{!c.changeSubFieldView}"
+                                         disabled='{!v.readOnly}'/>
+                    </aura:if>
+                    <aura:if isTrue="{!v.showemp_drive_for_business_purposes__c}">
+                        <lightning:radioGroup name='employer_verifies_drvr_record__c'
+                                              value="{!v.PEOChecklist.employer_verifies_drvr_record__c}"
+                                              label='Do you perform driver record verification?' 
+                                              onchange="{!c.changeSubFieldView}"
+                                              disabled='{!v.readOnly}'
+                                              options="{!v.yesNoSelection}" />
+                        <lightning:input aura:id='child-emp_drive_for_business_purposes__c'
+                                         name='list_of_fleet_vehicle_types__c'
+                                         onchange="{!c.changeSubFieldView}"
+                                         value="{!v.PEOChecklist.list_of_fleet_vehicle_types__c}"
+                                         label='What type of company vehicles are being driven?' 
+                                         disabled='{!v.readOnly}'/>
+                        <lightning:input aura:id='child-emp_drive_for_business_purposes__c'
+                                         name='driving_radius__c'
+                                         onchange="{!c.changeSubFieldView}"
+                                         value="{!v.PEOChecklist.driving_radius__c}"
+                                         label='What is the driving radius?'
+                                         disabled='{!v.readOnly}'/>
+                    </aura:if>
+                </div>
+            </lightning:layoutItem>
+        </lightning:layout-->
+    </lightning:card>
+    
+    <!-- footer buttons -->
+    <div>
+        <!--div class="modal-footer slds-modal__footer slds-size_1-of-1"-->
+        <c:communityFormNavButtons parentTabsetUsesIteration='true'
+                                   allPossibleParents='{!v.parentTabs}'
+                                   activeParent='{!v.activeTab}'
+                                   hideBackButton="false"
+                                   saveFunc='{!v.saveFunc}'
+                                   skipSaveEvt='false' />
+        <!--lightning:button  disabled='{!v.readOnly}' class="slds-m-top_small" variant="brand" type="button" name="saveProgress" label="Save and Next" onclick="{!c.saveForm}" /-->
+        
+    </div>
+</aura:component>

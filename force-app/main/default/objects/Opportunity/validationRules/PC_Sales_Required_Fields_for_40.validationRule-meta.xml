@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PC_Sales_Required_Fields_for_40</fullName>
+    <active>true</active>
+    <description>PC Onboarding Format field is required when moving the status to Discovery with Probability: 40%</description>
+    <errorConditionFormula>AND(
+NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+BEGINS($RecordType.DeveloperName, &apos;PC&apos;),
+OR(
+BEGINS($Profile.Name,&apos;PC Sales Administration - SB&apos;),
+BEGINS($Profile.Name,&apos;PC Sales Manager - SB&apos;),
+BEGINS($Profile.Name,&apos;PC Sales Rep - SB&apos;)
+),
+Probability&gt;=0.40,
+ISBLANK(TEXT(Onboarding_Format__c)),
+OR(
+ISPICKVAL(OpportunityType__c,&apos;AUTO&apos;),
+ISPICKVAL(OpportunityType__c,&quot;BOP (Business Owner&apos;s Package)&quot;),
+ISPICKVAL(OpportunityType__c,&apos;Disability&apos;),
+ISPICKVAL(OpportunityType__c,&apos;Umbrella&apos;),
+ISPICKVAL(OpportunityType__c,&apos;Workers Comp&apos;),
+ISPICKVAL(OpportunityType__c,&apos;General Liability&apos;),
+ISPICKVAL(OpportunityType__c,&apos;Errors and Omissions&apos;)
+)
+)</errorConditionFormula>
+    <errorMessage>PC Onboarding Format field is required when moving the status to Discovery with Probability: 40%</errorMessage>
+</ValidationRule>

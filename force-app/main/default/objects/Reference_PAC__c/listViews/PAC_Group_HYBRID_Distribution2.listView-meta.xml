@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PAC_Group_HYBRID_Distribution2</fullName>
+    <booleanFilter>(1 and 2 and 3 and 4 and 5 and 6)</booleanFilter>
+    <columns>NAME</columns>
+    <columns>Date_1st_Notice_Received_in_PAC__c</columns>
+    <columns>CPR_Group_New__c</columns>
+    <columns>Prospect_Client_Number__c</columns>
+    <columns>Tax_Agency__c</columns>
+    <columns>Tax_Type__c</columns>
+    <columns>First_Period_Listed__c</columns>
+    <columns>Status__c</columns>
+    <columns>OWNER.ALIAS</columns>
+    <columns>Client_Contact_Email__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>OWNER.ALIAS</field>
+        <operation>contains</operation>
+        <value>PAC Group,PAC MPSC</value>
+    </filters>
+    <filters>
+        <field>Status__c</field>
+        <operation>contains</operation>
+        <value>New Notice Received,Reassign to New ORR</value>
+    </filters>
+    <filters>
+        <field>Paychex_PEO_Issue__c</field>
+        <operation>notEqual</operation>
+        <value>Yes</value>
+    </filters>
+    <filters>
+        <field>Advantage_PTP__c</field>
+        <operation>notEqual</operation>
+        <value>Yes</value>
+    </filters>
+    <filters>
+        <field>OWNER.ALIAS</field>
+        <operation>notContain</operation>
+        <value>Group ESR,psst,additional,high rev,follow-up,missing,no client,– PEO,Local</value>
+    </filters>
+    <filters>
+        <field>OWNER.ALIAS</field>
+        <operation>notEqual</operation>
+        <value>PAC Group CSPAC,pac group e,pac mpsc d/e news,pac group d,pac group o</value>
+    </filters>
+    <label>PAC Group HYBRID - Distribution</label>
+    <sharedTo>
+        <roleAndSubordinatesInternal>Operating_Risk_Manager</roleAndSubordinatesInternal>
+    </sharedTo>
+</ListView>

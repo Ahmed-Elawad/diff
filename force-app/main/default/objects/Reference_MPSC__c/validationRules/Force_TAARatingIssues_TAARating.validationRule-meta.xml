@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_TAARatingIssues_TAARating</fullName>
+    <active>true</active>
+    <description>If TAA Rating = &quot;Not Complete&quot;, then force an entry in the TAA Rating Issues field</description>
+    <errorConditionFormula>AND(
+ ISPICKVAL(TAA_Rating__c,&quot;Not Complete&quot;),
+ ISBLANK(TAA_Rating_Issues__c),
+ $Profile.Name &lt;&gt;&quot;System Administrator&quot;
+)</errorConditionFormula>
+    <errorDisplayField>TAA_Rating_Issues__c</errorDisplayField>
+    <errorMessage>You must select at least one TAA Rating Issues value when setting TAA Rating = Not Complete</errorMessage>
+</ValidationRule>

@@ -1,0 +1,136 @@
+<aura:component >
+    <aura:attribute name="contactRoles" type="Object[]" />
+    <aura:attribute name="primaryContact" type="Object" />
+    <aura:attribute name="userInfo" type="User" default="{}"/>
+    
+    <aura:attribute name="hoverBaseElement" type="Object" />
+    <aura:attribute name="showPopover" type="Boolean" default="false"/>
+    
+    
+    <aura:handler name="change" value="{!v.contactRoles}" action="{!c.setPrimaryContact}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.setPrimaryContact}"/>
+    
+    <c:CompactLayoutPopover hoverElement="{!v.hoverBaseElement}" isHovered="{!v.showPopover}">
+        <c:ContactBannerPopover contact="{!v.primaryContact}" userInfo="{!v.userInfo}" />
+    </c:CompactLayoutPopover>
+    
+    
+    <div class="box" title="Activity">
+        
+        <div class="banner-header slds-align_absolute-center">
+            <h4 class="slds-item_label slds-text-color_weak slds-truncate slds-text-align_center">Contact Roles ({!v.contactRoles.length})</h4>
+        </div>
+        
+        <div class="banner-body">
+            
+            <div class="slds-item_detail slds-truncate slds-align_absolute-center column" title="Contact Roles">
+                
+                <aura:if isTrue="{!not(empty(v.primaryContact))}">
+                    <div style="white-space:nowrap" >                   
+                        <span class="hyperlink-text mypopover"  onclick="{!c.navigateToContact}" aura:id="hover-text" onmouseover="{!c.showModal}" onmouseout="{!c.hideModal}">
+                            {!v.primaryContact.Name}
+                        </span>
+                        
+                        <aura:if isTrue = "{!not(empty(v.primaryContact.Title))}">
+                            Title: 
+                            {!v.primaryContact.Title}
+                        </aura:if>     
+                    </div>
+                    
+                    <div class="slds-grid slds-wrap organizer-grid">
+                        <div class="slds-size_1-of-2 slds-p-bottom_x-small" >
+                            <!--               <span>
+                              <aura:if isTrue="{!not(empty(v.primaryContact.Phone))}">
+                                P: <ui:outputPhone aura:id="oPhone" value="{!v.primaryContact.Phone}" />
+                                        <br/>
+                                    </aura:if>
+                                    <aura:if isTrue="{!not(empty(v.primaryContact.MobilePhone))}">
+                                        M: <ui:outputPhone aura:id="oPhone" value="{!v.primaryContact.MobilePhone}" />
+                                    </aura:if>
+       
+                                <aura:if isTrue="{!v.primaryContact.DoNotCall ==true}"> 
+                                    <div class="slds-text-color_error"> Do Not Call </div>   
+                            </aura:if>
+                                
+       <aura:if isTrue="{!v.primaryContact.HasOptedOutOfEmail ==true}"> 
+          <div class="slds-text-color_error"> Do Not Email </div>   
+                            </aura:if>                                
+                            </span> --> 
+                            
+                            
+                            <!--  used to make numbers click to call using dialer -->
+                            <span>
+                                <aura:if isTrue="{!empty(v.userInfo.CallCenterId)}">
+                                    <aura:if isTrue="{!not(empty(v.primaryContact.Phone))}">
+                                        P: <ui:outputPhone aura:id="oPhone" value="{!v.primaryContact.Phone}" />
+                                        <br/>
+                                    </aura:if>
+                                    <aura:if isTrue="{!not(empty(v.primaryContact.MobilePhone))}">
+                                        M: <ui:outputPhone aura:id="oPhone" value="{!v.primaryContact.MobilePhone}" />
+                                        <br/>
+                                    </aura:if>
+                                    <aura:if isTrue="{!not(empty(v.primaryContact.OtherPhone))}">
+                                        O: <ui:outputPhone aura:id="oPhone" value="{!v.primaryContact.OtherPhone}" />
+                                        <br/>
+                                    </aura:if>
+                                    <aura:if isTrue="{!not(empty(v.primaryContact.Email))}">
+                                        E: <lightning:formattedEmail value ="{!v.primaryContact.Email}"/> 
+                                    </aura:if>
+                                    
+                                    <aura:set attribute="else">
+                                        <aura:if isTrue="{!not(empty(v.primaryContact.Phone))}">
+                                            P: <lightning:clickToDial value="{!v.primaryContact.Phone}" recordId="{!v.primaryContact.Id}" />
+                                            <br/>
+                                        </aura:if>
+                                        <aura:if isTrue="{!not(empty(v.primaryContact.MobilePhone))}">
+                                            M: <lightning:clickToDial value="{!v.primaryContact.MobilePhone}" recordId="{!v.primaryContact.Id}" />
+                                            <br/>                                        
+                                        </aura:if>
+                                        <aura:if isTrue="{!not(empty(v.primaryContact.HomePhone))}">
+                                            H: <lightning:clickToDial value="{!v.primaryContact.HomePhone}" recordId="{!v.primaryContact.Id}" />
+                                            <br/>                                         
+                                        </aura:if>    
+                                        <aura:if isTrue="{!not(empty(v.primaryContact.OtherPhone))}">
+                                            O: <lightning:clickToDial value="{!v.primaryContact.OtherPhone}" recordId="{!v.primaryContact.Id}" />
+                                            <br/>                                        
+                                        </aura:if>                                             
+                                        <aura:if isTrue="{!not(empty(v.primaryContact.Email))}">
+                                            E: <lightning:formattedEmail value ="{!v.primaryContact.Email}"/> 
+                                        </aura:if>
+                                    </aura:set>
+                                    
+                                </aura:if>
+                                
+                            </span>
+                            
+                        </div>
+                        
+                        
+                        <aura:if isTrue="{!not(empty(v.primaryContact.MailingAddress.street))}">
+                            <div class="slds-size_1-of-2 slds-p-bottom_x-small">
+                                
+                                {!v.primaryContact.MailingAddress.street}, {!v.primaryContact.MailingAddress.city}
+                                <br/>
+                                {!v.primaryContact.MailingAddress.state}, {!v.primaryContact.MailingAddress.postalCode}, 
+                                {!v.primaryContact.MailingAddress.country}
+                                
+                            </div>
+                            
+                            <aura:set attribute="else">
+                                No Address Found
+                            </aura:set>
+                        </aura:if>
+                    </div>
+                    
+                    
+                    <aura:set attribute="else">
+                        No Primary Contact Found
+                    </aura:set>
+                </aura:if>
+                
+                
+            </div>
+            
+        </div>
+    </div>
+</aura:component>

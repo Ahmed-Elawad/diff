@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HSA_Cancel_Date_Entered</fullName>
+    <active>true</active>
+    <description>Cannot enter a HSA Cancel Date until pending Tasks are completed</description>
+    <errorConditionFormula>NOT(ISNULL(HSA_Cancel_Date_Entered__c ))&amp;&amp;
+(
+CONTAINS( Pending_FSA_Tasks__c , &quot;Future HSA Last Check Date&quot;)||
+CONTAINS( Pending_FSA_Tasks__c , &quot;CPR NPR Callout&quot;)||
+CONTAINS( Pending_FSA_Tasks__c , &quot;Unresolved Paperwork Discrepancy&quot;)
+)</errorConditionFormula>
+    <errorMessage>You cannot fill out &quot;HSA Cancel Date Entered&quot; until the following Pending Tasks are Resolved: Future HSA, Last Check Date, CPR NPR Callout, and Unresolved Paperwork Discrepancy</errorMessage>
+</ValidationRule>

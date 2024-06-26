@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRE_Welc_Call_Cmplt_before_Intervw_Cmplt</fullName>
+    <active>true</active>
+    <description>Prevent the Interview Completed field from being populated BEFORE the Welcome Call Complete field has been populated.</description>
+    <errorConditionFormula>AND(
+ ISCHANGED(Interview_Completed__c),
+ ( Welcome_Call_Complete__c = FALSE ),
+ (NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)))
+ )</errorConditionFormula>
+    <errorDisplayField>Interview_Completed__c</errorDisplayField>
+    <errorMessage>You cannot change &apos;Interview Completed&apos; before &apos;Welcome Call Complete&apos;.</errorMessage>
+</ValidationRule>

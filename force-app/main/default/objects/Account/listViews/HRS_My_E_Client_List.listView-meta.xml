@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRS_My_E_Client_List</fullName>
+    <columns>HRS_Account_Owner__c</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ACCOUNT.EMPLOYEES</columns>
+    <columns>Do_Not_Call_Flag__c</columns>
+    <columns>ACCOUNT.PHONE1</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>X401K_Assets__c</columns>
+    <columns>ACCOUNT.ADDRESS1_ZIP</columns>
+    <columns>ACCOUNT.ADDRESS2_ZIP</columns>
+    <columns>Client_Start_Date__c</columns>
+    <columns>Lost_Date__c</columns>
+    <columns>Reason_Lost__c</columns>
+    <columns>X401_k__c</columns>
+    <columns>FSA__c</columns>
+    <columns>POP__c</columns>
+    <filterScope>Team</filterScope>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>contains</operation>
+        <value>FLEX Client,Advantage Client,HRS Client (Only),HR Solutions FLEX Client,HR Solutions Preview Client,HR Solutions Advantage Client,HR Solutions NPR Client,Lost Client,PEO Client,MMS Client</value>
+    </filters>
+    <filters>
+        <field>Out_of_Business__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Lost_Date__c</field>
+        <operation>equals</operation>
+        <value>,LAST_N_DAYS:30</value>
+    </filters>
+    <label>HRS - My E-Client List</label>
+    <sharedTo>
+        <group>HRSSales</group>
+    </sharedTo>
+</ListView>

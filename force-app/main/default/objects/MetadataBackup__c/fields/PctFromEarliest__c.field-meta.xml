@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PctFromEarliest__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <formula>IF (AND(NOT(ISBLANK( CodeLength__c )), EarliestVersion__c != null, NOT(ISBLANK(EarliestVersion__r.CodeLength__c)))
+     , (CodeLength__c /  EarliestVersion__r.CodeLength__c )
+     , null)</formula>
+    <inlineHelpText>The percent of code compared to the earliest version we have tracking for.</inlineHelpText>
+    <label>Pct From Earliest</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackTrending>false</trackTrending>
+    <type>Percent</type>
+</CustomField>

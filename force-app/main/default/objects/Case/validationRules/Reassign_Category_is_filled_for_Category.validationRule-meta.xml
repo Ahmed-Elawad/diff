@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reassign_Category_is_filled_for_Category</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( 
+RecordType.DeveloperName =&quot;Service_Support_401k_S125_Case&quot;, 
+NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)), 
+NOT(ISPICKVAL(Reassign_Category_1__c,&quot;&quot;)), 
+ISPICKVAL( Reassign_Category_2__c ,&quot;&quot;), 
+NOT(ISPICKVAL( Reassign_Category_1__c ,&quot;Client Plan Year Rollover&quot;)),
+NOT(ISPICKVAL( Reassign_Category_1__c ,&quot;Consumer Move&quot;)), 
+NOT(ISPICKVAL( Reassign_Category_1__c ,&quot;Case Question&quot;)), 
+NOT(ISPICKVAL( Reassign_Category_1__c ,&quot;Manual ACH&quot;)), 
+NOT(ISPICKVAL( Reassign_Category_1__c ,&quot;Security Breach S125&quot;)), 
+NOT(ISPICKVAL( Reassign_Category_1__c ,&quot;Year End Call Campaign&quot;)),
+NOT(ISPICKVAL( Reassign_Category_1__c, &quot;Report Error – HSA&quot;)),
+NOT(ISPICKVAL( Reassign_Category_1__c, &quot;Stop Payment (Broker Support Only)&quot;)),
+NOT(ISPICKVAL( Reassign_Category_1__c, &quot;Supporting Docs (LDPS Use Only)&quot;)),
+NOT(ISPICKVAL( Reassign_Category_1__c, &quot;PEP Due Diligence&quot;)),
+NOT(ISPICKVAL( Reassign_Category_1__c, &quot;Red Flag Review&quot;)),
+NOT(ISPICKVAL( Reassign_Category_1__c, &quot;Cancellation - HSA&quot;) 
+))</errorConditionFormula>
+    <errorMessage>All Reassign-Category levels must be selected in order to route the project correctly.</errorMessage>
+</ValidationRule>

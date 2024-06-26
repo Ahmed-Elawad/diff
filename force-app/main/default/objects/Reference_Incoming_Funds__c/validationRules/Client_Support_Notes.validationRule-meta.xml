@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Client_Support_Notes</fullName>
+    <active>true</active>
+    <description>Makes Client Support Notes required when Contribution Type = Wrong Account</description>
+    <errorConditionFormula>AND( Record_Type_Name__c = &apos;401k Incoming Checks and ACHs&apos;,ISPICKVAL(Contribution_Type__c,&apos;Wrong Account&apos;), ISBLANK(Client_Support_Notes__c),NOT(BEGINS($Profile.Name,&apos;System Administrator&apos;)))</errorConditionFormula>
+    <errorMessage>Client Support Notes are required when Contribution Type is &apos;Wrong Account&apos;</errorMessage>
+</ValidationRule>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRG_SpanishInsertsQnty_MinimumNumber</fullName>
+    <active>true</active>
+    <description>C18S - if Spanish Inserts Quantity is populated, then the value cannot be 0 (zero).</description>
+    <errorConditionFormula>AND(
+(Spanish_Inserts_Quantity__c = 0),
+(Historical_Order_Indicator__c = 0), 
+(NOT(BEGINS($Profile.Name,&quot;HR Essentials&quot;))),
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)))
+)</errorConditionFormula>
+    <errorDisplayField>Spanish_Inserts_Quantity__c</errorDisplayField>
+    <errorMessage>You must NOT select a zero value for the Spanish Inserts Quantity field.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,33 @@
+<template>
+    <lightning-record-form
+    record-id={refacct}
+        object-api-name="Referral_Account__c"
+        fields={fields}
+        columns="2"
+        mode="view">
+
+    </lightning-record-form>
+    <lightning-layout  horizontal-align="space">
+        <lightning-layout-item padding="around-small">
+            <div >
+                <span>Open Opportunities: </span> <span>{oppNum} </span> 
+            </div>
+            <div>
+                <span>Last Meeting Date: </span> <span>
+                   <lightning-formatted-date-time value={lastMeetingDate} month="2-digit" day="2-digit" year="2-digit"></lightning-formatted-date-time> 
+                </span> 
+            </div>
+            <div>
+                Number of Mutual Current Clients: <span>{mutualCurrentClients}</span>
+            </div>
+        </lightning-layout-item>
+        <lightning-layout-item padding="around-small">
+            <div >
+            Total Referrals In Past Year: <span> {totalRefsInPastYear} </span>
+            </div>
+            <div>
+            Total Mutual And Prospect Clients:  <span>{totalMutualAndProspectClients}</span>
+            </div>
+        </lightning-layout-item>
+    </lightning-layout>
+</template>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRE_Lockdown_Interview_Completed_Date</fullName>
+    <active>true</active>
+    <description>Prevent the Interview Completed Date field from being updated multiple times.</description>
+    <errorConditionFormula>AND( 
+ ISCHANGED(Interview_Completed__c), 
+ ( PRIORVALUE(Interview_Completed__c) = True ), 
+ ($UserRole.Name &lt;&gt; &quot;HRE Handbook Supervisor team 1&quot;), 
+ ($UserRole.Name &lt;&gt; &quot;HRE Handbook Supervisor team 2&quot;), 
+ ($UserRole.Name &lt;&gt; &quot;HRE Handbook Supervisor team 3&quot;), 
+ ($UserRole.Name &lt;&gt; &quot;HRE HR Services Supervisor team 1&quot;), 
+ ($UserRole.Name &lt;&gt; &quot;HRE HR Services Supervisor team 2&quot;), 
+ ($UserRole.Name &lt;&gt; &quot;HRE HR Advisor 1&quot;), 
+ ($UserRole.Name &lt;&gt; &quot;HRE HR Advisor 2&quot;),
+ ($UserRole.Name &lt;&gt; &quot;HRE Advisor Team 2&quot;), 
+ ($UserRole.Name &lt;&gt; &quot;System Administrator&quot;) 
+)</errorConditionFormula>
+    <errorDisplayField>Interview_Completed_Date__c</errorDisplayField>
+    <errorMessage>You cannot change the &apos;Interview Completed Date&apos; value.</errorMessage>
+</ValidationRule>

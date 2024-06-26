@@ -1,0 +1,116 @@
+<!--
+    Provides a summary view of the Reference PEO record.
+    Using Field sets and a custom controller to control what is displayed based on the Profile
+    of the person viewing the page.  
+ 
+  History
+  -------
+  06/16/2016 Lynn Michels   Created 
+  
+ -->
+
+<apex:page standardController="Reference_PEO__c" extensions="RefPEOSummaryViewController"
+            tabStyle="Reference_PEO__c"> 
+        
+        <!-- Salesforce 1 code - this page is only available on SF1 -->
+        <apex:form >
+        <apex:outputPanel >
+            <apex:stylesheet value="{!URLFOR($Resource.Salesforce1Bootstrap, 'bootstrap-sf1-010-beta15/dist/css/bootstrap-namespaced.css')}"/>
+                <style>
+                .bootstrap-sf1 h2{font-weight: bold;}
+                .bootstrap-sf1 .page-header {border-radius: .25em;
+											border: 1px solid rgb(216, 221, 230);
+											background-color: #ffffff}
+                .page-header.page-header-compact h1 {margin-bottom: 12px}
+                .card-detail-label {width: 75px}
+                .detailList th, .detailList td {height: 25px;
+                				border-bottom:1px solid rgb(216, 221, 230)}
+				th.labelCol.vfLabelColTextWrap.last, td.data2Col.last { border: none}
+				
+				
+				.bPageBlock .pbBody{background-color: #ffffff;
+									border-radius: .25em;
+									border: 1px solid rgb(216, 221, 230);
+									padding: 6px 20px 4px 20px;
+									margin-bottom: 5px}
+				.pbBody a {color: #2a94d6}
+				.bPageBlock {border: none;
+				              background-color: #f0f1f2;
+				              background-image: none}
+				.bPageBlock .pbFooter, .bWizardBlock .pbFooter{background-color: #f0f1f2;
+																background-image: none}
+				.list .headerRow th {border: none}
+				.list td {border: none}
+				.bootstrap-sf1 .card {background-color: aliceblue;}
+				.bootstrap-sf1 .card ul.card-detail.card-detail-labels > li .card-detail-value {text-align: left}
+				.bootstrap-sf1 table {width: 100%;}
+				.bootstrap-sf1 .card ul.card-detail.card-detail-labels > li .card-detail-value{white-space: normal}
+            	</style>
+
+                <div class="bootstrap-sf1" style="padding: 10px;">
+                    <div class="page-header page-header-compact context-c-shield">
+                        <h1>{!title}</h1>
+                    </div>
+               
+                <apex:pageBlock >
+                <apex:pageMessages />
+                    <apex:pageBlockSection columns="1">
+                        <apex:repeat value="{!fieldsetfields}" var="f">
+                        <apex:outputField value="{!refPEO[f.fieldPath]}" />
+                        </apex:repeat>
+                    </apex:pageBlockSection>                    
+                </apex:pageBlock>
+               
+                      <apex:pageBlock >
+                      	<h2>PEO Discrepancies</h2>
+			       	  	<apex:pageBlockTable value="{!PeoDiscrepancies}" var="p">
+				         		<apex:column >
+				         			<div class="card">
+							 			<div class="card-heading">
+							   				<a href="{!baseUrl}/{!p.id}">{!p.name}</a>
+							  			</div>
+							 			 <div class="card-detail">
+							 			  <ul class="card-detail card-detail-labels">
+										    <li>
+										      <label class="card-detail-label">Status</label>
+										      <span class="card-detail-value">{!p.Status__c}</span>
+										    </li>
+										    <li>
+										      <label class="card-detail-label">Area:</label>
+										      <span class="card-detail-value">{!p.Discrepancy_Area__c}</span>
+										    </li>
+										    <li>
+										      <label class="card-detail-label">Type:</label>
+										      <span class="card-detail-value">{!p.Discrepancy_Type__c}</span>
+										    </li>
+										    <li>
+										      <label class="card-detail-label">Hold:</label>
+										      <span class="card-detail-value">{!p.HoldPayrollWillNotRun__c}</span>
+										    </li>
+										    <li>
+										      <label class="card-detail-label">NonHold:</label>
+										      <span class="card-detail-value">{!p.NonHoldPayrollWillRun__c}</span>
+										    </li>
+										  </ul>
+							  			 </div>
+										</div>
+								</apex:column>
+							</apex:pageBlockTable><!-- end {!PeoDiscrepancies} -->
+						</apex:pageBlock><!-- end Discrepancies -->
+						
+						<apex:pageBlock >
+							<h2>Chatter Posts</h2>
+							<apex:pageBlockSection columns="1">
+		                        <apex:repeat value="{!chatterposts}" var="c">
+			                        <p>{!c.CreatedBy.FirstName} {!c.CreatedBy.LastName} on {!c.CreatedDate}<br/>
+			                        {!c.Body}</p>
+		                        </apex:repeat>
+		                    </apex:pageBlockSection> 
+	                    </apex:pageBlock>
+         
+           </div><!-- end SF1 bootstrap -->
+        </apex:outputPanel>  
+      
+    </apex:form>
+
+</apex:page>

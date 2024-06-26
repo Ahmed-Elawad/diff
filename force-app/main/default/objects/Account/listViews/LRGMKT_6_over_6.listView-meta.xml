@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>LRGMKT_6_over_6</fullName>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>Larkspur_401K_Assets__c</columns>
+    <columns>First_Run_Date__c</columns>
+    <columns>Patrick_Indicator__c</columns>
+    <columns>Do_Not_Call__c</columns>
+    <columns>ACCOUNT.ACCOUNT_NUMBER</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>ACCOUNT.EMPLOYEES</columns>
+    <columns>ACCOUNT.PHONE1</columns>
+    <columns>ACCOUNT.ADDRESS2_CITY</columns>
+    <columns>ACCOUNT.ADDRESS2_ZIP</columns>
+    <filterScope>Team</filterScope>
+    <filters>
+        <field>Bis_ID__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>notContain</operation>
+        <value>Lost Client,Out of Business</value>
+    </filters>
+    <filters>
+        <field>First_Run_Date__c</field>
+        <operation>lessThan</operation>
+        <value>LAST_N_DAYS:180</value>
+    </filters>
+    <filters>
+        <field>X401_k__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <label>LRGMKT 6 over 6</label>
+    <sharedTo>
+        <role>HRS_DISTRICT_61</role>
+        <role>HRS_DISTRICT_62</role>
+        <role>HRS_DISTRICT_63</role>
+        <role>HRS_DISTRICT_67</role>
+        <role>HRS_DISTRICT_84</role>
+        <role>HRS_DISTRICT_90</role>
+        <role>HRS_SALES_REP_DISTRICT_62</role>
+        <role>HRS_SALES_REP_DISTRICT_67</role>
+        <role>HRS_SALES_REP_DISTRICT_84</role>
+        <role>HRS_SALES_REP_DISTRICT_90</role>
+        <role>HRS_WHOLESALERS</role>
+    </sharedTo>
+</ListView>

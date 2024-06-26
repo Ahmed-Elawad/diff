@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ServiceNow_prevent_unchecking</fullName>
+    <active>true</active>
+    <description>Once the Send Case to ServiceNow box is checked it can&apos;t be unchecked</description>
+    <errorConditionFormula>PRIORVALUE( Send_Case_to_Service_Now__c ) &amp;&amp; NOT( Send_Case_to_Service_Now__c) &amp;&amp; Not(CONTAINS($Profile.Name,&quot;System Admin&quot;))</errorConditionFormula>
+    <errorDisplayField>Send_Case_to_Service_Now__c</errorDisplayField>
+    <errorMessage>You can not uncheck the Send Case to Service Now box.</errorMessage>
+</ValidationRule>

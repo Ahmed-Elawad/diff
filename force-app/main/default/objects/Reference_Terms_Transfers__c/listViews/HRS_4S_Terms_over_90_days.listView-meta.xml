@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRS_4S_Terms_over_90_days</fullName>
+    <columns>NAME</columns>
+    <columns>Case_Lookup__c</columns>
+    <columns>LAST_UPDATE</columns>
+    <columns>RECORDTYPE</columns>
+    <columns>OWNER.ALIAS</columns>
+    <columns>CREATEDBY_USER</columns>
+    <columns>Date_Paperwork_Received__c</columns>
+    <columns>Current_Assets__c</columns>
+    <columns>SFDC_Current_Assets__c</columns>
+    <columns>New_Case__c</columns>
+    <columns>SunGard_Number__c</columns>
+    <columns>Discrepancy__c</columns>
+    <columns>Term_Transfer_Stopped__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Discrepancy_Closed_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>LAST_UPDATE</field>
+        <operation>lessThan</operation>
+        <value>LAST_90_DAYS</value>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>equals</operation>
+        <value>In Process,Paperwork Discrepancy,Oustanding NSF</value>
+    </filters>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_Terms_Transfers__c.X401k_Termination</value>
+    </filters>
+    <label>HRS 4S Terms over 90 days</label>
+    <sharedTo>
+        <role>HRS4SClientRetentionRepresentative</role>
+    </sharedTo>
+</ListView>

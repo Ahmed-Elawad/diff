@@ -1,0 +1,84 @@
+<!--
+History
+02/22/2021 Dan Carmen      Added Do Not Prospect banner
+06/24/2021 Dan Carmen      Add Current Package section
+03/13/2023 Lalan Kumar     Removed the Sensitivity_BeneTrac__c and Sensitivity_Icon__c check so that Connect Banner should not display
+12/14/2023 Shilpa G		   APR0155814: Added Intent Banner to replace Insights Banner
+-->
+<aura:component description="ContactBanner" controller="ObjectBannerAuraService">
+    <aura:attribute name="contactId" type="Id" required="true" />
+    <aura:attribute name="bannerSettings" type="Object" required="true" />
+	<aura:attribute name="isPilot" type="Boolean"/>
+    
+    <aura:attribute name="contact" type="Object" />
+
+    <aura:attribute name="contactWrapper" type="Object" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+    <force:recordData aura:id="contactLoader"
+                      fields="Id,Name,DoNotCall,HasOptedOutOfEmail,Decision_Maker__c,Influencer__c,PayrollContact__c,Business_Owner__c,LastActivityDate,Sensitivity_BeneTrac__c,Sensitivity_Icon__c, DoNotProspectReason__c, Account.SensitivityList__c, Account.CadenceType__c, Account.In_Cadence__c, Account.LastCadenceName__c,Account.Do_Not_Prospect_Reason__c,Account.Current_Package__c"
+                      recordId="{!v.contactId}"
+                      targetFields="{!v.contact}"
+                      mode="VIEW" />
+
+    <div class="slds-tile__detail">
+        <div class="grid-wrapper">
+            <!-- Do Not Prospect -->
+ 
+            <aura:if isTrue="{!v.contact.Account.Do_Not_Prospect_Reason__c.length>0}">
+                <c:BannerDoNotProspect noProspectReason="{!v.contact.Account.Do_Not_Prospect_Reason__c}" />
+              <aura:set attribute="else">
+                 <aura:if isTrue="{!v.contact.DoNotProspectReason__c.length>0}">
+                    <c:BannerDoNotProspect noProspectReason="{!v.contact.DoNotProspectReason__c}" />
+                 </aura:if>
+              </aura:set>
+
+            </aura:if>
+            <!-- Removed the contact.Sensitivity_BeneTrac__c and contact.Sensitivity_Icon__c so that Banner should not displayed on Conact -->
+            <aura:if isTrue="{!or(or(v.contact.DoNotCall, v.contact.HasOptedOutOfEmail))}">
+                <c:BannerDNC contact="{!v.contact}" />
+            </aura:if>
+
+           <!-- Product Sensitivity -->
+           <aura:if isTrue="{!v.contact.Account.SensitivityList__c.length>0}">
+                <c:BannerProductSensitivity sensitivityList ="{!v.contact.Account.SensitivityList__c}" />
+            </aura:if>           
+
+            <aura:if isTrue="{!v.contact.Decision_Maker__c || v.contact.Influencer__c || v.contact.PayrollContact__c || v.contact.Business_Owner__c}">
+                <c:ContactRole contact="{!v.contact}" />
+            </aura:if>
+
+            <!-- Current Package -->
+            <aura:if isTrue="{!v.contact.Account.Current_Package__c.length>0}">
+                <c:BannerCurrentPackage currentPackage="{!v.contact.Account.Current_Package__c}" />
+            </aura:if>
+
+            <!-- In Cadence -->
+            <aura:if isTrue="{!v.contact.Account.In_Cadence__c}">
+                <c:BannerInCadence record="{!v.contact}" recordId="{!v.contactId}" cadenceType="{!v.contact.Account.CadenceType__c}" cadenceName="{!v.contact.Account.LastCadenceName__c}"/>
+            </aura:if>
+            
+            <aura:if isTrue="{!or(and(!v.bannerSettings.Contact_Show_Activities_If_None__c, or(v.contact.LastActivityDate, v.contactWrapper.OpenActivities.length > 0)), v.bannerSettings.Contact_Show_Activities_If_None__c)}">
+                <c:BannerOpenActivities recordId="{!v.contactId}" openActivities="{!v.contactWrapper.OpenActivities}" lastActivityDate="{!v.contact.LastActivityDate}" />
+            </aura:if>
+
+            <aura:if isTrue="{!or(and(!v.bannerSettings.Contact_Show_Cases_If_Zero__c, v.contactWrapper.OpenCases.length > 0), v.bannerSettings.Contact_Show_Cases_If_Zero__c)}">
+                <c:BannerOpenCases recordId="{!v.contactId}" openCases="{!v.contactWrapper.OpenCases}" caseType="Prospect-Client" objectType="Contact" />
+            </aura:if>
+
+            <aura:if isTrue="{!or(and(!v.bannerSettings.Contact_Show_Opportunities_If_Zero__c, v.contactWrapper.OpenOpportunities.length > 0), v.bannerSettings.Contact_Show_Opportunities_If_Zero__c)}">
+                <c:BannerOpenOpportunities recordId="{!v.contactId}" openOpportunities="{!v.contactWrapper.OpenOpportunities}" opportunityType="Prospect-Client" objectType="Contact"  />
+            </aura:if>
+            
+            <!--Insights banner-->
+            <!--<aura:if isTrue="{!and(v.isPilot, v.contactWrapper.marketingInsights.length > 0)}">
+                <c:BannerInsights recordId="{!v.contactId}" objectType="Contact" openInsights="{!v.contactWrapper.marketingInsights}"/>
+            </aura:if>-->
+            <!--Intent banner-->
+            <aura:if isTrue="{!and(v.isPilot, v.contactWrapper.customerIntentSignals.length > 0)}">
+                <c:BannerInsights recordId="{!v.contactId}" objectType="Contact" openInsights="{!v.contactWrapper.customerIntentSignals}"/>
+            </aura:if>
+        </div>
+    </div>
+</aura:component>

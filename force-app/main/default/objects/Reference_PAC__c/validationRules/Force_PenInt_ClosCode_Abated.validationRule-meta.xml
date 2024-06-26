@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_PenInt_ClosCode_Abated</fullName>
+    <active>true</active>
+    <description>If Closure Code starts with &apos;Abated&apos; the Penalty &amp; Interest Paid field minus Penalty &amp; Interest recovered field must be less than or equal to 0.</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;Reference PAC Record Type&quot; ), 
+( (Penalty_Interest_Paid__c - Penalty_Interest_Recovered__c) &gt; 0.00 ), 
+(BEGINS(TEXT(Closure_Code__c),&apos;Abated&apos;) ), 
+($Profile.Name &lt;&gt;&quot;System Administrator&quot;) 
+)</errorConditionFormula>
+    <errorDisplayField>Closure_Code__c</errorDisplayField>
+    <errorMessage>If the Closure Code starts with Abated, the Penalty &amp; Interest Paid field minus Penalty &amp; Interest Recovered field must be less than or equal to 0.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Must_populate_Workers_Comp_Type</fullName>
+    <active>false</active>
+    <description>For PEO Web Based Onboarding, When the field Final WC Approval Complete gets a date entered the field Workers compensation Type has to have a value and ALSO the value can not equal SR NO WC COI. Any other values you should be able to save the date.</description>
+    <errorConditionFormula>OR
+(
+AND(RecordTypeId = &apos;012700000001jeX&apos;, 
+NOT(ISBLANK( Reply_from_WC_Underwriting__c )) , ISPICKVAL(Workers_Compensation_Type__c, &apos;&apos; ) ),
+
+AND(RecordTypeId = &apos;0120g000000l3qD&apos;, 
+NOT(ISBLANK( Reply_from_WC_Underwriting__c )) , ISPICKVAL(Workers_Compensation_Type__c, &apos;&apos; ) ),
+
+
+AND(RecordTypeId = &apos;012700000001jeX&apos;,NOT(ISBLANK( Reply_from_WC_Underwriting__c )) , ISPICKVAL(Workers_Compensation_Type__c, &apos;SR NO WC COI&apos;) ))</errorConditionFormula>
+    <errorDisplayField>Workers_Compensation_Type__c</errorDisplayField>
+    <errorMessage>Workers Compensation type needs to have a value and it can not be equal to SR NO WC COI.</errorMessage>
+</ValidationRule>

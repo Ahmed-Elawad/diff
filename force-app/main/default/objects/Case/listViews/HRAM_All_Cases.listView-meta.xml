@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRAM_All_Cases</fullName>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>CORE.USERS.LAST_NAME</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>CASES.PRIORITY</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.HRS_Act_Mgr_Service_case_record_type</value>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Product__c</field>
+        <operation>notEqual</operation>
+        <value>HROi</value>
+    </filters>
+    <filters>
+        <field>Case_Created_By_Role__c</field>
+        <operation>notContain</operation>
+        <value>HROi</value>
+    </filters>
+    <label>HRAM All Cases</label>
+    <sharedTo>
+        <group>HR_Account_Managers</group>
+    </sharedTo>
+</ListView>

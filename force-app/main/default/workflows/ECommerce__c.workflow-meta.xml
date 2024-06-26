@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Ecom_Abandon_to_Prospect</fullName>
+        <description>Ecom Abandon to Prospect</description>
+        <protected>false</protected>
+        <recipients>
+            <field>EmailAbandonProspect__c</field>
+            <type>email</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>MKTG_All_Purpose/X02_CONVINCE_eComm_Still_curious_about_Paychex_Flex_v3</template>
+    </alerts>
+    <alerts>
+        <fullName>Ecommerce_Email_the_HBR</fullName>
+        <description>Ecommerce Email the HBR</description>
+        <protected>false</protected>
+        <recipients>
+            <field>EmailAbandon__c</field>
+            <type>email</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>MKTG_All_Purpose/EcomAbandoned</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>Update_Abandon_Sent_Date</fullName>
+        <description>Update the date/time the abandon email was sent to the HBR group</description>
+        <field>EmailAbandonSent__c</field>
+        <formula>Now()</formula>
+        <name>Update Abandon Sent Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Abandoned_Prospect_Sent</fullName>
+        <description>Update the sent date/time to indicate that the email was sent to the prospect.</description>
+        <field>EmailAbandonProspectSent__c</field>
+        <formula>now()</formula>
+        <name>Update Abandoned Prospect Sent</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Ecommerce Email HBR Abandoned</fullName>
+        <actions>
+            <name>Ecommerce_Email_the_HBR</name>
+            <type>Alert</type>
+        </actions>
+        <actions>
+            <name>Update_Abandon_Sent_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>ECommerce__c.EmailAbandon__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>ECommerce__c.Action__c</field>
+            <operation>contains</operation>
+            <value>Abandoned</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>ECommerce__c.EmailAbandonSent__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <description>When an ecommerce record comes in with an action of abandoned, an email is sent to the HBR group.</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ecommerce Email Prospect Abandoned</fullName>
+        <actions>
+            <name>Ecom_Abandon_to_Prospect</name>
+            <type>Alert</type>
+        </actions>
+        <actions>
+            <name>Update_Abandoned_Prospect_Sent</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>ECommerce__c.EmailAbandonProspect__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>ECommerce__c.EmailAbandonProspectSent__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>ECommerce__c.Action__c</field>
+            <operation>contains</operation>
+            <value>Abandoned</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>ECommerce__c.EmailAbandon__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>When an abandoned action comes in, email the prospect. Only trigger this if the Email Abandon field is populated also because we want to make sure we are sending to the HBR also.</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

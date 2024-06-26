@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DD_Notes_for_CAM_VR</fullName>
+    <active>true</active>
+    <description>Notes for CAM is required when Other (see notes) value if selected in Amount/Sources field</description>
+    <errorConditionFormula>RecordType.Name = &apos;Death Distribution&apos; &amp;&amp;  ISPICKVAL(Amount_Sources__c, &quot;Other(see notes)&quot;)
+ &amp;&amp;  ISBLANK(Notes_for_CAM__c)</errorConditionFormula>
+    <errorDisplayField>Notes_for_CAM__c</errorDisplayField>
+    <errorMessage>* Notes for CAM is required when Other (see notes) value if selected in Amount/Sources field *</errorMessage>
+</ValidationRule>

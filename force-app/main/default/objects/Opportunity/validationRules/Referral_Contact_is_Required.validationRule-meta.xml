@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Referral_Contact_is_Required</fullName>
+    <active>true</active>
+    <description>need referral contact name when Referral - Private Equity, Referral - Insurance Broker Lead Source is used
+updated - case #30067999</description>
+    <errorConditionFormula>AND(OR(ISNEW(),ISCHANGED(LeadSource)), OR(ISPICKVAL(LeadSource, &quot;Referral-Private Equity&quot;), 
+ISPICKVAL(LeadSource, &quot;Referral-Insurance Broker&quot;)), 
+NOT(BEGINS($Profile.Name, &apos;NSS&apos;)), 
+ISBLANK(Referral_Contact__c))</errorConditionFormula>
+    <errorDisplayField>Referral_Contact__c</errorDisplayField>
+    <errorMessage>*** You Must Enter The Referral Contact Name *** 
+Remember to click the Magnifying Glass icon to complete the selection</errorMessage>
+</ValidationRule>

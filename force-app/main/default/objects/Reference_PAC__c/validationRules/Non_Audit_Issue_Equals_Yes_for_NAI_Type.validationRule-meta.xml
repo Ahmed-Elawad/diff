@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Non_Audit_Issue_Equals_Yes_for_NAI_Type</fullName>
+    <active>true</active>
+    <description>Non-Audit Issue Type is a required field if the value of field &quot;Non-Audit Issue?&quot; = Yes</description>
+    <errorConditionFormula>AND(
+ISPICKVAL(Non_Audit_Issue__c,&quot;Yes&quot;),
+ISPICKVAL( Non_Audit_Issue_Type__c ,&quot;&quot;)
+)</errorConditionFormula>
+    <errorDisplayField>Non_Audit_Issue_Type__c</errorDisplayField>
+    <errorMessage>Non-Audit Issue Type is a required field if the value of field &quot;Non-Audit Issue?&quot; = Yes</errorMessage>
+</ValidationRule>

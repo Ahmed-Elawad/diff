@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_RefMPSCParent_when_C2C_Parent</fullName>
+    <active>true</active>
+    <description>Prevent user from populating the ReferenceMPSCParent field when &quot;Parent&quot; is selected for C2C.</description>
+    <errorConditionFormula>AND( 
+( ISPICKVAL(C2C__c, &apos;Parent&apos;) ), 
+NOT(ISBLANK(Reference_MPSC_Parent__c)),
+$Profile.Name &lt;&gt;&quot;System Administrator&quot; 
+)</errorConditionFormula>
+    <errorDisplayField>C2C__c</errorDisplayField>
+    <errorMessage>You cannot enter a Reference MPSC Parent when selecting Parent for the C2C field</errorMessage>
+</ValidationRule>

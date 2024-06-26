@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRG_BinderCoverQty_when_BindingOptions</fullName>
+    <active>true</active>
+    <description>B12 - if  8 1/2 x 11 Binding Options value = 1” Binder, then the  Binder Cover Option  AND  Binder Quantity  Fields must NOT be Null</description>
+    <errorConditionFormula>AND(
+($RecordType.Name = &quot;Handbook HR Solutions Order Record Type&quot; ),
+(ISPICKVAL(X8_x_11_Options__c, &apos;1” Binder&apos;)),
+(( ISPICKVAL(Art__c, &apos;&apos;)) || (Binder_Quantity__c = 0) || (ISNULL(Binder_Quantity__c)) ),
+(Historical_Order_Indicator__c = 0),
+(NOT(BEGINS($Profile.Name,&quot;HR Essentials&quot;))),
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)))
+)</errorConditionFormula>
+    <errorDisplayField>X8_x_11_Options__c</errorDisplayField>
+    <errorMessage>You must select a Binder Cover Option AND a Binder Quantity greater than zero when selecting the 8 ½ x 11 Binding Options value of &apos;1&quot; binder&apos;.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NSS_cannot_change_current_client_Name</fullName>
+    <active>true</active>
+    <description>NSS can not change the Account name for a current client</description>
+    <errorConditionFormula>OR(AND( BEGINS( $Profile.Name, &apos;NSS&apos;), ISCHANGED( Name ) , 
+NOT(ISBLANK(Bis_ID__c)),ISBLANK( Lost_Date__c)), AND( NOT(BEGINS($Profile.Name,&apos;System Administrator&apos;)), PRIORVALUE(Name)=&apos;Paychex ESR Inquiries&apos;, PRIORVALUE(Name)!= Name) )</errorConditionFormula>
+    <errorDisplayField>Name</errorDisplayField>
+    <errorMessage>You cannot change the name of a current client.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_AdditionalImplementationAction_OCE</fullName>
+    <active>true</active>
+    <description>Force the population of the Additional Implementation action needed? field before the Overall Client Experience field can be set to Closed.</description>
+    <errorConditionFormula>AND( 
+NOT(ISNULL(Date_Survey_Sent__c)),
+ISNULL(Date_Survey_Complete__c),
+NOT(ISPICKVAL(Survey_Status__c, &apos;Closed&apos;)),
+NOT(ISPICKVAL(Overall_Client_Experience__c,&apos;&apos;)), 
+ISPICKVAL(Additional_Implementation_action_needed__c,&apos;&apos;), 
+$Profile.Name &lt;&gt;&quot;System Administrator&quot; 
+)</errorConditionFormula>
+    <errorDisplayField>Additional_Implementation_action_needed__c</errorDisplayField>
+    <errorMessage>You must populate the Additional Implementation action needed? field before the Overall Client Experience field can be populated.</errorMessage>
+</ValidationRule>

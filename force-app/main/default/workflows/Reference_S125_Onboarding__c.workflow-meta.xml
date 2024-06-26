@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Audit_Returned_Email_S125</fullName>
+        <description>Audit Returned Email - S125</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>HRS_4S_New_Case/Audit_Returned_Email_Template_S125</template>
+    </alerts>
+    <alerts>
+        <fullName>Core_Open_Enrollment_Email_Sent</fullName>
+        <description>Core Open Enrollment Email Sent</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Plan_Contact_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>pbanewclient@paychex.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>HRS_4S_New_Case/PBA_Setup_Email_Core_2_of_3</template>
+    </alerts>
+    <alerts>
+        <fullName>Send_email_to_HRG_when_ASO_is_checked</fullName>
+        <description>Send email to HRG when ASO is checked.</description>
+        <protected>false</protected>
+        <recipients>
+            <field>HRG_Contact_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>HRS_4S_E_mail_Templates/HRS_4S_HRG_Email_Notification_S125</template>
+    </alerts>
+    <alerts>
+        <fullName>Setup_Complete_Email_Sent</fullName>
+        <description>Setup Complete Email Sent</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Plan_Contact_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>pbanewclient@paychex.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>HRS_4S_New_Case/PBA_Setup_Email_Core_3_of_3</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>Calculate_Enrollment_End_Date</fullName>
+        <field>Enrollment_End_Date__c</field>
+        <formula>Plan_Effective_Date__c - 1</formula>
+        <name>Calculate Enrollment End Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Calculate_enrollment_open_date</fullName>
+        <field>Enrollment_Open_Date__c</field>
+        <formula>Plan_Effective_Date__c - 16</formula>
+        <name>Calculate enrollment open date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_Full_Enrollment_Review_Complete</fullName>
+        <description>Populate this date when the Full Enrollment Review Stage 3 box is checked.</description>
+        <field>Full_Enrollment_Review_Complete__c</field>
+        <formula>TODAY()</formula>
+        <name>Populate Full Enrollment Review Complete</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_HRG_s_email</fullName>
+        <description>Populate HRG&apos;s email so it can be used in an Email Alert.</description>
+        <field>HRG_Contact_Email__c</field>
+        <formula>Case_Lookup__r.Account.HR_Generalist__r.Email</formula>
+        <name>Populate HRG&apos;s email</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>S125_Org_Sales_Rep_District</fullName>
+        <description>Populates the Original SR District field with the District of the Sales_Rep__c field when it&apos;s initially populated</description>
+        <field>Original_SR_District__c</field>
+        <formula>Sales_Rep__r.District__c</formula>
+        <name>S125 Org Sales Rep District</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Open_Enrollment_Notification</fullName>
+        <description>Completes Open Enrollment Notification field when criteria is met</description>
+        <field>Open_Enrollment_Notification__c</field>
+        <formula>Enrollment_Open_Date__c+1</formula>
+        <name>Update Open Enrollment Notification</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Open_Enrollment_Notification1</fullName>
+        <description>Populates today&apos;s date when Open Enrollment Email is sent</description>
+        <field>Open_Enrollment_Notification__c</field>
+        <formula>Today()</formula>
+        <name>Update Open Enrollment Notification</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>populate_Ready_to_Audit_Date</fullName>
+        <description>populate Ready to Audit date with Today&apos;s date</description>
+        <field>Ready_to_Audit__c</field>
+        <formula>TODAY()</formula>
+        <name>populate Ready to Audit Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Audit Returned</fullName>
+        <actions>
+            <name>Audit_Returned_Email_S125</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.Audit_Returned__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Automated Core PBA Open Enrollment Email</fullName>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6 AND 7 AND 8 AND 9 AND 10</booleanFilter>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.Branch_Client_Number__c</field>
+            <operation>notContain</operation>
+            <value>741-</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.S125_Product__c</field>
+            <operation>excludes</operation>
+            <value>Conversion</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.S125_Product__c</field>
+            <operation>notEqual</operation>
+            <value>Premium Only Plan</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.Setup_Type__c</field>
+            <operation>notEqual</operation>
+            <value>Phase 1 PBA</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.Open_Onboarding_Issues__c</field>
+            <operation>notContain</operation>
+            <value>Split</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.Activation_Complete__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.Client_Lost_During_Onboarding__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.Setup_Complete_Date__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.Open_Enrollment_Notification__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.CreatedDate</field>
+            <operation>greaterOrEqual</operation>
+            <value>11/14/2019</value>
+        </criteriaItems>
+        <description>Auto-sends the open enrollment email to Core clients on the day after the open enrollment start date
+(filtered for anything with a created date after 11/14/19 to prevent emails triggering for clients who have already received one)</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Core_Open_Enrollment_Email_Sent</name>
+                <type>Alert</type>
+            </actions>
+            <actions>
+                <name>Update_Open_Enrollment_Notification1</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <actions>
+                <name>Open_Enrollment_Email_was_Sent_to_Client1</name>
+                <type>Task</type>
+            </actions>
+            <offsetFromField>Reference_S125_Onboarding__c.Enrollment_Open_Date__c</offsetFromField>
+            <timeLength>1</timeLength>
+            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+    <rules>
+        <fullName>Automated Core PBA PRV Complete Email</fullName>
+        <active>false</active>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.Branch_Client_Number__c</field>
+            <operation>notContain</operation>
+            <value>741-</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.S125_Product__c</field>
+            <operation>notEqual</operation>
+            <value>POP</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.Setup_Type__c</field>
+            <operation>notEqual</operation>
+            <value>Phase 1 PBA</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.Open_Onboarding_Issues__c</field>
+            <operation>notContain</operation>
+            <value>Split</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.Client_Lost_During_Onboarding__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <description>Auto-sends the setup complete email to Core clients on the day after the Payroll Verified date</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Setup_Complete_Email_Sent</name>
+                <type>Alert</type>
+            </actions>
+            <actions>
+                <name>Setup_Complete_Email_was_Sent_to_Client1</name>
+                <type>Task</type>
+            </actions>
+            <offsetFromField>Reference_S125_Onboarding__c.Payroll_Verified__c</offsetFromField>
+            <timeLength>1</timeLength>
+            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+    <rules>
+        <fullName>Full Enrollment Review Complete</fullName>
+        <actions>
+            <name>Populate_Full_Enrollment_Review_Complete</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.Full_Enrollment_Review_Stage_3__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <description>Populate date when the Full Enrollment Review Stage 3 is complete.</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Notify HRG of ASO</fullName>
+        <actions>
+            <name>Send_email_to_HRG_when_ASO_is_checked</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.ASO__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.S125_Product__c</field>
+            <operation>excludes</operation>
+            <value>POP</value>
+        </criteriaItems>
+        <description>Send Email to HRG when ASO is checked.</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Populate Enrollment End Date</fullName>
+        <actions>
+            <name>Calculate_Enrollment_End_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.Plan_Effective_Date__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>Populate the Enrollment End date based on the (Plan Effective Date - 1 day)</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Populate Enrollment Open Date</fullName>
+        <actions>
+            <name>Calculate_enrollment_open_date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.Plan_Effective_Date__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>Calculate enrollment start date from Plan Effective Date - 16 days</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Populate HRG Email</fullName>
+        <actions>
+            <name>Populate_HRG_s_email</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.HRG_Contact__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>Populate the HRG&apos;s email on creation. This email field will be used in an Email Alert:</description>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>S125 - populate Original SR District</fullName>
+        <actions>
+            <name>S125_Org_Sales_Rep_District</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>S125 - populate Original SR District when the Sales_Rep__c field is initially populated</description>
+        <formula>ISBLANK(Original_SR_District__c) &amp;&amp;
+ISBLANK(PRIORVALUE(Sales_Rep__c)) &amp;&amp;
+NOT(ISBLANK(Sales_Rep__c))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>populate Ready to Audit Date</fullName>
+        <actions>
+            <name>populate_Ready_to_Audit_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.Payroll_Connection_Verified__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.Enrollment_Processed__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>When Payroll Connection Verified AND Enrollment Processed are populated, populate Ready to Audit date with Today&apos;s date.</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <tasks>
+        <fullName>Open_Enrollment_Email_was_Sent_to_Client</fullName>
+        <assignedTo>hrs4suser@paychex.com</assignedTo>
+        <assignedToType>user</assignedToType>
+        <description>PBA Setup Email (Core) 2 of 3 was automatically emailed to client</description>
+        <dueDateOffset>0</dueDateOffset>
+        <notifyAssignee>false</notifyAssignee>
+        <priority>Normal</priority>
+        <protected>false</protected>
+        <status>Completed</status>
+        <subject>Open Enrollment Email was Sent to Client</subject>
+    </tasks>
+    <tasks>
+        <fullName>Open_Enrollment_Email_was_Sent_to_Client1</fullName>
+        <assignedTo>hrs4suser@paychex.com</assignedTo>
+        <assignedToType>user</assignedToType>
+        <description>PBA Setup Email (Core) 2 of 3 was automatically emailed to client</description>
+        <dueDateOffset>0</dueDateOffset>
+        <notifyAssignee>false</notifyAssignee>
+        <priority>Normal</priority>
+        <protected>false</protected>
+        <status>Completed</status>
+        <subject>Open Enrollment Email was Sent to Client</subject>
+    </tasks>
+    <tasks>
+        <fullName>Setup_Complete_Email_was_Sent_to_Client</fullName>
+        <assignedTo>hrs4suser@paychex.com</assignedTo>
+        <assignedToType>user</assignedToType>
+        <description>PBA Setup Email (Core) 3 of 3 was automatically emailed to client</description>
+        <dueDateOffset>0</dueDateOffset>
+        <notifyAssignee>false</notifyAssignee>
+        <priority>Normal</priority>
+        <protected>false</protected>
+        <status>Completed</status>
+        <subject>Setup Complete Email was Sent to Client</subject>
+    </tasks>
+    <tasks>
+        <fullName>Setup_Complete_Email_was_Sent_to_Client1</fullName>
+        <assignedTo>hrs4suser@paychex.com</assignedTo>
+        <assignedToType>user</assignedToType>
+        <description>PBA Setup Email (Core) 3 of 3 was automatically emailed to client</description>
+        <dueDateOffset>0</dueDateOffset>
+        <notifyAssignee>false</notifyAssignee>
+        <priority>Normal</priority>
+        <protected>false</protected>
+        <status>Completed</status>
+        <subject>Setup Complete Email was Sent to Client</subject>
+    </tasks>
+</Workflow>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Contact_Reject_Reason</fullName>
+    <active>true</active>
+    <description>Ensure Reject Reason is populated when Contact Stage is set to &quot;Reject&quot;.</description>
+    <errorConditionFormula>AND(ISPICKVAL(Contact_Stage__c ,&quot;Reject&quot;), ISPICKVAL( Reject_Reason__c ,&quot;&quot;))</errorConditionFormula>
+    <errorDisplayField>Reject_Reason__c</errorDisplayField>
+    <errorMessage>A Reject Reason must be provided when the Contact Stage is set to &quot;Reject&quot;.</errorMessage>
+</ValidationRule>

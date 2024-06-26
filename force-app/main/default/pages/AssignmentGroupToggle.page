@@ -1,0 +1,32 @@
+<apex:page id="page" controller="AssignmentGroupToggleController">
+    <script type="text/javascript">
+        /*function setColor(){
+            var activeStatus = document.getElementById('page:form:activeStatus');
+            console.log('activeStatus'+activeStatus);
+            if(activeStatus.innerHTML == 'You are currently active'){    
+                activeStatus.style.color = 'green';
+            }
+            else{
+                activeStatus.style.color = 'red';
+            }
+        }*/
+    </script>
+    <apex:form id="form">
+        <apex:actionSupport event="onload" oncomplete="setColor()"/>
+        <apex:actionPoller interval="45" action="{!getGroupMemberMap}" reRender="form" oncomplete="setColor()"/>
+        <apex:outputLabel rendered="{!NOT(hasGroups)}" value="You Are Not Assigned to Any Groups!"/>
+        <apex:selectList rendered="{!hasGroups}" value="{!selectedGroup}" label="Assignment Group" multiselect="false" size="1">
+            <apex:selectOptions value="{!groupOptions}"/>
+            <apex:actionSupport event="onchange" rerender="activeStatus"/>
+        </apex:selectList>
+        <br/><br/>
+        <h2 id="header">
+            <apex:outputText id="activeStatus" style="{!IF(isActive, 'color:green', 'color:red')}" value="{!activeStatus}"/>
+        </h2>
+        <br/><br/>
+        <apex:commandButton rendered="{!hasGroups}" action="{!toggleActive}" value="Toggle Active Status" rerender="activeStatus" oncomplete="setColor()"/>
+        <!--<apex:commandButton rendered="{!hasGroups}" action="{!toggleActive}" value="Toggle Active Status">
+            <apex:actionSupport event="onchange" rerender="activeStatus"/>
+        </apex:commandButton>-->
+    </apex:form>
+</apex:page>

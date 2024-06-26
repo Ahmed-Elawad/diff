@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Send_Email</name>
+        <label>Send Email</label>
+        <locationX>50</locationX>
+        <locationY>539</locationY>
+        <actionName>emailSimple</actionName>
+        <actionType>emailSimple</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>emailAddresses</name>
+            <value>
+                <elementReference>$Record.ccpe_ocp__Stakeholder_Contact__r.project_cloud__Email__c</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>senderType</name>
+            <value>
+                <stringValue>OrgWideEmailAddress</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>senderAddress</name>
+            <value>
+                <stringValue>do_not_reply_sfdc@paychex.com</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailSubject</name>
+            <value>
+                <elementReference>email_subject</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailBody</name>
+            <value>
+                <elementReference>email_body</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>sendRichBody</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputParameters>
+        <nameSegment>emailSimple</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>58.0</apiVersion>
+    <decisions>
+        <name>Is_New_or_Updated_Email</name>
+        <label>Is New or Updated Email?</label>
+        <locationX>182</locationX>
+        <locationY>323</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>New_or_Updated</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>isNewOrUpdatedStakeholder</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Project</targetReference>
+            </connector>
+            <label>New or Updated</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <formulas>
+        <name>isNewOrUpdatedStakeholder</name>
+        <dataType>Boolean</dataType>
+        <expression>OR ( ISNEW(), ISCHANGED({!$Record.ccpe_ocp__Stakeholder_Contact__c}))</expression>
+    </formulas>
+    <formulas>
+        <name>parentRecordEnd</name>
+        <dataType>String</dataType>
+        <expression>IF ( ISBLANK({!$Record.ccpe_ocp__Card__c}), &apos;&lt;strong&gt;End Date: &lt;/strong&gt;&apos;+TEXT( MONTH( {!$Record.ccpe_ocp__Project_Task__r.project_cloud__Start__c} ) ) &amp; &quot;/&quot; &amp; TEXT( DAY( {!$Record.ccpe_ocp__Project_Task__r.project_cloud__Start__c} ) ) &amp; &quot;/&quot; &amp; TEXT( YEAR( {!$Record.ccpe_ocp__Project_Task__r.project_cloud__Start__c} ) ), &apos;&lt;strong&gt;Card Due Date: &lt;/strong&gt;&apos;+ 
+IF( ISBLANK( {!$Record.ccpe_ocp__Card__r.project_cloud__Due_Date__c} ), &apos;Not Set&apos;,  
+TEXT( MONTH( {!$Record.ccpe_ocp__Card__r.project_cloud__Due_Date__c} ) ) &amp; &quot;/&quot; &amp; TEXT( DAY( {!$Record.ccpe_ocp__Card__r.project_cloud__Due_Date__c} ) ) &amp; &quot;/&quot; &amp; TEXT( YEAR( {!$Record.ccpe_ocp__Card__r.project_cloud__Due_Date__c} ) ) ) )</expression>
+    </formulas>
+    <formulas>
+        <name>parentRecordName</name>
+        <dataType>String</dataType>
+        <expression>IF ( ISBLANK({!$Record.ccpe_ocp__Card__c}), &apos;&lt;strong&gt;Project Task Name: &lt;/strong&gt;&apos;+{!$Record.ccpe_ocp__Project_Task__r.Name}, &apos;&lt;strong&gt;Card Name: &lt;/strong&gt;&apos;+ {!$Record.ccpe_ocp__Card__r.project_cloud__Card_Name__c} )</expression>
+    </formulas>
+    <formulas>
+        <name>parentRecordStart</name>
+        <dataType>String</dataType>
+        <expression>IF ( ISBLANK({!$Record.ccpe_ocp__Card__c}), &apos;&lt;strong&gt;Start Date: &lt;/strong&gt;&apos;+TEXT( MONTH( {!$Record.ccpe_ocp__Project_Task__r.project_cloud__Start__c} ) ) &amp; &quot;/&quot; &amp; TEXT( DAY( {!$Record.ccpe_ocp__Project_Task__r.project_cloud__Start__c} ) ) &amp; &quot;/&quot; &amp; TEXT( YEAR( {!$Record.ccpe_ocp__Project_Task__r.project_cloud__Start__c} ) ), &apos;&lt;strong&gt;Created Date: &lt;/strong&gt;&apos;+ 
+TEXT( MONTH( DATEVALUE({!$Record.ccpe_ocp__Card__r.CreatedDate}) ) ) &amp; &quot;/&quot; &amp; TEXT( DAY( DATEVALUE({!$Record.ccpe_ocp__Card__r.CreatedDate} )) ) &amp; &quot;/&quot; &amp; TEXT( YEAR( DATEVALUE({!$Record.ccpe_ocp__Card__r.CreatedDate} )) ) )</expression>
+    </formulas>
+    <interviewLabel>[Cloud Coach] External Deliverable Creation Email Notification {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>[Cloud Coach] External Deliverable Creation Email Notification</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_Project</name>
+        <label>Get Project</label>
+        <locationX>50</locationX>
+        <locationY>431</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Send_Email</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.ccpe_ocp__Project_CCPE_Ignore__c</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>project_cloud__Project__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Is_New_or_Updated_Email</targetReference>
+        </connector>
+        <filterLogic>or</filterLogic>
+        <filters>
+            <field>ccpe_ocp__Stakeholder_Contact__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <object>ccpe_ocp__External_Deliverable__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <name>email_body</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;Hi {!$Record.ccpe_ocp__Stakeholder_Contact__r.project_cloud__Name__c},&lt;/p&gt;&lt;p&gt;You have been assigned as a Stakeholder for External Deliverable&lt;strong&gt; {!$Record.Name},&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;Check the details below for this record&lt;/span&gt;:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Created Date:&lt;/strong&gt; {!$Record.CreatedDate}&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Due Date:&lt;/strong&gt; {!$Record.ccpe_ocp__Due_Date__c}&lt;/li&gt;&lt;li&gt;&lt;strong&gt;External Deliverable Name: &lt;/strong&gt;{!$Record.Name}&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Project Name:&lt;/strong&gt; {!$Record.ccpe_ocp__Project_CCPE_Ignore__r.Name}&lt;/li&gt;&lt;li&gt;&lt;strong&gt;External Project View: &lt;/strong&gt;{!Get_Project.External_Project_View__c}&lt;/li&gt;&lt;/ul&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <name>email_subject</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>External Deliverable {!$Record.Name} assigned to you.</text>
+    </textTemplates>
+</Flow>

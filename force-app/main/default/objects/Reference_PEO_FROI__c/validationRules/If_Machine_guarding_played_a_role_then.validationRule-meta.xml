@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>If_Machine_guarding_played_a_role_then</fullName>
+    <active>true</active>
+    <description>If Machine guarding played a role then you need details</description>
+    <errorConditionFormula>AND 
+( 
+ISPICKVAL( Machine_Guarding_in_place_or_applic__c , &quot;Yes&quot;), 
+ISBLANK ( Details_on_Machine_Guarding__c ) 
+
+)</errorConditionFormula>
+    <errorDisplayField>Details_on_Machine_Guarding__c</errorDisplayField>
+    <errorMessage>If Machine guarding played a role then you need details</errorMessage>
+</ValidationRule>

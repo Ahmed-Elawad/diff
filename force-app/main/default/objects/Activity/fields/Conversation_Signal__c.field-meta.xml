@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Conversation_Signal__c</fullName>
+    <description>Defines whether each phone conversation was positive, neutral, or negative</description>
+    <externalId>false</externalId>
+    <formula>IF(
+CallDisposition = &apos;Meeting set&apos; || CallDisposition = &apos;Interested&apos; || CallDisposition = &apos;Demo scheduled&apos; ,&apos;Positive signal&apos;,
+IF(CallDisposition = &apos;Not interested&apos; || CallDisposition = &apos;Bad fit&apos; || CallDisposition = &apos;With competitor&apos; || CallDisposition = &apos;Hung up&apos; || CallDisposition = &apos;No longer with company&apos;, &apos;Negative signal&apos;,
+IF (CallDisposition = &apos;Referred to another person&apos; || CallDisposition = &apos;Set callback&apos; || CallDisposition = &apos;Not a direct line&apos; || CallDisposition = &apos;potential future opportunity&apos;, &apos;Neutral signal&apos;, null
+)))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Conversation Signal</label>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

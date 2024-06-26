@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>GL_Cancel_Email_Notification</fullName>
+        <description>GL: Cancel Email Notification</description>
+        <protected>false</protected>
+        <recipients>
+            <field>NCS_Email__c</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>glca@paychex.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>GL_Emails/GL_Cancel_Notification</template>
+    </alerts>
+    <alerts>
+        <fullName>GL_Graduation_Complete</fullName>
+        <description>GL Graduation Complete</description>
+        <protected>false</protected>
+        <recipients>
+            <type>accountOwner</type>
+        </recipients>
+        <recipients>
+            <field>NCS_Email__c</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>GL_Email_Templates/GL_Setup_Complete</template>
+    </alerts>
+    <alerts>
+        <fullName>GL_Mapping_Complete</fullName>
+        <description>GL Mapping Complete</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Communication_Coordinator__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>GL_New_Email_Templates/Mapping_Complete_Sent_to_Internal_Partners</template>
+    </alerts>
+    <alerts>
+        <fullName>GL_Onboarding_Complete</fullName>
+        <description>GL Onboarding Complete</description>
+        <protected>false</protected>
+        <recipients>
+            <type>accountOwner</type>
+        </recipients>
+        <recipients>
+            <field>NCS_Email__c</field>
+            <type>contactLookup</type>
+        </recipients>
+        <recipients>
+            <field>IPC_Assigned__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <recipients>
+            <field>Project_Manager1__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>GL_New_Email_Templates/SENT_TO_INTERNAL_PARTNERS_Onboarding_Complete</template>
+    </alerts>
+    <alerts>
+        <fullName>GL_Reference_Received</fullName>
+        <description>GL Reference Received</description>
+        <protected>false</protected>
+        <recipients>
+            <type>accountOwner</type>
+        </recipients>
+        <recipients>
+            <field>NCS_Email__c</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>GL_Email_Templates/GL_Case_Received</template>
+    </alerts>
+    <alerts>
+        <fullName>GL_Request_to_field_for_User_Name</fullName>
+        <description>GL Request to field for User Name</description>
+        <protected>false</protected>
+        <recipients>
+            <field>NCS_Email__c</field>
+            <type>contactLookup</type>
+        </recipients>
+        <recipients>
+            <field>LastModifiedById</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderAddress>glca@paychex.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>GL_Emails/GL_Client_Username_Request</template>
+    </alerts>
+    <alerts>
+        <fullName>GL_Training_Complete</fullName>
+        <description>GL Training Complete</description>
+        <protected>false</protected>
+        <recipients>
+            <type>accountOwner</type>
+        </recipients>
+        <recipients>
+            <field>NCS_Email__c</field>
+            <type>contactLookup</type>
+        </recipients>
+        <recipients>
+            <field>IPC_Assigned__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <recipients>
+            <field>Project_Manager1__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>GL_Email_Templates/GL_Training_Completed</template>
+    </alerts>
+    <alerts>
+        <fullName>GL_Welcome_Call</fullName>
+        <description>GL Welcome Call</description>
+        <protected>false</protected>
+        <recipients>
+            <type>accountOwner</type>
+        </recipients>
+        <recipients>
+            <field>NCS_Email__c</field>
+            <type>contactLookup</type>
+        </recipients>
+        <recipients>
+            <field>IPC_Assigned__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <recipients>
+            <field>Project_Manager1__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>GL_Email_Templates/GL_Welcome_Call</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>GL_Move_to_Step_1</fullName>
+        <description>Move to Step 1 once the reference TAA has been created</description>
+        <field>Current_Step__c</field>
+        <literalValue>(1 of 2) Waiting for Appointment</literalValue>
+        <name>GL: Move to Step 1</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>GL_Move_to_Step_2</fullName>
+        <description>Move current step to # 2</description>
+        <field>Current_Step__c</field>
+        <literalValue>(2 of 2) Pending Scheduled Appointment</literalValue>
+        <name>GL: Move to Step 2</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>GL_Update_Appt_comp_Dt</fullName>
+        <description>Updates with the date that the appt was completed</description>
+        <field>Date_Mapping_Complete__c</field>
+        <formula>Now()</formula>
+        <name>GL: Update Date Appt Completed</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>GL_Update_COA_Date_Rec_d</fullName>
+        <field>Date_Chart_Of_Accounts_Received__c</field>
+        <formula>Now()</formula>
+        <name>GL: Update COA Date Rec&apos;d</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>GL_Update_Current_Step_to_Cancel</fullName>
+        <description>For clients that don&apos;t want service - move status to canceled</description>
+        <field>Current_Step__c</field>
+        <literalValue>Cancelled</literalValue>
+        <name>GL: Update Current Step to Cancel</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>GL_Update_Initial_Mapping</fullName>
+        <description>Updates with the date/time that the Set Up Status is set to &quot;Initial Mapping&quot;</description>
+        <field>Initial_Mapping__c</field>
+        <formula>Now()</formula>
+        <name>GL: Update Initial Mapping</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>GL_Update_Message_Attempt_Date</fullName>
+        <description>Updates Date that message attempts were made</description>
+        <field>Message_Attempt_Date__c</field>
+        <formula>Now()</formula>
+        <name>GL: Update Message Attempt Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>GL_Update_Onboarding_Status</fullName>
+        <description>updates the Onboarding Status field with &quot;Appointment Scheduled&quot; when there is a date in the Date of Scheduled Appointment field.</description>
+        <field>Appt_Set_Status__c</field>
+        <literalValue>Appointment Scheduled</literalValue>
+        <name>GL: Update Onboarding Status</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>GL_Update_SchedulerName</fullName>
+        <description>Updates with the name of the User who modifies the Date of Scheduled Appointment.</description>
+        <field>Appointment_Scheduler__c</field>
+        <formula>$User.FirstName + &apos; &apos; + $User.LastName</formula>
+        <name>GL: Update Scheduler Name</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>GL_Update_Scheduler_Name</fullName>
+        <description>Updates with the name of the person who enters the date of scheduled appt</description>
+        <field>Appointment_Scheduler__c</field>
+        <formula>$User.FirstName + &apos; &apos; + $User.LastName</formula>
+        <name>GL: Update Scheduler Name</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>GL_Update_Step_to_30_Day_Follow_Up</fullName>
+        <field>Current_Step__c</field>
+        <literalValue>30 Day Follow Up</literalValue>
+        <name>GL: Update Step to 30 Day Follow Up</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>GL_Update_Step_to_Client_Unresponsive</fullName>
+        <description>Update current step on Ref GL to Client Unresponisve</description>
+        <field>Current_Step__c</field>
+        <literalValue>Client Unresponsive</literalValue>
+        <name>GL: Update Step to Client Unresponsive</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>GL_Update_Step_to_Completed</fullName>
+        <description>Once the appt has been completed, change step to completed</description>
+        <field>Current_Step__c</field>
+        <literalValue>Set Up Complete</literalValue>
+        <name>GL: Update Step to Completed</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>GL Date Mapping Complete</fullName>
+        <actions>
+            <name>GL_Update_Appt_comp_Dt</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_GL__c.Set_Up_Status__c</field>
+            <operation>equals</operation>
+            <value>Mapping Complete</value>
+        </criteriaItems>
+        <description>Updates with the date that the appt was completed</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>GL Missing User Name</fullName>
+        <actions>
+            <name>GL_Request_to_field_for_User_Name</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_GL__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>GL Onboarding Record Type</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_GL__c.Missing_User_Name__c</field>
+            <operation>equals</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <description>Used to send email to field requesting the user name</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>GL Update COA Date received</fullName>
+        <actions>
+            <name>GL_Update_COA_Date_Rec_d</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_GL__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>GL Onboarding Record Type</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_GL__c.Chart_of_Accounts_Recieved__c</field>
+            <operation>equals</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <description>To update the date field when it has been marked as Yes.</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>GL Update Initial Mapping</fullName>
+        <actions>
+            <name>GL_Update_Initial_Mapping</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Update Initial Mapping with the current date/time when the Set Up Status is set to &quot;Initial Mapping&quot;</description>
+        <formula>ISPICKVAL(Set_Up_Status__c, &quot;Initial Mapping&quot;) &amp;&amp;
+ ISCHANGED(Set_Up_Status__c)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>GL%3A Cancel Email Notification</fullName>
+        <actions>
+            <name>GL_Cancel_Email_Notification</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>(1 or 3) and 2</booleanFilter>
+        <criteriaItems>
+            <field>Reference_GL__c.Set_Up_Status__c</field>
+            <operation>equals</operation>
+            <value>Client did not want service</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_GL__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>GL Onboarding Record Type</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_GL__c.Appt_Set_Status__c</field>
+            <operation>equals</operation>
+            <value>Cancelled,Client did not want service</value>
+        </criteriaItems>
+        <description>Notify NCS_email group that a client has requested to cancel GL</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>GL%3A Contact Attempted</fullName>
+        <actions>
+            <name>GL_Update_Message_Attempt_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_GL__c.Message_Attempts__c</field>
+            <operation>equals</operation>
+            <value>Attempt 1</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_GL__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>GL Onboarding Record Type</value>
+        </criteriaItems>
+        <description>To Update the Message Attempted Date of when the Message Attemps field on the Reference GL is updated</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>GL%3A Contact Attempted 2</fullName>
+        <actions>
+            <name>GL_Update_Message_Attempt_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_GL__c.Message_Attempts__c</field>
+            <operation>equals</operation>
+            <value>Attempt 2</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_GL__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>GL Onboarding Record Type</value>
+        </criteriaItems>
+        <description>To Update the Message Attempted Date of when the Message Attemps field on the Reference GL is updated</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>GL%3A Contact Attempted 3</fullName>
+        <actions>
+            <name>GL_Update_Message_Attempt_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_GL__c.Message_Attempts__c</field>
+            <operation>equals</operation>
+            <value>Attempt 3</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_GL__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>GL Onboarding Record Type</value>
+        </criteriaItems>
+        <description>To Update the Message Attempted Date of when the Message Attemps field on the Reference GL is updated</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>GL%3A New Onboarding Set Up</fullName>
+        <actions>
+            <name>GL_Move_to_Step_1</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_GL__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>GL Onboarding Record Type</value>
+        </criteriaItems>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>GL%3A Onboarding Step 1 Complete</fullName>
+        <actions>
+            <name>GL_Move_to_Step_2</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>GL_Update_Scheduler_Name</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_GL__c.Appt_Set_Status__c</field>
+            <operation>equals</operation>
+            <value>Appointment Scheduled</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_GL__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>GL Onboarding Record Type</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>GL%3A Onboarding Step 2 Complete</fullName>
+        <actions>
+            <name>GL_Update_Step_to_Completed</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_GL__c.Set_Up_Status__c</field>
+            <operation>equals</operation>
+            <value>Set Up Completed</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_GL__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>GL Onboarding Record Type</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>GL%3A Update Case Status To Cancel</fullName>
+        <actions>
+            <name>GL_Update_Current_Step_to_Cancel</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 OR 2</booleanFilter>
+        <criteriaItems>
+            <field>Reference_GL__c.Appt_Set_Status__c</field>
+            <operation>equals</operation>
+            <value>Cancelled,Client did not want service</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_GL__c.Set_Up_Status__c</field>
+            <operation>equals</operation>
+            <value>Client did not want service</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>GL%3A Update Current Step To client Unresponsive</fullName>
+        <actions>
+            <name>GL_Update_Step_to_Client_Unresponsive</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_GL__c.Appt_Set_Status__c</field>
+            <operation>equals</operation>
+            <value>Client Unresponsive</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_GL__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>GL Onboarding Record Type</value>
+        </criteriaItems>
+        <description>Update Current Step on On Reference GL</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>GL%3A Update Date of Scheduled Appointment</fullName>
+        <actions>
+            <name>GL_Update_SchedulerName</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Update the Appointment Scheduler field each time the Date of Scheduled Appointment is modified.</description>
+        <formula>$RecordType.Name =&quot;GL Onboarding Record Type&quot; &amp;&amp;  ISCHANGED(Date_of_Scheduled_Appointment__c)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>GL%3A Update Date of Scheduled Appointment - one time</fullName>
+        <actions>
+            <name>GL_Update_Onboarding_Status</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Update the Onboarding Status field first time the Date of Scheduled Appointment is modified.</description>
+        <formula>$RecordType.Name =&quot;GL Onboarding Record Type&quot; &amp;&amp;  NOT(ISBLANK(Date_of_Scheduled_Appointment__c))</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>GL%3A Update Step to 30 Day Follow Up</fullName>
+        <actions>
+            <name>GL_Update_Step_to_30_Day_Follow_Up</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_GL__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>GL Onboarding Record Type</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_GL__c.Appt_Set_Status__c</field>
+            <operation>equals</operation>
+            <value>30 Day Follow Up</value>
+        </criteriaItems>
+        <description>If GL has not been able to reach client in 30 days, they set the Onboarding Status to 30 Day Follow Up to trigger an email out to the account owner for assistance in contacting client.</description>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

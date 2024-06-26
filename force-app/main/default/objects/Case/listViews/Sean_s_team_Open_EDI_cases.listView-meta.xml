@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sean_s_team_Open_EDI_cases</fullName>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>OWNER_NAME</columns>
+    <columns>BeneTrac_Category_1__c</columns>
+    <columns>BeneTrac_Sponsor_ID__c</columns>
+    <columns>BeneTrac_Site_ID__c</columns>
+    <columns>CREATEDBY_USER.ALIAS</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>CASES.PRIORITY</columns>
+    <columns>CASES.CREATED_DATE_DATE_ONLY</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CORE.USERS.ALIAS</field>
+        <operation>equals</operation>
+        <value>,atruo,chenn,snamv,eabua,kklam,cpalt,syin1,mdye1,srossi,lcamp,cmano</value>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Cancelled,Closed,Complete,Completed</value>
+    </filters>
+    <filters>
+        <field>BeneTrac_Category_1__c</field>
+        <operation>notEqual</operation>
+        <value>Flock Client Setup</value>
+    </filters>
+    <filters>
+        <field>BeneTrac_Sponsor_ID__c</field>
+        <operation>notEqual</operation>
+        <value>FLOCK</value>
+    </filters>
+    <filters>
+        <field>CASES.SUBJECT</field>
+        <operation>notContain</operation>
+        <value>Flock,FLOCK</value>
+    </filters>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.BeneTrac_Cases</value>
+    </filters>
+    <label>BeneTrac EDI - Open EDI cases</label>
+    <sharedTo>
+        <group>BeneTrac_EDI</group>
+        <group>BeneTrac_Tech_Ops</group>
+    </sharedTo>
+</ListView>

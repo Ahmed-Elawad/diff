@@ -1,0 +1,19 @@
+<apex:component controller="PlatformTrackingComponentController" >
+    <apex:attribute name="recordID" description="Record Id from Visualforce Page"  assignTo="{!recId}" type="String" required="true"/>
+    <apex:attribute name="objectType" description="Object Type from Visualforce Page"  assignTo="{!objType}" type="String" required="true"/>
+
+    <script type="text/javascript">
+    window.onload=function()       
+    {       
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.PlatformTrackingComponentController.save}',
+            '{!recId}',
+            '{!objType}',
+            '{!$User.UIThemeDisplayed}',
+            function(result){
+            }, 
+            {escape: true}
+        );
+    };
+    </script>
+</apex:component>

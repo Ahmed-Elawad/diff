@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRIS_Integrated_Record_No_Acct_Name_up</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))
+ ,ISCHANGED(  Name )
+ ,NOT(ISBLANK( Bis_ID__c ))
+ ,NOT(ISBLANK(First_Run_Date__c))
+ ,ISBLANK(Lost_Date__c)
+)</errorConditionFormula>
+    <errorDisplayField>Name</errorDisplayField>
+    <errorMessage>**** This is an HRIS Integrated Record , the Prospect-Client Name can not be Modified****</errorMessage>
+</ValidationRule>

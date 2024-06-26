@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Contribution_Date_CANNOT_be_updated</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( 
+RecordTypeId = &apos;0120g000000l3wG&apos;, 
+
+NOT(ISBLANK( Date_Sent_for_Research__c )), 
+ISBLANK( Research_Resolution_Date__c ), 
+ISCHANGED( Contribution_Date__c ))</errorConditionFormula>
+    <errorDisplayField>Contribution_Date__c</errorDisplayField>
+    <errorMessage>We cannot update the Contribution date without entering a research resolution date.</errorMessage>
+</ValidationRule>

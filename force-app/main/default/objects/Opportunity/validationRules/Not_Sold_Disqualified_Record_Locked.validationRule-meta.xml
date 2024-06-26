@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Not_Sold_Disqualified_Record_Locked</fullName>
+    <active>true</active>
+    <description>Prevent reps from reusing Not Sold or Disqualified opportunities</description>
+    <errorConditionFormula>AND(
+OR(RecordType.Name = &apos;Core Opportunity DSA Record Type&apos;,
+RecordType.Name = &apos;Core Opportunity Record Type&apos;,
+RecordType.Name = &apos;Core Virtual Sales&apos;,
+RecordType.Name = &apos;HNBF Opportunity DSA Record Type&apos;,
+RecordType.Name = &apos;HNBF Opportunity Record Type&apos;,
+RecordType.Name = &apos;HRS 401(k) Opportunity FSS Record Type&apos;,
+RecordType.Name = &apos;HRS 401(k) Opportunity Record Type&apos;,
+RecordType.Name = &apos;MMS Opportunity (DSA) Record Type&apos;,
+RecordType.Name = &apos;MMS Opportunity Record Type&apos;,
+RecordType.Name = &apos;ASO Opportunity FSS Record Type&apos;,
+RecordType.Name = &apos;ASO Opportunity Record Type&apos;,
+RecordType.Name = &apos;PEO Opportunity FSS Record Type&apos;,
+RecordType.Name = &apos;PEO Opportunity Record Type&apos;,
+RecordType.Name = &apos;Prism PEO Opportunity FSS Record Type&apos;,
+RecordType.Name = &apos;Prism PEO Opportunity Record Type&apos;),
+ISCHANGED(StageName),
+OR(ISPICKVAL(PRIORVALUE(StageName), &apos;Not Sold&apos;),ISPICKVAL(PRIORVALUE(StageName), &apos;Lost&apos;),ISPICKVAL(PRIORVALUE(StageName), &apos;No Decision&apos;),ISPICKVAL(PRIORVALUE(StageName), &apos;Disqualified&apos;)),
+NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+NOT($Profile.Name=&apos;Salesforce Support&apos;),
+NOT($Profile.Name=&apos;Sales Data Steward&apos;),
+NOT($Profile.Name=&apos;Sales Engineer&apos;),
+OR(
+AND(BEGINS(ReferralLookup__r.ReferralPartnerName__c , &apos;VS Micro&apos;),TODAY() &gt; PRIORVALUE(Status_Update_Date__c)+365),
+AND(NOT(ISBLANK(ReferralLookup__c)), NOT(BEGINS(ReferralLookup__r.ReferralPartnerName__c ,&apos;VS Micro&apos;)),TODAY() &gt; PRIORVALUE(Status_Update_Date__c)+30),
+AND(ISBLANK(ReferralLookup__c),TODAY() &gt; PRIORVALUE(Status_Update_Date__c)+30)
+))</errorConditionFormula>
+    <errorMessage>Once an Opportunity is marked as Lost, it cannot be reopened. Please create a new Opportunity if you have reengaged with this prospect.</errorMessage>
+</ValidationRule>

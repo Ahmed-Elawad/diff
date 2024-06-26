@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MS_Rep_Do_Not_Edit_Stage</fullName>
+    <active>false</active>
+    <description>Merchant Services Reps shouldn&apos;t be able to change the Opportunity Status value once it has the Payment Processing DSA Record Type</description>
+    <errorConditionFormula>AND( 
+	($RecordType.Name = &quot;Payment Processing (DSA) Opportunity&quot; ), 
+	(ISCHANGED(StageName)), 
+	(NOT(BEGINS($UserRole.Name,&quot;VIRTUAL SALES ZONE 30 ANCILLARY&quot;))), 
+	(NOT(BEGINS($UserRole.Name,&quot;System Administrator&quot;))),
+	(NOT($Profile.Name = &apos;NSS Manager Admin&apos;))
+)</errorConditionFormula>
+    <errorDisplayField>StageName</errorDisplayField>
+    <errorMessage>You cannot change the Opportunity Status value once it has the DSA Record Type</errorMessage>
+</ValidationRule>

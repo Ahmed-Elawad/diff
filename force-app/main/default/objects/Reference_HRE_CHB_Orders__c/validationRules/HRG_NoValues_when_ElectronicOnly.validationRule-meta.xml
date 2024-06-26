@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRG_NoValues_when_ElectronicOnly</fullName>
+    <active>true</active>
+    <description>C16 - if Electronic Only = True, then the Binder Quantity, Inserts Quantity or Spanish Binder Quantity fields can NOT be populated by HRGs.</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;Handbook HR Solutions Order Record Type&quot;), 
+(Electronic_Only__c), 
+( (NOT(Binder_Quantity__c = 0)) || (NOT(ISNULL(Binder_Quantity__c))) || (NOT(Inserts_Quantity__c = 0)) || (NOT(ISNULL(Inserts_Quantity__c))) || (NOT(ISNULL(Spanish_Binder_Quantity__c))) ), 
+(NOT(BEGINS($Profile.Name,&quot;HR Essentials&quot;))), 
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))) 
+)</errorConditionFormula>
+    <errorDisplayField>Electronic_Only__c</errorDisplayField>
+    <errorMessage>You CANNOT select a Binder Quantity, Inserts Quantity or a Spanish Binder Quantity value when checking the Electronic Only field.</errorMessage>
+</ValidationRule>

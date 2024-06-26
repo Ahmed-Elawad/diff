@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NEP_Close_date_needs_to_be_earlier_than</fullName>
+    <active>false</active>
+    <description>When the field Sent to Medical Underwriting gets a date entered the user should not be able to save unless the NEP Close date is earlier than the current date that the field is checked.</description>
+    <errorConditionFormula>AND(RecordTypeId = &apos;012700000001jeX&apos; || RecordTypeId=&quot;0120g000000l3qD&quot;,
+NOT(ISNULL( Sent_to_Medical_Underwriting__c )), (NEP_Close__c &gt; Today() || ISBLANK(NEP_Close__c ) ))</errorConditionFormula>
+    <errorDisplayField>NEP_Close__c</errorDisplayField>
+    <errorMessage>NEP Close date must be today or prior.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Merchant_service_rules</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name, &quot;System Admin&quot;)),
+ OR(RecordType.DeveloperName =&apos;Payment_Processing_DSA_Opportunity&apos;, RecordType.DeveloperName=&apos;Payment_Processing_Opportunity&apos;) &amp;&amp;
+IF(ISPICKVAL(StageName,&quot;Sold&quot;),OR(
+ISBLANK((Processing_Type_Select_All_that_Apply__c)),ISBLANK(Text( Has_the_equipment_been_ordered__c)),
+ISBLANK(Text( Merchant_Frequency__c)),
+ISBLANK( Terminal_Billed_to__c),
+ISBLANK( Sales_Rep_Notes__c ),
+ISBLANK( MS_Contact_Email__c)),false))</errorConditionFormula>
+    <errorMessage>Before updating OPP to Sold, you *must* update client prospect record with the Processing Type, Has equipment been ordered?, Merchant Frequency, Terminal Billed To, MS Contact Email, Sales Rep Notes fields. Move status back to an open status and update.</errorMessage>
+</ValidationRule>

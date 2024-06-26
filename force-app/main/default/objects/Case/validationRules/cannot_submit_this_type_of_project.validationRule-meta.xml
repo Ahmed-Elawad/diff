@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>cannot_submit_this_type_of_project</fullName>
+    <active>true</active>
+    <description>If the client is not a 401k Strategic Account, the user cannot submit certain cases</description>
+    <errorConditionFormula>AND( RecordType.Name = &apos;Service Support 401k/S125 Case&apos;, 
+ Account.Platinum__c = false,
+OR(
+AND( ISPICKVAL(Reassign_Category_1__c,&apos;5500&apos;),
+ISPICKVAL(Reassign_Category_2__c,&apos;MATC/957 Reconciliation&apos;)
+),
+
+AND(ISPICKVAL(Reassign_Category_1__c,&apos;Compliance Testing&apos;),
+ISPICKVAL(Reassign_Category_2__c,&apos;Compensation Ratio Testing&apos;))
+
+))</errorConditionFormula>
+    <errorDisplayField>X1099_Wages__c</errorDisplayField>
+    <errorMessage>This is not a Strategic Account Client and therefore, this type of project cannot be submitted.</errorMessage>
+</ValidationRule>

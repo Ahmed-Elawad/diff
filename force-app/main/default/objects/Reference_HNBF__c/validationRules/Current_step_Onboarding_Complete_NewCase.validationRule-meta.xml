@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Current_step_Onboarding_Complete_NewCase</fullName>
+    <active>true</active>
+    <errorConditionFormula>ISPICKVAL(Current_Step__c, &quot;Onboarding Complete&quot;)&amp;&amp;
+ISPICKVAL(Submission_Type__c, &quot;New Case&quot;)&amp;&amp;
+(
+(
+(ISBLANK(Infopath_Received__c) || ISBLANK(Set_up_complete_email_received__c) || Policy_Type_Total_of_EEs__c &lt; 1 || Carrier_Other_Count__c &gt; 0)
+
+)
+)</errorConditionFormula>
+    <errorMessage>You must resolve any Open Items, Sales Submission items, InfoPath Received, Set up Complete email received and Policy items: Total # of EEs and Carriers before the Current Step can be changed to Onboarding Complete</errorMessage>
+</ValidationRule>

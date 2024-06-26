@@ -1,0 +1,82 @@
+<apex:page standardController="Account"  extensions="PaychexAccountAdvocateInfoController"
+           showHeader="false"
+           sidebar="false"
+           lightningStylesheets="true">
+    <style>
+        .spinnerBg{
+        border-style: solid;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: auto;
+        margin-bottom: auto;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        background-color: #000;
+        opacity: 0.2;
+        z-index: 999999;
+        }
+        .spinner{
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        background-image: url("/img/loading32.gif");
+        background-size: 16px;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-position: center;
+        z-index: 9999999;
+        opacity: 1;
+        }
+    </style>
+    <apex:pageBlock rendered="{!displayAmpPage}"> 
+     <apex:actionStatus id="spinnerStatus">
+        <apex:facet name="start">
+            <div class="spinnerBg bPageBlock brandSecondaryBrd apexDefaultPageBlock secondaryPalette" />
+            <div class="spinner" />
+        </apex:facet>
+    </apex:actionStatus> 
+    <apex:outputPanel id="mainPage" rendered="{!displayMain}">
+        <apex:form >
+            <div class="bPageBlock brandSecondaryBrd apexDefaultPageBlock secondaryPalette">
+                <apex:outputPanel rendered="{!Not(swapContact)}">
+                    <div style="text-align:center;">
+                        <div class="btn">
+                            <apex:commandButton id="ChangeCt" value="Change Significant Contact" title="Change Significant Contact"  action="{!changeContact}"/>
+                        </div>
+                        <apex:outputText label="Significant Contact" value="{!sigNameEmail}"/>
+                    </div>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!swapContact}" >
+                    <div style="text-align:center;">
+    <!--                    <apex:actionStatus id="spinnerStatus">
+                            <apex:facet name="start">
+                                <div class="spinnerBg" />
+                                <div class="spinner" />
+                            </apex:facet>
+                        </apex:actionStatus> --> 
+                        <apex:outputText value="Change Significant Contact"/>
+                        <br/>
+                        <apex:selectList value="{!selectedCtctID}" multiselect="false" size="1">
+                            <apex:actionSupport event="onchange" action="{!saveContact}" status="spinnerStatus" rerender="mainPage"/>
+                            <apex:selectOptions value="{!ContactNames}"/>         
+                        </apex:selectList>
+                        <br/>
+                        <div class="btn">
+                            <apex:commandButton id="Cancel" value="Cancel" Title="Cancel" action="{!Cancel}" />
+                        </div>
+                    </div>
+                </apex:outputPanel>
+            </div>
+        </apex:form>
+        <apex:outputPanel rendered="{!displayAmp}">
+            <amp_dev:SObjectAmpAdvocatePanel recordId="{!Account.Id}"/>
+        </apex:outputPanel>
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!NOT(displayMain)}">
+        <div class="bPageBlock brandSecondaryBrd apexDefaultPageBlock secondaryPalette">
+            <apex:outputText label="Error Message" value="{!displayMessage}"/>    
+        </div>
+    </apex:outputPanel>
+</apex:pageBlock>        
+</apex:page>

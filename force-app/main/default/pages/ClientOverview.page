@@ -1,0 +1,76 @@
+<!-- Aloha inline visualforce to display the Client Overview/Onboarding Overview on the Account page. 
+History
+-------
+08/24/2012 Justin Stouffer and Carrie Marciano   Created  
+06/21/2013 Justin Stouffer                       Complete Redesign to Use Custom Setting
+03/31/2017 Justin Stouffer/Jermaine Stukes       Updated to change OnboardingOveview to component and to use Lightning Design System 
+-->
+<apex:page standardController="Account" extensions="ClientOverviewController" tabStyle="Account" rendered="{!Not(isSF1)}">
+    <apex:outputPanel rendered="{!Not(isIE)}">
+        <c:OnboardingOverview />
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!(isIE)}">
+        <c:OnboardingOverviewIE />
+    </apex:outputPanel>
+      
+    <script>
+    function doRedirect(){
+        window.top.location='/{!Account.id}';    
+    }
+    </script>
+    <apex:form > 
+        <apex:pageBlock id="ClientOverview" title="Key Client Information" >
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!SaveButton}" id="saveButton" value="Save" onComplete="doRedirect()" style="display:none;"/>
+                <apex:commandButton onclick="resetInlineEdit()" id="cancelButton" value="Cancel" style="display:none;"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection collapsible="TRUE" columns="4"  >
+                <apex:pageBlockSectionItem helpText="If checked, this client is in the top 1% of Paychex clients based on annualized revenue.">
+                    <apex:outputLabel style="white-space:nowrap;{!IF(account.Level_1__c,'color:BLUE','')};" value="Flagship Client" />
+                    <apex:outputField value="{!account.Level_1__c}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="If checked, this is a client of a key Paychex partner.">
+                    <apex:outputLabel style="white-space:nowrap;{!IF(account.KP_Client__c,'color:BLUE','')};" value="Client of Key Partner" />
+                    <apex:outputField value="{!account.KP_Client__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!IF(DNCEIndicator == NULL,'','Notification of any restrictions regarding contacting a client.')}">
+                    <apex:outputLabel style="white-space:nowrap;" value="{!IF(DNCEIndicator == NULL,'','Do Not Call/Email Indicator')}" />
+                    <apex:outputText style="white-space:pre;Color:Red" value="{!DNCEIndicator}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="A list of Paychex Business Units that consider this a Primary Client.">
+                    <apex:outputLabel style="white-space:nowrap;" value="BU Primary Client"/>
+                    <apex:outputText style="white-space: pre;" value="{!BUPrimaryClient}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="A list of Business Units that consider this client at risk." >
+                    <apex:outputLabel style="white-space:nowrap;" value="At Risk" />
+                    <apex:outputText style="white-space: pre;Color:Red" value="{!atRisk}" />
+                </apex:pageBlockSectionItem>                        
+                <apex:pageBlockSectionItem helpText="A list of Business Units that consider this client as a potential risk." >
+                    <apex:outputLabel style="white-space:nowrap;" value="Potential Risk" />
+                    <apex:outputtext style="white-space: pre;Color:Orange" value="{!potentialRisk}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <br/>
+            <apex:pageBlockSection collapsible="TRUE" columns="2">          
+                <apex:pageBlockSectionItem helpText="If there are any critical cases that require urgent action from the client, they will be displayed here.">
+                    <apex:outputLabel style="white-space:nowrap;" value="Urgent Client Action Required" />
+                    <apex:outputPanel >
+                        <apex:repeat value="{!clientActionNeeded}" var="items">
+                            <a style="white-space: pre" target="_parent" href="/{!items.id}" >{!items.CaseNumber}</a><br/> 
+                        </apex:repeat>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Enter any critical notes regarding this client here, in the format: Comment, Product/Business Unit, Date. 
+                                                     Pre-existing notes should remain until they are no longer necessary." >
+                    <apex:outputLabel style="white-space:nowrap;" value="Critical Client Notes" />
+                    <apex:outputField label="Critical Client Notes" value="{!account.Critical_Client_Notes__c}">
+                        <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                                                hideOnEdit="editButton" event="ondblclick" 
+                                                changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputField>             
+                </apex:pageBlockSectionItem>           
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

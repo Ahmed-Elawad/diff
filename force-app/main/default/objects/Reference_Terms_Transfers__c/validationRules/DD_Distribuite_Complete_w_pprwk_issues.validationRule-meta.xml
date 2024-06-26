@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DD_Distribuite_Complete_w_pprwk_issues</fullName>
+    <active>true</active>
+    <description>Prevent entry in the Distribution Entered field when there is an unresolved Distribution Paperwork Issue</description>
+    <errorConditionFormula>RecordType.Name = &apos;Death Distribution&apos; &amp;&amp; NOT(ISBLANK(  Distribution_Entered__c)) &amp;&amp; NOT(ISBLANK(TEXT( Paperwork_Issue__c))) &amp;&amp; ISBLANK(   Discrepancy_Resolved_Date__c   )</errorConditionFormula>
+    <errorDisplayField>Distribution_Entered__c</errorDisplayField>
+    <errorMessage>You cannot enter date in Distribution Entered if there is an outstanding Distribution Paperwork Issue</errorMessage>
+</ValidationRule>

@@ -1,0 +1,579 @@
+<aura:component controller="OnboardingController"  implements="lightning:isUrlAddressable,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <aura:html tag="style">
+        .toastMessage.forceActionsText{ white-space : pre-line !important; }
+    </aura:html>
+    <!--<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>-->
+    <aura:attribute name="tracker" type="CSO_Tracking__c"/>
+    <aura:attribute name="parentTracker" type="CSO_Tracking__c"/>
+    <aura:attribute name="onboardingToolId" type="String" />
+    <aura:attribute name="parentOnboardingId" type="String" />
+    <aura:attribute name="productList" type="String[]" />
+    <aura:attribute name="onboardingLoaded" type="Boolean" default="false"/>
+    <aura:attribute name="trackerLoaded" type="Boolean" default="false"/>
+    <aura:attribute name="sstValid" type="Boolean" default="false"/>
+    <aura:attribute name="displayUpdateScreen" type="Boolean" default="false"/>
+    <aura:attribute name="displayAuthOfficerScreen" type="Boolean" default="false"/>
+    <aura:attribute name="displayPayrollContactScreen" type="Boolean" default="false"/>
+    <aura:attribute name="displayPayContactScreen" type="Boolean" default="false"/>
+    <aura:attribute name="hasBenAdmin" type="Boolean" default="false"/>
+    <aura:attribute name="hasFlexTime" type="Boolean" default="false"/>
+    <aura:attribute name="hasESR" type="Boolean" default="false"/>
+    <aura:attribute name="populateParentAO" type="Boolean" default="false"/>
+    <aura:attribute name="populateParentPC" type="Boolean" default="false"/>
+    <aura:attribute name="populateParentPI" type="Boolean" default="false"/>
+    <aura:attribute name="populateParentESR" type="Boolean" default="false"/>
+    <aura:attribute name="populateParentFlexTime" type="Boolean" default="false"/>
+    <aura:attribute name="populateParentBenAdmin" type="Boolean" default="false"/>
+    <aura:attribute name="preCheck" type="String" />
+    <aura:attribute name="updateAO" type="Boolean" default="false"/>
+    <aura:attribute name="authOfficerId" type="String" />
+    <aura:attribute name="updatePC" type="Boolean" default="false"/>
+    <aura:attribute name="payContactId" type="String" />
+    <aura:attribute name="needPreassignedNumber" type="String" />
+    <aura:attribute name="need1099" type="String" />
+    <aura:attribute name="deliveryIsLegal" type="String" />
+    <aura:attribute name="loadSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="hideshow"  type="String" default="hide" />
+    <aura:attribute name="runDate" type="String" />
+    <aura:attribute name="checkDate" type="String" />
+    <aura:attribute name="endDate" type="String" />
+    <aura:attribute name="businessStructure" type="String" />
+    <aura:attribute name="relationshipManager" type="String" />
+    <aura:attribute name="newlyEstablished" type="String" />
+    <aura:attribute name="priorWagesLoaded" type="String" />
+    <aura:attribute name="empsToLoad" type="String" />
+    <aura:attribute name="statesProcessedIn" type="String" />
+    <aura:attribute name="num1099" type="String" />
+    <!--<aura:attribute name="PriceLock" type="String" /> -->
+    <aura:attribute name="deliveryAddy" type="String" />
+    <aura:attribute name="preAssignedId" type="String" />
+    <aura:attribute name="aoStyle" type="String" />
+    <aura:attribute name="ignoreRelationManager" type="Boolean" default="false"/>
+    <aura:attribute name="relationWithAddAccount" type="String" />
+    <aura:attribute name="relatedAccountId" type="String" />
+    <aura:attribute name="acctName" type="String" /> 
+    <aura:attribute name="isParent" type="Boolean" />
+    <aura:attribute name="oppty" type="Opportunity"/>
+    <aura:attribute name="loading" type="Boolean" default="false"/>
+    <aura:attribute name="revalidationCalled" type="Boolean" default="false"/>
+    <!--ESR Attributes-->
+    <aura:attribute name="ESR_educationInstitution" type="String" />
+    <aura:attribute name="ESR_PriorMedRenewalDate" type="String" />
+    <aura:attribute name="ESR_selfInsuredPlan" type="String" />
+    <aura:attribute name="ESR_UnionEmps" type="String" /> 
+    <!--Flex Time Attributes-->   
+    <aura:attribute name="Flextime_Date" type="String" />
+    <aura:attribute name="Flextime_NumFlexId" type="String" />
+    <aura:attribute name="Flextime_Anticipated_Start_Date" type="String" />
+    <aura:attribute name="Flextime_Timeclock" type="String" />
+    <aura:attribute name="Flextime_TAA" type="String" />
+	<!--Ben Admin Attributes-->    
+    <aura:attribute name="benAdmin_Broker_Contact" type="String" />
+    <aura:attribute name="benAdmin_Broker_Paying_Benefits_Admin_Fees" type="String" />
+    <aura:attribute name="benAdmin_Open_Enrollment_Date" type="String" />
+    <aura:attribute name="benAdmin_Delivery_Date" type="String" />
+    <aura:attribute name="benAdmin_EDI_Connection" type="String" />
+    <aura:attribute name="benAdmin_Carrier_Name" type="String" />
+    <aura:attribute name="benAdmin_Carrier_Contact" type="String" />
+    <aura:attribute name="benAdmin_Group_Number" type="String" />
+    
+    <aura:if isTrue="{!v.loadSpinner}">
+    <lightning:messages />
+        <div class="exampleHolder">
+            <lightning:spinner alternativeText="Loading" />
+        </div>
+    </aura:if>
+    <aura:registerEvent name="validateEnterpriseForm" type="c:UpdateEntRegForm" />
+
+    <lightning:recordEditForm recordId="{!v.tracker.Id}" 
+                              aura:id="TrackerForm"
+                              onload="{!c.handleTrackerLoad}"
+                              objectApiName="CSO_Tracking__c">
+        <div class="slds-hide">
+            <lightning:inputField fieldName="SSTValidated__c" value ="{!v.sstValid}" />
+        </div>
+    </lightning:recordEditForm>
+    <aura:if isTrue="{!!v.isParent}">
+        <lightning:recordEditForm recordId="{!v.parentOnboardingId}" 
+                                  aura:id="SSTParentForm"
+                                  objectApiName="Onboarding_Tool__c"  >
+            <div class="slds-hide">
+                <lightning:inputField aura:id="authOfficerParent" fieldName="Authorize_Officer__c"/>
+                <lightning:inputField aura:id="payContactParent" fieldName="PayrollContact__c"/>
+                <lightning:inputField aura:id="runDateParent" fieldName="Run_Date__c" />
+                <lightning:inputField aura:id="checkDateParent" fieldName="First_Check_Date__c"  />
+                <lightning:inputField aura:id="endDateParent" fieldName="PeriodEndDate__c" />
+                <lightning:inputField aura:id="businessStructureParent" fieldName="Business_Structure__c" />
+                <lightning:inputField aura:id="relationshipManagerParent" fieldName="RelationshipManager__c"/>
+                <lightning:inputField aura:id="ignoreRelationshipManagerParent" fieldName="IgnoreRelationshipManager__c"/>
+                <lightning:inputField aura:id="newlyEstablishedParent" fieldName="Newly_Established_Business__c"/>
+                <lightning:inputField aura:id="priorWagesLoadedParent" fieldName="PriorWagesLoaded__c"/>
+                <lightning:inputField aura:id="empsToLoadParent" fieldName="EmpsToLoad__c"/>
+                <lightning:inputField aura:id="statesProcessedInParent" fieldName="StateProcessedIn__c"/>
+                <lightning:inputField aura:id="1099requiredParent" fieldName="Does_Company_Need_1099s__c"/>
+                <lightning:inputField aura:id="num1099Parent" fieldName="NumOf1099s__c"/>
+                <lightning:inputField aura:id="isDeliveryLegalParent" fieldName="IrsIsDelivery__c"/>
+                <lightning:inputField aura:id="3yearPriceLockParent" fieldName="PriceLock3Year__c"/>
+                <lightning:inputField aura:id="deliveryAddyParent" fieldName="Irs_Address__c"/>
+                <lightning:inputField aura:id="PreAssignedClientNumParent" fieldName="PreAssignedClientNum__c"/>
+                <lightning:inputField aura:id="preAssignedIdParent" fieldName="PreAssignedId__c"/>
+                <lightning:inputField aura:id="relationWithAddAccountParent" fieldName="RelationWithAddAccount__c"/>
+                <lightning:inputField aura:id="relatedAccountIdParent" fieldName="RelatedAccountId__c"/>
+                <lightning:inputField aura:id="ESR_educationInstitutionParent" fieldName="ESR_educationInstitution__c"/>
+                <lightning:inputField aura:id="ESR_PriorMedRenewalDateParent" fieldName="ESR_PriorMedRenewalDate__c"/>
+                <lightning:inputField aura:id="ESR_selfInsuredPlanParent" fieldName="ESR_selfInsuredPlan__c"/>
+                <lightning:inputField aura:id="ESR_UnionEmpsParent" fieldName="ESR_UnionEmps__c"/>                
+                <lightning:inputField aura:id="Precheck_ClientParent" fieldName="Precheck_Client__c"/>
+                <lightning:inputField aura:id="Flextime_DateParent" fieldName="Flextime_Date__c"/>
+                <lightning:inputField aura:id="NumFlexIdParent" fieldName="NumFlexId__c"/>
+                <lightning:inputField aura:id="Anticipated_Start_DateParent" fieldName="Anticipated_Start_Date__c"/>
+                <lightning:inputField aura:id="Flextime_TimeclockParent" fieldName="Flextime_Timeclock__c"/>
+                <lightning:inputField aura:id="Flextime_TAAParent" fieldName="Flextime_TAA__c"/>
+                <lightning:inputField aura:id="benAdmin_Broker_ContactParent" fieldName="Broker_Contact__c"/>
+                <lightning:inputField aura:id="benAdmin_Broker_Paying_Benefits_Admin_FeesParent" fieldName="Broker_Paying_Benefits_Admin_Fees__c"/>
+                <lightning:inputField aura:id="benAdmin_Open_Enrollment_DateParent" fieldName="Open_Enrollment_Date__c"/>
+                <lightning:inputField aura:id="benAdmin_Delivery_DateParent" fieldName="Delivery_Date__c"/>
+                <lightning:inputField aura:id="benAdmin_EDI_ConnectionParent" fieldName="EDI_Connection__c"/>
+                <lightning:inputField aura:id="benAdmin_Carrier_NameParent" fieldName="Carrier_Name__c"/>
+                <lightning:inputField aura:id="benAdmin_Carrier_ContactParent" fieldName="Carrier_Contact__c"/>
+                <lightning:inputField aura:id="benAdmin_Group_NumberParent" fieldName="Group_Number__c"/>
+            </div>
+        </lightning:recordEditForm>
+    </aura:if>
+    <aura:if isTrue="{!v.loading}">
+        <lightning:recordEditForm recordId="{!v.onboardingToolId}" 
+                                  aura:id="SSTForm"
+                                  objectApiName="Onboarding_Tool__c"  
+                                  onload="{!c.handleOnboardLoad}"
+                                  onerror="{!c.handleSSTError}"
+                                  onsubmit="{!c.saveSST}" 
+                                  onsuccess="{!c.displaySucessMessage}">
+            <lightning:messages />
+            <div class="slds-hide">  
+                <lightning:inputField fieldName="IgnoreRelationshipManager__c" value ="{!v.ignoreRelationManager}" />
+                <lightning:inputField fieldName="Precheck_Client__c"  value="{!v.preCheck}" variant="label-hidden" />
+            </div>
+            <aura:if isTrue="{!!v.displayUpdateScreen}">
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="12" padding="horizontal-small">
+                        <aura:if isTrue="{!v.sstValid}">
+                            <div class="slds-align_absolute-center">
+                                <lightning:formattedText style="font-size: 16px; color: green; font-weight: bold" value="All required information obtained on this screen" />
+                            </div>
+                            <aura:set attribute="else">
+                                <div class="slds-align_absolute-center"><b>Action Required: &nbsp; </b> All fields highlighted with <abbr class="slds-required">&nbsp;<b>*</b>&nbsp;</abbr>on this screen are required.  Please fill out required fields and click the 'Validate and Save' button.</div>
+                            </aura:set>
+                        </aura:if>
+                    </lightning:layoutItem>
+                </lightning:layout>
+                <lightning:layout multipleRows="true">
+                    <!--Contact Information-->
+                    <lightning:layoutItem size="12" padding="around-small">
+                        <b>Contact Information</b>
+                    </lightning:layoutItem>
+                    <aura:if isTrue="{!v.authOfficerId == null}">
+                        <!--Authorized Officer-->
+                        <lightning:layoutItem size="3" padding="horizontal-small">
+                            Select existing contact as Authorized Officer
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="1" padding="horizontal-small">
+                            OR
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="8" padding="horizontal-small">
+                            Create new contact for Authorized Officer
+                        </lightning:layoutItem>
+                        <aura:set attribute="else">
+                            <lightning:layoutItem size="12" padding="around-small">
+                                Authorized Officer Information
+                            </lightning:layoutItem>
+                        </aura:set>
+                    </aura:if>
+                    <lightning:layoutItem size="2" padding="horizontal-small" class="">
+                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Authorized Officer </label><br/>
+                        <lightning:inputField aura:id="sstFormField" fieldName="Authorize_Officer__c" value="{!v.authOfficerId}" variant="label-hidden" />
+                        <aura:if isTrue="{!!v.isParent}">
+                            <lightning:input type="checkbox" name="populateParentAO" checked="{!v.populateParentAO}" value="{!v.populateParentAO}" label="Same as parent"  onchange="{!c.populateParentAO}"/>
+                        </aura:if>
+                    </lightning:layoutItem>
+                    <aura:if isTrue="{!v.authOfficerId == null}">
+                        <lightning:layoutItem size="2" />
+                        <lightning:layoutItem size="8" padding="around-medium">
+                            <lightning:button name="CreateNewContact" label="Create Authorized Officer" onclick="{!c.displayNewAO}" />
+                        </lightning:layoutItem>
+                        <aura:set attribute="else">
+                            <lightning:layoutItem size="10" padding="horizontal-small">                        
+                                <lightning:recordEditForm objectApiName="Contact"
+                                                          recordId="{!v.authOfficerId}" >
+                                    <lightning:layout multipleRows="true">
+                                        <lightning:layoutItem size="1" >
+                                            <lightning:outputField  fieldName="MobilePhone" variant="label-stacked"/>
+                                        </lightning:layoutItem>
+                                        <lightning:layoutItem size="1">
+                                            <lightning:outputField  fieldName="Title" variant="label-stacked" />
+                                        </lightning:layoutItem>
+                                        <lightning:layoutItem size="2">
+                                            <lightning:outputField  fieldName="Email" variant="label-stacked" />
+                                        </lightning:layoutItem>
+                                        <lightning:layoutItem size="6">
+                                            <lightning:button variant="brand" name="UpdateContact" label="Edit Authorized Officer" onclick="{!c.displayUpdateAO}"  />
+                                            <lightning:button variant="brand" name="ClearContact" label="Clear" onclick="{!c.clearAO}"  />
+                                        </lightning:layoutItem>
+                                    </lightning:layout>
+                                </lightning:recordEditForm>
+                            </lightning:layoutItem>
+                        </aura:set>
+                    </aura:if>
+                    <!--Payroll Contact-->
+                    <aura:if isTrue="{!v.payContactId == null}">
+                        <!--Authorized Officer-->
+                        <lightning:layoutItem size="3" padding="horizontal-small">
+                            Select existing contact as Payroll Contact
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="1" padding="horizontal-small">
+                            OR
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="8" padding="horizontal-small">
+                            Create new contact for Payroll Contact
+                        </lightning:layoutItem>
+                        <aura:set attribute="else">
+                            <lightning:layoutItem size="12" padding="around-small">
+                                Payroll Contact Information
+                            </lightning:layoutItem>
+                        </aura:set>
+                    </aura:if>
+                    <lightning:layoutItem size="2" padding="horizontal-small" class="">
+                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Payroll Contact </label><br/>
+                        <lightning:inputField aura:id="sstFormField" fieldName="PayrollContact__c" value="{!v.payContactId}" variant="label-hidden" />
+                        <aura:if isTrue="{!!v.isParent}">
+                            <lightning:input type="checkbox" name="populateParentPC" checked="{!v.populateParentPC}" value="{!v.populateParentPC}" label="Same as parent"  onchange="{!c.populateParentPayContact}"/>
+                        </aura:if>
+                    </lightning:layoutItem>
+                    <aura:if isTrue="{!v.payContactId == null}">
+                        <lightning:layoutItem size="2" />
+                        <lightning:layoutItem size="8" padding="around-medium">
+                            <lightning:button name="CreateNewContact" label="Create Payroll Contact" onclick="{!c.displayNewPC}" />
+                        </lightning:layoutItem>
+                        <aura:set attribute="else">
+                            <lightning:layoutItem size="10" padding="horizontal-small">                        
+                                <lightning:recordEditForm objectApiName="Contact"
+                                                          recordId="{!v.payContactId}" >
+                                    <lightning:layout multipleRows="true">
+                                        <lightning:layoutItem size="1" >
+                                            <lightning:outputField  fieldName="MobilePhone" variant="label-stacked"/>
+                                        </lightning:layoutItem>
+                                        <lightning:layoutItem size="1">
+                                            <lightning:outputField  fieldName="Title" variant="label-stacked" />
+                                        </lightning:layoutItem>
+                                        <lightning:layoutItem size="2">
+                                            <lightning:outputField  fieldName="Email" variant="label-stacked" />
+                                        </lightning:layoutItem>
+                                        <lightning:layoutItem size="6">
+                                            <lightning:button variant="brand" name="UpdateContact" label="Edit Payroll Contact" onclick="{!c.displayUpdatePC}"  />
+                                            <lightning:button variant="brand" name="ClearContact" label="Clear" onclick="{!c.clearPC}"  />
+                                        </lightning:layoutItem>
+                                    </lightning:layout>
+                                </lightning:recordEditForm>
+                            </lightning:layoutItem>
+                        </aura:set>
+                    </aura:if>
+                    <!--Payroll Information-->
+                    <lightning:layoutItem size="12" padding="around-small">
+                        <b>Payroll Information</b>
+                    </lightning:layoutItem>
+                    <aura:if isTrue="{!!v.isParent}">
+                        <lightning:layoutItem size="12" padding="horizontal-small">
+                            <lightning:input type="checkbox" name="populateParentPI" checked="{!v.populateParentPI}" value="{!v.populateParentPI}" label="Copy Payroll Information from Parent"  onchange="{!c.populateParentPayroll}"/>
+                        </lightning:layoutItem>
+                    </aura:if>
+                    <lightning:layoutItem size="4" padding="horizontal-small">
+                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Does client have a current/future relationship with another client?</label><br/>
+                        <lightning:inputField aura:id="sstFormField" fieldName="RelationWithAddAccount__c" value="{!v.relationWithAddAccount}" variant="label-hidden" />
+                    </lightning:layoutItem>
+                    <aura:if  isTrue="{!or(v.relationWithAddAccount == 'Y',v.relationWithAddAccount == 'Yes')}">
+                        <lightning:layoutItem size="2" padding="horizontal-small">
+                            <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Enter Parent Prospect-Client</label><br/>
+                            <lightning:inputField aura:id="sstFormField" fieldName="RelatedAccountId__c" value="{!v.relatedAccountId}" variant="label-hidden" />
+                        </lightning:layoutItem>
+                    </aura:if>
+                    <lightning:layoutItem size="2" padding="horizontal-small">
+                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Business Type </label><br/>
+                        <lightning:inputField aura:id="sstFormField" fieldName="Business_Structure__c" value="{!v.businessStructure}" variant="label-hidden" />
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="2" padding="horizontal-small">
+                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>First Run Date </label><br/>
+                        <lightning:inputField aura:id="sstFormField" fieldName="Run_Date__c" value="{!v.runDate}" variant="label-hidden" />
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="2" padding="horizontal-small">
+                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>First Check Date </label><br/>
+                        <lightning:inputField aura:id="sstFormField" fieldName="First_Check_Date__c" value="{!v.checkDate}" variant="label-hidden" />
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="2" padding="horizontal-small">
+                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Period End Date </label><br/>
+                        <lightning:inputField aura:id="sstFormField" fieldName="PeriodEndDate__c" value="{!v.endDate}" variant="label-hidden" />
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="3" padding="horizontal-small">
+                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Relationship Manager </label><br/>
+                        <lightning:inputField aura:id="sstFormField" fieldName="RelationshipManager__c" value="{!v.relationshipManager}" variant="label-hidden" />
+                        <lightning:input type="checkbox" name="ignoreRM" checked="{!v.ignoreRelationManager}" value="{!v.ignoreRelationManager}" label="Check if no Relationship Manager" />
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="2" padding="horizontal-small">
+                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Newly established business? </label><br/>
+                        <lightning:inputField aura:id="sstFormField" fieldName="Newly_Established_Business__c" value="{!v.newlyEstablished}" variant="label-hidden" />
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="3" padding="horizontal-small">
+                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Does {!v.acctName} have prior wages to be loaded? </label><br/>
+                        <lightning:inputField aura:id="sstFormField" fieldName="PriorWagesLoaded__c" value="{!v.priorWagesLoaded}" variant="label-hidden" />
+                    </lightning:layoutItem>
+                    <aura:if isTrue="{!v.isParent}">
+                        <lightning:layoutItem size="2" padding="horizontal-small">
+                            <label class="slds-form-element__label">Employees per pay period </label><br/>
+                            {!v.oppty.Employees_Paid_Per_Payroll__c}
+                        </lightning:layoutItem>
+                    </aura:if>
+                    <lightning:layoutItem size="2" padding="horizontal-small">
+                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Number of Employees to load </label><br/>
+                        <lightning:inputField aura:id="sstFormField" fieldName="EmpsToLoad__c" value="{!v.empsToLoad}" variant="label-hidden" />
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="3" padding="horizontal-small">
+                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>States Client is registered in: </label><br/>
+                        <lightning:inputField aura:id="sstFormField" fieldName="StateProcessedIn__c" value="{!v.statesProcessedIn}" variant="label-hidden" />
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="3" padding="horizontal-small">
+                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Does the company need to issue any 1099s? </label><br/>
+                        <lightning:inputField aura:id="sstFormField" fieldName="Does_Company_Need_1099s__c" variant="label-hidden" value ="{!v.need1099}" />
+                    </lightning:layoutItem>
+                    <aura:if  isTrue="{!or(v.need1099 == 'Y',v.need1099 == 'Yes')}">
+                        <lightning:layoutItem size="2" padding="horizontal-small">
+                            <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Number of 1099's </label><br/>
+                            <lightning:inputField aura:id="sstFormField" fieldName="NumOf1099s__c" value="{!v.num1099}" variant="label-hidden" />
+                        </lightning:layoutItem>
+                    </aura:if>
+                    <lightning:layoutItem size="3" padding="horizontal-small">
+                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Is the delivery address the same as the legal address? </label><br/>
+                        <lightning:inputField aura:id="sstFormField" fieldName="IrsIsDelivery__c"  variant="label-hidden" value ="{!v.deliveryIsLegal}" />
+                    </lightning:layoutItem>
+                    <aura:if  isTrue="{!or(v.deliveryIsLegal == 'N',v.deliveryIsLegal == 'No')}">
+                        <lightning:layoutItem size="2" padding="horizontal-small">
+                            <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Enter Delivery Address </label><br/>
+                            <lightning:inputField aura:id="sstFormField" fieldName="Irs_Address__c" value="{!v.deliveryAddy}" variant="label-hidden" />
+                        </lightning:layoutItem>
+                    </aura:if>
+                    <lightning:layoutItem size="2" padding="horizontal-small">
+                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Preassigned Client Number needed? </label><br/>
+                        <lightning:inputField aura:id="sstFormField" fieldName="PreAssignedClientNum__c"  value ="{!v.needPreassignedNumber}" variant="label-hidden" />
+                    </lightning:layoutItem>
+                    <aura:if  isTrue="{!v.needPreassignedNumber == 'Yes'}">
+                        <lightning:layoutItem size="2" padding="horizontal-small">
+                            <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Enter Preassigned Client Number </label><br/>
+                            <lightning:inputField aura:id="sstFormField" fieldName="PreAssignedId__c" value="{!v.preAssignedId}" variant="label-hidden" />
+                        </lightning:layoutItem>
+                    </aura:if>
+                    <lightning:layoutItem size="2" padding="horizontal-small">
+                        <label class="slds-form-element__label">Notes </label><br/>
+                        <lightning:inputField fieldName="Update_Notes__c" variant="label-hidden" />
+                    </lightning:layoutItem>
+                    <!--ESR-->
+                    <aura:if  isTrue="{!v.hasESR}">
+                        <lightning:layoutItem size="12" padding="horizontal-small">
+                            <b>Products and Services - ESR</b>
+                        </lightning:layoutItem>
+                        <aura:if isTrue="{!!v.isParent}">
+                            <lightning:layoutItem size="12" padding="horizontal-small">
+                                <lightning:input type="checkbox" name="populateParentESR" checked="{!v.populateParentESR}" value="{!v.populateParentESR}" label="Copy ESR Product Information from Parent"  onchange="{!c.populateParentESR}"/>
+                            </lightning:layoutItem>
+                        </aura:if>
+                        <lightning:layoutItem size="3"  padding="horizontal-small">
+                            <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Is the client categorized as an educational institution?</label><br/>
+                            <lightning:inputField aura:id="sstFormField" fieldName="ESR_educationInstitution__c"  value="{!v.ESR_educationInstitution}" variant="label-hidden" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="2"  padding="horizontal-small">
+                            <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Prior year medical renewal date</label><br/>
+                            <lightning:inputField aura:id="sstFormField" fieldName="ESR_PriorMedRenewalDate__c"  value="{!v.ESR_PriorMedRenewalDate}" variant="label-hidden" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="3"  padding="horizontal-small">
+                            <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Is the client offering a self insured plan?</label><br/>
+                            <lightning:inputField aura:id="sstFormField" fieldName="ESR_selfInsuredPlan__c"  value="{!v.ESR_selfInsuredPlan}" variant="label-hidden" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="2"  padding="horizontal-small">
+                            <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Does the client have union employees?</label><br/>
+                            <lightning:inputField aura:id="sstFormField" fieldName="ESR_UnionEmps__c"  value="{!v.ESR_UnionEmps}" variant="label-hidden" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="4" />
+                    </aura:if>
+                    <!--Flex Time-->
+                    <aura:if  isTrue="{!v.hasFlexTime}">
+                        <lightning:layoutItem size="12" padding="horizontal-small">
+                            <b>Products and Services - Flex Time</b>
+                        </lightning:layoutItem>
+                        <aura:if isTrue="{!!v.isParent}">
+                            <lightning:layoutItem size="12" padding="horizontal-small">
+                                <lightning:input type="checkbox" name="populateParentFlexTime" checked="{!v.populateParentFlexTime}" value="{!v.populateParentFlexTime}" label="Copy Flex Time Product Information from Parent"  onchange="{!c.populateParentFlex}"/>
+                            </lightning:layoutItem>
+                        </aura:if>
+                        <lightning:layoutItem size="2"  padding="horizontal-small">
+                            <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Flex Time implementation date</label><br/>
+                            <lightning:inputField aura:id="sstFormField" fieldName="Flextime_Date__c" value="{!v.Flextime_Date}" variant="label-hidden" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="2"  padding="horizontal-small">
+                            <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>How many Flex Time Id's?</label><br/>
+                            <lightning:inputField aura:id="sstFormField" fieldName="NumFlexId__c" value="{!v.Flextime_NumFlexId}" variant="label-hidden" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="2"  padding="horizontal-small">
+                            <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Anticipated go live date</label><br/>
+                            <lightning:inputField aura:id="sstFormField" fieldName="Anticipated_Start_Date__c" value="{!v.Flextime_Anticipated_Start_Date}" variant="label-hidden" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="2"  padding="horizontal-small">
+                            <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Will client be using time clocks?</label><br/>
+                            <lightning:inputField aura:id="sstFormField" fieldName="Flextime_Timeclock__c" value="{!v.Flextime_Timeclock}" variant="label-hidden" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="2" padding="horizontal-small">
+                            <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Add to existing TAA?</label><br/>
+                            <lightning:inputField aura:id="sstFormField" fieldName="Flextime_TAA__c" value="{!v.Flextime_TAA}" variant="label-hidden" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="2"  />
+                        <lightning:layoutItem size="2"  padding="horizontal-small" >
+                            <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Is this a Pre-Check client?</label><br/>
+                            <lightning:inputField aura:id="sstFormField" fieldName="Precheck_Client__c" value="{!v.preCheck}" variant="label-hidden" />
+                        </lightning:layoutItem>
+                        <aura:if  isTrue="{!or(v.preCheck == 'N',v.preCheck == 'No')}">
+                            <lightning:layoutItem size="2"  padding="horizontal-small">
+                                <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Reason</label><br/>
+                                <lightning:inputField aura:id="sstFormField" fieldName="Reason__c" variant="label-hidden" />
+                            </lightning:layoutItem>
+                        </aura:if>
+                    </aura:if>
+                    <!--Benefits Administration-->
+                    <aura:if  isTrue="{!v.hasBenAdmin}">
+                        <lightning:layoutItem size="12" padding="horizontal-small">
+                            <b>Products and Services - Benefits Administration</b>
+                        </lightning:layoutItem>
+                        <aura:if isTrue="{!!v.isParent}">
+                            <lightning:layoutItem size="12" padding="horizontal-small">
+                                <lightning:input type="checkbox" name="populateParentBenAdmin" checked="{!v.populateParentBenAdmin}" value="{!v.populateParentBenAdmin}" label="Copy Benefits Administration Product Information from Parent"  onchange="{!c.populateParentBenAdmin}"/>
+                            </lightning:layoutItem>
+                        </aura:if>
+                        <lightning:layoutItem size="2"  padding="horizontal-small">
+                            <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Broker Contact</label><br/>
+                            <lightning:inputField aura:id="sstFormField" fieldName="Broker_Contact__c" value="{!v.benAdmin_Broker_Contact}" variant="label-hidden" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="2"  padding="horizontal-small">
+                            <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Is the client's broker paying all or part of the Benefit's Administration fees?</label><br/>
+                            <lightning:inputField aura:id="sstFormField" fieldName="Broker_Paying_Benefits_Admin_Fees__c" value="{!v.benAdmin_Broker_Paying_Benefits_Admin_Fees}" variant="label-hidden" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="2"  padding="horizontal-small">
+                            <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Open Enrollment Date</label><br/>
+                            <lightning:inputField aura:id="sstFormField" fieldName="Open_Enrollment_Date__c" value="{!v.benAdmin_Open_Enrollment_Date}" variant="label-hidden" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="2"  padding="horizontal-small">
+                            <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Delivery Date</label><br/>
+                            <lightning:inputField aura:id="sstFormField" fieldName="Delivery_Date__c" value="{!v.benAdmin_Delivery_Date}" variant="label-hidden" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="2"  padding="horizontal-small">
+                            <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>EDI Connection</label><br/>
+                            <lightning:inputField aura:id="sstFormField" fieldName="EDI_Connection__c" value="{!v.benAdmin_EDI_Connection}" variant="label-hidden" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="2" />
+                        <lightning:layoutItem size="2"  padding="horizontal-small" >
+                            <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Carrier Name</label><br/>
+                            <lightning:inputField aura:id="sstFormField" fieldName="Carrier_Name__c" value="{!v.benAdmin_Carrier_Name}" variant="label-hidden" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="2"  padding="horizontal-small">
+                            <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Carrier Contact</label><br/>
+                            <lightning:inputField aura:id="sstFormField" fieldName="Carrier_Contact__c" value="{!v.benAdmin_Carrier_Contact}" variant="label-hidden" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="2"  padding="horizontal-small">
+                            <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Group Number</label><br/>
+                            <lightning:inputField aura:id="sstFormField" fieldName="Group_Number__c" value="{!v.benAdmin_Group_Number}" variant="label-hidden" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="2"  padding="horizontal-small">
+                            <lightning:inputField aura:id="notes" fieldName="Flock_Notes__c" variant="label-stacked" />
+                        </lightning:layoutItem>
+                    </aura:if>
+                    <lightning:layoutItem size="12" padding="around-large">
+                        <lightning:button label="Validate and Save" variant="brand" type="submit" />
+                        <lightning:button label="Save and Return to Oppty" variant="brand"  onclick="{!c.saveAndCloseSST}"  />
+                        <lightning:button label="Exit/Cancel" variant="brand"  onclick="{!c.closeSST}"  />
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </aura:if>
+        </lightning:recordEditForm>
+        <aura:if isTrue="{!v.displayAuthOfficerScreen}">
+            <lightning:layoutItem size="12" padding="around-small">
+                <b>Update Authorized Officer Screen</b>
+            </lightning:layoutItem>
+            <lightning:recordEditForm objectApiName="Contact"
+                                      recordId="{!v.authOfficerId}" 
+                                      aura:id="AuthorizedOfficerForm"
+                                      onsubmit="{!c.handleAOSubmit}" 
+                                      onsuccess="{!c.updateAuthOfficer}">
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="2" class="slds-hide">
+                        <lightning:inputField fieldName="AccountId" value="{!v.tracker.AccountId__c}" variant="label-stacked" />
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="2" >
+                        <lightning:inputField fieldName="Salutation" variant="label-stacked" />
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="2">
+                        <lightning:inputField fieldName="FirstName" variant="label-stacked"  required="true"/>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="2">
+                        <lightning:inputField fieldName="LastName" variant="label-stacked" />
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="6" />
+                    <lightning:layoutItem size="2" >
+                        <lightning:inputField fieldName="MobilePhone" variant="label-stacked"  required="true"/>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="2">
+                        <lightning:inputField fieldName="Title" variant="label-stacked"  required="true"/>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="2">
+                        <lightning:inputField fieldName="Email" variant="label-stacked" required="true"/>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="4" />
+                </lightning:layout>
+                <lightning:button variant="brand" name="CreateNewContact" label="Save Authorized Officer" type="submit" />
+                <lightning:button variant="brand" name="cancel" label="Cancel" onclick="{!c.updateDisplay}" />
+            </lightning:recordEditForm>
+        </aura:if>
+        <aura:if isTrue="{!v.displayPayrollContactScreen}">
+            <lightning:layoutItem size="12" padding="around-small">
+                <b>Update Payroll Contact Screen</b>
+            </lightning:layoutItem>
+            <lightning:recordEditForm objectApiName="Contact"
+                                      recordId="{!v.payContactId}" 
+                                      aura:id="PayrollContactForm"
+                                      onsubmit="{!c.handlePCSubmit}" 
+                                      onsuccess="{!c.updatePC}">
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="2" class="slds-hide">
+                        <lightning:inputField fieldName="AccountId" value="{!v.tracker.AccountId__c}" variant="label-stacked" />
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="2" >
+                        <lightning:inputField fieldName="Salutation" variant="label-stacked" />
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="2">
+                        <lightning:inputField fieldName="FirstName" variant="label-stacked"  required="true"/>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="2">
+                        <lightning:inputField fieldName="LastName" variant="label-stacked" />
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="6" />
+                    <lightning:layoutItem size="2" >
+                        <lightning:inputField fieldName="MobilePhone" variant="label-stacked"  required="true"/>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="2">
+                        <lightning:inputField fieldName="Title" variant="label-stacked"  required="true"/>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="2">
+                        <lightning:inputField fieldName="Email" variant="label-stacked" required="true"/>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="4" />
+                </lightning:layout>
+                <lightning:button variant="brand" name="CreateNewContact" label="Save Payroll Contact" type="submit" />
+                <lightning:button variant="brand" name="cancel" label="Cancel" onclick="{!c.updateDisplay}" />
+            </lightning:recordEditForm>
+        </aura:if>
+    </aura:if>
+
+</aura:component>

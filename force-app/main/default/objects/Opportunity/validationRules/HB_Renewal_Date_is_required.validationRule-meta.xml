@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HB_Renewal_Date_is_required</fullName>
+    <active>true</active>
+    <description>Case 33073073 - H&amp;B Renewal Date is required when associated Oppty has Type of &apos;Medical&apos; and Probability &gt; 50%</description>
+    <errorConditionFormula>AND(
+OR(
+AND(
+ISCHANGED(StageName),
+Probability &gt;= 0.50, 
+ISPICKVAL(OpportunityType__c, &apos;Medical&apos;),
+ISBLANK(TEXT(Account.H_B_Renewal_Date__c)),
+OR ($RecordType.Name = &apos;HNBF Opportunity DSA Record Type&apos; 
+,$RecordType.Name = &apos;HNBF Opportunity Record Type&apos; )
+),
+AND(
+ISCHANGED(StageName),
+Probability &gt;= 0.50, 
+ISBLANK(TEXT(Account.H_B_Renewal_Date__c)),
+OR ($RecordType.Name = &apos;Prism PEO Opportunity FSS Record Type&apos; 
+,$RecordType.Name = &apos;Prism PEO Opportunity Record Type&apos;,
+$RecordType.Name = &apos;PEO Opportunity FSS Record Type&apos;,
+$RecordType.Name = &apos;PEO Opportunity Record Type&apos;)
+)
+),
+OR ($User.Job_Name__c = &apos;Sales Representative&apos; 
+,$User.Job_Name__c = &apos;District Sales Manager&apos; 
+,$User.Job_Name__c = &apos;District Sales Assistant&apos; 
+,$User.Job_Name__c = &apos;Area Manager&apos; 
+,$User.Job_Name__c = &apos;Area Assistant&apos; 
+,$User.Job_Name__c = &apos;Zone Manager&apos; 
+,$User.Job_Name__c = &apos;Zone Assistant&apos;), 
+NOT(BEGINS($Profile.Name, &apos;System Administrator&apos;)),
+DATEVALUE(CreatedDate) &gt;= DATE(2019,08,06)
+)</errorConditionFormula>
+    <errorMessage>H&amp;B Renewal Date on Prospect-Client is required.</errorMessage>
+</ValidationRule>

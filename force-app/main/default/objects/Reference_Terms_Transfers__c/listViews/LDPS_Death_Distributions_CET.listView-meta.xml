@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>LDPS_Death_Distributions_CET</fullName>
+    <booleanFilter>1 AND 5 AND 6 AND (2 OR 3 OR 4)</booleanFilter>
+    <columns>NAME</columns>
+    <columns>Current_Step__c</columns>
+    <columns>Date_Time_Opened__c</columns>
+    <columns>Employer_Authorization_to_Distribute__c</columns>
+    <columns>Death_Certificate__c</columns>
+    <columns>Distribution_Paperwork__c</columns>
+    <columns>Case_Lookup__c</columns>
+    <columns>Contact_Name__c</columns>
+    <columns>BIS_ID__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_Terms_Transfers__c.Death_Distribution</value>
+    </filters>
+    <filters>
+        <field>Employer_Authorization_to_Distribute__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Death_Certificate__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Distribution_Paperwork__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>CREATED_DATE</field>
+        <operation>greaterOrEqual</operation>
+        <value>1/1/2021 12:00 AM</value>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>notEqual</operation>
+        <value>No Assets/No Contact</value>
+    </filters>
+    <label>LDPS: Death Distributions - CET</label>
+    <sharedTo>
+        <role>HRS_4S_LDPS_Representative_I</role>
+        <role>HRS_4S_LDPS_Representative_II</role>
+        <role>HRS_4S_LDPS_Supervisor_I</role>
+        <role>HRS_4S_LDPS_Supervisor_II</role>
+    </sharedTo>
+</ListView>

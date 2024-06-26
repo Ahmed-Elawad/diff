@@ -1,0 +1,227 @@
+<!-- Sales to Service Quick Action page.
+ * -------
+ *  01/30/2018  Jermaine Stukes Created
+    03/26/2018  Jermaine Stukes Updated
+    05/31/2018  Jermaine Stukes Added Notification Option
+    07/09/2018  Jermaine Stukes Small css change for lightning
+    08/30/2018  Jermaine Stukes Added change to save button to prevent multiple submissions
+    09/07/2018  Jacob Hinds     Added DNC
+    10/23/2018  Jermaine Stukes Added JS function for Save Button
+    10/31/2018  Jermaine Stukes Added method to New Case button
+    11/01/2018  Lynn Michels    Added Sales2Support
+    11/14/2018  Jermaine Stukes Added S2S to Account
+    11/19/2018  Lynn Michels    Post-imp changes to Sales2Support
+    6/29/2020   Jake Hinds      Adding product multi-select
+    07/14/2020  Jake Hinds      Removing feedback email per Melanie
+-->
+<apex:page controller="CaseS2SController" docType="html-5.0" showHeader="false"> 
+    <body>
+        <style type="text/css">
+            .text1
+            {
+            font-weight: bold;  
+            slds-text-heading_x-small
+            }
+            .textAlert
+            {
+            font-weight: bold; 
+            slds-text-heading_small;
+            color: red;
+            }
+            .textBox1 {
+            width: 95%;
+            padding: 5px;
+            border-radius: 5px;
+            }
+            .bottom
+            {
+            position: absolute; bottom: 50px;
+            }
+            .slds-scope .slds-theme_info, .slds-scope .slds-theme--info
+            {
+                padding: 3px;
+            }
+            .message .messageTable .messageCell {
+                width: 89%
+            }
+        </style>
+        <script type="text/javascript">
+        function SubmitOnClick(objSubmitBtn)
+        {
+            objSubmitBtn.disabled = true;
+            objSubmitBtn.value = 'Submitting…';
+            doSubmit();
+        }
+        </script> 
+        <apex:slds /> 
+        <div class="slds-scope " xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <apex:outputPanel id="displayForm">
+            <apex:form id="form1" >
+                <apex:pageMessages id="msg" rendered="{!displayMessages}" escape="false"/>
+                <div class="slds-box slds-box_xx-small slds-theme_info slds-theme_alert-texture" rendered="{!($User.UIThemeDisplayed == 'Theme3')}">
+                    <label class="{!headerDisplay}"><b>{!headerInfo1}</b></label>
+                    <p><label class="slds-text-body_medium">{!headerInfo2}</label></p>                    
+                </div>
+                <div class ="{!sldsBox}">
+                    <apex:outputPanel id="caseTypeSelection">
+                        <apex:actionRegion rendered="{!If(s2sCase.Type!='Act Support' ,true, false)}"><!--LM moved this section up to here-->
+                            <div class="slds-p-bottom_medium" id='caseTypeField'>
+                                <label class="text1"><abbr class="slds-required">* </abbr>Case Type:</label><br/>
+                                <apex:selectList disabled="{!disableButton}" styleClass="slds-input" value="{!s2sCase.Type}" size="1" >
+                                    <apex:selectOptions value="{!typeOptions}"/>
+                                    <apex:actionsupport event="onchange" action="{!checkS2SObject}" rerender="displayForm,displayRefContact,displayS2S2,displayDNC,feedback" />
+                                </apex:selectList>
+                            </div>
+                        </apex:actionRegion>
+                    </apex:outputPanel>
+                    <apex:actionRegion rendered="{!displayFields}">
+                    <apex:outputPanel id="displayRefContact">
+                    <apex:actionRegion rendered="{!If(s2sCase.Type!='Act Support' ,false, true)}">
+                        <div class="slds-p-bottom_medium">
+                            <label class="text1">Alternate Paychex Contact:</label><br/>
+                            <apex:inputField styleClass="textBox1" value="{!s2sCase.Alternate_Contact__c}" />
+                            </div>
+                            <div class="slds-m-bottom_small">
+                                <label class="text1">Prospect-Client Name:</label><br/>
+                                <apex:inputField styleClass="textBox1" value="{!s2sCase.AccountId}" />
+                            </div>    
+                            <div class="slds-m-bottom_small">
+                                <label class="text1"><abbr class="slds-required">* </abbr>Issue Type:</label><br/>
+                                <apex:inputField styleClass="slds-input" value="{!s2sCase.ACT_Category_1__c}" />
+                            </div>    
+                            <div class="slds-m-bottom_small">
+                                <label class="text1"><abbr class="slds-required">* </abbr>Subject:</label><br/>
+                                <apex:inputField styleClass="slds-input" value="{!s2sCase.Subject}" />
+                            </div> 
+                            <div class="slds-m-bottom_small">
+                                <label class="text1"><abbr class="slds-required">* </abbr>Description:</label><br/>
+                                <apex:inputField styleClass="slds-input" value="{!s2sCase.Description}" />
+                            </div>
+                            <div class="slds-m-bottom_small">
+                                <apex:inputField value="{!s2sCase.Notify_Owner__c}" />
+                                <label class="text1">Send confirmation email to contact</label>
+                            </div>
+                        </apex:actionRegion>
+                    </apex:outputPanel>
+                    <apex:outputPanel id="displayS2S2">
+                        <!--apex:actionRegion rendered="{!If(s2sCase.Type!='Sales2Service' ,false, true)}"-->
+                        <apex:actionRegion rendered="{!OR(s2sCase.Type=='Sales2Service',s2sCase.Type=='Sales2Support')}">
+                            <!--div class="slds-p-bottom_medium" id='caseTypeField'>
+                                <label class="text1"><abbr class="slds-required">* </abbr>Case Type:</label><br/>
+                                <apex:selectList styleClass="slds-input" value="{!s2sCase.Type}" size="1">
+                                    <apex:selectOptions value="{!typeOptions}"/>
+                                    <apex:actionsupport event="onchange" rerender="displayS2S2,displayDNC" />
+                                </apex:selectList>
+                            </div-->
+                            <div class="slds-p-bottom_medium">
+                                <label class="text1">Alternate Paychex Contact:</label><br/>
+                                <apex:inputField styleClass="textBox1" value="{!s2sCase.Alternate_Contact__c}" />
+                            </div>
+                            <!--<div class="slds-grid slds-wrap" style="{!IF(s2sCase.Type=='Sales2Service', IF($User.UIThemeDisplayed == 'Theme3', 'display:-webkit-box', 'display:block'), 'display:none')}">-->
+                            <div class="slds-m-bottom_small" style="{!IF(OR(NOT(showMultiProduct),s2sCase.Type=='Sales2Support'), 'display:block', 'display:none')}">
+                                <label class="text1"><abbr class="slds-required">* </abbr>Product:</label><br/>
+                                <apex:inputField styleClass="slds-input" value="{!s2sCase.Product__c}" />
+                            </div>
+                            <div class="slds-m-bottom_small" style="{!IF(AND(showMultiProduct,s2sCase.Type=='Sales2Service'), 'display:block', 'display:none')}">
+                                <label class="text1"><abbr class="slds-required">* </abbr>Products:</label><br/>
+                                <apex:inputField value="{!s2sCase.Products_Multi__c}" />
+                            </div>
+                            <div class="slds-m-bottom_small">
+                                <label class="text1"><abbr class="slds-required">* </abbr>Issue Type:</label><br/>
+                                <apex:inputField styleClass="slds-input" value="{!s2sCase.Issue_Type__c}" />
+                            </div>                
+                            <!--</div>-->  
+                            <div class="slds-m-bottom_small">
+                                <label class="text1"><abbr class="slds-required">* </abbr>Subject:</label><br/>
+                                <apex:inputField styleClass="slds-input" value="{!s2sCase.Subject}" />
+                            </div> 
+                            <div class="slds-m-bottom_small">
+                                <label class="text1"><abbr class="slds-required">* </abbr>Description:</label><br/>
+                                <apex:inputField styleClass="slds-input" value="{!s2sCase.Description}" />
+                            </div>
+                            <div class="slds-m-bottom_small" style="{!IF(s2sCase.Type=='Sales2Service', 'display:block', 'display:none')}">
+                                <apex:inputField value="{!s2sCase.Notify_Owner__c}" />
+                                <label class="text1">Send confirmation email to contact</label>
+                            </div>
+                        </apex:actionRegion>
+                    </apex:outputPanel>
+                    <apex:outputPanel id="displayDNC">
+                        <apex:actionRegion rendered="{!If(s2sCase.Type!='Do Not Contact',false, true)}">
+                            <!--div class="slds-p-bottom_medium" id='caseTypeField'>
+                                <label class="text1"><abbr class="slds-required">* </abbr>Case Type:</label><br/>
+                                <apex:selectList styleClass="slds-input" value="{!s2sCase.Type}" size="1">
+                                    <apex:selectOptions value="{!typeOptions}"/>
+                                    <apex:actionsupport event="onchange" rerender="displayS2S2,displayDNC" />
+                                </apex:selectList>
+                            </div-->
+                        
+                        
+                        <apex:actionRegion >
+                            <div class="slds-p-bottom_medium">
+                                <label class="text1"><abbr class="slds-required">* </abbr>Sub-Type:</label><br/>
+                                <apex:selectList styleClass="slds-input" value="{!s2sCase.Sub_Type__c}" size="1">
+                                    <apex:selectOptions value="{!subTypeOptions}"/>
+                                    <apex:actionsupport event="onchange" rerender="doNotCallExpDate" />
+                                </apex:selectList>
+                            </div>
+                      </apex:actionRegion>
+                        
+                            <div class="slds-p-bottom_medium">
+                                <label class="text1"><abbr class="slds-required">* </abbr>Reason for Request:</label><br/>
+                                <apex:inputField styleClass="slds-input" value="{!s2sCase.Reason_for_Request__c}"/>
+                            </div>
+                        
+                            <apex:outputPanel id="doNotCallExpDate">
+                           
+                                <div class="slds-p-bottom_medium" style="{!IF(s2sCase.Sub_Type__c=='Do Not Call', 'display:block', 'display:none')}">
+                                    <label class="text1">Expiration Date:</label><br/>
+                                    <apex:inputField styleClass="slds-input" style="width:75%" value="{!s2sCase.Expiration_Date__c}"/>
+                                </div>
+                               
+                            </apex:outputPanel>
+                            
+                            <div class="slds-p-bottom_medium">
+                                <label class="text1"><abbr class="slds-required">* </abbr>Description:</label><br/>
+                                <apex:inputField styleClass="slds-input" value="{!s2sCase.Description}" />
+                            </div>
+                        </apex:actionRegion>
+                    </apex:outputPanel>
+                    <apex:outputPanel id="displayAtt">
+                        <apex:actionRegion rendered="{!Not($User.UIThemeDisplayed == 'Theme4t') || Not(disableButton)}">
+                            <div class="slds-m-bottom_small">
+                                <label class="text1">Attachment:</label><br/>
+                                <apex:inputFile rendered="{!Not(disableButton)}" id="att1" value="{!attachBody}" fileName="{!attachName}" />
+                            </div>
+                            <div class="slds-m-bottom_small">
+                                <label class="text1">Attachment2:</label><br/>
+                                <apex:inputFile rendered="{!Not(disableButton)}" id="att2" value="{!attachBody2}" fileName="{!attachName2}" />
+                            </div>
+                            <div class="slds-m-bottom_small">
+                                <label class="text1">Attachment3:</label><br/>
+                                <apex:inputFile rendered="{!Not(disableButton)}" id="att3" value="{!attachBody3}" fileName="{!attachName3}" />
+                            </div>
+                        </apex:actionRegion>
+                    </apex:outputPanel>
+                    <!-- need to rerender this on type change -->
+                    <!--div rendered="{!If((s2sCase.Type!='Sales2Service' || s2sCase.Type!='Act Support'),false, true)}"-->
+                    <!--<apex:outputPanel id="feedback">
+                        <apex:actionRegion rendered="{!If(s2sCase.Type=='Sales2Service' ,true, false) || If(s2sCase.Type=='Act Support' ,true, false)}">
+                                              
+                            <apex:outputText value="{!feedbackMessage}"></apex:outputText>
+                            <apex:outputLink value="mailto:s2s_feedback@paychex.com?subject=S2S Salesforce Tool Feedback">s2s feedback@paychex.com</apex:outputLink>
+            
+                        </apex:actionRegion>
+                    </apex:outputPanel>  -->
+                    <!--div class="{!If($User.UIThemeDisplayed == 'Theme3','slds-docked-form-footer slds-theme_info slds-theme_alert-texture', 'slds-theme_info slds-theme_alert-texture')}   slds-align_absolute-center"--> 
+                    <div class="slds-box slds-box_xx-small slds-theme_info slds-theme_alert-texture">
+                        <apex:commandButton styleClass="slds-button {!buttonStyle} slds-align_absolute-center" rendered="{!Not(disableButton)}" value="Save Case" id="Submit" onclick="SubmitOnClick(this);" />
+                        <apex:commandButton styleClass="slds-button {!buttonStyle} slds-align_absolute-center" rendered="{!disableButton}" value="Create Another Case" action="{!reload}" />
+                        <apex:actionFunction name="doSubmit" action="{!saveKase}" />
+                    </div>
+                    </apex:actionRegion>
+                </div>
+            </apex:form>
+            </apex:outputPanel>
+        </div>
+    </body>
+</apex:page>

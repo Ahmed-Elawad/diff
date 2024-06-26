@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Paychex_Employee_Contact_Lockout_Rule</fullName>
+    <active>true</active>
+    <description>Prevent non Sys Admin from editing the Paychex Inc SA employee contact records. Added Safety DA - based on the HR Person Id field</description>
+    <errorConditionFormula>NOT(ISNEW()) &amp;&amp; NOT($Profile.Name = &apos;Insurance Compliance&apos;) &amp;&amp; ( HR_Person_Id__c != null || PRIORVALUE(HR_Person_Id__c) != null) &amp;&amp; NOT(BEGINS( $Profile.Name , &quot;System Administrator&quot;) ) &amp;&amp; NOT(BEGINS( $Profile.Name , &quot;2008-09 HRS Premier Safety Delegated Admin&quot;) ) &amp;&amp;
+NOT (BEGINS( $Profile.Name , &quot;Salesforce Support&quot;) )</errorConditionFormula>
+    <errorMessage>**** THIS CONTACT RECORD CAN NOT BE EDITED ****</errorMessage>
+</ValidationRule>

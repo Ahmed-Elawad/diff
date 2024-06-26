@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reason_for_Delete_required</fullName>
+    <active>true</active>
+    <description>case# 20316596 - automating delete process for Leads</description>
+    <errorConditionFormula>if (NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)) &amp;&amp; To_Be_Deleted__c = true &amp;&amp; ISBLANK(TEXT(Reason_for_Delete__c)) ,true, false)</errorConditionFormula>
+    <errorDisplayField>To_Be_Deleted__c</errorDisplayField>
+    <errorMessage>You must select a Reason for Delete if you check the To Be Deleted box.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MyOldNSSOpportunities</fullName>
+    <booleanFilter>(1 or 2) AND 3</booleanFilter>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>OPPORTUNITY.CLOSE_DATE</columns>
+    <columns>NSS_Flag__c</columns>
+    <columns>NSS_Source__c</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>Close_Probability__c</columns>
+    <columns>OPPORTUNITY.AMOUNT</columns>
+    <columns>Primary_Competition__c</columns>
+    <columns>NSS_Rep__c</columns>
+    <columns>Local_Competitors__c</columns>
+    <columns>OPPORTUNITY.CREATED_DATE</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>OPPORTUNITY.LEAD_SOURCE</field>
+        <operation>contains</operation>
+        <value>National Sales Support,Corporate Marketing</value>
+    </filters>
+    <filters>
+        <field>NSS_Source__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.CLOSE_DATE</field>
+        <operation>notEqual</operation>
+        <value>LAST_90_DAYS</value>
+    </filters>
+    <label>My NSS Opps 90 days or Older</label>
+    <sharedTo>
+        <group>CORE</group>
+        <group>HNBF</group>
+        <group>HRSSales</group>
+        <group>MMS</group>
+    </sharedTo>
+</ListView>

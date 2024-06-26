@@ -1,0 +1,185 @@
+<!-- Allow users to lookup a zip code and see the reps assigned to it..
+
+   History
+   -------
+   04/04/2012 Dan Carmen   Created 
+   03/26/2013 Dan Carmen   Update contact point for DSM/DSA change
+   05/19/2016 Frank Lurz   Removed 3 NSS-related FAQ links per Case 21223783
+ -->
+<apex:page controller="ZipCodeLookupController"
+           tabStyle="Zip_Code_Lookup__tab" >
+
+      <style type="text/css">
+        .helpPanel {background-color:yellow; width:100%; border:2px solid black; text-align:center;}
+        .helpPanelText {color: blue; font-weight: bold; text-align:center; font-size: 16pt;}
+        .faqText {font-weight: bold; font-size: 12pt;}
+      </style>
+
+   <apex:form >
+    <apex:sectionHeader title="Sales Rep Assignment By Zip Code" />
+      <apex:pageBlock id="zipCodeBlock">
+         <apex:pageMessages />
+         <apex:pageBlockSection columns="1">
+            <!-- Trying this out - not sure it works correctly
+            <apex:actionStatus id="enterZipCodeStatus">
+               <apex:facet name="stop">
+                  <apex:pageBlockSectionItem >
+                     <apex:outputLabel value="Please enter a zip code" />
+                     <apex:inputField value="{!zipLookup.Zip_Code__c}">
+                       <apex:actionSupport event="onchange" action="{!queryZipCodes}" rerender="zipCodeBlock" status="enterZipCodeStatus"/>
+                     </apex:inputField>
+                  </apex:pageBlockSectionItem>
+               </apex:facet>
+               <apex:facet name="start">
+                  <apex:pageBlockSectionItem >
+                     <apex:outputLabel value="Querying zip code" />
+                     <apex:outputField value="{!zipLookup.Zip_Code__c}">
+                     </apex:outputField>
+                  </apex:pageBlockSectionItem>
+               </apex:facet>
+            </apex:actionStatus>
+             -->
+            <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Please enter a zip code" />
+               <apex:outputPanel >
+                  <apex:inputText size="5" value="{!zipCodeQuery}">
+                     <apex:actionSupport event="onchange"  action="{!queryZipCodes}" rerender="zipCodeBlock" status="zipQueryStatus"/>
+                  </apex:inputText>
+                  &nbsp;&nbsp;
+                  <apex:commandButton action="{!queryZipCodes}" value="Search Zip Codes" styleClass="btn" rerender="zipCodeBlock" status="zipQueryStatus" />
+               </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            <apex:actionStatus startText="Querying Zip Code..." id="zipQueryStatus"/>
+         </apex:pageBlockSection>
+         
+         <apex:pageBlockSection rendered="{!hasZipInfo}" title="Zip Code Information">
+            <apex:outputField value="{!zipInfo.City__c}" />
+            <apex:outputField value="{!zipInfo.County__c}" />
+            <apex:outputField value="{!zipInfo.State__c}" />
+            <apex:outputField value="{!zipInfo.AreaCode__c}" />
+         </apex:pageBlockSection>
+         
+         <apex:pageBlockSection rendered="{!hasResults}" columns="1" id="resultsSection" title="Sales Rep Information">
+
+               <apex:outputPanel rendered="{!showAllColumns}">
+                  <apex:image url="{!URLFOR($Resource.Tree_Images, 'collapse2.png')}" width="15" height="15" alt="Collapse" title="Click to hide the extra columns" >
+                        <apex:actionSupport event="onclick" action="{!toggleShowAllColumns}" rerender="resultsSection" status="statusHideColumns">
+                        </apex:actionSupport>
+                  </apex:image>
+                  &nbsp; 
+                  <apex:commandLink action="{!toggleShowAllColumns}" value="Hide Columns" immediate="true" rerender="resultsSection" status="statusHideColumns"/>
+                  &nbsp;&nbsp;
+                  <apex:actionStatus startText="Hiding Columns..." id="statusHideColumns"/>
+               </apex:outputPanel>
+               
+               <apex:outputPanel rendered="{!NOT(showAllColumns)}">
+                  <apex:image url="{!URLFOR($Resource.Tree_Images, 'expand2.png')}" width="15" height="15" alt="Expand" title="Click to display all columns">
+                        <apex:actionSupport event="onclick" action="{!toggleShowAllColumns}" rerender="resultsSection" status="statusExpandColumns">
+                        </apex:actionSupport>
+                  </apex:image>
+                  &nbsp;  
+                  <apex:commandLink action="{!toggleShowAllColumns}" value="Show All Columns" rerender="resultsSection" status="statusExpandColumns"/>
+                  &nbsp;&nbsp;
+                  <apex:actionStatus startText="Expanding Table..." id="statusExpandColumns"/>
+               </apex:outputPanel>
+
+            <apex:pageBlockTable id="salesRepTable" value="{!zipResults}" var="rec" cellPadding="4" border="1">
+               <apex:column headerValue="Product">
+                  <apex:outputText value="{!rec.product}" />
+               </apex:column>
+
+               <apex:column headerValue="Tier">
+                  <apex:outputField value="{!rec.zipSeg.Name}" />
+               </apex:column>
+
+               <apex:column rendered="{!showAllColumns}" headerValue="Emps Min">
+                  <apex:outputField value="{!rec.zipSeg.Emps_Min__c}" />
+               </apex:column>
+
+               <apex:column rendered="{!showAllColumns}" headerValue="Emps Max">
+                  <apex:outputField value="{!rec.zipSeg.Emps_Max__c}" />
+               </apex:column>
+
+               <apex:column headerValue="Rep Name">
+                  <apex:outputText value="{!rec.repName}" />
+               </apex:column>
+
+               <apex:column rendered="{!showAllColumns}" headerValue="Rep Email">
+                  <apex:outputText value="{!rec.repEmail}" />
+               </apex:column>
+
+               <apex:column headerValue="District">
+                  <apex:outputText value="{!rec.district.Name}" />
+               </apex:column>
+
+               <apex:column rendered="{!showAllColumns}" headerValue="District Name">
+                  <apex:outputText value="{!rec.district.Org_Unit_Name__c}" />
+               </apex:column>
+
+               <apex:column headerValue="Sls Ofc">
+                  <apex:outputText value="{!rec.salesOfficeNbr}" />
+               </apex:column>
+
+               <apex:column headerValue="DSM Name">
+                  <apex:outputText value="{!rec.manager.fullName}" />
+               </apex:column>
+
+               <apex:column headerValue="DSM Email">
+                  <apex:outputText value="{!rec.manager.email}" />
+               </apex:column>
+
+               <apex:column headerValue="DSA/FSS Name">
+                  <apex:outputText value="{!rec.assistant.fullName}" />
+               </apex:column>
+               
+               <apex:column headerValue="DSA/FSS Email">
+                  <apex:outputText value="{!rec.assistant.email}" />
+               </apex:column>
+               
+            </apex:pageBlockTable>
+         </apex:pageBlockSection>
+<!-- 
+         <apex:pageBlockSection rendered="{!hasResults}" columns="1" title="Sales Rep Information">
+            <apex:pageBlockTable id="zipTable" value="{!queryResults}" var="rec" cellPadding="4" border="1">
+               <apex:column headerValue="Product">
+                  <apex:outputText value="{!rec.product}" />
+               </apex:column>
+
+               <apex:column headerValue="Rep Name">
+                  <apex:outputText value="{!rec.repName}" />
+               </apex:column>
+
+               <apex:column headerValue="Sales Office">
+                  <apex:outputText value="{!rec.salesOfficeNbr}" />
+               </apex:column>
+
+               <apex:column headerValue="Sales Office Name">
+                  <apex:outputText value="{!rec.salesOfficeName}" />
+               </apex:column>
+
+               <apex:column headerValue="DSM Name">
+                  <apex:outputText value="{!rec.dsmName}" />
+               </apex:column>
+
+               <apex:column headerValue="DSA/FSS Name">
+                  <apex:outputText value="{!rec.dsaName}" />
+               </apex:column>
+               
+            </apex:pageBlockTable>
+         </apex:pageBlockSection>
+      -->
+      
+      <apex:pageBlockSection columns="1" id="nssInfo">
+         <apex:panelGrid styleClass="helpPanel" >
+             <br/>
+             <apex:outputText styleClass="helpPanelText" value="If a territory sales rep, DSA, or DSM is incorrect or missing " />
+             <apex:outputText styleClass="helpPanelText" value="please have the DSM or DSA correct it in Salesforce in the Manage Zip Assignment tabs." />
+             <apex:outputText styleClass="helpPanelText" value="The user must have access to the district to make those changes." />
+             <br/>
+  
+         </apex:panelGrid>
+      </apex:pageBlockSection>         
+
+      </apex:pageBlock>
+   </apex:form>
+</apex:page>

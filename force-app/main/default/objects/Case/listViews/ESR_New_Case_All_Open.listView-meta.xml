@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ESR_New_Case_All_Open</fullName>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>OWNER_NAME</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>Current_Step__c</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>CASES.PRIORITY</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.ESR</value>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Cancelled,Closed,Closed - Rejected,Completed,Client Unresponsive,Refused</value>
+    </filters>
+    <filters>
+        <field>CASES.ORIGIN</field>
+        <operation>notEqual</operation>
+        <value>Email-to-Case ESR New Case</value>
+    </filters>
+    <filters>
+        <field>OWNER_NAME</field>
+        <operation>notEqual</operation>
+        <value>Agency ESR New Case</value>
+    </filters>
+    <label>ESR: New Case All Open</label>
+    <sharedTo>
+        <roleAndSubordinates>DirectorHBOperations</roleAndSubordinates>
+        <roleAndSubordinates>ESR_Operations_Manager</roleAndSubordinates>
+        <roleAndSubordinates>ESR_Service_Center_Manager</roleAndSubordinates>
+    </sharedTo>
+</ListView>

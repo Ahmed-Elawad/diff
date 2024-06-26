@@ -1,0 +1,93 @@
+<aura:component description="ReferralAccountBanner" controller="ObjectBannerAuraService">
+    <aura:attribute name="referralAccountId" type="Id" required="true" />
+    <aura:attribute name="bannerSettings" type="Object" required="true" />
+
+    <aura:attribute name="referralAccountWrapper" type="Object" />
+    <aura:attribute name="hasSensitiveReferralContacts" type="Boolean" />
+    <aura:attribute name="engagementTextDisplayList" type="Object" />
+
+    <aura:attribute name="sensitivityList" type="string" />    
+ 
+    <aura:attribute name="referralAccount" type="Object" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <aura:dependency resource="markup://force:editRecord" type="EVENT" />
+    <aura:dependency resource="markup://force:createRecord" type="EVENT" />
+    <aura:handler event="force:refreshView" action="{!c.doInit}" />
+
+    <aura:attribute name="hasPermission" type="Boolean" default="false"/>
+
+    <aura:attribute name="CurrentUser" type="Object"/>
+<force:recordData recordId="{!$SObjectType.CurrentUser.Id}"
+                  fields="Profile.Name"
+                  targetFields="{!v.CurrentUser}"/>
+    
+    <force:recordData aura:id="referralAccountLoader"
+                      fields="Id,Name,LastActivityDate,Referral_Source_Business_Type__c , Sensitivity_List__c,In_Cadence__c,CadenceType__c,LastCadenceName__c,LastCadenceClosedType__c"
+                      recordId="{!v.referralAccountId}"                      
+                      targetFields="{!v.referralAccount}"
+                      mode="VIEW" />    
+    
+
+    <div class="slds-tile__detail">
+        <div class="grid-wrapper">
+
+            <!-- Referral Business Type 
+            <c:BannerBusinessType referralBusinessType="{!v.referralAccountWrapper.ReferralAccount.Referral_Source_Business_Type__c}" />
+			-->
+            <!-- Referral Type -->
+            <c:BannerReferralType referralType="{!v.referralAccountWrapper.ReferralAccount.Referral_Type__c}" businessType="{!v.referralAccountWrapper.ReferralAccount.Referral_Source_Business_Type__c}" referralPaymentProgramName="{!v.referralAccountWrapper.ReferralAccount.Referral_Payment_Program_Name__c}" recordTypeName="{!v.referralAccountWrapper.ReferralAccount.Ref_Record_Type_Name__c}" />
+            
+            <!-- CPA Program Status -->
+            <aura:if isTrue="{!and(or(v.CurrentUser.Profile.Name == 'System Administrator' || v.CurrentUser.Profile.Name == 'Sales Enablement' || $Label.c.Accountant_Program_Require_Permission == 'No' || $Label.c.Accountant_Program_Require_Permission == 'NO' || v.hasPermission == true))}">
+
+            <aura:if isTrue="{!or(v.referralAccountWrapper.ReferralAccount.Referral_Source_Business_Type__c == 'Accounting Firm',v.referralAccountWrapper.ReferralAccount.Referral_Source_Business_Type__c =='Strategic Accountant Firm')}">
+            	<c:BannerCPAProgramStatus status="{!v.referralAccountWrapper.ReferralAccount.CPA_Program_Status__c}" tier="{!v.referralAccountWrapper.ReferralAccount.MutualClientTier__c}"/>
+            </aura:if>
+            </aura:if>
+           <!-- Product Sensitivity -->
+          <!--  <aura:if isTrue="{!or(v.referralAccountWrapper.ReferralAccount.Sensitivity_List__c, v.hasSensitiveReferralContacts)}">
+                <c:BannerProductSensitivity />
+            </aura:if> -->
+<!--
+			<aura:if isTrue="{!v.referralAccount.Sensitivity_List__c.length>0}">
+                <c:BannerProductSensitivity sensitivityList ="{!v.referralAccount.Sensitivity_List__c}" />
+            </aura:if> -->
+            
+            <!-- In Cadence -->
+            <aura:if isTrue="{!v.referralAccount.In_Cadence__c}">
+                <c:BannerInCadence record="{!v.referralAccount}" recordId="{!v.referralAccount.Id}" cadenceType="{!v.referralAccount.CadenceType__c}" cadenceName="{!v.referralAccount.LastCadenceName__c}"/>
+            </aura:if>
+
+            <aura:if isTrue = "{!v.sensitivityList.length>0}"> 
+                <c:BannerProductSensitivity sensitivityList = "{!v.sensitivityList}"/> 
+            </aura:if>
+
+            <!-- Engaged -->
+            <aura:if isTrue="{!v.engagementTextDisplayList.length > 0}">
+                <c:BannerEngaged engagementTextDisplayList="{!v.engagementTextDisplayList}" />
+            </aura:if>
+
+			 <!-- Activity -->
+           <aura:if isTrue="{!or(and(!v.bannerSettings.Referral_Contact_Show_Activities_If_None__c, v.referralAccountWrapper.OpenActivities.length>0), v.bannerSettings.Referral_Contact_Show_Activities_If_None__c)}"> 
+               <c:BannerOpenActivities recordId="{!v.referralAccountId}" openActivities="{!v.referralAccountWrapper.OpenActivities}" lastActivityDate="10/01/2018" />
+            </aura:if>               
+
+            <!-- Open Cases -->
+            <aura:if isTrue="{!or(and(!v.bannerSettings.Ref_Acct_Cases_If_Zero__c, v.referralAccountWrapper.OpenCases.length > 0), v.bannerSettings.Ref_Acct_Cases_If_Zero__c)}">
+                <c:BannerOpenCases recordId="{!v.referralAccountId}" openCases="{!v.referralAccountWrapper.OpenCases}" caseType="Referral Account"  objectType="Referral_Account__c" />
+            </aura:if>
+
+            <!-- Open Opportunities -->
+            <aura:if isTrue="{!or(and(!v.bannerSettings.Ref_Acct_Opps_If_Zero__c, v.referralAccountWrapper.OpenOpportunities.length > 0), v.bannerSettings.Ref_Acct_Opps_If_Zero__c)}">
+                <c:BannerOpenOpportunities recordId="{!v.referralAccountId}" openOpportunities="{!v.referralAccountWrapper.OpenOpportunities}" opportunityType="Referral Account" objectType="Referral_Account__c" />
+            </aura:if>
+
+            <!-- Mutual Clients -->
+            <aura:if isTrue="{!or(and(!v.bannerSettings.Ref_Acct_Mutual_Clients_If_Zero__c, v.referralAccountWrapper.MutualClientCount > 0), v.bannerSettings.Ref_Acct_Mutual_Clients_If_Zero__c)}">
+                <c:BannerMutualClients recordId="{!v.referralAccountId}" mutualClientCount="{!v.referralAccountWrapper.MutualClientCount}" objectType="Referral_Account__c" businessType="{!v.referralAccountWrapper.ReferralAccount.Referral_Source_Business_Type__c}"/>
+            </aura:if>
+        </div>
+    </div>
+</aura:component>

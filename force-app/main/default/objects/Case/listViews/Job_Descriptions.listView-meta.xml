@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Job_Descriptions</fullName>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>Branch_Client_ID__c</columns>
+    <columns>Total_Job_Descriptions_Received__c</columns>
+    <columns>Job_Description_Titles__c</columns>
+    <columns>HR_Services_Due_Date__c</columns>
+    <columns>HRS_Advisor__c</columns>
+    <columns>HRG_Sales_Rep__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.Service_Support_HR_Services_Job_Desc_Case</value>
+    </filters>
+    <filters>
+        <field>Sent_to_HRG_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Complete,Closed</value>
+    </filters>
+    <filters>
+        <field>Send_JD_Completed_Email__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <label>Job Descriptions</label>
+    <sharedTo>
+        <role>HRE_Handbook_Rep_team_1</role>
+        <role>HRE_Handbook_Rep_team_2</role>
+        <role>HRE_Handbook_Rep_team_3</role>
+        <role>HRE_Handbook_Supervisor_team_1</role>
+        <role>HRE_Handbook_Supervisor_team_2</role>
+        <role>HRE_Handbook_Supervisor_team_3</role>
+        <roleAndSubordinates>HRE_HR_Services_Supervisor_team_1</roleAndSubordinates>
+        <roleAndSubordinates>HRE_HR_Services_Supervisor_team_2</roleAndSubordinates>
+    </sharedTo>
+</ListView>

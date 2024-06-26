@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cannot_Remove_Latest_Campaign_from_Lead</fullName>
+    <active>true</active>
+    <description>some campaigns are being removed from the lead before convert, fixing as a result of support ticket  INC1749635</description>
+    <errorConditionFormula>ISCHANGED(LatestCampaign__c)&amp;&amp; ISBLANK(LatestCampaign__c)&amp;&amp;NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))</errorConditionFormula>
+    <errorMessage>You cannot remove the latest campaign once its been entered.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sensitivity_List__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>IF ( Sensitivity_401_k__c, &quot;401k&quot;, &quot;&quot;)
+&amp; IF ( Sensitivity_FSA__c, IF (Sensitivity_401_k__c, &quot;, &quot;,&quot;&quot;) &amp; &quot;FSA&quot;, &quot;&quot;)
+&amp; IF ( Sensitivity_PAO__c, IF (OR(Sensitivity_401_k__c,Sensitivity_FSA__c), &quot;, &quot;,&quot;&quot;) &amp; &quot;PAO&quot;, &quot;&quot;)
+&amp; IF ( Sensitivity_Health_Ins__c, IF (OR(Sensitivity_401_k__c,Sensitivity_FSA__c,Sensitivity_PAO__c), &quot;, &quot;,&quot;&quot;) &amp; &quot;Health Insurance&quot;, &quot;&quot;)
+&amp; IF ( Sensitivity_Sales_Tax__c, IF (OR(Sensitivity_401_k__c,Sensitivity_FSA__c,Sensitivity_PAO__c, Sensitivity_Health_Ins__c), &quot;, &quot;,&quot;&quot;) &amp; &quot;Sales Tax&quot;, &quot;&quot;)
+&amp; IF ( Sensitivity_Wrks_Comp__c, IF (OR(Sensitivity_401_k__c,Sensitivity_FSA__c,Sensitivity_PAO__c, Sensitivity_Health_Ins__c,Sensitivity_Sales_Tax__c), &quot;, &quot;,&quot;&quot;) &amp; &quot;Workers Comp&quot;, &quot;&quot;)
+&amp; IF ( Sensitivity_Credit_Card_Processing__c, IF (OR(Sensitivity_401_k__c,Sensitivity_FSA__c,Sensitivity_PAO__c, Sensitivity_Health_Ins__c,Sensitivity_Sales_Tax__c, Sensitivity_Wrks_Comp__c), &quot;, &quot;,&quot;&quot;) &amp; &quot;Credit Card Processing&quot;, &quot;&quot;)
+&amp; IF ( Sensitivity_BenAdmin__c, IF (OR(Sensitivity_401_k__c,Sensitivity_FSA__c,Sensitivity_PAO__c, Sensitivity_Health_Ins__c,Sensitivity_Sales_Tax__c, Sensitivity_Wrks_Comp__c, Sensitivity_Credit_Card_Processing__c), &quot;, &quot;,&quot;&quot;) &amp; &quot;BenAdmin&quot;, &quot;&quot;)
+&amp; IF ( Sensitivity_Recruiting__c, IF (OR(Sensitivity_401_k__c,Sensitivity_FSA__c,Sensitivity_PAO__c, Sensitivity_Health_Ins__c,Sensitivity_Sales_Tax__c, Sensitivity_Wrks_Comp__c, Sensitivity_Credit_Card_Processing__c, Sensitivity_BenAdmin__c), &quot;, &quot;,&quot;&quot;) &amp; &quot;Recruiting&quot;, &quot;&quot;)
+&amp; IF ( Sensitivity_Onboarding__c, IF (OR(Sensitivity_401_k__c,Sensitivity_FSA__c,Sensitivity_PAO__c, Sensitivity_Health_Ins__c,Sensitivity_Sales_Tax__c, Sensitivity_Wrks_Comp__c, Sensitivity_Credit_Card_Processing__c, Sensitivity_BenAdmin__c, Sensitivity_Recruiting__c), &quot;, &quot;,&quot;&quot;) &amp; &quot;Onboarding&quot;, &quot;&quot;)
+&amp; IF ( Sensitivity_ERTC__c, IF (OR(Sensitivity_401_k__c,Sensitivity_FSA__c,Sensitivity_PAO__c, Sensitivity_Health_Ins__c,Sensitivity_Sales_Tax__c, Sensitivity_Wrks_Comp__c, Sensitivity_Credit_Card_Processing__c, Sensitivity_BenAdmin__c, Sensitivity_Recruiting__c, Sensitivity_Onboarding__c), &quot;, &quot;,&quot;&quot;) &amp; &quot;ERTC&quot;, &quot;&quot;)</formula>
+    <inlineHelpText>A List of all of the sensitivities</inlineHelpText>
+    <label>Sensitivity List</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

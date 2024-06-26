@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PEO_Future_Renewal_Stage_Required_Fields</fullName>
+    <active>true</active>
+    <description>PEO Future Renewal Stage Required Fields</description>
+    <errorConditionFormula>AND(
+ISCHANGED( StageName),
+ISPICKVAL(StageName,&apos;Future Renewal&apos;),
+Contains($Label.OpptyRecordTypeForPEOFutureRenewalStageRequiredFields,$RecordType.DeveloperName),
+ OR(
+ISPICKVAL(Account.H_B_Renewal_Date__c,&apos;&apos;),
+ISBLANK(Account.H_B_Carrier__c),
+ISPICKVAL(Account.PEO_Target_Field__c,&apos;&apos;),
+ISBLANK(Follow_Up_Date__c),
+ISPICKVAL(Payroll_Current_Prior_Method__c,&apos;&apos;),
+ISBLANK(NextStep)
+) 
+)</errorConditionFormula>
+    <errorMessage>The following fields must be populated: H&amp;B Renewal Date, H&amp;B Carrier, PEO Target, Payroll Current-Prior Method, Follow Up Date, and Next Step</errorMessage>
+</ValidationRule>

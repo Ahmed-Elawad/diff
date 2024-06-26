@@ -1,0 +1,113 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes" access="global" >
+    
+    <!-- auto save -->
+    <aura:registerEvent name='autoSave' type='c:CommunityFormsAutoSave' />
+    <aura:attribute name='autoSaveRecords' type='map' />
+    
+    <aura:attribute name='serviceIndustryRec' type='Object' />
+    <aura:attribute name='radioGroupOptions' type='List' default="[{'label': 'Yes', 'value':'Yes'},{'label':'No','value':'No'}]" />
+    <aura:attribute name='radioOptionsSold' type='List' default="[{'label': 'Storefront', 'value':'Storefront'},{'label':'Internet','value':'Internet'},{'label':'Both','value':'Both'}]" />
+    <aura:attribute name="dontAllowChanges" type="Boolean" default="true" />
+    <aura:attribute name="parentAccount" type="Account"/>
+    <aura:attribute name="allAccounts" type="Account[]" />
+    
+    <aura:method name="validateFields" action="{!c.validate}" access="public"/>
+    
+    <lightning:layout multipleRows="true">
+        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+            <lightning:input aura:id="isqQue" disabled='{!v.dontAllowChanges}' 
+                             name='Type_of_vehicles_worked_on__c'
+                             onchange='{!c.handleChange}'
+                             label="What type of vehicles are worked on (i.e. car, motorcycle, boat, RV, tractor trailers)?"
+                             value="{!v.serviceIndustryRec.Type_of_vehicles_worked_on__c}" />
+            <lightning:radioGroup aura:id="isqQue" disabled='{!v.dontAllowChanges}' 
+                                  name='Towing_or_Road_side_services_offered__c'
+                                  label="Are towing services offered or roadside assistance?"
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.serviceIndustryRec.Towing_or_Road_side_services_offered__c}" />
+            <!--aura:if isTrue="{!v.serviceIndustryRec.Towing_or_Road_side_services_offered__c=='Yes'}">
+                <lightning:input disabled='{!v.dontAllowChanges}' 
+                                 type='Number'
+                                 name='Towing_Service_Radius_in_Miles__c'
+                                 label="What is the radius of travel in miles?"
+                                 onchange='{!c.handleChange}'
+                                 value="{!v.serviceIndustryRec.Towing_Service_Radius_in_Miles__c}" />
+                <lightning:input disabled='{!v.dontAllowChanges}' 
+                                 type='Number'
+                                 name='Number_of_owned_tilted_bed_trucks__c'
+                                 label="How many tilt-bed or tow trucks are owned?"
+                                 onchange='{!c.handleChange}'
+                                 value="{!v.serviceIndustryRec.Number_of_owned_tilted_bed_trucks__c}" />
+            </aura:if-->
+            <lightning:radioGroup aura:id="isqQue" disabled='{!v.dontAllowChanges}' 
+                                  name='Clerical_emp_removed_from_repair_area__c'
+                                  label="Are all the clerical employees completely removed by four full walls from the repair shop area?"
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.serviceIndustryRec.Clerical_emp_removed_from_repair_area__c}" />
+            <lightning:radioGroup aura:id="isqQue" disabled='{!v.dontAllowChanges}' 
+                                  name='Employs_estimators_to_inspct_vehicles__c'
+                                  label="Do you employ service writers or estimators that inspect vehicles for repair purposes and pricing?"
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.serviceIndustryRec.Employs_estimators_to_inspct_vehicles__c}" />
+            <!--lightning:input disabled='{!v.dontAllowChanges}' 
+                             name='How_are_unused_materials_disposed__c'
+                             label="How are used tires, automotive fluids, batteries, motor oil, and soiled uniforms or rags disposed of?"
+                             onchange='{!c.handleChange}'
+                             value="{!v.serviceIndustryRec.How_are_unused_materials_disposed__c}" /-->
+        </lightning:layoutItem>
+        <!-- right side of layout questions -->
+        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+            <!--lightning:radioGroup disabled='{!v.dontAllowChanges}' 
+                                  name='Do_employees_ever_test_drive_vehicles__c'
+                                  label="Do employees ever test drive vehicles?"
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.serviceIndustryRec.Do_employees_ever_test_drive_vehicles__c}" /-->
+            <lightning:radioGroup aura:id="isqQue" disabled='{!v.dontAllowChanges}' 
+                                  name='Does_this_risk_do_any_parts_delivery__c'
+                                  label="Do any employees drive to pick up parts from or deliver parts to a different location?"
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.serviceIndustryRec.Does_this_risk_do_any_parts_delivery__c}" />
+            <lightning:input aura:id="isqQue" disabled='{!v.dontAllowChanges}' 
+                             name='Type_of_protective_equipment_used_on_job__c'
+                             label="What specific personal protective equipment and/or Safety Equipment is used on the job?"
+                             onchange='{!c.handleChange}'
+                             value="{!v.serviceIndustryRec.Type_of_protective_equipment_used_on_job__c}" />
+            
+            <lightning:radioGroup aura:id="isqQue" disabled='{!v.dontAllowChanges}' 
+                                  name='Do_you_service_repair_heavy_truck_engine__c'
+                                  label="Do you service or repair heavy truck engines or tires?"
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.serviceIndustryRec.Do_you_service_repair_heavy_truck_engine__c}" />
+            
+            <aura:if isTrue="{!v.serviceIndustryRec.Do_you_service_repair_heavy_truck_engine__c=='Yes'}">
+                <lightning:radioGroup aura:id="isqQue" disabled='{!v.dontAllowChanges}' 
+                                      name='Is_tire_cage_utilized__c'
+                                      label="Is tire cage utilized?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange='{!c.handleChange}'
+                                      value="{!v.serviceIndustryRec.Is_tire_cage_utilized__c}" /> 
+            </aura:if> 
+            
+            <!--lightning:radioGroup disabled='{!v.dontAllowChanges}' 
+                                  name='Flammable_substances_stored_in_shop__c'
+                                  label="Are there any flammable substances stored in the repair shop?"
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.serviceIndustryRec.Flammable_substances_stored_in_shop__c}" />
+            <aura:if isTrue="{!v.serviceIndustryRec.Flammable_substances_stored_in_shop__c=='Yes'}">
+                <lightning:radioGroup disabled='{!v.dontAllowChanges}' 
+                                      name='Flammable_in_safe_distance_from_ignition__c'
+                                      label="Are all flammable substances stored at a safe distance from potential ignition sources?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange='{!c.handleChange}'
+                                      value="{!v.serviceIndustryRec.Flammable_in_safe_distance_from_ignition__c}" />
+            </aura:if-->
+        </lightning:layoutItem>
+    </lightning:layout>
+</aura:component>

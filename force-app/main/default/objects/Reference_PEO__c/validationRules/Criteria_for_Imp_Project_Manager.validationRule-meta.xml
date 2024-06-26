@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Criteria_for_Imp_Project_Manager</fullName>
+    <active>true</active>
+    <description>PEO Implementation Project Manager Notification process builder errors when the HRG or the Sales Rep is not populated when the Imp Proj Manger is populated, this rule will prevent that error.</description>
+    <errorConditionFormula>AND(NOT(ISBLANK(Implementation_Project_Manager__c)),
+ISBLANK(Sales_Rep__c),
+ISBLANK(HRG__c))</errorConditionFormula>
+    <errorDisplayField>Implementation_Project_Manager__c</errorDisplayField>
+    <errorMessage>The HRG or Sales Rep must be populated before populating this field.</errorMessage>
+</ValidationRule>

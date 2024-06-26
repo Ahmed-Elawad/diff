@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRE_Prmry_Contact_Name_when_Set_Up_Cmplt</fullName>
+    <active>true</active>
+    <description>&apos;Primary Contact Name&apos; must be entered before &apos;Set up Complete&apos; can be checked.</description>
+    <errorConditionFormula>AND(
+( Set_Up_Complete__c = TRUE ),
+( ISBLANK(Primary_Contact_Name__c) ),
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)))
+)</errorConditionFormula>
+    <errorDisplayField>Primary_Contact_Name__c</errorDisplayField>
+    <errorMessage>&apos;Primary Contact Name&apos; must be entered before &apos;Set up Complete&apos; can be checked.</errorMessage>
+</ValidationRule>

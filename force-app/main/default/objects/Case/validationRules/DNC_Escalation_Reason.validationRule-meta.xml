@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DNC_Escalation_Reason</fullName>
+    <active>true</active>
+    <description>You must fill in the Reason for Escalation field when escalating this case</description>
+    <errorConditionFormula>NOT(BEGINS($Profile.Name,&apos;System Admin&apos;))&amp;&amp;
+RecordType.Name = &apos;Sales Support Cases Record Type&apos; &amp;&amp;
+IsEscalated = true &amp;&amp;
+ISBLANK(Reason_for_escalation__c)</errorConditionFormula>
+    <errorMessage>You must fill in the Reason for Escalation field when escalating this case</errorMessage>
+</ValidationRule>

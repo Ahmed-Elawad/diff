@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Days_1st_Payroll__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description># DAYS it took for 1st payroll to be completed after Training</description>
+    <externalId>false</externalId>
+    <formula>If(ISNULL(X1st_Payroll_Complete_Date__c), 
+
+(today() - datevalue(Training_Complete_Date__c
+) - 2*( floor((today() - DATE(1985, 6, 24))/7) - floor((datevalue(Training_Complete_Date__c
+) - DATE(1985, 6, 24))/7))), 
+
+(datevalue(X1st_Payroll_Complete_Date__c) - datevalue(Training_Complete_Date__c
+) - 2*( floor((datevalue(X1st_Payroll_Complete_Date__c) - DATE(1985, 6, 24))/7) - floor((datevalue(Training_Complete_Date__c
+) - DATE(1985, 6, 24))/7))))</formula>
+    <label>#Days 1st Payroll</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

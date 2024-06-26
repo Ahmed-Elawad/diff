@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reassign_Category_required</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND 
+( 
+ISPICKVAL ( Reassign_Category_1__c,&quot;Cancellation - 401k&quot;), 
+ISPICKVAL ( Reassign_Category_2__c,&quot;Post-Onboarding Task&quot;), 
+(ISPICKVAL ( Reassign_Category_3__c,&quot;401(k) Cancellation&quot;)|| ISPICKVAL ( Reassign_Category_3__c,&quot;401(k) Conversion Out&quot;)), 
+ISPICKVAL ( Reassign_Category_4__c,&quot;&quot;) 
+)</errorConditionFormula>
+    <errorMessage>Reassign-Category 4 is required</errorMessage>
+</ValidationRule>

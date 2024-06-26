@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Payrun_Warning_Indicator__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>IF(AND(Proposed_Run_Date__c &lt; TODAY(),
+       OR(ISPICKVAL(Current_Step__c,&quot;Case Creation&quot;),
+          ISBLANK(TEXT(Current_Step__c)),
+          ISPICKVAL(Current_Step__c,&quot;(1 of 6) Client Load Received - Verifying Load Docs In Progress&quot;),
+          ISPICKVAL(Current_Step__c,&quot;(1 of 4) Client Load Received&quot;),
+          ISPICKVAL(Current_Step__c,&quot;(2 of 6) Load Docs Verified - Client Load In Progress&quot;),
+          ISPICKVAL(Current_Step__c,&quot;(2 of 4) Client Load Complete&quot;),
+          ISPICKVAL(Current_Step__c,&quot;(3 of 6) Client Load Completed - Pre 1st Payroll Run Training In Progress&quot;))),
+   IMAGE(&quot;/img/samples/light_red.gif&quot;,&quot;Red&quot;),
+IF(AND(OR(Proposed_Run_Date__c = TODAY(),
+          Proposed_Run_Date__c - 1 = TODAY()),
+       OR(ISPICKVAL(Current_Step__c,&quot;Case Creation&quot;),
+          ISBLANK(TEXT(Current_Step__c)),
+          ISPICKVAL(Current_Step__c,&quot;(1 of 6) Client Load Received - Verifying Load Docs In Progress&quot;),
+          ISPICKVAL(Current_Step__c,&quot;(1 of 4) Client Load Received&quot;),
+          ISPICKVAL(Current_Step__c,&quot;(2 of 6) Load Docs Verified - Client Load In Progress&quot;),
+          ISPICKVAL(Current_Step__c,&quot;(2 of 4) Client Load Complete&quot;),
+          ISPICKVAL(Current_Step__c,&quot;(3 of 6) Client Load Completed - Pre 1st Payroll Run Training In Progress&quot;))),
+       IMAGE(&quot;/img/samples/light_yellow.gif&quot;,&quot;Yellow&quot;),
+IF(OR(ISPICKVAL(Current_Step__c,&quot;Onboarding Complete&quot;),
+      ISPICKVAL(Current_Step__c,&quot;(4 of 6) Pre 1st Payroll Run Training Completed - 1st Payroll Run In Progress&quot;),
+      ISPICKVAL(Current_Step__c,&quot;(5 of 6) 1st Payroll Run Completed - Post 1st Payroll Training In Progress&quot;),
+      ISPICKVAL(Current_Step__c,&quot;(3 of 4) First Payroll Ran&quot;),
+      ISPICKVAL(Current_Step__c,&quot;(4 of 4) Transferred to Payroll Specialist&quot;)),
+   IMAGE(&quot;/img/samples/light_green.gif&quot;,&quot;Green&quot;),     
+IF(Proposed_Run_Date__c &gt; TODAY(),
+   IMAGE(&quot;/img/samples/light_green.gif&quot;,&quot;Green&quot;),&quot;&quot;))))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>1st Payrun Warning Indicator</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reasearch_Resolution_Date</fullName>
+    <active>true</active>
+    <description>per case 23326147 
+
+On Recordtype: 401k Incoming Checks and ACHs - 
+If &apos;Research Resolution Date&apos; is entered, then &apos;Returned-No Trade&apos; OR &apos;Ready for Trade&apos; need to be entered before the object can be saved.</description>
+    <errorConditionFormula>RecordType.Name = &quot;401k Incoming Checks and ACHs&quot;&amp;&amp; 
+!ISNULL(Research_Resolution_Date__c)&amp;&amp; 
+ISNULL( Returned_No_Trade__c)&amp;&amp; 
+ISNULL( Ready_for_Trade__c)</errorConditionFormula>
+    <errorMessage>If &apos;Research Resolution Date&apos; is entered, then &apos;Returned-No Trade&apos; OR &apos;Ready for Trade&apos; need to be entered before the object can be saved.</errorMessage>
+</ValidationRule>

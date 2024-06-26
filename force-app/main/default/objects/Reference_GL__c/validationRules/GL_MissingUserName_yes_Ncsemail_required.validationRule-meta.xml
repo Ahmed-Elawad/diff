@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>GL_MissingUserName_yes_Ncsemail_required</fullName>
+    <active>true</active>
+    <description>When missing user name = yest, make ncsemail field required</description>
+    <errorConditionFormula>ISPICKVAL( Missing_User_Name__c   , &quot;yes&quot;)&amp;&amp; ISBLANK(  NCS_Email__c  )</errorConditionFormula>
+    <errorDisplayField>NCS_Email__c</errorDisplayField>
+    <errorMessage>If the client is Missing User Name, then the NCS_Email field must be populated with the NCS email address of the branch.  An email goes to the branch requesting the user name.</errorMessage>
+</ValidationRule>

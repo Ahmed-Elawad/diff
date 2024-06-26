@@ -1,0 +1,266 @@
+<aura:component controller="FirmProgramMembership" implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global" >
+    
+    <aura:attribute name="memOutInfo" type="FirmProgramMembership.MembersOuterInfo"/>
+    <aura:attribute name="memInfo" type="FirmProgramMembership.MembersInfo[]"/>
+    <aura:attribute name="memInfoSize" type="integer"/>    
+    <aura:attribute name="isAdminCPA" type="Boolean" default="True"/>
+    <aura:attribute name="isLoading" type="Boolean" default="false"/>
+    <aura:attribute name="isModalOpen" type="boolean" default="false"/>
+    <aura:attribute name="isMOLoading" type="Boolean" default="false"/>
+    <aura:attribute name="OptOutReason" type="String"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.initLoad}"/>
+   <!-- <aura:handler name="cparemovefirm" event="c:CPARemoveFirmEvent" action="{!c.handleCPARemoveFirmEvent}"/>
+    <aura:handler name="cparemoveAdmin" event="c:CPARemoveAdmin" action="{!c.handleCPARemoveAdmin}"/>
+    <aura:handler name="cparemoveShared" event="c:CPARemoveShared" action="{!c.handlecparemoveShared}"/> --> 
+    
+  <aura:html tag="style">
+  .slds-popover_tooltip, .slds-popover--tooltip{
+      background: #0059a2;
+      }
+      .slds-popover__body{
+      color: white !important;
+      }
+      .slds-form-element__icon{
+      margin-left: 0%; 
+      margin-top: -2%; 
+      }
+    
+  </aura:html>
+        
+    <aura:if isTrue="{!v.isAdminCPA}">
+        <lightning:layout multipleRows="true">
+            <!-- <lightning:layoutItem padding="around-small" size="2"></lightning:layoutItem> -->
+            <div style="margin:auto;"> 
+            <lightning:layoutItem padding="around-small" >
+                <!-- <center> -->
+                    <!-- <lightning:card title=""> -->
+                            <div class=" exampleHolder ">
+                                <aura:if isTrue="{!v.isLoading}">
+                                    <lightning:spinner alternativeText="Loading"/>
+                                </aura:if>
+                            </div>
+                            <div style="width:auto; ">
+                                <div style="width:100%">
+                                    <h2 id="element-with-table-label" class="slds-text-heading_medium slds-m-bottom_xx-small slds-text-align_center slds-box" style="font-family:'PublicoBanner'; background-color:white">Account Details and Users</h2>
+                                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-box" aria-labelledby="element-with-table-label other-element-with-table-label">
+                                        <thead>
+                                            <!-- <tr> -->
+                                                <!-- <th scope="row" class="slds-text-align_center" > -->
+            
+                                                <!-- </th> -->
+                                            <!-- </tr> -->
+                                            <tr class=" slds-line-height_reset ">
+                                                <th class=" " scope="col" >  <!--colspan="2"-->
+                                                    <div class=" slds-truncate firstRow" title="Firm Member"><span class=""> Firm Member</span>
+                                                    </div>
+                                                </th>
+                                                <th class="slds-cell-wrap " scope="col">
+                                                    <div class=" slds-truncate firstRow" title="Firm Administrator Access">Firm Administrator Access
+                                                    <lightning:helptext style="tooltip" content="Selecting Admin will grant this user administrator rights to this account."/>
+                                                    </div>
+                                                </th>
+                                                <th class=" " scope="col">
+                                                    <div class="slds-truncate firstRow" title="View All Shared Clients">View All Shared Clients
+                                                    <lightning:helptext style="tooltip" content="Selecting Yes grants this user access to see all shared clients at your firm."/>
+                                                    </div>
+                                                </th>
+                                                <th class="" scope="col">
+                                                    
+                                                     <div class=" slds-truncate firstRow" title="Remove from Firm Account">
+                                                     Remove from Firm Account
+                                                     
+                                                    
+                                                     <lightning:helptext style="tooltip" content="Taking this action will remove this user from your Paychex Accountant Program Account."/>
+                                                     </div>
+                                                      
+                                                </th>
+                                            </tr>
+                                            <!--  <tr class=" slds-line-height_reset">
+                                                <th class=" " scope="col">
+                                                    <div class=" slds-truncate firstRow" title="First Name">First Name</div>
+                                                </th>
+                                                <th class=" " scope="col">
+                                                    <div class=" slds-truncate firstRow" title="Last Name">Last Name</div>
+                                                </th>
+                                                <th class=" " scope="col">
+                                                    <div class=" slds-truncate firstRow" title="Y/N">Y/N</div>
+                                                </th>
+                                                <th class=" " scope="col">
+                                                    <div class=" slds-truncate firstRow" title="Y/N">Y/N</div>
+                                                </th>
+                                                <th class=" " scope="col">
+                                                    <div class=" slds-truncate firstRow" style="overflow-wrap : anywhere;" title="Checkbox">Check box and save changes to 
+                                                        <div>
+                                                            remove this user from your
+                                                        </div> 
+                                                        <div>
+                                                            Paychex Accountant Program account.  
+                                                        </div> 
+                                                        <div>
+                                                            This request will be verified by your 
+                                                        </div> 
+                                                        <div>
+                                                            Paychex Account Representative
+                                                        </div>
+                                                        <div>before taking place.</div>
+                                                    </div>
+                                                </th>
+                                            </tr> -->
+                                        </thead>
+                                        <tbody>
+                                            <aura:iteration items="{!v.memInfo}" var="itm">
+                                                <c:FirmProgramMembRecord miRec="{!itm}"/>
+                                            </aura:iteration>
+                                        </tbody>
+                                        </table>
+                                </div>
+    
+                                
+                            </div>
+                       
+
+                    <!-- </lightning:card> -->
+                <!-- </center> -->
+            </lightning:layoutItem>
+        </div>
+
+            <!-- <lightning:layoutItem padding="around-small" size="2"></lightning:layoutItem> -->
+        </lightning:layout>
+        
+        <lightning:layout multipleRows="true">
+          <!--  <lightning:layoutItem size="12" padding="around-small" class="slds-align_absolute-center">
+                <lightning:button  class ="paychexBlueButton"  label="Save Changes" title="Save Changes" onclick="{!c.saveChanges}"/>
+            </lightning:layoutItem> -->
+            <lightning:layoutItem size="12" padding="around-small" class=" slds-align_absolute-center">
+                <center>
+                <div class=" slds-align_absolute-center"><p><b>Platform Opt Out</b></p></div>
+                <div class=" slds-align_absolute-center">
+                    <p>If you no longer want to participate in the platform - Click 
+                        <lightning:button variant="base" label="here" title="Platform Opt Out" onclick="{!c.handlePlatformOptOut}"/> to opt out
+                    </p>
+            	</div>
+                </center>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </aura:if>
+    
+        <aura:if isTrue="{!Not(v.isAdminCPA)}">
+            <lightning:layoutItem padding="around-large" >
+	<div class=" slds-m-around_large" style="overflow:hidden; width:1347px;height:900px;background:#F2F4F7;padding: 30px;">
+    <div id="Non-Admin" class="slds-text-heading_medium slds-m-bottom_xx-small slds-text-align_center slds-box" style="table; background-color:white">
+        You are currently not registered as an Administrator for your firm. To request administrator level access, please reach out to  
+        
+       
+        <aura:iteration items="{!v.memInfo}" var="adm" indexVar="idx">
+           
+           
+          <!--  <aura:if isTrue="{!and(adm.adminCPA, lessthan(idx, v.memInfoSize  -1) ) }" >   
+                {!adm.firstName +' '+ adm.lastName +','}
+                <aura:set attribute="else">
+                    {!adm.firstName +' '+ adm.lastName}
+                </aura:set>                
+            </aura:if> -->
+            
+            <aura:if isTrue="{!adm.adminCPA}" > 
+                
+                {!adm.firstName +' '+ adm.lastName +',  '}
+               <!--<aura:set attribute="else">
+                    {!adm.firstName +' '+ adm.lastName}
+                </aura:set>    -->             
+            </aura:if>
+        
+        </aura:iteration>
+         they are your firms designated owner(s) for this program. 
+
+        
+        </div>
+            </div>
+                </lightning:layoutItem>
+        </aura:if>         
+    
+    <div class=" slds-m-around_xx-large">
+        <!--Use aura:if tag to display/hide popup based on isModalOpen value-->  
+        <aura:if isTrue="{!v.isModalOpen}">
+             
+            <!-- Modal/Popup Box starts here-->
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class=" slds-modal slds-fade-in-open">
+                <div class=" exampleHolder">
+                	<aura:if isTrue="{!v.isMOLoading}">
+                    	<lightning:spinner alternativeText="Loading"/>
+                    </aura:if>
+                </div>
+                <div class=" slds-modal__container">
+                    <!-- Modal/Popup Box Header Starts here-->
+                    <header class=" slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class=" slds-modal__close"/>
+                        <h2 id="modal-heading-01" class=" slds-text-heading_medium slds-hyphenate">Confirm Opt Out Form</h2>
+                    </header>
+                    <!--Modal/Popup Box Body Starts here-->
+                    <h2 class=" slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <p>Please confirm you would like to remove the following firm from the Paychex Accountant Program Platform. Please note, you will still receive program benefits if you choose to opt, you simply lose platform access.
+                        </p>
+                        
+                        <lightning:layout >
+                            <lightning:layoutItem padding="around-small">
+                                <div class=" header-column">
+                                    <p class=" field-title" title="First Name">Firm Name</p>
+                                    <p>{!v.memOutInfo.firmName}</p>
+                                </div>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem padding="around-small">
+                                <div class=" header-column">
+                                    <p class=" field-title" title="Admin First Name">Admin First Name</p>
+                                    <p>{!v.memOutInfo.firstName}</p>
+                                </div>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem padding="around-small">
+                                <div class=" header-column">
+                                    <p class=" field-title" title="Admin Last Name">Admin Last Name</p>
+                                    <p>{!v.memOutInfo.lastName}</p>
+                                </div>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem padding="around-small">
+                                <div class=" header-column">
+                                    <p class=" field-title" title="Email Address">Email Address</p>
+                                    <p>{!v.memOutInfo.email}</p>
+                                </div>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                        <lightning:layout multipleRows="true">
+                            <lightning:layoutItem padding="around-small" size="12">
+                                <div class=" header-column">
+                                    <lightning:textarea name="unenrollReason" aura:id="optOutRec" required="true" label="Reason for Option Out" value="{!v.OptOutReason}" />
+                                </div>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </h2>
+                    <!--Modal/Popup Box Footer Starts here-->
+                    <footer class=" slds-modal__footer">
+                        <lightning:button class ="RemoveInProgressButton" 
+                                          variant="neutral"
+                                          label="Cancel"
+                                          title="Cancel"
+                                          onclick="{! c.closeModel }"/>
+                        <lightning:button class ="RemoveButton"
+                                          variant="brand"
+                                          label="OK"
+                                          title="OK"
+                                          onclick="{!c.submitDetails}"
+                                          />
+                    </footer>
+                </div>
+            </section>
+            <div class=" slds-backdrop slds-backdrop_open"></div>
+        </aura:if>
+     
+    </div>
+
+ 
+    
+    
+</aura:component>

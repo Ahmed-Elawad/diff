@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SharingRules xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sharingCriteriaRules>
+        <fullName>Case_Record_Type_Sharing_rule</fullName>
+        <accessLevel>Edit</accessLevel>
+        <label>Case Record Type Sharing rule</label>
+        <sharedTo>
+            <group>Mid_Market_Service_Group_All</group>
+        </sharedTo>
+        <criteriaItems>
+            <field>RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Service Support STM Case,Service Support PAC Case,Service Support TAA Case</value>
+        </criteriaItems>
+        <includeRecordsOwnedByAll>true</includeRecordsOwnedByAll>
+    </sharingCriteriaRules>
+    <sharingCriteriaRules>
+        <fullName>ESR_Calendar_Admin</fullName>
+        <accessLevel>Edit</accessLevel>
+        <label>ESR Calendar Admin</label>
+        <sharedTo>
+            <role>ESR_Calendar_Admin</role>
+        </sharedTo>
+        <criteriaItems>
+            <field>RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Service Support ESR Case</value>
+        </criteriaItems>
+        <includeRecordsOwnedByAll>false</includeRecordsOwnedByAll>
+    </sharingCriteriaRules>
+    <sharingCriteriaRules>
+        <fullName>Multi_Product_Case_to_Mid_Market_User</fullName>
+        <accessLevel>Read</accessLevel>
+        <description>Open Access to Cases with the MPSC group. This is to Open Edit access to Non-Power Apps Cases</description>
+        <label>Multi-Product Case to Mid Market User</label>
+        <sharedTo>
+            <group>Mid_Market_Service_Group_All</group>
+        </sharedTo>
+        <criteriaItems>
+            <field>RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Multi-Product Service Case</value>
+        </criteriaItems>
+        <includeRecordsOwnedByAll>true</includeRecordsOwnedByAll>
+    </sharingCriteriaRules>
+    <sharingCriteriaRules>
+        <fullName>Multi_Product_Case_to_Relationship_Managers</fullName>
+        <accessLevel>Edit</accessLevel>
+        <label>Multi-Product Case to Relationship Managers</label>
+        <sharedTo>
+            <roleAndSubordinatesInternal>PHRS_Region_Manager_5_ASO_West</roleAndSubordinatesInternal>
+        </sharedTo>
+        <criteriaItems>
+            <field>RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Multi-Product Service Case</value>
+        </criteriaItems>
+        <includeRecordsOwnedByAll>true</includeRecordsOwnedByAll>
+    </sharingCriteriaRules>
+    <sharingCriteriaRules>
+        <fullName>Share_Virtual_Ancillary_Cases</fullName>
+        <accessLevel>Read</accessLevel>
+        <description>Used to share out records that Virtual Sales Ancillary DSAs created</description>
+        <label>Share Virtual Ancillary Cases2</label>
+        <sharedTo>
+            <roleAndSubordinates>VIRTUAL_SALES_ZONE_30</roleAndSubordinates>
+        </sharedTo>
+        <criteriaItems>
+            <field>Case_Created_By_Role__c</field>
+            <operation>startsWith</operation>
+            <value>Virtual Sales</value>
+        </criteriaItems>
+        <includeRecordsOwnedByAll>false</includeRecordsOwnedByAll>
+    </sharingCriteriaRules>
+    <sharingCriteriaRules>
+        <fullName>Sharing_Rules_for_Service_Support_401k_S125_Case_Record_Type</fullName>
+        <accessLevel>Edit</accessLevel>
+        <label>Sharing Rules for Service Support 401k/S125 Case Record Type</label>
+        <sharedTo>
+            <group>Public_Service_Support_401k_S125_Case</group>
+        </sharedTo>
+        <criteriaItems>
+            <field>RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Service Support 401k/S125 Case</value>
+        </criteriaItems>
+        <includeRecordsOwnedByAll>false</includeRecordsOwnedByAll>
+    </sharingCriteriaRules>
+    <sharingGuestRules>
+        <fullName>TTUser</fullName>
+        <accessLevel>Read</accessLevel>
+        <label>TTUser</label>
+        <sharedTo>
+            <guestUser>ClicktoSchedule</guestUser>
+        </sharedTo>
+        <criteriaItems>
+            <field>CreatedById</field>
+            <operation>notEqual</operation>
+            <value>xyz123</value>
+        </criteriaItems>
+        <includeHVUOwnedRecords>false</includeHVUOwnedRecords>
+    </sharingGuestRules>
+    <sharingOwnerRules>
+        <fullName>BeneTrac_Ops_to_see_BT_cases</fullName>
+        <accessLevel>Edit</accessLevel>
+        <description>allows the BeneTrac ops team to see cases they&apos;ve reassigned to other BeneTrac ops team members</description>
+        <label>BeneTrac Ops to see BT cases</label>
+        <sharedTo>
+            <roleAndSubordinates>BeneTrac_Sales_Ops_Support_Manager</roleAndSubordinates>
+        </sharedTo>
+        <sharedFrom>
+            <roleAndSubordinates>BeneTrac_Sales_Ops_Support_Manager</roleAndSubordinates>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>CSADirector</fullName>
+        <accessLevel>Edit</accessLevel>
+        <label>CSA Director</label>
+        <sharedTo>
+            <group>CSADirector</group>
+        </sharedTo>
+        <sharedFrom>
+            <roleAndSubordinates>CSADirector</roleAndSubordinates>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>CSA_Request_Tracker_All_Rule</fullName>
+        <accessLevel>Edit</accessLevel>
+        <description>Gives corporate commission write access to queue records</description>
+        <label>CSA Request Tracker-All Rule</label>
+        <sharedTo>
+            <group>Corporate_Commissions</group>
+        </sharedTo>
+        <sharedFrom>
+            <queue>CSARequestTrackerAllDivisions</queue>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>CSA_Request_Tracker_Core_Rule</fullName>
+        <accessLevel>Edit</accessLevel>
+        <description>Gives corporate commission write access to queue records</description>
+        <label>CSA Request Tracker-Core Rule</label>
+        <sharedTo>
+            <group>Corporate_Commissions</group>
+        </sharedTo>
+        <sharedFrom>
+            <queue>CSARequestTrackerCore</queue>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>CSA_Request_Tracker_HRS_Rule</fullName>
+        <accessLevel>Edit</accessLevel>
+        <description>Gives corporate commission write access to queue records</description>
+        <label>CSA Request Tracker – HRS Rule</label>
+        <sharedTo>
+            <group>Corporate_Commissions</group>
+        </sharedTo>
+        <sharedFrom>
+            <queue>CSARequestTrackerHRS</queue>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>CSA_Request_Tracker_MMS_Rule</fullName>
+        <accessLevel>Edit</accessLevel>
+        <description>Gives corporate commission write access to queue records</description>
+        <label>CSA Request Tracker-MMS Rule</label>
+        <sharedTo>
+            <group>Corporate_Commissions</group>
+        </sharedTo>
+        <sharedFrom>
+            <queue>CSARequestTrackerMMS</queue>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>Conversion_B_Access</fullName>
+        <accessLevel>Read</accessLevel>
+        <label>Conversion B Access</label>
+        <sharedTo>
+            <roleAndSubordinates>HRS4SOnboardingManager</roleAndSubordinates>
+        </sharedTo>
+        <sharedFrom>
+            <queue>ConversionAssetsB</queue>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>ESR_Service_Support_Cases</fullName>
+        <accessLevel>Edit</accessLevel>
+        <description>Sharing to allow managers in the ESR Service Support group to view all the ESR Dedicated Service Rep cases as they fall in a different area of the hierarchy</description>
+        <label>ESR Service Support Cases</label>
+        <sharedTo>
+            <group>ESR_Service_Support_Cases</group>
+        </sharedTo>
+        <sharedFrom>
+            <roleAndSubordinates>ESR_Dedicated_Service_Supervisor</roleAndSubordinates>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>KAS_Cases</fullName>
+        <accessLevel>Edit</accessLevel>
+        <description>share cases that are owned by users with the KAS Profile with other users with the KAS Profile. Public Group created for this.</description>
+        <label>KAS Cases</label>
+        <sharedTo>
+            <group>KAS_Users</group>
+        </sharedTo>
+        <sharedFrom>
+            <group>KAS_Users</group>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>Ops_Sharing_Cases_with_Sales</fullName>
+        <accessLevel>Edit</accessLevel>
+        <label>Ops Sharing Cases with Sales</label>
+        <sharedTo>
+            <roleAndSubordinates>SeniorVPSales</roleAndSubordinates>
+        </sharedTo>
+        <sharedFrom>
+            <queue>X401k_S125_Sales_Escalation_Queue</queue>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>RO_for_all_Ops_and_Sales</fullName>
+        <accessLevel>Read</accessLevel>
+        <label>RO for all Ops and Sales</label>
+        <sharedTo>
+            <roleAndSubordinates>SystemAdministrator</roleAndSubordinates>
+        </sharedTo>
+        <sharedFrom>
+            <queue>PEOOnboardingQueue</queue>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>SVPOperationsD</fullName>
+        <accessLevel>Read</accessLevel>
+        <label>SVP OperationsD</label>
+        <sharedTo>
+            <roleAndSubordinates>SVPOperations</roleAndSubordinates>
+        </sharedTo>
+        <sharedFrom>
+            <role>SystemAdministrator</role>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>SVPOperationsD137061</fullName>
+        <accessLevel>Edit</accessLevel>
+        <label>SVP OperationsD</label>
+        <sharedTo>
+            <roleAndSubordinates>SVPOperations</roleAndSubordinates>
+        </sharedTo>
+        <sharedFrom>
+            <roleAndSubordinates>SVPOperations</roleAndSubordinates>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>SalesforceBUSponsors</fullName>
+        <accessLevel>Edit</accessLevel>
+        <label>Salesforce BU Sponsors</label>
+        <sharedTo>
+            <group>SalesforceBUSponsors</group>
+        </sharedTo>
+        <sharedFrom>
+            <role>SystemAdministrator</role>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>SalesforceBUSponsors137061</fullName>
+        <accessLevel>Edit</accessLevel>
+        <label>Salesforce BU Sponsors</label>
+        <sharedTo>
+            <group>SalesforceBUSponsors</group>
+        </sharedTo>
+        <sharedFrom>
+            <queue>COEEnhancementQueue</queue>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>SalesforceBUSponsors137062</fullName>
+        <accessLevel>Read</accessLevel>
+        <label>Salesforce BU Sponsors</label>
+        <sharedTo>
+            <group>SalesforceBUSponsors</group>
+        </sharedTo>
+        <sharedFrom>
+            <group>SalesforceBUSponsors</group>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>SalesforceSalesSponsors</fullName>
+        <accessLevel>Edit</accessLevel>
+        <label>Salesforce Sales Sponsors</label>
+        <sharedTo>
+            <group>SalesforceSalesSponsors</group>
+        </sharedTo>
+        <sharedFrom>
+            <queue>SFDCSupportEmailQueue</queue>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>SeniorVPSalesD</fullName>
+        <accessLevel>Read</accessLevel>
+        <label>Senior VP SalesD</label>
+        <sharedTo>
+            <roleAndSubordinates>SeniorVPSales</roleAndSubordinates>
+        </sharedTo>
+        <sharedFrom>
+            <roleAndSubordinates>SVPOperations</roleAndSubordinates>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>Share_Virtual_Ancillary_Cases</fullName>
+        <accessLevel>Read</accessLevel>
+        <description>Used to allow Virtual DSAs to cross-reference each others cases to minimize duplicates</description>
+        <label>Share Virtual Ancillary Cases</label>
+        <sharedTo>
+            <roleAndSubordinates>VIRTUAL_SALES_ZONE_30</roleAndSubordinates>
+        </sharedTo>
+        <sharedFrom>
+            <roleAndSubordinates>VIRTUAL_SALES_ZONE_30</roleAndSubordinates>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>Share_with_Role_HRS_4S_Product_Integrity_Representative</fullName>
+        <accessLevel>Edit</accessLevel>
+        <label>Share with Role &quot;HRS 4S Product Integrity Representative&quot;</label>
+        <sharedTo>
+            <role>HRS4SProductIntegrityRepresentative</role>
+        </sharedTo>
+        <sharedFrom>
+            <allInternalUsers></allInternalUsers>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>Survey_Site_User</fullName>
+        <accessLevel>Read</accessLevel>
+        <label>Survey Site User</label>
+        <sharedTo>
+            <group>Survey_Site_User</group>
+        </sharedTo>
+        <sharedFrom>
+            <allInternalUsers></allInternalUsers>
+        </sharedFrom>
+    </sharingOwnerRules>
+</SharingRules>

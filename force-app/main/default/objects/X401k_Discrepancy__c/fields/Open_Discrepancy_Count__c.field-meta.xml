@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Open_Discrepancy_Count__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>IF(ISBLANK(Discrepancy_Resolution_Date__c),
+(IF( INCLUDES( Discrepancy_Description__c , &quot;Fund Restricted/Unavailable&quot;), 1, 0)+
+IF( INCLUDES( Discrepancy_Description__c , &quot;Competing Fund&quot;), 1, 0)+
+IF( INCLUDES( Discrepancy_Description__c , &quot;QDIA Needed&quot;), 1, 0)+
+IF( INCLUDES( Discrepancy_Description__c , &quot;Plan Default Needed&quot;), 1, 0)+
+IF( INCLUDES( Discrepancy_Description__c , &quot;QDIA Section Incorrect&quot;), 1, 0)+
+IF( INCLUDES( Discrepancy_Description__c , &quot;Mapping Needed&quot;), 1, 0)+
+IF( INCLUDES( Discrepancy_Description__c , &quot;Ticker Fund Mismatch&quot;), 1, 0)+
+IF( INCLUDES( Discrepancy_Description__c , &quot;Incomplete Fund Names and/or Tickers&quot;), 1, 0)+
+IF( INCLUDES( Discrepancy_Description__c , &quot;No Lineup Selected&quot;), 1, 0)+
+IF( INCLUDES( Discrepancy_Description__c , &quot;Advisor Restriction&quot;), 1, 0)+
+IF( INCLUDES( Discrepancy_Description__c , &quot;Advisor Paperwork Issue&quot;), 1, 0)+
+IF( INCLUDES( Discrepancy_Description__c , &quot;AAF Form Issue&quot;), 1, 0)+
+IF( INCLUDES( Discrepancy_Description__c , &quot;Stable Value Paperwork Issue&quot;), 1, 0)+
+IF( INCLUDES( Discrepancy_Description__c , &quot;Fiduciary Agreement Issue&quot;), 1, 0)+
+IF( INCLUDES( Discrepancy_Description__c , &quot;MATC Paperwork Issue&quot;), 1, 0)+
+IF( INCLUDES( Discrepancy_Description__c , &quot;Verification of Sponsor Issue&quot;), 1, 0)+
+IF( INCLUDES( Discrepancy_Description__c , &quot;Unauthorized Signer&quot;), 1, 0)+
+IF( INCLUDES( Discrepancy_Description__c , &quot;Other&quot;), 1, 0)+
+IF( INCLUDES( Discrepancy_Description__c , &quot;Electronic Signature&quot;), 1, 0)+
+IF( INCLUDES( Discrepancy_Description__c , &quot;Signer Not 3(38)&quot;), 1, 0)+
+IF( INCLUDES( Discrepancy_Description__c , &quot;Pending Amendment&quot;), 1, 0)+
+IF( INCLUDES( Discrepancy_Description__c , &quot;Incomplete Paperwork&quot;), 1, 0))
+,0)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Open Discrepancy Count</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

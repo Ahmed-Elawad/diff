@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MPSC_ServiceHelp_Case_Reopen_conditions</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+RecordType.DeveloperName ==&quot;Multi_Product_Service_Case&quot;,
+NOT(ISNEW()),
+(TODAY() - DATEVALUE(ClosedDate) &lt;=2),
+ISPICKVAL(Type ,&quot;Service Help&quot;),
+$Profile.Name==&quot;Mid-Market Service Profile&quot;,
+IsClosed,
+NOT(ISCHANGED(Status))
+
+)</errorConditionFormula>
+    <errorMessage>In order edit a Closed or Cancelled Case, reopen it first through Reopen Case button</errorMessage>
+</ValidationRule>

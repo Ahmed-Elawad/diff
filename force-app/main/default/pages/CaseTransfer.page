@@ -1,0 +1,106 @@
+<!-- Transfer a Case to another group.
+
+   History
+   -------
+   03/21/2011 Dan Carmen        Created.
+   09/21/2011 Dan Carmen        Added ability to move attachments if present.
+ -->
+<apex:page standardController="Case" extensions="CaseTransferController"
+           tabStyle="Case" id="CaseTransferPage">
+
+
+   <apex:form id="caseForm">
+      <apex:pageBlock rendered="{!NOT(hasCurCase)}">
+   <apex:pageMessages />
+        <apex:commandButton action="{!cancel}" value="Cancel" />
+      </apex:pageBlock>
+      
+      <apex:actionRegion >
+         <apex:pageBlock rendered="{!hasCurCase}" id="transferBlock" title="Transfer Case">
+            <apex:pageBlockButtons >
+               <apex:commandButton action="{!cancel}" value="Cancel" />
+               <apex:commandButton rendered="{!okayToTransfer}" 
+                               action="{!transferCase}" value="Transfer Case"/>
+            </apex:pageBlockButtons>
+            
+            <apex:pageBlockSection id="transferOptions" columns="1">
+   <apex:pageMessages />
+               <apex:pageBlockSectionItem >
+                  <apex:outputLabel value="External Department Transfer"/>
+                  <apex:selectList value="{!departmentOption}" id="department_option" title="External Department Transfer" size="1">
+                     <apex:selectOptions value="{!departmentOptions}"/>
+                     <apex:actionSupport event="onchange" action="{!selectDepartment}" rerender="transferBlock" />
+                  </apex:selectList>
+               </apex:pageBlockSectionItem>
+               <apex:pageBlockSectionItem rendered="{!departmentOption != '--Select a Department--'}">
+                  <apex:outputLabel value="Select a Group"/>
+                  <apex:selectList value="{!groupOption}" id="group_option" title="Group Selection" size="1">
+                     <apex:selectOptions value="{!groupOptions}"/>
+                     <apex:actionSupport event="onchange" action="{!selectGroup}" rerender="transferBlock" />
+                  </apex:selectList>
+               </apex:pageBlockSectionItem>
+               <!--
+               <apex:outputField value="{!selectedRouting.Queue_Name__c}" rendered="{!groupSelected}"/>
+               <apex:outputField value="{!selectedRouting.Record_Type_Name__c}" rendered="{!groupSelected}"/>
+               <apex:outputField value="{!selectedRouting.Allow_Transfer_to_User__c}" rendered="{!groupSelected}"/>
+                -->
+               <apex:outputField value="{!newCase.Account.Name}"  />
+               <apex:pageBlockSectionItem >
+                  <apex:outputLabel value="Contact Name" for="contactName"/>
+                  <apex:outputField value="{!newCase.Contact.Name}" id="contactName" />
+               </apex:pageBlockSectionItem>
+               <apex:pageBlockSectionItem >
+                  <apex:outputLabel value="Referral Contact Name" for="refContactname"/>
+                  <apex:outputField value="{!newCase.Referral_Contact__r.Name}" id="refContactName" />
+               </apex:pageBlockSectionItem>
+               <apex:pageBlockSectionItem >
+                  <apex:outputLabel value="Case Description" for="caseDescription"/>
+                  <apex:inputTextArea value="{!newCase.Description}" rows="4" cols="60" id="caseDescription"/>
+               </apex:pageBlockSectionItem>
+
+               <apex:repeat value="{!$ObjectType.Case.FieldSets.Safety_Transfer_Fields}" var="fld">
+                            <apex:inputField rendered="{!showSafetyTransferFields}" value="{!newCase[fld]}"/>       
+                       </apex:repeat>
+
+               <apex:inputField value="{!newCase.Priority}" />
+               <apex:pageBlockSectionItem rendered="{!hasMultipleXferOptions}" >
+                  <apex:outputLabel value="Assignment Type"/>
+                  <apex:selectRadio value="{!xferToOption}"
+                                   layout="pageDirection" 
+                                  required="true"
+                                   title="Select a transfer option." >
+                     <apex:selectOptions value="{!xferOptions}"/>
+                     <apex:actionSupport event="onclick" action="{!changeXferOption}" rerender="transferBlock" />
+                  </apex:selectRadio>
+               </apex:pageBlockSectionItem>
+               <!-- 
+               <apex:outputField value="{!selectedRouting.Queue_Name__c}" rendered="{!AND(groupSelected,xferToOption=='queue')}"/>
+                -->
+               <apex:pageBlockSectionItem rendered="{!xferToOption=='queue'}">
+                  <apex:outputLabel value="Assigning to Queue"/>
+                  <apex:outputField value="{!selectedRouting.Queue_Name__c}" /> 
+               </apex:pageBlockSectionItem>
+               <apex:pageBlockSectionItem rendered="{!xferToOption=='user'}">
+                  <apex:outputLabel value="Select a User to Assign the Case"/>
+                  <apex:inputField value="{!newCase.User__c}" /> 
+               </apex:pageBlockSectionItem>
+               <apex:pageBlockSectionItem rendered="{!xferToOption=='assignRule'}">
+                  <apex:outputLabel value="Assigning using Active Assignment Rules"/>
+               </apex:pageBlockSectionItem>
+               <apex:outputText rendered="{!NOT(recordTypeOkay)}" value="The Record Type {!selectedRouting.Record_Type_Name__c} could not be found!" />
+               
+               <apex:outputLabel rendered="{!hasAttachments}" value="Select the Attachments to move to the new Case"/>
+               <apex:pageBlockTable rendered="{!hasAttachments}" value="{!attaches}" var="rec" cellPadding="1" border="1">
+                  <apex:column headerValue="Selected">
+                     <apex:inputCheckbox value="{!rec.selected}"/>
+                  </apex:column>
+                  <apex:column value="{!rec.attach.Name}"/>
+                  <apex:column value="{!rec.attach.ContentType}"/>
+                  <apex:column value="{!rec.attach.BodyLength}"/>
+               </apex:pageBlockTable>
+            </apex:pageBlockSection>
+         </apex:pageBlock>
+      </apex:actionRegion>
+   </apex:form> 
+
+</apex:page>

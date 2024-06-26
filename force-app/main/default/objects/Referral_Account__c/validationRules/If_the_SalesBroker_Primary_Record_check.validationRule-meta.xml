@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>If_the_SalesBroker_Primary_Record_check</fullName>
+    <active>true</active>
+    <description>If the SalesBroker Primary Record checkbox is checked on the Referral Account. Users are not able to edit some of the fields. 
+Case#24998492</description>
+    <errorConditionFormula>(NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)))&amp;&amp;( $Profile.Name&lt;&gt;&apos;2008-09 HRS 4S Sales Broker Rep&apos;)&amp;&amp; 
+(NOT(BEGINS($Profile.Name,&apos;Sales Enablement&apos;))) &amp;&amp;
+NOT($UserRole.Name = &apos;HRS FINANCIAL ADVISOR WHOLESALER MANAGER&apos;) &amp;&amp;
+OR(SalesBroker_Primary_Record__c = True ,NOT(ISPICKVAL(Lock_Down_Record__c, &apos;&apos;)))&amp;&amp; 
+OR(OR(ISCHANGED(Parent_Referral_Account__c ),ISCHANGED(Name ),ISCHANGED( Phone__c),ISCHANGED(Phone_Ext__c) 
+,ISCHANGED( Website__c ), ISCHANGED( CRD_Number__c ),ISCHANGED( Common_Remitter_Participation__c),ISCHANGED( Common_Remitter_Start_Date__c ),ISCHANGED( Common_Remitter_End_Date__c),ISCHANGED( Email__c) 
+,ISCHANGED(Account_ID__c), ISCHANGED( PNG_BIS_ID__c ),ISCHANGED( Lock_Down_Record__c),ISCHANGED( Description__c ),ISCHANGED( Referral_Org_ID__c ),ISCHANGED( Referral_Type__c ) 
+, ISCHANGED( Referral_Source_Business_Type__c ),ISCHANGED( Street_Address_1__c ),ISCHANGED( Street_Address_2__c ),ISCHANGED( City__c ),ISCHANGED( State_Province__c ) 
+,ISCHANGED( Zip_Postal_Code__c ), ISCHANGED( Sensitivity_401_k__c ),ISCHANGED( Sensitivity_Credit_Card_Processing__c ),ISCHANGED( Sensitivity_FSA__c ),ISCHANGED( Sensitivity_Health_Ins__c ),ISCHANGED( Sensitivity_PAO__c ) 
+,ISCHANGED( Sensitivity_Sales_Tax__c ), ISCHANGED( Sensitivity_Wrks_Comp__c )), 
+AND(ISNEW(),OR(NOT(ISBLANK( Parent_Referral_Account__c)),NOT(ISBLANK( Name)),NOT(ISBLANK( Phone__c )),NOT(ISBLANK(Phone_Ext__c)),NOT(ISBLANK(Website__c)),NOT(ISBLANK(CRD_Number__c)),(Common_Remitter_Participation__c=True),NOT(ISBLANK(Common_Remitter_Start_Date__c)),NOT(ISBLANK(Common_Remitter_End_Date__c)),NOT(ISBLANK(Email__c)), NOT(ISBLANK(Account_ID__c)),NOT(ISBLANK(PNG_BIS_ID__c)),NOT(ISBLANK(Description__c)),NOT(ISBLANK(Referral_Org_ID__c)),NOT(ISBLANK(TEXT(Referral_Type__c))),NOT(ISBLANK(TEXT(Referral_Source_Business_Type__c))),NOT(ISBLANK(Street_Address_1__c)),NOT(ISBLANK(Street_Address_2__c)),NOT(ISBLANK(City__c)),NOT(ISBLANK(State_Province__c)),NOT(ISBLANK(Zip_Postal_Code__c)),(Sensitivity_401_k__c=True),(Sensitivity_Credit_Card_Processing__c=True),(Sensitivity_FSA__c=True),(Sensitivity_Health_Ins__c),(Sensitivity_PAO__c=True),(Sensitivity_Sales_Tax__c=True),(Sensitivity_Wrks_Comp__c=True) 
+)) 
+)</errorConditionFormula>
+    <errorMessage>You are not allowed to edit some of the fields with Lockdown Record Field Checked.</errorMessage>
+</ValidationRule>

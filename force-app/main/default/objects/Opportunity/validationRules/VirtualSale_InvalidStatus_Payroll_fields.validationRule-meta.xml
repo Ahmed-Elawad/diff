@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>VirtualSale_InvalidStatus_Payroll_fields</fullName>
+    <active>true</active>
+    <description>Prevent the Status from being set to Demo Completed ( or Probability &gt;= 50%) unless the Payroll Platform &amp; Payroll Units fields are populated, for the Referral Partner Opportunity Record Type.</description>
+    <errorConditionFormula>AND( 
+((ISPICKVAL(StageName,&apos;Demo Completed&apos;)) || (Probability &gt; 0.49) ), 
+( ( ISPICKVAL(Payroll_Platform__c, &apos;&apos;) ) || ( ISBLANK(Payroll_Units__c) ) ), 
+( $RecordType.Name = &quot;Referral Partner Opportunity Record Type&quot; ), 
+($UserRole.Name &lt;&gt; &quot;System Administrator&quot;),
+($User.Sales_Division__c &lt;&gt; &quot;CSSR&quot;) 
+)</errorConditionFormula>
+    <errorDisplayField>StageName</errorDisplayField>
+    <errorMessage>You must select a value for the Payroll Platform and Payroll Units fields before you can set the Opportunity Status to greater than 50% Probability.</errorMessage>
+</ValidationRule>

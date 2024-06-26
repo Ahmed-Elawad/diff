@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>POPS_Service_Location_is_Required</fullName>
+    <active>true</active>
+    <description>The Service Location field must be filled in if &quot;TSS Check In Call&quot; is selected for the POPs Resolution Code field.</description>
+    <errorConditionFormula>$RecordType.Name = &quot;Service Support POPS Case&quot; &amp;&amp; 
+ISPICKVAL(POPs_Resolution_Code__c,&quot;TSS Check In Call&quot;) &amp;&amp; 
+ISPICKVAL(Service_Location__c,&quot;&quot;)</errorConditionFormula>
+    <errorMessage>If TSS Check In Call is selected then Service Location field must be field in</errorMessage>
+</ValidationRule>

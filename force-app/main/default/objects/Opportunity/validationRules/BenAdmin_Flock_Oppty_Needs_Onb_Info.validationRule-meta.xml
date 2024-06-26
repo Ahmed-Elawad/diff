@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BenAdmin_Flock_Oppty_Needs_Onb_Info</fullName>
+    <active>true</active>
+    <description>BenAdmin reps movnig a Flock opportunity to Sold need to fill out the Onboarding Info to ensure a case and reference object are created</description>
+    <errorConditionFormula>AND(
+NOT(BEGINS($Profile.Name,&apos;System Administrator&apos;)),
+ISCHANGED(StageName),
+ISPICKVAL( StageName , &apos;Sold - Submitted&apos;), RecordType.Name = &apos;HNBF Opportunity Record Type&apos;,(ISPICKVAL(OpportunityType__c, &apos;Flock&apos;)),Onboarding_Info_Sent__c = False
+)</errorConditionFormula>
+    <errorMessage>Before movnig a Flock opportunity to Sold or Sold - Submitted you need to fill out the BenAdmin Onboarding Info to ensure a case and reference object are created</errorMessage>
+</ValidationRule>

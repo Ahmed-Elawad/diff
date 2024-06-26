@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Timing_Notes_Field_Required</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND 
+( 
+ISPICKVAL( Timecard_Task__c , &quot;Special Circumstances&quot;), 
+RecordType.DeveloperName =&quot;MSP_Onboarding_Support_Timecard_Case&quot;, 
+ISBLANK( Timing_Notes__c ) 
+)</errorConditionFormula>
+    <errorDisplayField>Timing_Notes__c</errorDisplayField>
+    <errorMessage>Timing Notes Field Required when Timecard Task = “Special Circumstances”</errorMessage>
+</ValidationRule>

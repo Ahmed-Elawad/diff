@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRE_restrict_FirstCalResolution_FollowUp</fullName>
+    <active>true</active>
+    <description>Prevent the First Call Resolution and the Follow Up Needed fields from being simultaneously checked.</description>
+    <errorConditionFormula>AND(
+( First_Call_Resolution__c = TRUE ), 
+( Follow_Up_Needed__c = TRUE), 
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)))
+)</errorConditionFormula>
+    <errorDisplayField>First_Call_Resolution__c</errorDisplayField>
+    <errorMessage>You cannot have &apos;First Call Resolution&apos; and &apos;Follow Up Needed&apos; checked at the same time.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,176 @@
+<!-- Page to start Referrals from Financial Advisors
+ 
+   History
+   -------
+   1/04/2013 Cindy Freeman   Created 
+ -->
+<apex:page controller="FAReferralController" tabStyle="Referral_Contact__c" >
+<script type='text/javascript'>
+        function onenter(ev)  {
+            if (window.event && window.event.keyCode == 13 || ev.which == 13) {
+                doSearch();
+                return false;
+             } else {
+                  return true;
+             }
+         }
+</script>
+
+<apex:form >
+<apex:actionFunction name="doSearch" action="{!runSearch}" />
+
+   <apex:sectionHeader title="Paychex FA Referrals" subtitle="from {!refCtct.Name}, {!refAcct.Name}"  />
+   
+   <apex:pageBlock id="searchSection" rendered="{!Or(currentStep=='STEPsearch',currentStep=='STEPpreSearch',isError)}">       
+    <apex:pageMessages rendered="{!AND(isError,currentStep=='STEPpreSearch')}"/>   
+      <apex:pageBlockButtons >      
+         <apex:commandButton value="Search" action="{!runSearch}" rerender="searchSection,ResultsSection" status="searchStatus" />   
+         <apex:commandButton value="Cancel" immediate="true" action="{!cancel}" />         
+         <apex:actionStatus id="searchStatus" startText="   (searching...)" stopText=""/>
+      </apex:pageBlockButtons>
+     
+     Enter Search Criteria:
+     <apex:pageBlockSection columns="2">        
+        <apex:pageBlockSectionItem >
+            <apex:outputText value="Prospect-Client Name: " />
+            <apex:inputText value="{!searchAcct}" size="50" onkeypress="return onenter(event);"/>    
+        </apex:pageBlockSectionItem>        
+        <apex:pageBlockSectionItem >
+            <apex:outputText value="Contact Name: " />
+            <apex:inputText value="{!searchName}" size="50" onkeypress="return onenter(event);"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputText value="Zipcode: " />
+            <apex:inputText value="{!searchZip}" size="10" onkeypress="return onenter(event);"/>    
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputText value="Email: " />
+            <apex:inputText value="{!searchEmail}" size="50" onkeypress="return onenter(event);"/>    
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputText value="Phone: " />
+            <apex:inputText value="{!searchPhone}" size="50" onkeypress="return onenter(event);"/>    
+        </apex:pageBlockSectionItem>        
+        </apex:pageBlockSection>
+        
+    </apex:pageBlock>
+              
+    <apex:pageBlock id="ResultsSection" rendered="{!Or(currentStep=='STEPsearch',currentStep=='STEPpreSearch')}">
+      <apex:pageMessages rendered="{!AND(isError,currentStep=='STEPsearch')}"/>   
+   
+      <apex:pageBlocksection title="Select the contact or prospect-client for this opportunity" columns="1" rendered="{!currentStep=='STEPsearch'}">
+            <apex:outputText value="To create the referral opportunity for an existing contact, click their name. "/>
+            <apex:outputText value="If you do not see the person's name but you see their Prospect-Client name, click the Prospect-Client name and you will be able to create a new contact." />
+      </apex:pageBlocksection>
+      <apex:pageBlocksection columns="2" rendered="{!currentStep=='STEPsearch'}" >
+            <apex:outputText value="If after multiple searches you do not see the right contact or prospect-client, click Create New -" />
+            <apex:commandButton value="Create New Prospect-Client and Contact" action="{!createAandC}" rendered="{!oktoCreate}" />
+      </apex:pageBlocksection>
+      
+      <apex:pageBlocksection columns="1" rendered="{!currentStep=='STEPsearch'}">
+            <apex:pageBlockTable id="rsltTable" value="{!resultList}" var="rslt" cellPadding="2" border="1">
+               <apex:column >                    
+                    <apex:facet name="header">
+                        <apex:commandLink value="Contact Name" action="{!sortRecords}" rerender="ResultsSection">
+                            <apex:param name="sortField" value="nameField" assignTo="{!sortField}"/>
+                        </apex:commandLink>
+                    </apex:facet>
+                    <apex:commandLink value="{!rslt.lastNameField}, {!rslt.firstNameField}" action="{!nextStep}" >
+                        <apex:param name="selectedId" value="{!rslt.objId}" assignTo="{!selectedId}" />
+                        <apex:param name="selectedObj" value="{!rslt.obj}" assignTo="{!selectedObj}" />
+                        <apex:param name="selectedStep" value="refer" assignTo="{!selectedStep}" />
+                    </apex:commandLink>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:commandLink value="Prospect-Client Name" action="{!sortRecords}" rerender="ResultsSection">
+                            <apex:param name="sortField" value="companyField" assignTo="{!sortField}"/>
+                        </apex:commandLink>
+                    </apex:facet>                
+                    <apex:commandLink value="{!rslt.companyField}" action="{!nextStep}" >
+                        <apex:param name="selectedId" value="{!rslt.objId}" assignTo="{!selectedId}" />
+                        <apex:param name="selectedObj" value="{!rslt.obj}" assignTo="{!selectedObj}" />
+                        <apex:param name="selectedStep" value="createCt" assignTo="{!selectedStep}" />
+                    </apex:commandLink>                    
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Email</apex:facet>
+                    <apex:outputText value="{!rslt.emailField}" />
+                </apex:column>                                
+                <apex:column >
+                    <apex:facet name="header">Phone</apex:facet>
+                    <apex:outputText value="{!rslt.phoneField}" />
+                </apex:column>
+                <apex:column >                
+                    <apex:facet name="header">Client Type</apex:facet>
+                    <apex:outputText value="{!rslt.clientTypeField}" />
+                </apex:column>                
+                <apex:column >
+                    <apex:facet name="header">Client Number</apex:facet>
+                    <apex:outputText value="{!rslt.clientNmbrField}" />
+                </apex:column>                                
+                <apex:column >
+                    <apex:facet name="header">City</apex:facet>
+                    <apex:outputText value="{!rslt.cityField}" />
+                </apex:column>                
+                <apex:column >
+                    <apex:facet name="header">Postal Code</apex:facet>
+                    <apex:outputText value="{!rslt.zipField}" />
+                </apex:column>
+            </apex:pageBlockTable> 
+      </apex:pageBlocksection>
+    </apex:pageBlock>
+    
+    <apex:pageBlock id="createSections" rendered="{!OR(currentStep=='STEPcreateCT',currentStep=='STEPcreateAC')}">
+      <apex:pageMessages />  
+ 
+        <apex:pageBlockButtons >        
+         <apex:commandButton value="Save and Continue" action="{!saveRcds}" />   
+         <apex:commandButton value="Return to Search Results" action="{!returnToSearch}" immediate="true" />    
+         <apex:commandButton value="Cancel" action="{!cancel}" immediate="true"/>
+      </apex:pageBlockButtons>
+              
+      <apex:pageBlocksection title="Prospect-Client details" columns="2" id="createAcctSection" rendered="{!OR(canEditAcct,currentStep=='STEPcreateAC')}">
+            <apex:inputField label="Prospect-Client Name " value="{!newAcct.Name}" />
+            <apex:inputField label="Billing Street " value="{!newAcct.BillingStreet}" />
+            <apex:inputField label="Prospect-Client Number " value="{!newAcct.AccountNumber}" />
+            <apex:inputField label="Billing City " value="{!newAcct.BillingCity}" />
+            <apex:inputField label="BIS-Id " value="{!newAcct.Bis_ID__c}" />
+            <apex:inputField label="Billing State " value="{!newAcct.BillingState}" />
+            <apex:inputField label="Number of Employees " value="{!newAcct.NumberOfEmployees}" />
+            <apex:inputField label="Billing Zipcode " value="{!newAcct.BillingPostalCode}" />
+            <apex:inputField label="Conversion Assets " value="{!newAcct.X401K_Assets__c}" />
+                                    
+      </apex:pageBlocksection>
+
+      <apex:pageBlocksection title="Prospect-Client details" columns="2" id="showAcctSection" rendered="{!AND(NOT(canEditAcct),currentSTEP='STEPcreateCT')}">
+            <apex:outputText label="Prospect-Client Name " value="{!newAcct.Name}" />
+            <apex:outputText label="Billing Street " value="{!newAcct.BillingStreet}" />
+            <apex:outputText label="Prospect-Client Number " value="{!newAcct.AccountNumber}" />
+            <apex:outputText label="Billing City " value="{!newAcct.BillingCity}" />
+            <apex:outputText label="BIS-Id " value="{!newAcct.Bis_ID__c}" />
+            <apex:outputText label="Billing State " value="{!newAcct.BillingState}" />
+            <apex:outputText label="Number of Employees " value="{!newAcct.NumberOfEmployees}" />
+            <apex:outputText label="Billing Zipcode " value="{!newAcct.BillingPostalCode}" />           
+
+      </apex:pageBlocksection>
+      
+      <apex:pageBlocksection title="Contact details" columns="2" id="createCtctSection" rendered="{!OR(currentStep=='STEPcreateCT',currentStep=='STEPcreateAC')}">
+            <apex:inputField label="First Name " value="{!newCt.FirstName}" />
+            <apex:inputField label="Mailing Street " value="{!newCT.MailingStreet}" />
+            <apex:inputField label="Last Name " value="{!newCT.LastName}" />
+            <apex:inputField label="Mailing City " value="{!newCT.MailingCity}" />
+            <apex:inputField label="Phone " value="{!newCT.Phone}" />
+            <apex:inputField label="Mailing State " value="{!newCT.MailingState}" />
+            <apex:inputField label="Email " value="{!newCT.Email}"/>
+            <apex:inputField label="Mailing Zipcode " value="{!newCT.MailingPostalCode}" />                 
+            
+      </apex:pageBlocksection>
+      
+   </apex:pageBlock>
+  
+
+</apex:form>
+</apex:page>

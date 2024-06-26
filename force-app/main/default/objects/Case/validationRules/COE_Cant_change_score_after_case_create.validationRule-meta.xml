@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>COE_Cant_change_score_after_case_create</fullName>
+    <active>true</active>
+    <description>once a case is created the score cannot be altered by anyone other than a system admin</description>
+    <errorConditionFormula>$Profile.Name &lt;&gt;&quot;System Administrator&quot;&amp;&amp;( 
+(ISCHANGED(Legal_Corp_Directive__c )|| 
+ISCHANGED(External_Impact_Volume__c )|| 
+ISCHANGED(External_Impact_Severity__c ) || 
+ISCHANGED(External_Impact_Frequency__c )|| 
+ISCHANGED(Internal_Impact_Volume__c ) || 
+ISCHANGED(Internal_Impact_Frequency__c )|| 
+ISCHANGED(Internal_Impact_Severity__c) || 
+ISCHANGED(Internal_Savings__c)|| 
+ISCHANGED(Revenue__c)|| 
+ISCHANGED(Risk__c))&amp;&amp; 
+NOT(ISBLANK( CreatedDate )))</errorConditionFormula>
+    <errorMessage>Once a case is created the score cannot be modified. Please contact your SPOC if the score needs to be changed.</errorMessage>
+</ValidationRule>

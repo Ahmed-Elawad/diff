@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Referring_Employee_on_Internal_Referrals</fullName>
+    <active>true</active>
+    <description>Requires the Referring Employee field to be required when the lead source begins with Referral - Internal.  This rule will only be valid for records created or modified after 10/29/2012.</description>
+    <errorConditionFormula>AND(Referring_Employee__c = NULL, 
+BEGINS( TEXT(LeadSource), &quot;Referral-Internal&quot;), 
+TODAY() &gt;= DATE(2012,10,29), 
+NOT(BEGINS($Profile.Name,&apos;System Administrator&apos;)), 
+OR(ISNEW(), 
+AND(ISCHANGED(LeadSource), 
+BEGINS( TEXT(LeadSource), &quot;Referral-Internal&quot;))) 
+)</errorConditionFormula>
+    <errorDisplayField>Referring_Employee__c</errorDisplayField>
+    <errorMessage>*** Referring Employee is required for Internal Referrals ***</errorMessage>
+</ValidationRule>

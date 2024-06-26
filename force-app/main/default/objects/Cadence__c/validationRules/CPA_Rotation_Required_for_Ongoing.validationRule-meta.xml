@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CPA_Rotation_Required_for_Ongoing</fullName>
+    <active>true</active>
+    <description>CPA Rotation is Required for an Ongoing Cadence</description>
+    <errorConditionFormula>OR( 
+AND(
+ReferralSourceCadence__c,
+ISBLANK(ReferralSourceBusinessType2__c)
+),
+AND( 
+ISPICKVAL( TargetType__c , &quot;Ongoing Referral Source&quot;),
+INCLUDES( ReferralSourceBusinessType2__c , &quot;Accounting Firm&quot;),
+OR(
+ISPICKVAL ( CPARotation__c , &quot;&quot;),
+ISPICKVAL ( Cadence_Type__c , &quot;&quot;)
+)
+)
+)</errorConditionFormula>
+    <errorDisplayField>ReferralSourceBusinessType__c</errorDisplayField>
+    <errorMessage>Referral Source Business Type is required for a Referral Source Cadence, and Referral Type and CPA Rotation are required for an Ongoing Referral Source Cadence</errorMessage>
+</ValidationRule>

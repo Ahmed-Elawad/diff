@@ -1,0 +1,387 @@
+<aura:component controller="CommunityAccountEditFormController" implements="force:appHostable,force:lightningQuickAction" access="global">
+    
+    <!-- initializers/event related attr -->
+    <aura:registerEvent name="updateStep" type="c:commAccUpdateStep" />
+    <aura:handler name="init" value="{!this}" action="{!c.setViewedChecklist}"/>
+    <aura:attribute name="firstStep" type="Integer"/>
+    <aura:registerEvent name='autoSave' type='c:CommunityFormsAutoSave' />
+    <aura:attribute name='autoSaveRecords' type='map' />
+    
+    <!-- auto save --> 
+    <aura:attribute name='autoSaveStorage' type='Map' />
+    <aura:attribute name='autoSaveNeeded' type='boolean' />
+    <aura:attribute name='indAttributesRefresh' type='Object' />
+    
+    <!-- parent labeling mapping -->
+    <aura:attribute name='currentLabel' type='String' />
+    
+    <!-- save function reference used by tab navigation -->
+    <aura:attribute name='saveFunc' type='Object' />
+    
+    <!-- form functionality/ui attributes -->
+    <aura:attribute name="readOnlyPermission" type="Boolean" default="true" />
+    <aura:attribute name="medReadOnlyPermission" type="Boolean" default="false" />
+    <aura:attribute name="wcReadOnlyPermission" type="Boolean" default="false" />
+    <aura:attribute name="readOnlyString" type="String" default="" />
+    <aura:attribute name="currentRecPos" type="Integer" default="0" />
+    <aura:attribute name="viewedRec" type="Account" default="{!v.parentAcc}" />
+    <aura:attribute name="medQuestionnaireNeedsSaving" type="Boolean" default="false"/>
+    <aura:attribute name='waitingForResp' type='boolean' />
+    <aura:attribute name='progressRate' type='Integer' default='0' />
+    <aura:attribute name='invalidFedID' type='boolean' />
+    <aura:attribute name='valChange' type='boolean' />
+    <aura:attribute name='tabList' type='String[]' default="['Basic Information', 'About Your Business']" />
+    <aura:attribute name='selectedTab' type='String' default='Basic Information' />
+    <aura:attribute name="tabStyle" type="String"/>
+    <aura:attribute name='parentTabs' type='String[]' />
+    <aura:attribute name='ActiveParentTab' type='String'/>
+    <aura:attribute name='errorMsg' type='String' />
+    
+    <!-- record related attributes -->
+    <aura:attribute name="allAccts" type="Account[]" />
+    <aura:attribute name="parentAcc" type="Account" />
+    <aura:attribute name="PEOChecklist" type="Object" />
+    <aura:attribute name="medicalQuestionnaire" type="PEO_Onboarding_Medical_Questionnaire__c" />
+    <aura:attribute name="viewPEOChecklist" type="Object"/>
+    <aura:attribute name="viewMedicalQuestionnaire" type="PEO_Onboarding_Medical_Questionnaire__c" />
+    <aura:attribute name='placeholderRec' type='Map' />
+    <aura:attribute name='currentAccount' type='Account' />
+    
+    <!-- Form field value managment -->
+    <aura:attribute name="medicalWasRequested" type="Boolean"/>
+    <aura:attribute name='medicalUQRequested' type='String' />
+    <aura:attribute name='isMedical' type='boolean' default="{!v.viewPEOChecklist!=null &amp;&amp; v.viewPEOChecklist.Current_Medical_Coverage_Provided__c=='Yes'}" />
+    <aura:attribute name='isDental' type='boolean' default="{!v.viewPEOChecklist!=null &amp;&amp; v.viewPEOChecklist.Interested_in_dental__c=='Yes'}" />
+    <aura:attribute name='isVision' type='boolean' default="{!v.viewPEOChecklist!=null &amp;&amp; v.viewPEOChecklist.interested_in_Vision__c=='Yes'}" />
+    <aura:attribute name='is401K' type='String' />
+    <aura:attribute name='isFSA' type='String' />
+    <aura:attribute name="EnrolledEmployees" type="string" default="{!v.viewPEOChecklist.Number_of_Enrolled_Employees__c}" />
+    <aura:attribute name="DentalCarrier" type="string" default="{!v.viewPEOChecklist.Has_current_dental_carrier__c}" />
+    <aura:attribute name="VisionCarrier" type="string" default="{!v.viewPEOChecklist.has_current_Vision_Carrier__c}" />
+    <aura:attribute name="WhoDentalCarrier" type="string" default="{!v.viewPEOChecklist.Who_is_your_Current_Dental_Carrier__c}" />
+    <aura:attribute name="WhoVisionCarrier" type="string" default="{!v.viewPEOChecklist.Who_is_your_Current_Vision_Carrier__c}" />
+    <aura:attribute name="readOnly" type="Boolean" default="true" />
+    <aura:attribute name='radioGroupOptions' type='List' default="[{'label': 'Yes', 'value':'Yes'},{'label':'No','value':'No'}]" />
+    <aura:attribute name='ownerRecs' type='Object[]' />
+    <aura:attribute name='percentageTotal' type='Integer' default='0'/>
+    <aura:attribute name="stateRequired" type="Boolean" default="false"/>
+    <aura:attribute name="currentRunningUser" type="User"/>
+    <aura:attribute name="communityUser" type="Boolean"/>
+    <aura:attribute name='initialNaicsCode' type='Integer'/>
+    <aura:attribute name='lastNaicsCode' type='Integer'/>
+    <aura:attribute name="frequencyOptions" type="List" default="[{ label: '12 - Monthly', value: '12 - Monthly' },
+                                                                 { label: '24 - Semi-Monthly', value: '24 - Semi-Monthly' },
+                                                                 { label: '26 - Bi-Weekly', value: '26 - Bi-Weekly' },
+                                                                 { label: '52 - Weekly', value: '52 - Weekly' }]"/>
+    <aura:attribute name="frequencyValues" type="List" default="[]"/>
+    
+    <aura:attribute name="picklistFieldsMap" type="Map" default="{Corporation_Type__c:'Account',state_with_most_employees__c:'PEO_Onboarding_Checklist__c', Health_Benefits_Currently_through_a_PEO__c:'PEO_Onboarding_Checklist__c'}"/>
+    <aura:attribute name="howAreyouFillingTaxesOptions" type="Map"/>
+    <aura:attribute name="businessEnityTypes" type="Map"/>
+    <aura:attribute name="yesOrNoMap" type="Map"/>
+    <aura:attribute name="stateMap" type="Map"/>
+    
+    <aura:attribute name='activeLabel' type='String' />
+    <aura:attribute name="onBackspacePress" type="Boolean" default="false"/>
+    <!--for numbering-->
+    <aura:attribute name='BILabel' type='String' default="Basic Information" />
+    <aura:attribute name='AbtYourBsnsLabel' type='String' default="About Your Business" />
+    <aura:attribute name='ReqdDocsLabel' type='String' default="Required Documents" />
+    
+    <div class="CompInfoHeader">
+        <lightning:card>
+            <form class="slds-form_stacked" type='Submit' > 
+                <div class=" slds-form slds-grid slds-wrap">
+                    <aura:if isTrue="{!greaterthan(v.readOnlyString.length, 1)}">
+                        <div style="width:100%">
+                            <ui:message title="Evaluation Status" severity="info" closable="false" >
+                                {!v.readOnlyString}
+                            </ui:message>
+                        </div>
+                    </aura:if>
+                    <lightning:tabset variant="{!v.tabStyle}"  selectedTabId='{!v.selectedTab}'>
+                        <lightning:tab label="{!v.BILabel}" id="Basic Information" onactive='{!c.setLabel}'>
+                            <lightning:layout >
+                                <lightning:layoutItem size="6" padding="around-small">
+                                    
+                                    <lightning:input disabled='true' aura:id="editFormField" label="Company Name" name="Name" value='{!v.currentAccount.Name}' onchange='{!c.handleChange}' />
+                                    <span onkeydown="{!c.keyCheck}" class="slds-size--12-of-12">
+                                        <lightning:input label='Federal ID Number' disabled='{!v.readOnlyPermission}' id='Federal_ID_Number__c' aura:id="editFormField"  messageWhenBadInput='Federal ID Number format must be ##-#######' name="Account.Federal_ID_Number__c" value='{!v.currentAccount.Federal_ID_Number__c}'  onchange='{!c.handleChange}' maxlength='10' />
+                                    </span>
+                                    <aura:if isTrue='{!v.invalidFedID}'>
+                                        <span  class="slds-text-color_error">Federal ID number must be in ##-####### format.</span>
+                                    </aura:if>
+                                    <!--lightning:input disabled='{!v.readOnlyPermission}' aura:id="editFormField" label="Legal Name" name="Account.Legal_Name__c" value='{!v.currentAccount.Legal_Name__c}'  onchange='{!c.handleChange}' maxlength='40' /-->
+                                    <aura:if isTrue="{!v.currRecord.ParentId}">
+                                        <lightning:input disabled='true' aura:id="editFormField" name='Name' label='Sales Parent' value='{!v.currentAccount.Name}'/>
+                                    </aura:if>
+                                    <lightning:input disabled='{!v.readOnlyPermission}' aura:id="editFormField" label="DBA" name="Account.DBA__c" value='{!v.currentAccount.DBA__c}'  onchange='{!c.handleChange}'/>
+                                    <lightning:input disabled='{!v.readOnlyPermission}' aura:id="editFormField" type='tel' label='Phone' name="Account.Phone" value='{!v.currentAccount.Phone}'  onchange='{!c.handleChange}' />
+                                </lightning:layoutItem>
+                                <lightning:layoutItem size="6"  padding="around-small">
+                                    <lightning:input disabled='{!v.readOnlyPermission}' aura:id="editFormField" label="Street" name="Account.ShippingStreet" value='{!v.currentAccount.ShippingStreet}' onchange='{!c.handleChange}'/>
+                                    <lightning:input disabled='{!v.readOnlyPermission}' aura:id="editFormField" label="Shipping City" name="Account.ShippingCity" value='{!v.currentAccount.ShippingCity}' onchange='{!c.handleChange}'/>
+                                    <lightning:input disabled='{!v.readOnlyPermission}' aura:id="editFormField" label="Postal Code" name="Account.ShippingPostalCode" value='{!v.currentAccount.ShippingPostalCode}' onchange='{!c.handleChange}' maxlength='10' />
+                                    <lightning:input disabled='{!v.readOnlyPermission}' 
+                                                     aura:id="editFormField" label="State" name="Account.ShippingState" value='{!v.currentAccount.ShippingState}' onchange='{!c.handleChange}'/>
+                                </lightning:layoutItem>
+                            </lightning:layout>
+                            <c:communityFormNavButtons tabNameList='{!v.tabList}' 
+                                                       currentPos='{!v.selectedTab}' 
+                                                       allPossibleParents='{!v.parentTabs}'
+                                                       activeParent='{!v.ActiveParentTab}'
+                                                       parentTabsetUsesIteration='True'
+                                                       hideBackButton="{! if(and(equals(v.viewedRec.Id,v.parentAcc.Id),equals(v.selectedTab, 'Basic Information')), true, false)}" 
+                                                       saveFunc='{!v.saveFunc}'
+                                                       skipSaveEvt="{! if(equals(v.selectedTab, 'Basic Information'), true, false)}" />
+                        </lightning:tab>
+                        <lightning:tab label="{!v.AbtYourBsnsLabel}" id="About Your Business" onactive='{!c.setLabel}'>
+                            <lightning:layout>
+                                <lightning:layoutItem size="6" padding="around-small">
+                                    <div style="height:12px"></div>
+                                    <lightning:input disabled='{!v.readOnlyPermission}' aura:id="editFormField" label="Website" name="Account.Website" value='{!v.currentAccount.Website}'  onchange='{!c.handleChange}' maxlength='255'/>
+                                    <div style="height:15px"></div>
+                                   <!-- <lightning:input disabled='{!v.readOnlyPermission}' aura:id="editFormField" type='Date' label="Date of Incorporation" name="Account.Date_of_Incorporation__c" value='{!v.currentAccount.Date_of_Incorporation__c}'  onchange='{!c.handleChange}'/>-->
+                                    <aura:if isTrue='{! or( or(v.currentAccount.isParent__c, v.viewPEOChecklist.Client_Add_on__c), (and(!v.currentAccount.isParent__c, empty(v.currentAccount.SalesParent__c)))) }'>
+                                        <lightning:select aura:id="editFormField" disabled="{!or(v.medReadOnlyPermission,v.wcReadOnlyPermission)}" required="{!v.stateRequired}" value="{!v.viewPEOChecklist.state_with_most_employees__c}" name="PEO_Onboarding_Checklist__c.state_with_most_employees__c" label="In which state do you have the most employees?"  onchange='{!c.handleChange}'>
+                                            <option value=""></option>
+                                            <aura:iteration items="{!v.stateMap}" var="state" indexVar="key">
+                                                <option text="{!state.value}" value="{!state.key}" selected="{!state.key==v.viewPEOChecklist.state_with_most_employees__c}" />
+                                            </aura:iteration>
+                                        </lightning:select>
+                                    </aura:if>
+                                    
+                                    <!--Corp type frop down -->
+                                    <!--<div class="slds-grid slds-gutters slds-wrap">-->
+                                    <!--  <div class="slds-col slds-size_6-of-6" style="padding-bottom:25px"> -->
+                                    <div>
+                                        <lightning:select disabled='{!v.readOnlyPermission}'
+                                                          aura:id="editFormField" 
+                                                          label="Business Entity Type" 
+                                                          name="Account.Corporation_Type__c"
+                                                          value='{!v.currentAccount.Corporation_Type__c}'
+                                                          onchange='{!c.handleChange}' >
+                                            <option value=''></option>
+                                            <option value='Board Owned'>Board Owned</option>
+                                            <option value='C-Corporation'>C-Corporation</option>
+                                            <option value='Church Organization'>Church Organization</option>
+                                            <option value='Government Entity'>Government Entity</option>
+                                            <option value='Individual/Sole Proprietor'>Individual/Sole Proprietor</option>
+                                            <option value='Joint Venture'>Joint Venture</option>
+                                            <option value='Limited Liability Company'>Limited Liability Company</option>
+                                            <option value='Limited Liability Partnership'>Limited Liability Partnership</option>
+                                            <option value='Limited Partnership'>Limited Partnership</option>
+                                            <option value='Not For Profit'>Not For Profit</option>
+                                            <option value='Other'>Other</option>
+                                            <option value='Partnership'>Partnership</option>
+                                            <option value='Personal Service Corporation'>Personal Service Corporation</option>
+                                            <option value='Professional Corporation'>Professional Corporation</option>
+                                            <option value='S-Corporation'>S-Corporation</option>
+                                            <option value='Tax Exempt'>Tax Exempt</option>
+                                            <option value='Trust'>Trust</option>
+                                        </lightning:select>
+                                    </div>
+                                    <!--</div>-->
+                                    <!--</div>-->
+                                    <aura:if isTrue="{!v.currentAccount.Corporation_Type__c =='Limited Liability Company'}">
+                                        <lightning:select disabled='{!v.readOnlyPermission}'
+                                                          aura:id="editFormField" 
+                                                          label="As an LLC, how are you filing taxes?" 
+                                                          name="PEO_Onboarding_Checklist__c.how_are_you_filing_taxes__c"
+                                                          value='{!v.viewPEOChecklist.how_are_you_filing_taxes__c}'
+                                                          onchange='{!c.handleChange}' >
+                                            <option value=''></option>
+                                            <option value='Corporation'>Corporation</option>
+                                            <option value='Partnership'>Partnership</option>
+                                            <option value='Individual/Sole Proprietorship'>Individual/Sole Proprietorship</option>
+                                            <option value='S-Corp'>S-Corp</option>
+                                        </lightning:select>
+                                    </aura:if>
+                                    <lightning:radioGroup disabled='{!v.readOnlyPermission}'
+                                                          aura:id="bankruptcy"
+                                                          name='PEO_Onboarding_Checklist__c.has_bankruptcies_in_past_12_months__c'
+                                                          label="Any bankruptcies in the past year?"
+                                                          options="{!v.radioGroupOptions}"
+                                                          value="{!v.viewPEOChecklist.has_bankruptcies_in_past_12_months__c}"
+                                                          onchange='{!c.handleChange}'
+                                                          />
+                                    <lightning:radioGroup disabled='{!v.readOnlyPermission}'
+                                                          name='PEO_Onboarding_Checklist__c.Advisor_for_your_retirement_plan__c'
+                                                          label="Any 1099 Independent Contractors on payroll?"
+                                                          options="{!v.radioGroupOptions}"
+                                                          value="{!v.viewPEOChecklist.Any_1099_s_Independent_Cntrctrs_on_pyrll__c}"
+                                                          onchange='{!c.handleChange}'
+                                                          />
+                                </lightning:layoutItem>
+                                <lightning:layoutItem size="6"  padding="around-small">
+                                    
+                                    <c:KeyWordSearchInput disable='{!or(v.readOnlyPermission,v.wcReadOnlyPermission)}' label='NAICS Code' objectApiName='WC_NAICS_To_Industry_Map__c' idFieldApiName='Id' valueFieldApiName='NAICS_Title__c' inputValue='{!v.currentAccount.NAICS_Code__c}'/>
+                                    
+                                    <div aura:id="naicsToolLink" class="naicsToolLink">
+                                        <p>Click
+                                            <lightning:formattedUrl class='naicsTool' value="https://www.naics.com/company-lookup-tool/" label="here" tooltip="Go to NAICS look up tool" />
+                                            to access the NAICS Company Lookup Tool</p>
+                                    </div>
+                                    <lightning:input disabled='{!v.readOnlyPermission}' aura:id="editFormField" type='Number' label="# of Employees Working 30 Hours or More per Week" name="Account.Full_Time_Employees__c" value='{!v.currentAccount.Full_Time_Employees__c}'  onchange='{!c.handleChange}' min='0' max='100000'/>
+                                    <lightning:input disabled='{!v.readOnlyPermission}' aura:id="editFormField" type='Number' label="# of Employees Working Less Than 30 Hours per Week" name="Account.Part_Time_Employees__c" value='{!v.currentAccount.Part_Time_Employees__c}' onchange='{!c.handleChange}'  min='0' max='100000'/>
+                                    <lightning:dualListbox name="PEO_Onboarding_Checklist__c.Payroll_Frequency__c"
+                                                           label= "Payroll Frequency"
+                                                           disabled='{!v.readOnlyPermission}'
+                                                           sourceLabel="Available"
+                                                           selectedLabel="Selected"
+                                                           value="{!v.frequencyValues}"
+                                                           options="{!v.frequencyOptions}"
+                                                           onchange="{!c.handleChange}"/>
+                                    <!-- <lightning:radioGroup disabled='{!or(v.readOnlyPermission,v.medReadOnlyPermission)}'
+                                                          label="Are your health benefits currently through a PEO?" 
+                                                          name="PEO_Onboarding_Checklist__c.Health_Benefits_Currently_through_a_PEO__c"
+                                                          options="{!v.radioGroupOptions}"
+                                                          value="{!v.viewPEOChecklist.Health_Benefits_Currently_through_a_PEO__c}"
+                                                          onchange='{!c.handleChange}'
+                                                          /> -->
+                                    <lightning:radioGroup disabled='{!v.readOnlyPermission}'
+                                                          name='PEO_Onboarding_Checklist__c.has_Union_Employees_on_Payroll__c'
+                                                          label="Any union employees on Payroll?"
+                                                          options="{!v.radioGroupOptions}"
+                                                          value="{!v.viewPEOChecklist.has_Union_Employees_on_Payroll__c}"
+                                                          onchange='{!c.handleChange}'
+                                                          />
+                                </lightning:layoutItem>
+                            </lightning:layout>
+                            <aura:if isTrue="{! not(v.currentAccount.Corporation_Type__c == 'Not For Profit') }">
+                                <div class="slds-p-around_small">
+                                    <div class="slds-grid slds-gutters slds-wrap">
+                                        <div class="slds-col slds-size_6-of-6" style="padding-bottom:25px">
+                                            <table border="0" cellpadding="5">
+                                                <thead border="1">
+                                                    <tr>
+                                                        <th></th>
+                                                        <th style="padding:5px">Owner Name</th>
+                                                        <th style="padding:5px; padding-left:15px;">Ownership Percent</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <aura:iteration items="{!v.ownerRecs}" var="ownerRec" indexVar="ownerRecIndex">  
+                                                        <tr> 
+                                                            <td>
+                                                                {!ownerRecIndex + 1})
+                                                            </td>
+                                                            <td style="padding:5px; padding-right:13px;">
+                                                                <lightning:input disabled='{!v.readOnlyPermission}' label="Owner Name" variant="label-hidden" placeholder="Enter text..." onchange="{!c.handleOwnerChange}" value="{!ownerRec.nameOfOwner}" name="{!ownerRecIndex}"/>
+                                                            </td>  
+                                                            <td style="padding:5px; padding-left:15px;">
+                                                                <lightning:input disabled='{!v.readOnlyPermission}' label="Ownership Percent" variant="label-hidden" placeholder="Enter Number" onchange="{!c.calculatePercentOwnership}" value="{!ownerRec.percentOfOwner}" type="number" name="{!ownerRecIndex}" />
+                                                            </td>
+                                                            <td>
+                                                                <aura:if isTrue="{!greaterthan(v.ownerRecs.length, 1)}">
+                                                                    <a name="{!ownerRecIndex}" onclick="{!c.removeRow}">
+                                                                        <lightning:icon iconName="utility:delete" alternativeText="delete" size="x-small"/>
+                                                                    </a>
+                                                                </aura:if>
+                                                            </td>
+                                                        </tr>  
+                                                    </aura:iteration>
+                                                </tbody>
+                                            </table>
+                                            <aura:if isTrue="{!v.percentageTotal != 100}">
+                                                <span style="color:red">Ownership Percentages must add up to 100%.</span> <br></br>
+                                            </aura:if>
+                                            <aura:if isTrue="{!lessthan(v.ownerRecs.length, 5)}">
+                                                <lightning:button disabled='{!v.readOnlyPermission}' class="slds-m-top_small" variant="brand" type="button" label="Add Row" onclick="{!c.addNewOwner}"></lightning:button>
+                                            </aura:if>
+                                        </div>
+                                    </div>
+                                </div>
+                            </aura:if>
+                            <c:communityFormNavButtons tabNameList='{!v.tabList}' 
+                                                       currentPos='{!v.selectedTab}' 
+                                                       allPossibleParents='{!v.parentTabs}'
+                                                       activeParent='{!v.ActiveParentTab}'
+                                                       parentTabsetUsesIteration='True'
+                                                       hideBackButton="{! if(and(equals(v.viewedRec.Id,v.parentAcc.Id),equals(v.selectedTab, 'Basic Information')), true, false)}" 
+                                                       saveFunc='{!v.saveFunc}'
+                                                       skipSaveEvt="{! if(equals(v.selectedTab, 'Basic Information'), true, false)}" />
+                        </lightning:tab>
+                        <!--Medical_Pre_Qualifier_Status__c = {!v.PEOChecklist.Medical_Pre_Qualifier_Status__c}<br/>
+                        Health_Insurance_Summary_required__c = {!v.viewPEOChecklist.Health_Insurance_Summary_required__c}<br/>
+                        Health_Invoice_required__c = {!v.viewPEOChecklist.Health_Invoice_required__c}<br/>
+                        Claims_Report_required__c = {!v.viewPEOChecklist.Claims_Report_required__c}<br/>
+                        Health_Insurance_Renewal_required__c = {!v.viewPEOChecklist.Health_Insurance_Renewal_required__c}<br/> -->
+                        
+                        <aura:if isTrue="{!and(v.PEOChecklist.Medical_Pre_Qualifier_Status__c == 'Approved',
+                                         (v.viewPEOChecklist.Health_Insurance_Summary_required__c||
+                                         v.viewPEOChecklist.Health_Invoice_required__c||v.viewPEOChecklist.Claims_Report_required__c||
+                                         v.viewPEOChecklist.Health_Insurance_Renewal_required__c))}">
+                            <lightning:tab label="{!v.ReqdDocsLabel}" id="Upload">
+                                <c:UploadFiles tabOption="{!v.tabType}" 
+                                               checklist="{!v.viewPEOChecklist}"  
+                                               currentAccount="{!v.currentAccount}"  
+                                               parentAccountToCurrentAccount='{!v.parentAcc.Id}'
+                                               disableFilesUpload="{!v.readOnlyPermission}" readOnlyString='{!v.readOnlyString}'
+                                               isCommunityUser="{!v.user.Profile.Name == 'Customer Community Login User Clone'}"
+                                               claimsReportRequired = "{!v.viewPEOChecklist.Claims_Report_required__c}" 
+                                               hlthInsRenwReqd = "{!v.viewPEOChecklist.Health_Insurance_Renewal_required__c}" hlthInsSummReqd = "{!v.viewPEOChecklist.Health_Insurance_Summary_required__c}" 
+                                               hlthInvReqd = "{!v.viewPEOChecklist.Health_Invoice_required__c}"
+                                               suiReqd = "true" wcReqd="{!not(v.communityUser)}"/>
+                                <c:communityFormNavButtons tabNameList='{!v.tabList}' 
+                                                           currentPos='{!v.selectedTab}' 
+                                                           allPossibleParents='{!v.parentTabs}'
+                                                           activeParent='{!v.ActiveParentTab}'
+                                                           parentTabsetUsesIteration='True'
+                                                           hideBackButton="{! if(and(equals(v.viewedRec.Id,v.parentAcc.Id),equals(v.selectedTab, 'Basic Information')), true, false)}" 
+                                                           saveFunc='{!v.saveFunc}'
+                                                           skipSaveEvt="{! if(equals(v.selectedTab, 'Basic Information'), true, false)}" />
+                            </lightning:tab>
+                            <aura:set attribute="else">
+                                <aura:if isTrue= "{! v.currentAccount.Id == v.parentAcc.Id}">
+                                    <lightning:tab label="{!v.ReqdDocsLabel}" id="Upload">
+                                        <c:UploadFiles tabOption="{!v.tabType}" 
+                                                       checklist="{!v.viewPEOChecklist}"  
+                                                       currentAccount="{!v.currentAccount}"  
+                                                       parentAccountToCurrentAccount='{!v.parentAcc.Id}'
+                                                       disableFilesUpload="{!v.readOnlyPermission}" readOnlyString='{!v.readOnlyString}'
+                                                       isCommunityUser="{!v.user.Profile.Name == 'Customer Community Login User Clone'}"
+                                                       suiReqd = "true" wcReqd="{!not(v.communityUser)}"/>
+                                        <c:communityFormNavButtons tabNameList='{!v.tabList}' 
+                                                                   currentPos='{!v.selectedTab}' 
+                                                                   allPossibleParents='{!v.parentTabs}'
+                                                                   activeParent='{!v.ActiveParentTab}'
+                                                                   parentTabsetUsesIteration='True'
+                                                                   hideBackButton="{! if(and(equals(v.viewedRec.Id,v.parentAcc.Id),equals(v.selectedTab, 'Basic Information')), true, false)}" 
+                                                                   saveFunc='{!v.saveFunc}'
+                                                                   skipSaveEvt="{! if(equals(v.selectedTab, 'Basic Information'), true, false)}" 
+                                                                   />
+                                    </lightning:tab>
+                                </aura:if>
+                            </aura:set>
+                        </aura:if>
+                        <!--viewPEOChecklistName {!v.viewPEOChecklist.Name}<br/>
+                        Prequal Status{!v.PEOChecklist.Medical_Pre_Qualifier_Status__c}<br/>
+                        Claims_Report_Required__c{!v.PEOChecklist.Claims_Report_Required__c}<br/>
+                        Health_Insurance_Renewal_Required__c{!v.PEOChecklist.Health_Insurance_Renewal_Required__c}<br/>
+                        Health_Insurance_Summary_Required__c{!v.PEOChecklist.Health_Insurance_Summary_Required__c}<br/>
+                        Health_Invoice_Required__c{!v.PEOChecklist.Health_Invoice_Required__c}<br/>
+                        <aura:if isTrue="{!and(v.PEOChecklist.Medical_Pre_Qualifier_Status__c == 'Approved',
+                                     or(v.viewPEOChecklist.Claims_Report_Required__c,v.viewPEOChecklist.Health_Insurance_Renewal_Required__c,
+                                      v.viewPEOChecklist.Health_Insurance_Summary_Required__c,v.viewPEOChecklist.Health_Invoice_Required__c))}">
+                            <lightning:tab label="Required Documents" id="Upload">
+                                <c:UploadFiles tabOption="{!v.tabType}" 
+                                          checklist="{!v.viewPEOChecklist}"  
+                                          currentAccount="{!v.currentAccount}"  
+                                          parentAccountToCurrentAccount='{!v.parentAcc.Id}'
+                                          disableFilesUpload="{!v.readOnlyPermission}" readOnlyString='{!v.readOnlyString}'
+                                          isCommunityUser="{!v.user.Profile.Name == 'Customer Community Login User Clone'}"
+                                          claimsReportRequired = "{!v.viewPEOChecklist.Claims_Report_Required__c}" 
+                                          hlthInsRenwReqd = "{!v.viewPEOChecklist.Health_Insurance_Renewal_Required__c}" 
+                                          hlthInsSummReqd = "{!v.viewPEOChecklist.Health_Insurance_Summary_Required__c}" 
+                                          hlthInvReqd = "{!v.viewPEOChecklist.Health_Invoice_Required__c}"/>
+                            </lightning:tab>
+                        </aura:if>-->
+                    </lightning:tabset>
+                </div>
+                <div >
+                </div>
+            </form>
+        </lightning:card>
+    </div>    
+</aura:component>

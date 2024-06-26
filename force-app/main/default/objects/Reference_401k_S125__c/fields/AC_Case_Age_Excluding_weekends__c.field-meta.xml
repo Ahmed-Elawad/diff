@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AC_Case_Age_Excluding_weekends__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>If(  NOT(ISNULL(Plan_Coordinator__c)) , 
+((DateValue(  CreatedDate ) - DateValue( CreatedDate ) - 2*( floor((DateValue( CreatedDate) - DATE(1985, 6, 24))/7) - floor((DateValue( CreatedDate) - DATE(1985, 6, 24))/7)))), 
+( Today() - DateValue( CreatedDate ) -2*(floor(( Today() - DATE(1985, 6, 24))/7) - floor(( DateValue(CreatedDate ) - DATE(1985, 6, 24))/7))))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>AC Case Age Excluding weekends</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

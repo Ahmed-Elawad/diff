@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reason_Won_Details_Required</fullName>
+    <active>true</active>
+    <description>Makes Reason Won Details Required when an opportunity is saved with Verbal Commit status or higher</description>
+    <errorConditionFormula>AND(
+AND(NOT(BEGINS($Profile.Name, &quot;System Admin&quot;)), NOT(BEGINS($Profile.Name, &quot;Sales Enablement&quot;))),
+ISCHANGED(StageName),
+ISPICKVAL(Reason_Won_Details__c ,&quot;&quot;),
+OR($RecordType.Name = &apos;MMS Opportunity Record Type&apos;, $RecordType.Name = &apos;Core Opportunity Record Type&apos;, $RecordType.Name = &apos;Core Virtual Sales&apos;),
+OR(ISPICKVAL(StageName ,&quot;Verbal Commit&quot;),ISPICKVAL( StageName ,&quot;Sold&quot;),ISPICKVAL( StageName ,&quot;Sold - Submitted&quot;), ISPICKVAL( StageName ,&quot;Sold - Submitted to CTT&quot;)),
+AND(NOT(ISPICKVAL(Reason_Won__c, &quot;No Reason given&quot;)),
+NOT(ISPICKVAL(Reason_Won__c, &quot;Other&quot;))))</errorConditionFormula>
+    <errorDisplayField>Reason_Won_Details__c</errorDisplayField>
+    <errorMessage>Reason Won Details is required when the opportunity is Verbal Commit, Sold, Sold - Submitted, Sold - Submitted to CTT</errorMessage>
+</ValidationRule>

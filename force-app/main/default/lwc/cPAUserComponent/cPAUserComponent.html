@@ -1,0 +1,48 @@
+<template>
+  <lightning-quick-action-panel header={headerText}>
+    <template if:true={showSpinner}>
+      <lightning-spinner size="medium"></lightning-spinner>
+    </template>
+    <template if:false={displayCard}>
+      This feature is not yet available.
+    </template>
+    <template if:true={displayCard}>
+      <template if:true={existingUserCheckCompleted}>
+        <lightning-layout multiple-rows>
+          <lightning-layout-item size="12" padding="around-small">
+            <lightning-input type="text" label="Contact Name" value={contactData.Name} disabled>
+            </lightning-input>
+          </lightning-layout-item>
+          <lightning-layout-item size="12" padding="around-small">
+            <lightning-input type="email" label="Email" value={email} data-field="contactEmail" data-required="true"
+              required onchange={handleEmailChange} disabled={disableFields}>
+            </lightning-input>
+          </lightning-layout-item>
+          <lightning-layout-item size="12" padding="around-small">
+            <lightning-input type="email" label="Community Username" value={userName} field-level-help="Username will mirror email address entered,
+                  but if email address is utilized by multiple contacts you should update the username to enroll."
+              data-field="userName" data-required="true" required disabled={disableFields}>
+            </lightning-input>
+          </lightning-layout-item>
+        </lightning-layout>
+        <div slot="footer">
+          <lightning-layout>
+            <lightning-layout-item>
+              <lightning-button label="Cancel" variant="neutral" onclick={handleCancel}></lightning-button>
+            </lightning-layout-item>
+            <lightning-layout-item alignment-bump="left">
+              <lightning-button if:true={resendInvite} label="Re-invite User" variant="brand"
+                onclick={handleReInviteUser}>
+              </lightning-button>
+              <lightning-button if:true={reactivateUser} label="Re-Activate User" variant="brand"
+                onclick={handleReActivateUser}>
+              </lightning-button>
+              <lightning-button if:true={firsTimeUserCreation} label="Create and Invite User" variant="brand"
+                onclick={createUser} disabled={disableFields}></lightning-button>
+            </lightning-layout-item>
+          </lightning-layout>
+        </div>
+      </template>
+    </template>
+  </lightning-quick-action-panel>
+</template>

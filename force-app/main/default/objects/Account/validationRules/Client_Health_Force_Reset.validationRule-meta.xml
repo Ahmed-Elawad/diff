@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Client_Health_Force_Reset</fullName>
+    <active>true</active>
+    <errorConditionFormula>(ispickval(PRIORVALUE(X401k_S125_Account_Health__c),&apos;Potential Risk&apos;) &amp;&amp; ISPICKVAL(X401k_S125_Account_Health__c, &apos;At Risk&apos;)) || 
+
+(ispickval(PRIORVALUE(HRO_Account_Health__c),&apos;Potential Risk&apos;) &amp;&amp; ISPICKVAL(HRO_Account_Health__c, &apos;At Risk&apos;)) || 
+
+(ispickval(PRIORVALUE(TAA_Account_Health__c),&apos;Potential Risk&apos;) &amp;&amp; ISPICKVAL(TAA_Account_Health__c, &apos;At Risk&apos;)) &amp;&amp; not(isnull(Client_Health_Date_TAA__c))</errorConditionFormula>
+    <errorMessage>Please change the account health to &apos;stable&apos; before changing it to &apos;At Risk&apos;.</errorMessage>
+</ValidationRule>

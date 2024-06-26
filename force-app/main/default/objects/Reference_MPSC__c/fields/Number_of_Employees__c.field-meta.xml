@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Number_of_Employees__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>IF (Case_Lookup__r.Account.NumberOfEmployees &gt; 500, &apos;&gt;500&apos;, 
+IF(AND(Case_Lookup__r.Account.NumberOfEmployees &gt; 100, Case_Lookup__r.Account.NumberOfEmployees &lt;= 500), &apos;&gt;100&apos;,
+IF(AND(Case_Lookup__r.Account.NumberOfEmployees &gt; 50, Case_Lookup__r.Account.NumberOfEmployees &lt;= 100), &apos;51-100&apos;,
+IF(AND(Case_Lookup__r.Account.NumberOfEmployees &gt;= 1, Case_Lookup__r.Account.NumberOfEmployees &lt;= 50), &apos;1-50&apos;,
+&apos;&apos;))))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Number of Employees</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

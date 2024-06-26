@@ -1,0 +1,78 @@
+<apex:page controller="CloneAccountController"
+           tabStyle="Account">
+<apex:pageMessages />
+<apex:pageBlock rendered="{!isAccountSet}">
+
+  <apex:sectionHeader title="Clone Prospect-Client Information"
+                      subtitle="Step 2 of 2"/>
+  <apex:form >
+    <apex:pageBlock title="Prospect-Client Information">
+      <apex:facet name="footer">
+        <apex:outputPanel >
+          <apex:commandButton action="{!step1}" value="Previous" styleClass="btn"/>
+          <apex:commandButton action="{!save}" value="Save" styleClass="btn"/>
+          <apex:commandButton action="{!cancel}" value="Cancel" styleClass="btn"/>
+        </apex:outputPanel>
+      </apex:facet>
+      <apex:PageBlockSection title="The following Prospect-Client records were identified.">
+        <apex:dataTable value="{!accts}" var="acct" cellPadding="4" border="1">
+          <apex:column headerValue="Prospect-Client Number"> 
+            <apex:outputField value="{!acct.AccountNumber}"/>
+          </apex:column>
+          <apex:column headerValue="Prospect-Client Name"> 
+            <apex:outputField value="{!acct.Name}" />
+          </apex:column>
+        </apex:dataTable>
+        <br></br>
+      </apex:PageBlockSection>
+      <apex:PageBlockSection title="Selected Products and Services to clone - the Product will be added if it does not already exist.">
+        <apex:dataTable rendered="{!showSelected}" value="{!selectedAssets}" var="asset" cellPadding="4" border="1">
+          <apex:column headerValue="Product and Service Name">
+            <apex:outputField value="{!asset.Name}"/>
+          </apex:column>
+          <apex:column headerValue="Plan Code">
+            <apex:outputField value="{!asset.Product_Plan_Code__c}"/>
+          </apex:column>
+          <apex:column headerValue="Start Date">
+            <apex:outputField value="{!asset.Start_Date__c}"/>
+          </apex:column>
+          <apex:column headerValue="End Date">
+            <apex:outputField value="{!asset.Product_End_Date__c}"/>
+          </apex:column>
+        </apex:dataTable>
+        <apex:outputPanel rendered="{!NOT(showSelected)}">
+          <apex:outputText value="No Products were selected"/>
+        </apex:outputPanel>
+      </apex:PageBlockSection>
+      <apex:PageBlockSection rendered="{!showInserts}" title="The following Prospect-Client records do not match existing records and will be created.">
+        <apex:outputPanel >
+          <apex:outputText value="The following fields will be copied from the original Prospect-Client record: {!insertNames}."/>
+        </apex:outputPanel>
+        <br/>
+        <apex:dataTable value="{!insertAccts}" var="insertAcct" cellPadding="4" border="1">
+          <apex:column headerValue="Prospect-Client Number"> 
+            <apex:outputField value="{!insertAcct.AccountNumber}"/>
+          </apex:column>
+          <apex:column headerValue="Prospect-Client Name"> 
+            <apex:outputField value="{!insertAcct.Name}" />
+          </apex:column>
+        </apex:dataTable>
+      </apex:PageBlockSection>
+      <apex:PageBlockSection rendered="{!showUpdates}" title="The following Prospect-Client records match existing records and will be updated.">
+        <apex:outputPanel >
+          <apex:outputText value="The following fields will be copied from the original Prospect-Client record: {!updateNames}."/>
+        </apex:outputPanel>
+        <br/>
+        <apex:dataTable value="{!updateAccts}" var="updateAcct" cellPadding="4" border="1">
+          <apex:column headerValue="Prospect-Client Number"> 
+            <apex:outputField value="{!updateAcct.AccountNumber}"/>
+          </apex:column>
+          <apex:column headerValue="Prospect-Client Name"> 
+            <apex:outputField value="{!updateAcct.Name}" />
+          </apex:column>
+        </apex:dataTable>
+      </apex:PageBlockSection>
+    </apex:PageBlock>
+  </apex:form>
+</apex:pageBlock>
+</apex:page>

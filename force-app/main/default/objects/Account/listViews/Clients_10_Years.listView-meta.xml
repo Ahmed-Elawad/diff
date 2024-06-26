@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Clients_10_Years</fullName>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ACCOUNT.SITE</columns>
+    <columns>ACCOUNT.ADDRESS1_STATE</columns>
+    <columns>ACCOUNT.PHONE1</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>ESR_Payroll_Start_Date__c</field>
+        <operation>greaterOrEqual</operation>
+        <value>1/1/2009</value>
+    </filters>
+    <filters>
+        <field>LostClient__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>equals</operation>
+        <value>FLEX Client,CORE Client</value>
+    </filters>
+    <filters>
+        <field>Likely_to_Refer__c</field>
+        <operation>equals</operation>
+        <value>A,B</value>
+    </filters>
+    <filters>
+        <field>Do_Not_Call__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Account.CoreAccountRecordType</value>
+    </filters>
+    <label>Clients 10+ Years</label>
+    <sharedTo>
+        <group>CORE</group>
+    </sharedTo>
+</ListView>

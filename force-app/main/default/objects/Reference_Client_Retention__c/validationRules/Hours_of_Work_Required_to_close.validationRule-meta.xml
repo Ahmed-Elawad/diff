@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Hours_of_Work_Required_to_close</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+ISNULL(Hours_of_work_involved_for_project_fix__c),
+OR(ISPICKVAL(Current_Step__c,&apos;Resolution Resolved&apos;),
+ISPICKVAL(Current_Step__c,&apos;Solution Resolved&apos;),AND(ISPICKVAL(Current_Step__c,&apos;Unable to retain Client&apos;),BEGINS($RecordType.Name,&apos;Client Retention&apos;))))</errorConditionFormula>
+    <errorMessage>A value is required in the Hours of work involved for project/fix field before closing the record.</errorMessage>
+</ValidationRule>

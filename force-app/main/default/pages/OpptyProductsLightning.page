@@ -1,0 +1,610 @@
+<apex:page standardController="Opportunity" extensions="OpptyProductsController"
+           id="OpptyProductsPage">  
+
+    <apex:stylesheet value="{!URLFOR($Resource.pageMessage_lightning, 'pageMessage-lightning.css')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.pageMessage_lightning,'pageMessage-lightning.js')}"/> 
+
+    <apex:stylesheet value="{!$Resource.OpptyProductsLightningCSS}"/>
+    <apex:slds />
+
+    <apex:form >
+        <apex:outputPanel rendered="{!AND(NOT(opptyComplete),opptyFound)}" >
+            <div class="slds-scope">
+
+                <article class="slds-card">
+                    <div class="slds-card__header slds-grid">
+                        <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                            <div class="slds-media__figure">
+                                <span class="slds-icon_container slds-icon-standard-contact" title="description of icon when needed">
+                                    <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                                        <use xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/standard-sprite/svg/symbols.svg#account')}" />
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="slds-media__body">
+                                <h2>
+                                    <a href="javascript:void(0);" class="slds-card__header-link slds-truncate" title="[object Object]">
+                                        <span class="slds-text-heading_small">Complete the Opportunity Information to Continue</span>
+                                    </a>
+                                </h2>
+                            </div>
+                        </header>
+                    </div>
+                    <div class="slds-card__body slds-card__body_inner">
+                        <apex:pageMessages />
+                        <h3 class="slds-text-heading_small slds-m-bottom_medium">
+                            Opportunity {!productHelper.oppty.Name}
+                        </h3>
+
+                        <label class="slds-form-element__label">Employees Paid Per Payroll</label>
+                        <apex:inputField styleClass="slds-input" rendered="{!productHelper.useEmpsPerPay}" value="{!productHelper.oppty.Employees_Paid_Per_Payroll__c}" ></apex:inputField>
+                        <label class="slds-form-element__label">Run-Effective Date</label>
+                        <apex:inputField styleClass="slds-input" value="{!productHelper.oppty.CloseDate}"/>
+                        <label class="slds-form-element__label">Frequency</label>
+                        <apex:inputField styleClass="slds-input" rendered="{!productHelper.useFrequency}" value="{!productHelper.oppty.Frequency__c}" ></apex:inputField>
+                    </div>
+                    <footer class="slds-card__footer">
+                        <div class="centered-buttons">
+
+                            <apex:commandButton styleClass="slds-button slds-button_neutral" action="{!checkOpptyAndContinue}" value="Continue to Product Setup" />
+                            <apex:commandButton styleClass="slds-button slds-button_neutral" action="{!cancel}" value="Return to Opportunity" /> 
+                            
+                        </div>
+                    </footer>
+                </article>
+            </div>
+        </apex:outputPanel>
+
+        <apex:outputPanel rendered="{!opptyComplete}" id="productTypeSelectionBlock-lightning">
+
+            <div class="slds-scope">
+                <article class="slds-card">
+                    <div class="slds-card__header slds-grid">
+                        <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                            <div class="slds-media__figure">
+                                <span class="slds-icon_container slds-icon-standard-contact" title="description of icon when needed">
+                                    <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                                        <use xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/standard-sprite/svg/symbols.svg#account')}" />
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="slds-media__body">
+                                <h2>
+                                    <a href="javascript:void(0);" class="slds-card__header-link slds-truncate" title="[object Object]">
+                                        <span class="slds-text-heading_small">Manage Products</span>
+                                    </a>
+                                </h2>
+                            </div>
+                        </header>
+                    </div>
+                    <div class="slds-card__body slds-card__body_inner">
+                        <apex:outputPanel rendered="{!opptyComplete}" id="card-body-lightning">
+
+                            <apex:actionRegion >
+                                <apex:pageMessages />
+                                <h3 class="slds-text-heading_small slds-m-bottom_medium">
+                                    Opportunity {!productHelper.oppty.Name}
+                                </h3>
+                                
+                                <apex:outputPanel rendered="{!NOT(readOnly)}">
+
+                                    <label class="slds-form-element__label">Employees Paid Per Payroll</label>
+                                    <apex:inputField styleClass="slds-input" value="{!productHelper.oppty.Employees_Paid_Per_Payroll__c}" >
+                                        <apex:actionSupport event="onchange" action="{!productHelper.changeEmpCount}" rerender="productTypeSelectionBlock-lightning" status="empCountStatus"/>
+                                    </apex:inputField>
+                                    
+                                    <label class="slds-form-element__label">Run-Effective Date</label>
+                                    <apex:inputField styleClass="slds-input" value="{!productHelper.oppty.CloseDate}" />
+
+                                    <label class="slds-form-element__label">Frequency</label>
+                                    <apex:inputField styleClass="slds-input" value="{!productHelper.oppty.Frequency__c}" >
+                                        <apex:actionSupport event="onchange" action="{!productHelper.changeFrequency}" rerender="productTypeSelectionBlock-lightning" status="frequencyStatus"/>
+                                    </apex:inputField>
+
+                                </apex:outputPanel>
+
+                                <apex:actionStatus startText="Recalculating for new frequency..." id="frequencyStatus"/>
+                                <apex:actionStatus startText="Recalculating for new employee count..." id="empCountStatus"/>
+
+                                <apex:outputPanel rendered="{!readOnly}">
+
+                                    <label class="slds-form-element__label block-display">Employees Paid Per Payroll</label>
+                                    <apex:outputField styleClass="slds-form-element__static block-display" value="{!productHelper.oppty.Employees_Paid_Per_Payroll__c}" />
+
+                                    <label class="slds-form-element__label block-display">Run-Effective Date</label>
+                                    <apex:outputField styleClass="slds-form-element__static block-display" value="{!productHelper.oppty.CloseDate}" />
+
+                                    <label class="slds-form-element__label block-display">Frequency</label>
+                                    <apex:outputField styleClass="slds-form-element__static block-display" value="{!productHelper.oppty.Frequency__c}" />
+
+                                </apex:outputPanel>
+
+
+                                <apex:outputPanel rendered="{!productHelper.hasPriceSchedule}">
+                                    <label class="slds-form-element__label block-display">Current Pricing Schedule(s)</label>
+                                    <apex:outputText styleClass="slds-form-element__static" value="{!productHelper.priceHelper.priceScheduleKey}"/>
+                                    <apex:outputPanel rendered="{!NOT(readOnly)}" >
+                                        <label class="slds-form-element__label block-display">Cost Center</label>
+                                        <apex:inputText styleClass="slds-input" value="{!productHelper.costCenter}">
+                                            <apex:actionSupport event="onchange" action="{!changePriceSchedule}" rerender="productTypeSelectionBlock-lightning" status="priceScheduleStatus"/>
+                                        </apex:inputText>
+                                    </apex:outputPanel>
+                                    <apex:actionStatus startText="Retrieving new price schedule..." id="priceScheduleStatus"/>
+                                </apex:outputPanel>
+
+
+                                <apex:variable rendered="{!productHelper.packagesAvailable}" value="display-toggle" var="selectPackageDisplay">
+                                    
+                                    <h3 class="slds-text-heading_small slds-m-bottom_medium">
+                                        Select a Package
+                                    </h3>
+
+                                    <apex:outputPanel rendered="{!productHelper.hasMultiplePlatforms}">
+                                        <label class="slds-form-element__label block-display">Select a Payroll Platform</label>
+                                        <apex:outputPanel >
+                                            <apex:selectList styleClass="slds-select" value="{!productHelper.oppty.Payroll_Platform__c}"
+                                                title="Select a Payroll Platform." size="1" >
+                                                <apex:selectOptions value="{!productHelper.availPayrollPlatforms}"/>
+                                                <apex:actionSupport event="onchange" action="{!productHelper.changePackage}" rerender="card-body-lightning" status="payPlatStatus"/>
+                                            </apex:selectList>
+                                        </apex:outputPanel>
+                                    </apex:outputPanel>
+
+                                    <apex:actionStatus rendered="{!productHelper.hasMultiplePlatforms}" startText="Changing Payroll Platform..." id="payPlatStatus"/>
+                           
+                                    <apex:outputPanel rendered="{!NOT(productHelper.pkgSelected)}" >
+                                        <label class="slds-form-element__label block-display">Select a Package</label>
+                                        <apex:outputPanel >
+                                            <apex:selectList styleClass="slds-select" value="{!productHelper.selectedPkgOption}"
+                                                          title="Select a Package."
+                                                          size="1" >
+                                                <apex:selectOptions value="{!productHelper.pkgOptions}"/>
+                                                <apex:actionSupport event="onchange" action="{!productHelper.selectPkg}" rerender="card-body-lightning" status="pkgStatus"/>
+                                            </apex:selectList>
+                                            &nbsp;
+                                            <apex:commandLink styleClass="slds-button" rendered="{!AND(productHelper.hasNonShortList,productHelper.isShortPkgList)}" action="{!productHelper.changeShowPkg}" value="Show All Pkgs" immediate="true" rerender="pkgSelectionSection" status="changePkgStatus"/>
+                                            <apex:commandLink styleClass="slds-button" rendered="{!AND(productHelper.hasNonShortList,NOT(productHelper.isShortPkgList))}" action="{!productHelper.changeShowPkg}" value="Show Less Pkgs" immediate="true" rerender="pkgSelectionSection" status="changePkgStatus"/>
+                                        </apex:outputPanel>
+                                    </apex:outputPanel>
+
+                                    <apex:outputPanel rendered="{!productHelper.pkgSelected}" >
+                                        <label class="slds-form-element__label block-display">Select a Package</label>
+                                        <apex:outputPanel >
+                                            <apex:outputText styleClass="slds-form-element__static" value="{!productHelper.selectedPkgName}"/>
+                                            <apex:commandLink styleClass="slds-button" rendered="{!NOT(readOnly)}" action="{!productHelper.changePackage}" value="Change Package" immediate="true" />
+                                        </apex:outputPanel>
+                                    </apex:outputPanel>
+                                    <apex:actionStatus startText="Changing Package..." id="pkgStatus"/>
+                                    <apex:actionStatus startText="Setting Product Information..." id="changePkgStatus"/>
+
+                                </apex:variable>
+
+
+                                <apex:outputPanel rendered="{!AND(NOT(productHelper.packagesAvailable),productHelper.hasDefaultProd)}">
+                                    <h3 class="slds-text-heading_small slds-m-bottom_medium">
+                                        Product Selection Button
+                                    </h3>
+
+                                    <apex:commandButton styleClass="slds-button slds-button_neutral" rendered="{!NOT(readOnly)}" action="{!productHelper.selectStandaloneProduct}" value="Select Product" />
+                                </apex:outputPanel>
+
+             <!-- ************************  Discount Information ************************ -->
+                                <apex:outputPanel rendered="{!AND(NOT(readOnly),NOT(productHelper.hasDefaultProd),productHelper.pkgSelected,OR(productHelper.totalRecord.discPctAllowed,productHelper.totalRecord.freeMonthsAllowed))}">
+                                    <h3 class="slds-text-heading_small slds-m-bottom_medium">
+                                        Discount Information
+                                    </h3>
+
+                                    <apex:outputPanel rendered="{!productHelper.totalRecord.freeMonthsAllowed}" >
+                                        <label class="slds-form-element__label block-display">Free Months</label>
+                                        <apex:selectList value="{!productHelper.totalRecord.selectedFreeMonths}"
+                                            title="Free Months" size="1" >
+                                            <apex:selectOptions value="{!productHelper.totalRecord.freeMonthsOptions}"/>
+                                        </apex:selectList>
+                                    </apex:outputPanel>
+
+                                    <apex:outputPanel rendered="{!NOT(productHelper.totalRecord.freeMonthsAllowed)}" />
+                                        <apex:outputPanel rendered="{!productHelper.totalRecord.discPctAllowed}" >
+                                            <label class="slds-form-element__label block-display">Discount %</label>
+                                            <apex:outputPanel >
+                                                <apex:inputText styleClass="slds-input" value="{!productHelper.totalRecord.oli.Discount_Percent__c}" size="5" />
+                                                % for
+                                                <apex:selectList styleClass="slds-select" value="{!productHelper.totalRecord.selectedDiscMonths}" title="Discount Duration" size="1" >
+                                                    <apex:selectOptions value="{!productHelper.totalRecord.discMonthsOptions}"/>
+                                                </apex:selectList>
+                                            </apex:outputPanel>
+                                        </apex:outputPanel>
+                                        <apex:commandButton styleClass="slds-button slds-button_neutral" action="{!productHelper.applyDiscountAllProducts}" value="Apply Discount to All Products" rerender="productTypeSelectionBlock-lightning" status="prodApplyDiscountStatus"/>
+                                    <apex:outputPanel />
+
+
+                                    <label class="slds-form-element__label block-display">Discounts will apply to all products that are eligible for a discount and will override any discount currently set. Only the maximum discount allowed for each product will be applied. </label>
+                                </apex:outputPanel>
+
+                                <apex:actionStatus startText="Applying Discount..." id="prodApplyDiscountStatus"/>
+                        
+             <!-- ************************  Product Information ************************ -->
+
+
+                                <apex:outputPanel rendered="{!AND(productHelper.pkgSelected,NOT(productHelper.hasDefaultProd))}"  id="prodSelectionSection" >
+                                    <br/>
+                                    <h3 class="slds-text-heading_small slds-m-bottom_medium">
+                                        Product Information
+                                    </h3>               
+
+                                    <apex:outputPanel rendered="{!productHelper.showAllColumns}">
+                                        <apex:image url="{!URLFOR($Resource.Tree_Images, 'collapse2.png')}" width="15" height="15" alt="Collapse" title="Click to hide the non-enterable columns" >
+                                            <apex:actionSupport event="onclick" action="{!productHelper.changeShowColumns}" rerender="prodSelectionSection" status="statusHideColumns">
+                                            </apex:actionSupport>
+                                        </apex:image>
+                                        &nbsp; 
+                                        <apex:commandLink styleClass="slds-button" action="{!productHelper.changeShowColumns}" value="Hide Columns" immediate="true" rerender="prodSelectionSection" status="statusHideColumns"/>
+                                        &nbsp;&nbsp;
+                                        <apex:actionStatus startText="Hiding Columns..." id="statusHideColumns"/>
+                                    </apex:outputPanel>
+                                   
+                                    <apex:outputPanel rendered="{!NOT(productHelper.showAllColumns)}">
+                                        <apex:image url="{!URLFOR($Resource.Tree_Images, 'expand2.png')}" width="15" height="15" alt="Expand" title="Click to display all columns">
+                                            <apex:actionSupport event="onclick" action="{!productHelper.changeShowColumns}" rerender="prodSelectionSection" status="statusExpandColumns">
+                                            </apex:actionSupport>
+                                        </apex:image>
+                                        &nbsp;  
+                                        <apex:commandLink styleClass="slds-button" action="{!productHelper.changeShowColumns}" value="Show All Columns" rerender="prodSelectionSection" status="statusExpandColumns"/>
+                                        &nbsp;&nbsp;
+                                        <apex:actionStatus startText="Expanding Table..." id="statusExpandColumns"/>
+                                    </apex:outputPanel>
+                                   
+                                    <apex:outputPanel rendered="{!productHelper.includedChildrenExist}" >
+                                        <apex:outputText style="color: #616D7E; font-weight: bold;" value="**" />
+                                        <apex:outputText style="color: BLACK; font-weight: bold;" value="= Included In Package Price" />
+                                    </apex:outputPanel>
+
+                                    <apex:outputPanel >
+                                        <apex:actionStatus startText="Configuring Products..." id="prodSelectionStatus"/>
+                                        <apex:actionStatus startText="Expanding Tree..." id="prodExpandTreeStatus"/>
+                                        <apex:actionStatus startText="Collapsing Tree..." id="prodCollapseTreeStatus"/>
+                                        <apex:actionStatus startText="Adding Adjustment..." id="prodAdjustmentStatus"/>
+                                        <apex:actionStatus startText="Deleting Adjustment..." id="prodDeleteAdjustmentStatus"/>
+                                    </apex:outputPanel>
+
+                                    <apex:pageBlock >
+                                        <apex:pageBlockTable id="prodTable" value="{!productHelper.displayProdList}" var="prod" cellPadding="4" border="1">
+                                       
+                                            <apex:column rendered="{!AND(productHelper.isSold,productHelper.isDsaRecordType)}" headerValue="Action" >
+                                                
+                                                <apex:outputPanel rendered="{!AND(prod.selected,prod.hasEntry,NOT(prod.isAdjustment),OR(NOT(prod.hasTrueup),NOT(prod.hasChargeback),NOT(prod.hasReferral)))}" >
+                                                    <apex:commandLink rendered="{!AND(NOT(prod.isAdjustment),NOT(prod.hasTrueup))}" action="{!productHelper.addAdjustment}" value="True-Up" immediate="false" rerender="productTypeSelectionBlock-lightning" status="prodAdjustmentStatus">
+                                                        <apex:param name="prodId" value="{!prod.prodId}"/>
+                                                        <apex:param name="adjType" value="True-Up"/>
+                                                    </apex:commandLink>
+                                                    <apex:outputPanel rendered="{!AND(NOT(prod.hasTrueup),NOT(prod.hasChargeback))}">
+                                                        &nbsp;|&nbsp;
+                                                    </apex:outputPanel>
+                                                    <apex:commandLink rendered="{!AND(NOT(prod.isAdjustment),NOT(prod.hasChargeback))}" action="{!productHelper.addAdjustment}" value="Chrgbk" immediate="false" rerender="productTypeSelectionBlock-lightning" status="prodAdjustmentStatus">
+                                                        <apex:param name="prodId" value="{!prod.prodId}"/>
+                                                        <apex:param name="adjType" value="Chargeback"/>
+                                                    </apex:commandLink>
+                                                    <apex:outputPanel rendered="{!AND(NOT(prod.hasReferral),OR(NOT(prod.hasChargeback),AND(prod.hasChargeback,NOT(prod.hasTrueup))))}">
+                                                        &nbsp;|&nbsp;
+                                                    </apex:outputPanel>
+                                                    <apex:commandLink rendered="{!AND(NOT(prod.isAdjustment),NOT(prod.hasReferral))}" action="{!productHelper.addAdjustment}" value="Ref" immediate="false" rerender="productTypeSelectionBlock-lightning" status="prodAdjustmentStatus">
+                                                        <apex:param name="prodId" value="{!prod.prodId}"/>
+                                                        <apex:param name="adjType" value="Referral"/>
+                                                    </apex:commandLink>
+                                                </apex:outputPanel>
+
+                                                <apex:outputPanel rendered="{!AND(prod.isAdjustment,NOT(prod.isClosed))}" >
+                                                    <apex:commandLink action="{!productHelper.deleteAdjustment}" value="Delete" immediate="false" rerender="productTypeSelectionBlock-lightning" status="prodDeleteAdjustmentStatus">
+                                                        <apex:param name="prodId" value="{!prod.prodId}"/>
+                                                    </apex:commandLink>
+                                                </apex:outputPanel>
+
+                                            </apex:column>
+                                          
+                                            <apex:column >
+
+                                                <apex:image rendered="{!AND(prod.hasChildren,prod.displayAllChildren,prod.hasHiddenChildren)}" url="{!URLFOR($Resource.Tree_Images, 'collapse2.png')}" width="15" height="15" alt="Collapse" title="Click to hide the products under {!prod.name} that do not affect revenue" >
+                                                    <apex:actionSupport event="onclick" action="{!productHelper.changeShowChildren}" rerender="prodSelectionSection" status="prodCollapseTreeStatus">
+                                                        <apex:param name="entryId" value="{!prod.entry.Id}"/>
+                                                    </apex:actionSupport>
+                                                </apex:image>
+
+                                                <apex:image rendered="{!AND(prod.hasChildren,NOT(prod.displayAllChildren),prod.hasHiddenChildren)}" url="{!URLFOR($Resource.Tree_Images, 'expand2.png')}" width="15" height="15" alt="Expand" title="Click to display all products for {!prod.name}">
+                                                    <apex:actionSupport event="onclick" action="{!productHelper.changeShowChildren}" rerender="prodSelectionSection" status="prodExpandTreeStatus">
+                                                        <apex:param name="entryId" value="{!prod.entry.Id}"/>
+                                                    </apex:actionSupport>
+                                                </apex:image>
+
+                                            </apex:column>
+                         
+                                            <apex:column headerValue="Product"> 
+
+                                                <apex:facet name="footer">Total</apex:facet>
+                                                <apex:repeat rendered="{!AND(prod.hasEntry,prod.isChild)}" value="{!prod.levels}" var="level" id="blankSpace">
+                                                    <apex:image url="{!URLFOR($Resource.Tree_Images, 'blank2.png')}" width="15" height="15" />
+                                                </apex:repeat>
+                                                <apex:inputCheckbox rendered="{!AND(prod.hasEntry,OR(readOnly,prod.isClosed,prod.isAdjustment))}" disabled="true" value="{!prod.selected}" />
+                                                <apex:inputCheckbox rendered="{!AND(prod.hasEntry,NOT(readOnly),NOT(prod.isClosed),NOT(prod.isAdjustment))}" disabled="{!prod.isMandatory}" value="{!prod.selected}"/>
+                                                &nbsp;
+                                                <apex:outputText rendered="{!prod.includedInParentPrice}" style="color: #616D7E; font-weight: bold;" value="**" />
+                                                <apex:outputText rendered="{!prod.pricingExistsButDoesntMatch}" style="color: red; font-weight: bold;" value="**{!prod.name}" />
+                                                <apex:outputText rendered="{!NOT(prod.pricingExistsButDoesntMatch)}" value="{!prod.name}" />
+
+                                            </apex:column>
+                                          
+                                            <apex:column headerValue="Ovrd">
+                                                <apex:inputCheckbox rendered="{!prod.selected}" disabled="{!OR(prod.isAdjustment,prod.isClosed)}" value="{!prod.oli.User_Override__c}" >
+                                                </apex:inputCheckbox>
+                                            </apex:column>
+
+                                            <apex:column headerValue="Prod Start Date">
+                                                <apex:inputField rendered="{!AND(NOT(prod.isClosed),prod.oli.User_Override__c,prod.hasEntry,OR(prod.selected,prod.showRevenue),NOT(readOnly))}" value="{!prod.oli.ServiceDate}" />
+                                                <apex:outputField rendered="{!AND(NOT(prod.oli.User_Override__c),prod.hasEntry,OR(prod.selected,prod.showRevenue),NOT(readOnly))}" value="{!prod.oli.ServiceDate}" />
+                                                <apex:outputField rendered="{!AND(prod.hasEntry,OR(prod.Selected,prod.showRevenue),OR(readOnly,prod.isClosed))}" value="{!prod.oli.ServiceDate}" />
+                                            </apex:column>
+
+                                            <apex:column headerValue="Status">
+                                                <apex:inputField rendered="{!AND(NOT(prod.isClosed),NOT(readOnly),prod.oli.User_Override__c,prod.selected,NOT(prod.isAdjustment))}" value="{!prod.oli.Status__c}" />
+                                                <apex:outputField rendered="{!AND(OR(prod.isClosed,readOnly,NOT(prod.oli.User_Override__c)),prod.selected,NOT(prod.isAdjustment))}" value="{!prod.oli.Status__c}" />
+                                            </apex:column>
+                                          
+                                            <apex:column rendered="{!productHelper.isSold}" headerValue="True-Up/Chrgbk">
+                                                <apex:outputField rendered="{!prod.hasEntry}" value="{!prod.oli.Adj_Type__c}" />
+                                            </apex:column>
+                                          
+                                            <apex:column rendered="{!productHelper.hasPayrollUnit}" headerValue="Unit">
+                                                <apex:facet name="footer">
+                                                    <apex:outputField value="{!productHelper.totalRecord.oli.Payroll_Unit__c}" />
+                                                </apex:facet>
+                                                <apex:inputText rendered="{!AND(NOT(readOnly),NOT(prod.isClosed),prod.selected,prod.hasEntry,prod.entry.Product2.Is_Payroll_Unit__c)}" value="{!prod.oli.Payroll_Unit__c}" size="2" />
+                                                <apex:outputField rendered="{!OR(readOnly,prod.isClosed,AND(NOT(prod.hasEntry),prod.hasPayrollUnit))}" value="{!prod.oli.Payroll_Unit__c}" />
+                                            </apex:column>
+                                          
+                                            <apex:column headerValue="Setup Fee"> 
+                                                <apex:facet name="footer">
+                                                    <apex:outputField value="{!productHelper.totalRecord.oli.Setup_Fee__c}" />
+                                                </apex:facet>
+                                                <apex:inputText rendered="{!AND(NOT(readOnly),NOT(prod.isClosed),prod.selected,prod.hasEnterableSetupFee,NOT(prod.hasSetupFeePicklist))}" value="{!prod.setupFee}" size="6"/>
+                                                <apex:selectList rendered="{!AND(NOT(readOnly),NOT(prod.isClosed),prod.selected,prod.hasEnterableSetupFee,prod.hasSetupFeePicklist)}"
+                                                    value="{!prod.setupFeeSelectedOption}" title="Select a Setup Fee." size="1" >
+                                                    <apex:selectOptions value="{!prod.setupFeeOptions}"/>
+                                                </apex:selectList>
+                                                <apex:outputField rendered="{!OR(AND(NOT(prod.HasEnterableSetupFee),prod.hasSetupFee),AND(prod.selected,OR(readOnly,prod.isClosed),prod.hasEnterableSetupFee))}" value="{!prod.oli.Setup_Fee__c}" />
+                                            </apex:column>
+                                          
+                                            <apex:column headerValue="Trans Qty"> 
+                                                <apex:inputText rendered="{!AND(NOT(readOnly),NOT(prod.isClosed),prod.hasEntry,prod.enterUnit,NOT(prod.isAdjustment))}" value="{!prod.unit}" size="3" />
+                                                <apex:outputField rendered="{!AND(OR(readOnly,prod.isClosed),prod.hasEntry,prod.enterUnit,NOT(prod.isAdjustment))}" value="{!prod.oli.Unit__c}" />
+                                                <apex:outputText rendered="{!AND(prod.hasEntry,prod.enterUnit,NOT(prod.isAdjustment))}" value="({!prod.entry.Product2.Unit_Type__c})"/>
+                                            </apex:column>
+
+                                            <apex:column rendered="{!productHelper.showAllColumns}" headerValue="Base Fee" > 
+                                                <apex:facet name="header">Base Fee</apex:facet> 
+                                                <apex:outputField value="{!prod.oli.Base_Fee__c}" />
+                                            </apex:column>
+                                          
+                                            <apex:column rendered="{!productHelper.showAllColumns}" headerValue="Trans Fee" > 
+                                                <apex:facet name="header">Trans Fee</apex:facet> 
+                                                <apex:outputField value="{!prod.oli.Transaction_Fee__c}" />
+                                            </apex:column>
+
+                                            <apex:column rendered="{!productHelper.totalRecord.freeMonthsAllowed}" headerValue="Free Months" > 
+                                                <apex:facet name="header">Free Months</apex:facet> 
+                                                <apex:selectList rendered="{!AND(NOT(readOnly),NOT(prod.isClosed),prod.selected,prod.hasEntry,prod.freeMonthsAllowed)}" 
+                                                           value="{!prod.selectedFreeMonths}"
+                                                           title="Free Months"
+                                                            size="1" >
+                                                    <apex:selectOptions value="{!prod.freeMonthsOptions}"/>
+                                                </apex:selectList>
+                                                <apex:outputField rendered="{!AND(OR(readOnly,prod.isClosed),prod.selected,prod.hasEntry,prod.freeMonthsAllowed)}" value="{!prod.oli.Discount_Free_Months__c}" />
+                                            </apex:column>
+                                          
+                                            <apex:column rendered="{!productHelper.totalRecord.discPctAllowed}" headerValue="Discount %" > 
+                                                <apex:facet name="header">Discount %</apex:facet> 
+                                                <apex:outputPanel rendered="{!AND(NOT(readOnly),NOT(prod.isClosed),prod.selected,prod.hasEntry,prod.discPctAllowed)}">
+                                                    <apex:inputText value="{!prod.oli.Discount_Percent__c}" size="5" />
+                                                    % for
+                                                    <apex:selectList value="{!prod.selectedDiscMonths}"
+                                                               title="Discount Duration"
+                                                                size="1" >
+                                                        <apex:selectOptions value="{!prod.discMonthsOptions}"/>
+                                                    </apex:selectList>
+                                                </apex:outputPanel>
+                                                <apex:outputPanel rendered="{!AND(OR(readOnly,prod.isClosed),prod.selected,prod.hasEntry,prod.discPctAllowed,prod.hasDiscPct)}">
+                                                    <apex:outputField value="{!prod.oli.Discount_Percent__c}" />
+                                                    % for
+                                                    <apex:outputField value="{!prod.oli.Discount_Months__c}" />
+                                                </apex:outputPanel>
+                                            </apex:column>
+                                          
+                                            <apex:column rendered="{!AND(productHelper.showAllColumns,OR(productHelper.totalRecord.discPctAllowed,productHelper.totalRecord.freeMonthsAllowed))}" headerValue="Annual Disc" > 
+                                                <apex:facet name="header">Annual Disc</apex:facet> 
+                                                <apex:outputField value="{!prod.oli.Discount_Annualized__c}" />
+                                            </apex:column>
+                                          
+                                            <apex:column rendered="{!productHelper.showAllColumns}" headerValue="Pricing">
+                                                <apex:facet name="header">Pricing</apex:facet> 
+                                                <apex:outputField rendered="{!AND(prod.hasEntry,prod.showPricePerFreq)}" value="{!prod.oli.Price_Per_Frequency__c}" />
+                                                <apex:outputText rendered="{!AND(prod.hasEntry,prod.showPricePerFreq)}" value="{!prod.billingPeriod}" />
+                                            </apex:column>
+                                          
+                                            <apex:column rendered="{!productHelper.showAllColumns}" headerValue="Annual Price" >
+                                                <apex:facet name="header">Annual Price</apex:facet> 
+                                                <apex:facet name="footer">
+                                                    <apex:outputField value="{!productHelper.totalRecord.oli.Total_Calced__c}" />
+                                                </apex:facet>
+                                                <apex:outputField rendered="{!prod.showRevCalcd}" value="{!prod.oli.Total_Calced__c}" />
+                                            </apex:column>
+
+
+                                            <apex:column headerValue="Rev Adj +/-" >
+                                                <apex:facet name="header">Rev Adj +/-</apex:facet> 
+                                                <apex:inputText rendered="{!AND(NOT(readOnly),NOT(prod.isClosed),prod.showRevAdj)}" value="{!prod.revAdj}" size="8"/>
+                                                <apex:outputField rendered="{!AND(OR(readOnly,prod.isClosed),prod.showRevAdj)}" value="{!prod.oli.Rev_Adj__c}" />
+                                            </apex:column>
+                                          
+                                            <apex:column headerValue="Est Revenue" > 
+                                                <apex:facet name="footer">
+                                                    <apex:outputField value="{!productHelper.totalRecord.oli.TotalPrice}" />
+                                                </apex:facet>
+                                                <apex:outputField rendered="{!AND(NOT(prod.enterRevenueManually),prod.showRevenue)}" value="{!prod.oli.TotalPrice}" />
+                                                <apex:inputText rendered="{!AND(prod.selected,prod.enterRevenueManually,NOT(readOnly),NOT(prod.isClosed))}" value="{!prod.estRev}" size="8"/>
+                                                <apex:outputField rendered="{!AND(prod.selected,prod.enterRevenueManually,OR(readOnly,prod.isClosed))}" value="{!prod.oli.TotalPrice}"/>
+                                            </apex:column>
+
+                                        </apex:pageBlockTable>
+                                    </apex:pageBlock>
+
+                                    <apex:outputPanel >
+                                        <apex:outputText style="color: BLACK; font-weight: bold;" value="Key: Ovrd = Override. Select this box if you want the date and status to not follow the Opportunity Status and Date. Use 'Apply Changes/Calculate Revenue' after selecting the override checkbox(es)." />
+                                    </apex:outputPanel>
+                                   
+                                </apex:outputPanel>
+
+                    <!-- **************************** Default Product section  **************************** -->
+                                <apex:outputPanel rendered="{!productHelper.hasDefaultProd}" id="defaultProductSection">
+                                    <br/>
+                                    <h3 class="slds-text-heading_small slds-m-bottom_medium">
+                                        Product Information
+                                    </h3>               
+
+                                    <apex:pageBlock >
+                                        <apex:pageBlockTable id="defaultProdTable" value="{!productHelper.defaultProds}" var="prod" cellPadding="4" border="1">
+                                       
+                                            <apex:column headerValue="Product"> 
+                                                <apex:inputCheckbox disabled="true" value="{!prod.selected}" />
+                                                &nbsp;
+                                                <apex:outputText value="{!prod.name}" />
+                                            </apex:column>
+                                          
+                                            <apex:column headerValue="Prod Start Date">
+                                                <apex:outputField value="{!prod.oli.ServiceDate}" />
+                                            </apex:column>
+
+                                            <apex:column headerValue="Status">
+                                                <apex:outputField value="{!prod.oli.Status__c}" />
+                                            </apex:column>
+                                          
+                                            <apex:column rendered="{!productHelper.hasPayrollUnit}" headerValue="Unit">
+                                                <apex:facet name="footer">
+                                                    <apex:outputField value="{!productHelper.totalRecord.oli.Payroll_Unit__c}" />
+                                                </apex:facet>
+                                                <apex:inputText rendered="{!AND(NOT(readOnly),NOT(prod.isClosed),prod.selected,prod.hasEntry,prod.entry.Product2.Is_Payroll_Unit__c)}" value="{!prod.oli.Payroll_Unit__c}" size="2" />
+                                                <apex:outputField rendered="{!OR(readOnly,prod.isClosed,AND(NOT(prod.hasEntry),prod.hasPayrollUnit))}" value="{!prod.oli.Payroll_Unit__c}" />
+                                            </apex:column>
+                                          
+                                            <apex:column headerValue="Est Revenue" > 
+                                             <!-- jc removing <apex:inputText value="{!prod.estRev}" size="8"/>-->
+                                            <apex:outputText value="{!prod.estRev}"/>
+                                            </apex:column>
+                        
+                                        </apex:pageBlockTable>
+                                    </apex:pageBlock>
+                                    
+                                    <apex:outputPanel >
+                                        <apex:outputText style="color: RED; font-weight: bold;" value="This record needs to be replaced with a real product if the Opportunity is moved to Sold or better." />
+                                    </apex:outputPanel>
+                                   
+                                </apex:outputPanel>
+
+                            </apex:actionRegion>
+
+
+                        </apex:outputPanel>
+
+                    </div>
+
+                    <footer class="slds-card__footer">
+                        <apex:outputPanel id="footer-section">
+                            <div class="centered-buttons">
+
+                                <apex:commandButton id="applyButtonActive" action="{!calcRevenue}" value="Apply Changes/Calculate Revenue"  rerender="card-body-lightning, footer-section" styleClass="saveBtnClass slds-button slds-button_neutral" onclick="blockReleaseBtns(true);" oncomplete="blockReleaseBtns(false), hideButtonsBasedOnView();"/>
+
+                                <span class="non-console-button">
+                                    <apex:commandButton id="saveButtonActive" action="{!saveProducts}" value="Save to Opportunity"  rerender="card-body-lightning, footer-section" styleClass="saveBtnClass2 slds-button slds-button_neutral" onclick="blockReleaseBtns(true);" oncomplete="blockReleaseBtns(false);" />
+                                </span>
+                                <span class="console-button">
+                                    <apex:commandButton id="saveButtonActive2" action="{!saveProductsInConsole}" value="Save to Opportunity"  rerender="card-body-lightning, footer-section" styleClass="saveBtnClass2 slds-button slds-button_neutral" onclick="blockReleaseBtns(true);" oncomplete="refreshIsSaveSuccessful();"  />
+                                </span>
+                                <apex:commandButton id="cancelButton" rendered="{!NOT(readOnly)}" action="{!cancel}" value="Cancel" styleClass="slds-button slds-button_neutral"/>
+
+                            </div>
+                        </apex:outputPanel>
+                    </footer>
+                </article>
+            </div>
+        </apex:outputPanel>
+
+        <apex:outputPanel id="isSaveSuccessfulPanel">
+            <span id="isSaveSuccessful" style="display: none;">{!saveSuccessfulInConsole}</span>
+        </apex:outputPanel>
+        <apex:actionFunction action="{!returnSaveSuccessfulInConsole}" name="refreshIsSaveSuccessful" rerender="isSaveSuccessfulPanel" oncomplete="afterSave();"/>
+
+    </apex:form>
+        <apex:includeScript value="/support/console/43.0/integration.js"/>
+
+    <script>
+        hideButtonsBasedOnView();
+        var currentTabId;
+        var primaryTabId;
+        var consoleSaveSuccessful;
+
+        function hideButtonsBasedOnView(){
+            var buttonsToHide = [];
+            if (sforce.console.isInConsole()) {
+                buttonsToHide = document.getElementsByClassName("non-console-button");
+            } else {
+                buttonsToHide = document.getElementsByClassName("console-button");
+            }
+
+            for(var i = 0; i < buttonsToHide.length; i++){
+                buttonsToHide[i].style.display = 'none';
+            }
+        }
+
+        function afterSave(){
+            blockReleaseBtns(false);
+            hideButtonsBasedOnView();
+            consoleSaveSuccessful = document.getElementById('isSaveSuccessful').innerHTML;
+            if(consoleSaveSuccessful == 'true'){ 
+                getCurrentTabId();
+            }
+        }
+
+
+        function getCurrentTabId(){
+            sforce.console.getFocusedSubtabId(showTabId);
+        }
+
+        var showTabId = function(result) {
+            currentTabId = result.id;
+            sforce.console.getEnclosingPrimaryTabId(refreshPrimaryTab);
+        }
+
+
+        var refreshPrimaryTab = function testRefreshPrimaryTabById(tab) {
+            primaryTabId = tab.id;
+            sforce.console.getSubtabIds(primaryTabId, refreshSubTabs);
+        }
+
+        var refreshSubTabs = function(tabs){
+            for(var i = 0; i < tabs.ids.length; i++){
+                if(tabs.ids[i] != currentTabId){
+                    sforce.console.refreshSubtabById(tabs.ids[i], true, refreshSuccess);
+                }
+            }
+            sforce.console.closeTab(currentTabId);
+
+        }
+        
+        var refreshSuccess = function refreshSuccess(result) {
+            /*if (result.success == true) {
+                alert('Primary tab refreshed successfully');
+            } else {
+                alert('Primary did not refresh');
+            }*/
+        };
+        
+    </script>
+
+
+</apex:page>

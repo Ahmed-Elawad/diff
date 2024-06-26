@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WFA_attached_toPlan_Required_on_401kOp_H</fullName>
+    <active>true</active>
+    <description>Will a Financial Advisor be attached to the Plan&apos; fields is required on HRS 401k Opportunity Record Types and HRS
+401k Opportunity FSS Record Types upon setting the probability to 80% or higher</description>
+    <errorConditionFormula>AND(AND(NOT(BEGINS($Profile.Name, &apos;System Administrator&apos;)),
+NOT(BEGINS($Profile.Name, &quot;Paychex Marketing Admin&quot;))),
+OR($RecordType.DeveloperName = &apos;HRS401kOpportunityRecordType&apos;,$RecordType.DeveloperName = &apos;HRS401kOpportunityFSSRecordType&apos;), Probability &gt;= 0.80, ISPICKVAL( Will_a_FA_be_attached_to_the_Plan__c ,&apos;&apos;) )</errorConditionFormula>
+    <errorMessage>Is a Financial Advisor attached to the plan? Complete the Will a Financial Advisor be attached to the Plan field</errorMessage>
+</ValidationRule>

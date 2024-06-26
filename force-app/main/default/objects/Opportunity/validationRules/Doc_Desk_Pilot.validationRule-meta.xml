@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Doc_Desk_Pilot</fullName>
+    <active>false</active>
+    <description>Only Doc Desk Pilot Users can pick the Submitted to FSS/VSS Status when the Opportunity Type is Payroll</description>
+    <errorConditionFormula>AND(
+NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+OR(ISPICKVAL(StageName,&apos;Pending - Submitted to VSS&apos;), 
+ISPICKVAL(StageName,&apos;Sold - Submitted to FSS&apos;)),
+ISCHANGED(StageName),
+OR(NOT(ISPICKVAL(OpportunityType__c ,&apos;Payroll&apos;)),NOT(CONTAINS(TEXT($User.User_Type__c),&apos;Doc Desk&apos;)),ISBLANK(TEXT($User.User_Type__c))))</errorConditionFormula>
+    <errorMessage>Only Doc Desk Pilot Users can pick the Submitted to FSS/VSS Status when the Opportunity Type is Payroll</errorMessage>
+</ValidationRule>

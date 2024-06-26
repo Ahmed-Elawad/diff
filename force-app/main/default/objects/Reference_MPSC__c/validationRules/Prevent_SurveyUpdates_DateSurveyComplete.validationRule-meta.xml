@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_SurveyUpdates_DateSurveyComplete</fullName>
+    <active>true</active>
+    <description>If Date Survey Complete is populated, then prevent users from updating Survey related fields</description>
+    <errorConditionFormula>AND(
+ NOT(ISBLANK(Date_Survey_Sent__c)),
+ NOT(ISBLANK(Date_Survey_Complete__c)),
+ (ISCHANGED(Overall_Client_Experience__c) || 
+  ISCHANGED(Payroll_Rating__c) || 
+  ISCHANGED(Payroll_Rating_Issues__c) || 
+  ISCHANGED(GL_Rating__c) || 
+  ISCHANGED(TAA_Rating_Issues__c) ),
+ $Profile.Name &lt;&gt;&quot;System Administrator&quot;
+)</errorConditionFormula>
+    <errorDisplayField>Date_Survey_Complete__c</errorDisplayField>
+    <errorMessage>You may not modify Survey fields after the Survey is completed</errorMessage>
+</ValidationRule>

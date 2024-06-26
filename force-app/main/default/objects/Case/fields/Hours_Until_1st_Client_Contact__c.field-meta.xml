@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Hours_Until_1st_Client_Contact__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>Used for reporting for MPSC Escalation. Not on any page layouts.
+This field is replacing Days Until 1st Client Contact for case 26975061</description>
+    <externalId>false</externalId>
+    <formula>ROUND( 8 * (
+   ( 5 * FLOOR( ( DATEVALUE( X1st_Time_Client_Contacted2__c ) - DATE( 1900, 1, 8) ) / 7) +
+    MIN(5, 
+     MOD( DATEVALUE( X1st_Time_Client_Contacted2__c ) - DATE( 1900, 1, 8), 7) +
+     MIN( 1, 24 / 8 * ( MOD( X1st_Time_Client_Contacted2__c - DATETIMEVALUE( &apos;1900-01-08 13:00:00&apos; ), 1 ) ) )
+    ) 
+   )
+ -
+   ( 5 * FLOOR( ( DATEVALUE( CreatedDate ) - DATE( 1900, 1, 8) ) / 7) +
+     MIN( 5,
+      MOD( DATEVALUE( CreatedDate ) - DATE( 1996, 1, 1), 7 ) +
+      MIN( 1, 24 / 8 * ( MOD( CreatedDate - DATETIMEVALUE( &apos;1900-01-08 13:00:00&apos; ), 1) ) )
+    )
+   ) 
+  ), 
+0 )</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label># Hours Until 1st Client Contact</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

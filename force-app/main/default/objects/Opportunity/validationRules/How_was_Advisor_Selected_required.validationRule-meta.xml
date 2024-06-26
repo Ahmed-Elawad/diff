@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>How_was_Advisor_Selected_required</fullName>
+    <active>false</active>
+    <description>case 27424648 How was Advisor Selected required for 401k optys before status = Actively Engaged</description>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),$User.Job_Name__c = &apos;Sales Representative&apos;, 
+BEGINS($RecordType.Name,&apos;HRS 401(k) Opportunity&apos;), 
+Probability &gt;= 0.70, 
+ISBLANK(TEXT(How_was_the_Advisor_Selected__c)) 
+)</errorConditionFormula>
+    <errorDisplayField>How_was_the_Advisor_Selected__c</errorDisplayField>
+    <errorMessage>You must populate &apos;How was the Advisor Selected?&apos; before updating the Status to Won.</errorMessage>
+</ValidationRule>

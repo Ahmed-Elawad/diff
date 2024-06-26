@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Agency_or_Self_Retained_Deals_with_Med_A</fullName>
+    <active>false</active>
+    <description>Benefit Option does not match medical approval. Check to make sure option is correct or see Medical UW Team.</description>
+    <errorConditionFormula>AND 
+( 
+NEPs_Complete__c &gt; DATE (2019,01,10), 
+ISPICKVAL(Medical_Option__c,&apos;Paychex Agency&apos;)|| 
+ISPICKVAL(Medical_Option__c,&apos;Paychex Agency with PBS Non Medical&apos;) || 
+ISPICKVAL(Medical_Option__c,&apos;Self-Retained&apos;)|| 
+ISPICKVAL(Medical_Option__c,&apos;Self-retained Medical with PBS Non Medical&apos;), 
+ISPICKVAL(Initial_Medical_UW_Approval__c, &quot;Approved&quot;)|| 
+ISPICKVAL(Initial_Medical_UW_Approval__c, &quot;Approved Dual Bands&quot;)|| 
+ISPICKVAL(Initial_Medical_UW_Approval__c, &quot;Approved for Non-Medical/Not Offering&quot;)||
+ISPICKVAL(Initial_Medical_UW_Approval__c,&quot;&quot;)
+)</errorConditionFormula>
+    <errorMessage>Benefit Option does not match Initial Medical approval. Check to make sure option is correct or see Medical UW Team.</errorMessage>
+</ValidationRule>

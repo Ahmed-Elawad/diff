@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cannot_update_Merges_from_Integration</fullName>
+    <active>true</active>
+    <description>Cannot change the Merge Name field on Accts designated for Merge (appended with &quot;sfdcapi1&quot;) by the Integration process</description>
+    <errorConditionFormula>AND( NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)),  LOWER(RIGHT( PRIORVALUE(  Merge_Name__c), 8))= &quot;sfdcapi1&quot;,  ISCHANGED( Merge_Name__c ) )</errorConditionFormula>
+    <errorDisplayField>Merge_Name__c</errorDisplayField>
+    <errorMessage>***You cannot change this field, This record has already been designated as a merge with a higher priorty***</errorMessage>
+</ValidationRule>

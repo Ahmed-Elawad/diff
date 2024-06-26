@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Submit_WalkMe_Sales_Help_Requests</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(RecordType.Name = &apos;Sales Help Request Case&apos;,
+ISPICKVAL(Type,&apos;WalkMe&apos;),
+NOT(CONTAINS($Profile.Name, &apos;NSS Manager Admin&apos;)),
+NOT(CONTAINS($Profile.Name, &apos;Sales Enablement&apos;)),
+NOT(BEGINS($Profile.Name, &apos;System Admin&apos;)))</errorConditionFormula>
+    <errorMessage>Please work with the Sales Effectiveness Manager for your division to submit this request.</errorMessage>
+</ValidationRule>

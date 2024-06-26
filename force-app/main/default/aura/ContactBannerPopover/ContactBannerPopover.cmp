@@ -1,0 +1,48 @@
+<aura:component controller="ContactBannerPopoverAuraService">
+    <aura:attribute name="contact" type="Contact" />
+    <aura:attribute name="userInfo" type="Object" />
+    <aura:attribute name="fields" type="List" />
+    <aura:attribute name="leftColumnFields" type="Object[]" />
+    <aura:attribute name="rightColumnFields" type="Object[]" />
+
+    <aura:handler name="change" value="{!v.contact}" action="{!c.getFields}"/>
+	<div class="slds-media slds-media_center slds-m-bottom_small">
+        <div class="slds-media__figure">
+            <span class="slds-icon_container slds-icon-standard-contact">
+                <lightning:icon class="myIcon" iconName="standard:contact" size="large"/>
+                <span class="slds-assistive-text">Contact</span> 
+            </span>
+        </div>
+        <div class="slds-media__body">
+            <a href="#void" class="slds-text-heading_medium">
+                <span onclick="{!c.navigateToContact}">
+                    {!v.contact.Name}
+                </span>
+            </a>
+        </div> 
+    </div>
+
+    <div class="slds-grid slds-wrap slds-grid_pull-padded">
+        <div class="slds-col_padded slds-size_1-of-2 slds-p-bottom_x-small">
+
+
+            <aura:iteration items="{!v.leftColumnFields}" var="field">
+                <c:ContactBannerPopoverField userInfo="{!v.userInfo}" field="{!field}"/>
+                <br/>
+            </aura:iteration>            
+
+        </div>
+
+
+        <div class="slds-col_padded slds-size_1-of-2 slds-p-bottom_x-small">
+
+            <aura:iteration items="{!v.rightColumnFields}" var="field">                
+                <c:ContactBannerPopoverField userInfo="{!v.userInfo}" field="{!field}"/>
+                <br/>
+            </aura:iteration>
+
+        </div>
+
+
+    </div>
+</aura:component>

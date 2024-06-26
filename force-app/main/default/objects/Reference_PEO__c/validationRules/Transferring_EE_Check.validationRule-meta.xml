@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Transferring_EE_Check</fullName>
+    <active>true</active>
+    <description>Requires That the employees transferring from client number to be filled in</description>
+    <errorConditionFormula>isblank(EEs_Transferring_From_Client_Number__c) &amp;&amp; not (isnull(Number_Transferring_EEs__c)) &amp;&amp; NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))</errorConditionFormula>
+    <errorDisplayField>EEs_Transferring_From_Client_Number__c</errorDisplayField>
+    <errorMessage>Please fill in the Client number of where the EE&apos;s are transferring from.</errorMessage>
+</ValidationRule>

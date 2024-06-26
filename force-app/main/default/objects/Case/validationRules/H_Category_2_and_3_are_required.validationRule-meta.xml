@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>H_Category_2_and_3_are_required</fullName>
+    <active>true</active>
+    <description>If H_Category 1 = Ops - Service Support, the H_Category 2 and 3 are required</description>
+    <errorConditionFormula>AND(ISPICKVAL(HRS4SCategory1__c,&apos;Ops - Service Support&apos;),(ISPICKVAL(HRS4SCategory2__c,&apos;&apos;)||ISPICKVAL(HRS4SCategory3__c,&apos;&apos;))
+				,(RecordType.Id=&apos;012700000001U2z&apos;),NOT(CONTAINS($Profile.Name,&apos;System Administrator&apos;)))</errorConditionFormula>
+    <errorMessage>If H_Category 1 = Ops - Service Support, the H_Category 2 and H_Category 3 are required</errorMessage>
+</ValidationRule>

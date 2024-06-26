@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>HRG_Notification_Chatter_0_0_0_0</name>
+        <label>HRG Notification(Chatter)</label>
+        <locationX>842</locationX>
+        <locationY>924</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <elementReference>ChatterNotificationBody</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>HRG_Notification_Chatter_Spanish_Speaking</name>
+        <label>HRG Notification(Chatter) Spanish Speaking</label>
+        <locationX>50</locationX>
+        <locationY>924</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <elementReference>ChaterNotificationBodySpanishSpeaking</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>HRPP_HRG_Notification_Chatter_Non_Spanish</name>
+        <label>HRPP HRG Notification(Chatter) Non Spanish</label>
+        <locationX>578</locationX>
+        <locationY>924</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <elementReference>HRPPChatterNotificationBody</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>HRPP_HRG_Notification_Chatter_Spanish_Speaking</name>
+        <label>HRPP HRG Notification(Chatter) Spanish Speaking</label>
+        <locationX>314</locationX>
+        <locationY>924</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <elementReference>HRPPChatterNotificationBodySpanishSpeaking</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>HRPP_Manager_Notification</name>
+        <label>HRPP Manager Notification</label>
+        <locationX>1106</locationX>
+        <locationY>924</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <stringValue>There is an HR Partner Plus client waiting for an HRG assignment approval and one has been suggested. @[{!$Record.Manager__r.Id}]</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Manager_Notification_0</name>
+        <label>Manager Notification</label>
+        <locationX>1370</locationX>
+        <locationY>924</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <stringValue>There is a client waiting for an HRG assignment approval and one has been suggested. @[{!$Record.Manager__r.Id}]</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>54.0</apiVersion>
+    <decisions>
+        <name>Approved_Man_Override_or_Waiting_For_Approval</name>
+        <label>Approved Man Override or Waiting For Approval</label>
+        <locationX>1238</locationX>
+        <locationY>384</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Approved_Override_or_Waiting_For_Approval</name>
+            <conditionLogic>(1 AND 4) OR (2 ) OR 3 OR (1 AND 5)</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Approved</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Manager Override</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Waiting For Approval</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Pending</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Waiting For Approval</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_ProductId</targetReference>
+            </connector>
+            <label>Approved Override or Waiting For Approval</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Contains_HRPP_Product</name>
+        <label>Contains HRPP Product?</label>
+        <locationX>1238</locationX>
+        <locationY>816</locationY>
+        <defaultConnector>
+            <targetReference>Manager_Notification_0</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Contains_HRPP</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_OpptyLines.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>HRPP_Manager_Notification</targetReference>
+            </connector>
+            <label>Contains HRPP</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Created_Or_Updated</name>
+        <label>Created Or Updated</label>
+        <locationX>512</locationX>
+        <locationY>276</locationY>
+        <defaultConnector>
+            <targetReference>Approved_Man_Override_or_Waiting_For_Approval</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Created</defaultConnectorLabel>
+        <rules>
+            <name>Never_Happens</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Id</leftValueReference>
+                <operator>WasSet</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Pending</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Waiting For Approval</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Manager Override</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Approved</stringValue>
+                </rightValue>
+            </conditions>
+            <label>Never Happens</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Determines the Verbage on the chatter message</description>
+        <name>Is_Spanish_Speaking</name>
+        <label>Is Spanish Speaking</label>
+        <locationX>446</locationX>
+        <locationY>816</locationY>
+        <defaultConnector>
+            <targetReference>HRG_Notification_Chatter_0_0_0_0</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>No</defaultConnectorLabel>
+        <rules>
+            <name>Yes</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Spanish_Speaking_Indicator__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_OpptyLines.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>HRG_Notification_Chatter_Spanish_Speaking</targetReference>
+            </connector>
+            <label>Yes</label>
+        </rules>
+        <rules>
+            <name>HRPP_Spanish_Speaking</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Spanish_Speaking_Indicator__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_OpptyLines.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>HRPP_HRG_Notification_Chatter_Spanish_Speaking</targetReference>
+            </connector>
+            <label>HRPP Spanish Speaking</label>
+        </rules>
+        <rules>
+            <name>HRPP_Non_Spanish_Speaking</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Spanish_Speaking_Indicator__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_OpptyLines.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>HRPP_HRG_Notification_Chatter_Non_Spanish</targetReference>
+            </connector>
+            <label>HRPP Non Spanish Speaking</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Man_Override_Auto_Approval</name>
+        <label>Man Override / Auto Approval</label>
+        <locationX>842</locationX>
+        <locationY>708</locationY>
+        <defaultConnector>
+            <targetReference>Contains_HRPP_Product</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Waiting For Approval</defaultConnectorLabel>
+        <rules>
+            <name>Approved_Or_Override</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Approved</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Manager Override</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Is_Spanish_Speaking</targetReference>
+            </connector>
+            <label>Approved Or Override</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>StillWaitingForApproval</name>
+        <label>Still Waiting For Approval ?</label>
+        <locationX>2030</locationX>
+        <locationY>276</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Still_Waiting</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Waiting For Approval</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Auto_Approve_waiting_HRGs</targetReference>
+            </connector>
+            <label>Still Waiting</label>
+        </rules>
+    </decisions>
+    <description>The notification For HRG Auto-Assignment Spanish Speaking
+8/11 Update
+5/3/24 Update to Chatter Notification</description>
+    <environments>Default</environments>
+    <interviewLabel>HRG Notification {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>HRG Notification</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_OpptyLines</name>
+        <label>Get OpptyLines</label>
+        <locationX>842</locationX>
+        <locationY>600</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Man_Override_Auto_Approval</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>OpportunityId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Opportunity__c</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Product2Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>HRPP_ProductId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>OpportunityLineItem</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_ProductId</name>
+        <label>Get ProductId</label>
+        <locationX>842</locationX>
+        <locationY>492</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_OpptyLines</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>ProductCode</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Label.HR_Partner_Plus_Prod_Code</elementReference>
+            </value>
+        </filters>
+        <object>Product2</object>
+        <outputAssignments>
+            <assignToReference>HRPP_ProductId</assignToReference>
+            <field>Id</field>
+        </outputAssignments>
+    </recordLookups>
+    <recordUpdates>
+        <name>Auto_Approve_waiting_HRGs</name>
+        <label>Auto Approve waiting HRGs</label>
+        <locationX>1898</locationX>
+        <locationY>384</locationY>
+        <connector>
+            <targetReference>CheckAutoApprove</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Status__c</field>
+            <value>
+                <stringValue>Approved</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>CheckAutoApprove</name>
+        <label>CheckAutoApprove</label>
+        <locationX>1898</locationX>
+        <locationY>492</locationY>
+        <inputAssignments>
+            <field>Auto_Approved__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>1145</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Created_Or_Updated</targetReference>
+        </connector>
+        <object>HRG_Assignment__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <name>AutoApprove24hrsLater</name>
+            <connector>
+                <targetReference>StillWaitingForApproval</targetReference>
+            </connector>
+            <label>AutoApprove24hrsLater</label>
+            <offsetNumber>1</offsetNumber>
+            <offsetUnit>Minutes</offsetUnit>
+            <recordField>AutoApproveDate__c</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <name>ChaterNotificationBodySpanishSpeaking</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>** Spanish Speaking Assignment **
+Hi @[{!$Record.Opportunity__r.Owner.Id}], 
+{!$Record.SelectedHRP__r.FirstName} {!$Record.SelectedHRP__r.LastName} will support this new client for us.
+Please coordinate a time with the HRBP to discuss next steps.
+@[{!$Record.SelectedHRP__r.User_Lookup__r.Id}], @[{!$Record.Manager__r.Id}]</text>
+    </textTemplates>
+    <textTemplates>
+        <description>The Notification message sent via chatter for HRG Assignment</description>
+        <name>ChatterNotificationBody</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Hi @[{!$Record.Opportunity__r.Owner.Id}], 
+{!$Record.SelectedHRP__r.FirstName} {!$Record.SelectedHRP__r.LastName} will support this new client for us.
+Please coordinate a time with the HRBP to discuss next steps.
+@[{!$Record.SelectedHRP__r.User_Lookup__r.Id}], @[{!$Record.Manager__r.Id}]</text>
+    </textTemplates>
+    <textTemplates>
+        <name>HRPPChatterNotificationBody</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Hi @[{!$Record.Opportunity__r.Owner.Id}], 
+{!$Record.SelectedHRP__r.FirstName} {!$Record.SelectedHRP__r.LastName} will support this new client for us.
+Please coordinate a time with the HRBP to discuss next steps.
+
+@[{!$Record.SelectedHRP__r.User_Lookup__r.Id}], @[{!$Record.Manager__r.Id}]</text>
+    </textTemplates>
+    <textTemplates>
+        <name>HRPPChatterNotificationBodySpanishSpeaking</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>** Spanish Speaking Assignment **
+Hi @[{!$Record.Opportunity__r.Owner.Id}], 
+{!$Record.SelectedHRP__r.FirstName} {!$Record.SelectedHRP__r.LastName} will support this new client for us.
+Please coordinate a time with the HRBP to discuss next steps.
+@[{!$Record.SelectedHRP__r.User_Lookup__r.Id}], @[{!$Record.Manager__r.Id}]</text>
+    </textTemplates>
+    <variables>
+        <description>Store the Product Id of HP Partner Plus product</description>
+        <name>HRPP_ProductId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

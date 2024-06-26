@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Current_Step_7_of_12_FLOCK_COBRA</fullName>
+    <active>true</active>
+    <errorConditionFormula>(ISPICKVAL( Current_Step__c ,&quot;(7 of 12) Building Conversion Timeline&quot;) ||
+(ISPICKVAL( Current_Step__c ,&quot;(8 of 12) Kick Off Meeting&quot;) ||
+(ISPICKVAL( Current_Step__c ,&quot;(9 of 12) Client Training&quot;) ||
+(ISPICKVAL( Current_Step__c ,&quot;(10 of 12) First Payroll Run&quot;) ||
+(ISPICKVAL( Current_Step__c ,&quot;(12 of 12) Transfer to Ongoing Support&quot;) ||
+(ISPICKVAL( Current_Step__c ,&quot;(11 of 12) Post Run Debrief&quot;)
+
+))))))
+
+&amp;&amp;
+OR (
+
+
+ISBLANK(Text ( Flock_COBRA__c )))</errorConditionFormula>
+    <errorDisplayField>Flock_COBRA__c</errorDisplayField>
+    <errorMessage>Flock COBRA is Required Field</errorMessage>
+</ValidationRule>

@@ -1,0 +1,913 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Cobra_Notification_of_Company_Shell_Alert</fullName>
+        <ccEmails>cobranewcase@paychex.com</ccEmails>
+        <description>Cobra Notification of Company Shell Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <field>LastModifiedById</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>MMS_Hub_Email_Templates1/Cobra_Notification_of_Company_Shell_Completion</template>
+    </alerts>
+    <alerts>
+        <fullName>Field_Ops_MMS_Client_Load_Assigned</fullName>
+        <description>Field Ops: MMS Client Load Assigned</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <recipients>
+            <field>LastModifiedById</field>
+            <type>userLookup</type>
+        </recipients>
+        <recipients>
+            <field>Sales_Rep__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>MMS_Hub_Email_Templates1/Client_Load_Assignment_Template2</template>
+    </alerts>
+    <alerts>
+        <fullName>HRO_Notification_of_Company_Shell_Alert</fullName>
+        <ccEmails>paychexhronline@paychex.com</ccEmails>
+        <description>HRO Notification of Company Shell Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <field>HRO_Onboarding__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <recipients>
+            <field>LastModifiedById</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>MMS_Hub_Email_Templates1/HRO_Notification_of_Company_Shell_Completion</template>
+    </alerts>
+    <alerts>
+        <fullName>POP_Notification_of_Company_Shell_Alert</fullName>
+        <ccEmails>MMSPOPNewCase@paychex.com</ccEmails>
+        <description>POP Notification of Company Shell Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <field>LastModifiedById</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>MMS_Hub_Email_Templates1/Cobra_SUIS_POP_Notification_of_Company_Shell_Completion</template>
+    </alerts>
+    <alerts>
+        <fullName>Payroll_Rescheduled_Alert</fullName>
+        <description>Payroll Rescheduled Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <recipients>
+            <field>DSA__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <recipients>
+            <field>DSM__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <recipients>
+            <field>LastModifiedById</field>
+            <type>userLookup</type>
+        </recipients>
+        <recipients>
+            <field>Sales_Rep__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>MMS_Hub_Email_Templates1/Payroll_Rescheduled_Notification</template>
+    </alerts>
+    <alerts>
+        <fullName>Payroll_Scheduled_Alert</fullName>
+        <description>Payroll Scheduled Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <field>DSA__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <recipients>
+            <field>DSM__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <recipients>
+            <field>LastModifiedById</field>
+            <type>userLookup</type>
+        </recipients>
+        <recipients>
+            <field>Sales_Rep__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>MMS_Hub_Email_Templates1/Payroll_Scheduled_Notification</template>
+    </alerts>
+    <alerts>
+        <fullName>SUIS_Notification_of_Company_Shell_Alert</fullName>
+        <ccEmails>SUI@paychex.com</ccEmails>
+        <description>SUIS Notification of Company Shell Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <field>LastModifiedById</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>MMS_Hub_Email_Templates1/Cobra_SUIS_POP_Notification_of_Company_Shell_Completion</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>Billing_Performed_by_Update</fullName>
+        <field>Billing_Audit_Completed_by__c</field>
+        <formula>$User.FirstName + &quot; &quot; + $User.LastName</formula>
+        <name>Billing Performed by Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Branch_Client_Number_Update2</fullName>
+        <field>Branch_Client_Number__c</field>
+        <formula>Prospect_Client_Number__c</formula>
+        <name>Branch-Client Number Update2</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>CS_Client_Load_Assigned_Update</fullName>
+        <field>Current_Step__c</field>
+        <literalValue>(3 of 5) Client Load Assigned</literalValue>
+        <name>CS Client Load Assigned Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>CS_Client_Load_Received_Update</fullName>
+        <field>Current_Step__c</field>
+        <literalValue>(1 of 5) Client Load Received</literalValue>
+        <name>CS Client Load Received Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>CS_Client_Never_Ran_Update</fullName>
+        <field>Current_Step__c</field>
+        <literalValue>Client Never Ran</literalValue>
+        <name>CS Client Never Ran Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>CS_Documents_Complete_Update</fullName>
+        <field>Current_Step__c</field>
+        <literalValue>(2 of 5) Documents Complete</literalValue>
+        <name>CS Documents Complete Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>CS_First_Payroll_Processing_Update</fullName>
+        <field>Current_Step__c</field>
+        <literalValue>(4 of 5) First Payroll Processing Complete</literalValue>
+        <name>CS First Payroll Processing Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>CS_Transferred_to_Client_Support_Update</fullName>
+        <field>Current_Step__c</field>
+        <literalValue>(5 of 5) Transferred to Client Support</literalValue>
+        <name>CS Transferred to Client Support Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Client_Assigned_Date_WF_Update</fullName>
+        <field>Client_Assigned_Date__c</field>
+        <formula>TODAY()</formula>
+        <name>Client Assigned Date WF Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>true</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Client_Assigned_by_Update</fullName>
+        <field>Client_Assigned_By__c</field>
+        <formula>$User.FirstName + &quot; &quot; + $User.LastName</formula>
+        <name>Client Assigned by Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Client_Load_Completed_by_Update</fullName>
+        <field>Client_Load_Completed_by__c</field>
+        <formula>$User.FirstName + &quot; &quot; +  $User.LastName</formula>
+        <name>Client Load Completed by Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Client_Name_Update</fullName>
+        <field>Client_Name__c</field>
+        <formula>Case_Number__r.Account.Name</formula>
+        <name>Client Name Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Client_Number_Update</fullName>
+        <field>Branch_Client_Number__c</field>
+        <formula>Case_Number__r.Account.AccountNumber</formula>
+        <name>Branch-Client Number Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Current_Scheduled_Run_Date_Update</fullName>
+        <field>Current_Scheduled_Run_Date__c</field>
+        <formula>IF(Current_Scheduled_Run_Date__c=Scheduled_Run_Date__c, Current_Scheduled_Run_Date__c,Scheduled_Run_Date__c)</formula>
+        <name>Current Scheduled Run Date Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>DSA_Email_Update</fullName>
+        <field>DSA_Email__c</field>
+        <formula>Sales_Rep__r.DSA_FSS__r.Email</formula>
+        <name>DSA Email Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>DSM_Email_Update</fullName>
+        <field>DSM_Email__c</field>
+        <formula>Sales_Rep__r.Manager.Email</formula>
+        <name>DSM Email Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Document_Discrepancy_Resolve_UpdateX</fullName>
+        <field>Current_Step__c</field>
+        <literalValue>(1 of 7) ENS Set-Up Complete</literalValue>
+        <name>Document Discrepancy Resolve UpdateX</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Document_Discrepancy_Resolved_Update</fullName>
+        <field>Document_Discrepancy_Status__c</field>
+        <formula>&quot;Document Discrepancy Resolved&quot;</formula>
+        <name>Document Discrepancy Resolved Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>ENS_Set_up_Mandatory_Field_Update_to_No</fullName>
+        <field>ENS_Set_up_Mandatory__c</field>
+        <literalValue>No</literalValue>
+        <name>ENS Set-up Mandatory Field Update to No</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>ENS_Set_up_Mandatory_Field_Update_to_Yes</fullName>
+        <field>ENS_Set_up_Mandatory__c</field>
+        <literalValue>Yes</literalValue>
+        <name>ENS Set-up Mandatory Field Update to Yes</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>true</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Load_Accepted_Date_Update</fullName>
+        <field>Load_Accepted_Date__c</field>
+        <formula>TODAY()</formula>
+        <name>Load Accepted Date Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Load_Rejected_Date_Updated</fullName>
+        <field>Load_Rejected_Date__c</field>
+        <formula>TODAY()</formula>
+        <name>Load Rejected Date Updated</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Load_Review_by_Update</fullName>
+        <field>Load_Reviewed_by__c</field>
+        <formula>$User.FirstName + &quot; &quot; + $User.LastName</formula>
+        <name>Load Review by Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>New_Load_Audit_Performed_by_Update</fullName>
+        <field>New_Load_Audit_Performed_by__c</field>
+        <formula>$User.FirstName + &quot; &quot; + $User.LastName</formula>
+        <name>New Load Audit Performed by Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>OC_Company_Shell_Update</fullName>
+        <field>Onboarding_Progression__c</field>
+        <formula>Onboarding_Progression__c  &amp; &quot;; Company Shell/EE Static Complete&quot;</formula>
+        <name>OC Company Shell Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>OC_ENS_Update</fullName>
+        <field>Onboarding_Progression__c</field>
+        <formula>Onboarding_Progression__c &amp; &quot;; ENS Set-Up Complete&quot;</formula>
+        <name>OC ENS Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>OC_Installation_and_Training_Update</fullName>
+        <field>Onboarding_Progression__c</field>
+        <formula>Onboarding_Progression__c &amp; &quot;; Installation and Training Complete&quot;</formula>
+        <name>OC Installation and Training Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>OC_Interfaces_Set_up_Update</fullName>
+        <field>Onboarding_Progression__c</field>
+        <formula>Onboarding_Progression__c  &amp; &quot;; Interfaces Set-up Complete&quot;</formula>
+        <name>OC Interfaces Set-up Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>OC_Tax_Wage_and_Balance_Update</fullName>
+        <field>Onboarding_Progression__c</field>
+        <formula>Onboarding_Progression__c &amp; &quot;; Tax, Wage and Balance Complete&quot;</formula>
+        <name>OC Tax, Wage and Balance Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Prior_Scheduled_Run_Date_Update</fullName>
+        <field>Prior_Scheduled_Run_Date__c</field>
+        <formula>IF(Scheduled_Run_Date__c&lt;&gt;Current_Scheduled_Run_Date__c, Current_Scheduled_Run_Date__c,Prior_Scheduled_Run_Date__c)</formula>
+        <name>Prior Scheduled Run Date Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>true</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Set_up_Fee_Field_Update</fullName>
+        <field>Setup_Fee__c</field>
+        <literalValue>1</literalValue>
+        <name>Set-up Fee Field Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Tax_Wage_and_Balance_Mandatory_Update</fullName>
+        <field>Tax_Wage_and_Balance_Manatory__c</field>
+        <literalValue>Yes</literalValue>
+        <name>Tax, Wage and Balance:Mandatory Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Tax_Wage_and_Balance_Mandatory_Update2</fullName>
+        <field>Tax_Wage_and_Balance_Manatory__c</field>
+        <literalValue>No</literalValue>
+        <name>Tax, Wage and Balance:Mandatory Update-2</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Taxpay_Indicator_Set</fullName>
+        <description>Set Taxpay Indicator when Taxpay product is in product summary field</description>
+        <field>Taxpay_Indicator__c</field>
+        <literalValue>Yes</literalValue>
+        <name>Taxpay Indicator Set</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>true</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Billing Completed by WF</fullName>
+        <actions>
+            <name>Billing_Performed_by_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Updates the Billing Completed by field with the User that updates the Billing Complettion Date by field.</description>
+        <formula>NOT(ISNULL( Billing_Audit_Completion_Date__c ))  &amp;&amp;  ISCHANGED( Billing_Audit_Completion_Date__c )</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>CS Client Load Assign</fullName>
+        <actions>
+            <name>CS_Client_Load_Assigned_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>NOT(ISNULL(Client_Assigned_Date__c)) &amp;&amp; NOT(First_Payroll_has_Run__c)</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>CS Client Load Received</fullName>
+        <actions>
+            <name>CS_Client_Load_Received_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>NOT(ISNULL(Client_Assigned_Date__c)) &amp;&amp; NOT(First_Payroll_has_Run__c)</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>CS Client Never Ran WF</fullName>
+        <actions>
+            <name>CS_Client_Never_Ran_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>Client_Never_Ran__c</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>CS Documents Complete WF</fullName>
+        <actions>
+            <name>CS_Documents_Complete_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>(Required_Document_Count__c &lt;&gt; 0 &amp;&amp;  Discrepancy_Document_Count__c = 0 &amp;&amp;  Required_Document_Count__c = Received_Document_Count__c)  &amp;&amp;  ISNULL(Client_Assigned_Date__c)</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>CS First Payroll Processing WF</fullName>
+        <actions>
+            <name>CS_First_Payroll_Processing_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>First_Payroll_has_Run__c &amp;&amp; ISNULL(Date_Transferred_to_Client_Support__c)</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>CS Transferred to Client Support WF</fullName>
+        <actions>
+            <name>CS_Transferred_to_Client_Support_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll__c.Date_Transferred_to_Client_Support__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Client Load Completed by WF</fullName>
+        <actions>
+            <name>Client_Load_Completed_by_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>NOT(ISNULL(Client_Load_Completion_Date__c))  &amp;&amp;  ISCHANGED(Client_Load_Completion_Date__c)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Client Name and Number WF Rule</fullName>
+        <actions>
+            <name>Client_Name_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Client_Number_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>NOT( ISNULL( Case_Number__c ) )</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Cobra Notification of Company Shell WF</fullName>
+        <actions>
+            <name>Cobra_Notification_of_Company_Shell_Alert</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <formula>CONTAINS(Product_Summary__c, &quot;COBRA&quot;) &amp;&amp;  (NOT(ISNULL(Calendar_Set_up__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Calendar Set up&quot;)) &amp;&amp;  (NOT(ISNULL(Earning_and_Deductions__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Earning and Deductions&quot;)) &amp;&amp;  (NOT(ISNULL(Check_Printing__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Check Printing&quot;)) &amp;&amp;  (NOT(ISNULL(Locations_Branches__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Locations/Branches&quot;)) &amp;&amp;  (NOT(ISNULL(State_Local_Tax_IDs__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;State/Local Tax IDs&quot;)) &amp;&amp;  (NOT(ISNULL(Reports__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Reports&quot;)) &amp;&amp;  (NOT(ISNULL(Earning_Code_Sets__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Earning Code Sets&quot;)) &amp;&amp;  (NOT(ISNULL(GL__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;GL&quot;)) &amp;&amp;  (NOT(ISNULL(Input_Worksheet__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Input Worksheet&quot;)) &amp;&amp;  (NOT(ISNULL(Workers_Comp_Codes__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Workers&apos; Comp Codes&quot;)) &amp;&amp;  (NOT(ISNULL(X401K_Centers__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;401K Centers&quot;)) &amp;&amp;  (NOT(ISNULL(Billing__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Billing&quot;)) &amp;&amp;  (NOT(ISNULL(Tax_Exempts__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Tax Exempts&quot;)) &amp;&amp;  (NOT(ISNULL(Time_Off_Accrual__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Time Off Accrual Complete&quot;)) &amp;&amp;  (NOT(ISNULL(Agency_Checks__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Agency Checks Complete&quot;)) &amp;&amp;  (NOT(ISNULL(Sales__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Sales&quot;)) &amp;&amp;  (NOT(ISNULL(Misc_Options__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Misc Options&quot;)) &amp;&amp;  (NOT(ISNULL(Extra_Fields__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Extra Fields&quot;)) &amp;&amp;  (NOT(ISNULL(Company_Flags__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Company Flags&quot;)) &amp;&amp;  (NOT(ISNULL(Paychex_Options__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Paychex Options&quot;)) &amp;&amp;  (NOT(ISNULL(Conversion_Target_Date__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Conversion Target Date&quot;)) &amp;&amp;  (NOT(ISNULL(Delivery__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Delivery Complete&quot;)) &amp;&amp;  (NOT(ISNULL(Products__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Products&quot;)) &amp;&amp;  (NOT(ISNULL(Employee_Static__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Employee Static&quot;)) &amp;&amp;  (NOT(ISNULL(Recurring_Earning_Deductions__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Recurring Earning &amp; Deductions&quot;)) &amp;&amp;  (NOT(ISNULL(Target_Balance__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Target Balance&quot;)) &amp;&amp;  (NOT(ISNULL(Locals_Setup__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Locals Setup&quot;)) &amp;&amp;  (NOT(ISNULL(Direct_Deposits__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Direct Deposits&quot;)) &amp;&amp;  (NOT(ISNULL(Remove_Prenotes__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Remove Prenotes&quot;)) &amp;&amp;  (NOT(ISNULL(Code_1099_s__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Code 1099&apos;s&quot;)) &amp;&amp;  (NOT(ISNULL(Verification_Kit_to_Client__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Verification Kit to Client&quot;))</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>DSM DSA Email WF</fullName>
+        <actions>
+            <name>DSA_Email_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>DSM_Email_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll__c.Sales_Rep__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>ENS Set-up Mandatory WF to No</fullName>
+        <actions>
+            <name>ENS_Set_up_Mandatory_Field_Update_to_No</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 3</booleanFilter>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll__c.Zero_Wage_Start__c</field>
+            <operation>equals</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll__c.Taxpay_Indicator__c</field>
+            <operation>equals</operation>
+            <value>No</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll__c.New_Business_Indicator__c</field>
+            <operation>equals</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>ENS Set-up Mandatory WF to Yes</fullName>
+        <actions>
+            <name>ENS_Set_up_Mandatory_Field_Update_to_Yes</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 and (2 or 3)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll__c.Taxpay_Indicator__c</field>
+            <operation>equals</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll__c.Zero_Wage_Start__c</field>
+            <operation>equals</operation>
+            <value>No</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll__c.New_Business_Indicator__c</field>
+            <operation>equals</operation>
+            <value>No</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>HRO Notification of Company Shell WF</fullName>
+        <actions>
+            <name>HRO_Notification_of_Company_Shell_Alert</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <formula>HRO_Summary_Count__c  &gt; 0 &amp;&amp;  (NOT(ISNULL(Calendar_Set_up__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Calendar Set up&quot;)) &amp;&amp;  (NOT(ISNULL(Earning_and_Deductions__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Earning and Deductions&quot;)) &amp;&amp;  (NOT(ISNULL(Check_Printing__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Check Printing&quot;)) &amp;&amp;  (NOT(ISNULL(Locations_Branches__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Locations/Branches&quot;)) &amp;&amp;  (NOT(ISNULL(State_Local_Tax_IDs__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;State/Local Tax IDs&quot;)) &amp;&amp;  (NOT(ISNULL(Reports__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Reports&quot;)) &amp;&amp;  (NOT(ISNULL(Earning_Code_Sets__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Earning Code Sets&quot;)) &amp;&amp;  (NOT(ISNULL(GL__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;GL&quot;)) &amp;&amp;  (NOT(ISNULL(Input_Worksheet__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Input Worksheet&quot;)) &amp;&amp;  (NOT(ISNULL(Workers_Comp_Codes__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Workers&apos; Comp Codes&quot;)) &amp;&amp;  (NOT(ISNULL(X401K_Centers__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;401K Centers&quot;)) &amp;&amp;  (NOT(ISNULL(Billing__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Billing&quot;)) &amp;&amp;  (NOT(ISNULL(Tax_Exempts__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Tax Exempts&quot;)) &amp;&amp;  (NOT(ISNULL(Time_Off_Accrual__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Time Off Accrual Complete&quot;)) &amp;&amp;  (NOT(ISNULL(Agency_Checks__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Agency Checks Complete&quot;)) &amp;&amp;  (NOT(ISNULL(Sales__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Sales&quot;)) &amp;&amp;  (NOT(ISNULL(Misc_Options__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Misc Options&quot;)) &amp;&amp;  (NOT(ISNULL(Extra_Fields__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Extra Fields&quot;)) &amp;&amp;  (NOT(ISNULL(Company_Flags__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Company Flags&quot;)) &amp;&amp;  (NOT(ISNULL(Paychex_Options__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Paychex Options&quot;)) &amp;&amp;  (NOT(ISNULL(Conversion_Target_Date__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Conversion Target Date&quot;)) &amp;&amp;  (NOT(ISNULL(Delivery__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Delivery Complete&quot;)) &amp;&amp;  (NOT(ISNULL(Products__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Products&quot;)) &amp;&amp;  (NOT(ISNULL(Employee_Static__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Employee Static&quot;)) &amp;&amp;  (NOT(ISNULL(Recurring_Earning_Deductions__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Recurring Earning &amp; Deductions&quot;)) &amp;&amp;  (NOT(ISNULL(Target_Balance__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Target Balance&quot;)) &amp;&amp;  (NOT(ISNULL(Locals_Setup__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Locals Setup&quot;)) &amp;&amp;  (NOT(ISNULL(Direct_Deposits__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Direct Deposits&quot;)) &amp;&amp;  (NOT(ISNULL(Remove_Prenotes__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Remove Prenotes&quot;)) &amp;&amp;  (NOT(ISNULL(Code_1099_s__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Code 1099&apos;s&quot;)) &amp;&amp;  (NOT(ISNULL(Verification_Kit_to_Client__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Verification Kit to Client&quot;))</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Load Reviewed by A-WF</fullName>
+        <actions>
+            <name>Load_Accepted_Date_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Load_Review_by_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll__c.Load_Review_Result__c</field>
+            <operation>equals</operation>
+            <value>Accepted</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Load Reviewed by R-WF</fullName>
+        <actions>
+            <name>Load_Rejected_Date_Updated</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Load_Review_by_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll__c.Load_Review_Result__c</field>
+            <operation>equals</operation>
+            <value>Rejected</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>New Load Assigned WF Rule</fullName>
+        <actions>
+            <name>Field_Ops_MMS_Client_Load_Assigned</name>
+            <type>Alert</type>
+        </actions>
+        <actions>
+            <name>Client_Assigned_Date_WF_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Client_Assigned_by_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>Owner:User.Profile.Name = &quot;Field Ops New Load Specialist&quot;</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>New Load Audit Performed by WF</fullName>
+        <actions>
+            <name>New_Load_Audit_Performed_by_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Updates the New Load Audit Performed by field with the User that updates the New Load Audit MMS003 field.</description>
+        <formula>NOT(ISNULL( New_Load_Audit_Date__c ))  &amp;&amp;  ISCHANGED( New_Load_Audit_Date__c )</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>OC Company Shell WF</fullName>
+        <actions>
+            <name>OC_Company_Shell_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>(NOT(CONTAINS(Onboarding_Progression__c , &quot;Company Shell/EE Static Complete&quot;)) ||  ISBLANK(Onboarding_Progression__c)  ) &amp;&amp;  NOT(ISNULL(Calendar_Set_up__c)) &amp;&amp;  NOT(ISNULL(Earning_and_Deductions__c)) &amp;&amp;  NOT(ISNULL(Check_Printing__c)) &amp;&amp;  NOT(ISNULL(Locations_Branches__c)) &amp;&amp;  NOT(ISNULL(State_Local_Tax_IDs__c)) &amp;&amp;  NOT(ISNULL(Reports__c)) &amp;&amp;  (NOT(ISNULL(Earning_Code_Sets__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Earning Code Sets&quot;)) &amp;&amp;  (NOT(ISNULL(GL__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;GL&quot;)) &amp;&amp;  (NOT(ISNULL(Input_Worksheet__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Input Worksheet&quot;)) &amp;&amp;  (NOT(ISNULL(Workers_Comp_Codes__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Workers&apos; Comp Codes&quot;)) &amp;&amp;  (NOT(ISNULL(X401K_Centers__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;401K Centers&quot;)) &amp;&amp;  NOT(ISNULL(Billing__c)) &amp;&amp;  (NOT(ISNULL(Tax_Exempts__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Tax Exempts&quot;)) &amp;&amp;  (NOT(ISNULL(Time_Off_Accrual__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Time Off Accrual&quot;)) &amp;&amp;  (NOT(ISNULL(Agency_Checks__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Agency Checks&quot;)) &amp;&amp;  NOT(ISNULL(Sales__c)) &amp;&amp;  (NOT(ISNULL(Misc_Options__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Misc Options&quot;)) &amp;&amp;  (NOT(ISNULL(Extra_Fields__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Extra Fields&quot;)) &amp;&amp;  (NOT(ISNULL(Company_Flags__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Company Flags&quot;)) &amp;&amp;  (NOT(ISNULL(Paychex_Options__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Paychex Options&quot;)) &amp;&amp;  (NOT(ISNULL(Conversion_Target_Date__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Conversion Target Date&quot;)) &amp;&amp;  NOT(ISNULL(Delivery__c)) &amp;&amp;  NOT(ISNULL(Products__c)) &amp;&amp;  NOT(ISNULL(Employee_Static__c)) &amp;&amp;  (NOT(ISNULL(Recurring_Earning_Deductions__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Recurring Earning &amp; Deductions&quot;)) &amp;&amp;  (NOT(ISNULL(Target_Balance__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Target Balance&quot;)) &amp;&amp;  (NOT(ISNULL(Locals_Setup__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Locals Setup&quot;)) &amp;&amp;  (NOT(ISNULL(Direct_Deposits__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Direct Deposits&quot;)) &amp;&amp;  (NOT(ISNULL(Remove_Prenotes__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Remove Prenotes&quot;)) &amp;&amp;  (NOT(ISNULL(Code_1099_s__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Code 1099&apos;s&quot;)) &amp;&amp;  (NOT(ISNULL(Verification_Kit_to_Client__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Verification Kit to Client&quot;))</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>OC ENS WF</fullName>
+        <actions>
+            <name>OC_ENS_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>(NOT(CONTAINS(Onboarding_Progression__c , &quot;ENS Set-Up Complete&quot;)) ||  ISBLANK(Onboarding_Progression__c)) &amp;&amp;  ISPICKVAL(ENS_Set_up_Mandatory__c, &quot;Yes&quot;) &amp;&amp;  NOT(ISNULL(ENS_Submission_Date__c)) &amp;&amp;  (NOT(ISNULL( Readychex_Received_Date__c)) || INCLUDES(Not_Applicable_ENS_Set_up__c, &quot;Readychex&quot;)) &amp;&amp;  (NOT(ISNULL( SigFont_Received_Date__c )) || INCLUDES(Not_Applicable_ENS_Set_up__c, &quot;SigFont&quot;)) &amp;&amp;  (NOT(ISNULL( Logo_Received_Date__c )) || INCLUDES(Not_Applicable_ENS_Set_up__c, &quot;Logo&quot;)) &amp;&amp;  NOT(ISNULL( ID_Formats_Verified_and_Submitted__c ))</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>OC Installation and Training WF</fullName>
+        <actions>
+            <name>OC_Installation_and_Training_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>(NOT(CONTAINS(Onboarding_Progression__c , &quot; Installation and Training Complete&quot;)) ||  ISBLANK(Onboarding_Progression__c)) &amp;&amp; (NOT(ISNULL(Preview_Install__c)) || INCLUDES( Not_Applicable_Installation_and_Training__c, &quot;Preview Install&quot;)) &amp;&amp;  (NOT(ISNULL(IFT_Set_up__c)) || INCLUDES( Not_Applicable_Installation_and_Training__c, &quot;IFT Set up&quot;)) &amp;&amp;  (NOT(ISNULL(Preview_Hosting__c)) || INCLUDES( Not_Applicable_Installation_and_Training__c, &quot;Preview Hosting&quot;)) &amp;&amp;  (NOT(ISNULL(Advanced_Training_HR_Module__c)) || INCLUDES( Not_Applicable_Installation_and_Training__c, &quot;Advanced Training - HR Module&quot;)) &amp;&amp;  (NOT(ISNULL(Preview_Training__c)) || INCLUDES( Not_Applicable_Installation_and_Training__c, &quot;Preview Training&quot;)) &amp;&amp;  (NOT(ISNULL(Advanced_Training_GL__c)) || INCLUDES( Not_Applicable_Installation_and_Training__c, &quot;Advanced Training - GL&quot;)) &amp;&amp;  (NOT(ISNULL(Advanced_Training_RW__c)) || INCLUDES( Not_Applicable_Installation_and_Training__c, &quot;Advanced Training - RW&quot;)) &amp;&amp;  (NOT(ISNULL(Encryption_Key__c)) || INCLUDES( Not_Applicable_Installation_and_Training__c, &quot;Encryption Key&quot;))</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>OC Interfaces Set-up WF</fullName>
+        <actions>
+            <name>OC_Interfaces_Set_up_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>(NOT(CONTAINS(Onboarding_Progression__c , &quot; Interfaces Set-up Complete&quot;)) ||  ISBLANK(Onboarding_Progression__c)) &amp;&amp;   ISPICKVAL(ENS_Set_up_Mandatory__c, &quot;Yes&quot;) &amp;&amp; (NOT(ISNULL(Custom_Reports__c)) || INCLUDES( Not_Applicable_Interfaces_Set_up__c, &quot;Custom Reports&quot;)) &amp;&amp;  (NOT(ISNULL(Other_Interface__c)) || INCLUDES( Not_Applicable_Interfaces_Set_up__c, &quot;Other Interface&quot;)) &amp;&amp;  (NOT(ISNULL(GL_Interface__c)) || INCLUDES( Not_Applicable_Interfaces_Set_up__c, &quot;GL Interface&quot;)) &amp;&amp;  (NOT(ISNULL(TLO__c))  || INCLUDES( Not_Applicable_Interfaces_Set_up__c, &quot;TLO&quot;))&amp;&amp;  (NOT(ISNULL(Expense_Manager__c)) || INCLUDES( Not_Applicable_Interfaces_Set_up__c, &quot;Expense Manager&quot;)) &amp;&amp;  (Benetrac__c || INCLUDES( Not_Applicable_Interfaces_Set_up__c, &quot;Benetrac&quot;))</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>OC Tax%2C Wage and Balance WF</fullName>
+        <actions>
+            <name>OC_Tax_Wage_and_Balance_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>(NOT(CONTAINS(Onboarding_Progression__c , &quot;Tax, Wage and Balance Complete&quot;)) ||  ISBLANK(Onboarding_Progression__c)) &amp;&amp; (NOT(ISNULL(Prior_Quarter_Wages__c)) ||  INCLUDES( Not_Applicable_Tax_Wage_and_Balance__c , &quot;Prior Quarter Wages&quot;) ) &amp;&amp;  (NOT(ISNULL(Prior_Quarter_Balanced__c)) || INCLUDES( Not_Applicable_Tax_Wage_and_Balance__c , &quot;Prior Quarter Balanced&quot;)) &amp;&amp;  NOT(ISNULL(Current_Quarter_Wages__c))&amp;&amp;  (NOT(ISNULL(Current_Quarter_Balanced__c)) || INCLUDES( Not_Applicable_Tax_Wage_and_Balance__c , &quot;Current Quarter Balanced&quot;)) &amp;&amp;  (QTD_YTD_Data_Load_of_Wages__c  || INCLUDES( Not_Applicable_Tax_Wage_and_Balance__c , &quot;QTD YTD Data Load of Wages&quot;)) &amp;&amp;  (NOT(ISNULL(Quarter_1_Liabilities_Complete__c)) || INCLUDES(Not_Applicable_Tax_Wage_and_Balance__c , &quot;Quarter 1 Liabilities Complete&quot;)) &amp;&amp;  (NOT(ISNULL(Quarter_2_Liabilities_Complete__c)) || INCLUDES(Not_Applicable_Tax_Wage_and_Balance__c , &quot;Quarter 2 Liabilities Complete&quot;)) &amp;&amp;  (NOT(ISNULL(Quarter_3_Liabilities_Complete__c)) || INCLUDES(Not_Applicable_Tax_Wage_and_Balance__c , &quot;Quarter 3 Liabilities Complete&quot;)) &amp;&amp;  (NOT(ISNULL(Quarter_4_Liabilities_Complete__c)) || INCLUDES(Not_Applicable_Tax_Wage_and_Balance__c , &quot;Quarter 4 Liabilities Complete&quot;))</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>POP Notification of Company Shell WF</fullName>
+        <actions>
+            <name>POP_Notification_of_Company_Shell_Alert</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <formula>(POP_Summary_Checked_In__c || CONTAINS(Product_Summary__c, &quot;POP &quot;) )  &amp;&amp;  (NOT(ISNULL(Calendar_Set_up__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Calendar Set up&quot;)) &amp;&amp;  (NOT(ISNULL(Earning_and_Deductions__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Earning and Deductions&quot;)) &amp;&amp;  (NOT(ISNULL(Check_Printing__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Check Printing&quot;)) &amp;&amp;  (NOT(ISNULL(Locations_Branches__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Locations/Branches&quot;)) &amp;&amp;  (NOT(ISNULL(State_Local_Tax_IDs__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;State/Local Tax IDs&quot;)) &amp;&amp;  (NOT(ISNULL(Reports__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Reports&quot;)) &amp;&amp;  (NOT(ISNULL(Earning_Code_Sets__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Earning Code Sets&quot;)) &amp;&amp;  (NOT(ISNULL(GL__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;GL&quot;)) &amp;&amp;  (NOT(ISNULL(Input_Worksheet__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Input Worksheet&quot;)) &amp;&amp;  (NOT(ISNULL(Workers_Comp_Codes__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Workers&apos; Comp Codes&quot;)) &amp;&amp;  (NOT(ISNULL(X401K_Centers__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;401K Centers&quot;)) &amp;&amp;  (NOT(ISNULL(Billing__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Billing&quot;)) &amp;&amp;  (NOT(ISNULL(Tax_Exempts__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Tax Exempts&quot;)) &amp;&amp;  (NOT(ISNULL(Time_Off_Accrual__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Time Off Accrual Complete&quot;)) &amp;&amp;  (NOT(ISNULL(Agency_Checks__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Agency Checks Complete&quot;)) &amp;&amp;  (NOT(ISNULL(Sales__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Sales&quot;)) &amp;&amp;  (NOT(ISNULL(Misc_Options__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Misc Options&quot;)) &amp;&amp;  (NOT(ISNULL(Extra_Fields__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Extra Fields&quot;)) &amp;&amp;  (NOT(ISNULL(Company_Flags__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Company Flags&quot;)) &amp;&amp;  (NOT(ISNULL(Paychex_Options__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Paychex Options&quot;)) &amp;&amp;  (NOT(ISNULL(Conversion_Target_Date__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Conversion Target Date&quot;)) &amp;&amp;  (NOT(ISNULL(Delivery__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Delivery Complete&quot;)) &amp;&amp;  (NOT(ISNULL(Products__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Products&quot;)) &amp;&amp;  (NOT(ISNULL(Employee_Static__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Employee Static&quot;)) &amp;&amp;  (NOT(ISNULL(Recurring_Earning_Deductions__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Recurring Earning &amp; Deductions&quot;)) &amp;&amp;  (NOT(ISNULL(Target_Balance__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Target Balance&quot;)) &amp;&amp;  (NOT(ISNULL(Locals_Setup__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Locals Setup&quot;)) &amp;&amp;  (NOT(ISNULL(Direct_Deposits__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Direct Deposits&quot;)) &amp;&amp;  (NOT(ISNULL(Remove_Prenotes__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Remove Prenotes&quot;)) &amp;&amp;  (NOT(ISNULL(Code_1099_s__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Code 1099&apos;s&quot;)) &amp;&amp;  (NOT(ISNULL(Verification_Kit_to_Client__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Verification Kit to Client&quot;))</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Rescheduled Run Date Update WF</fullName>
+        <actions>
+            <name>Prior_Scheduled_Run_Date_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll__c.Scheduled_Run_Date__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Rescheduled Run Date WF</fullName>
+        <actions>
+            <name>Payroll_Rescheduled_Alert</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <formula>ISCHANGED(Prior_Scheduled_Run_Date__c)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Resolved Doc Discrepancy WF</fullName>
+        <actions>
+            <name>Document_Discrepancy_Resolved_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Updates Current Step if document discrepancies are resolved</description>
+        <formula>Document_Discrepancy_Status__c =&quot;Document Discrepancy Sent&quot;  &amp;&amp;  Discrepancy_Document_Count__c = 0</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>SUI Notification of Company Shell WF</fullName>
+        <actions>
+            <name>SUIS_Notification_of_Company_Shell_Alert</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <formula>(SUI_Summary_Checked_In__c || CONTAINS(Product_Summary__c, &quot;SUI &quot;) )  &amp;&amp;  (NOT(ISNULL(Calendar_Set_up__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Calendar Set up&quot;)) &amp;&amp;  (NOT(ISNULL(Earning_and_Deductions__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Earning and Deductions&quot;)) &amp;&amp;  (NOT(ISNULL(Check_Printing__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Check Printing&quot;)) &amp;&amp;  (NOT(ISNULL(Locations_Branches__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Locations/Branches&quot;)) &amp;&amp;  (NOT(ISNULL(State_Local_Tax_IDs__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;State/Local Tax IDs&quot;)) &amp;&amp;  (NOT(ISNULL(Reports__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Reports&quot;)) &amp;&amp;  (NOT(ISNULL(Earning_Code_Sets__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Earning Code Sets&quot;)) &amp;&amp;  (NOT(ISNULL(GL__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;GL&quot;)) &amp;&amp;  (NOT(ISNULL(Input_Worksheet__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Input Worksheet&quot;)) &amp;&amp;  (NOT(ISNULL(Workers_Comp_Codes__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Workers&apos; Comp Codes&quot;)) &amp;&amp;  (NOT(ISNULL(X401K_Centers__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;401K Centers&quot;)) &amp;&amp;  (NOT(ISNULL(Billing__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Billing&quot;)) &amp;&amp;  (NOT(ISNULL(Tax_Exempts__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Tax Exempts&quot;)) &amp;&amp;  (NOT(ISNULL(Time_Off_Accrual__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Time Off Accrual Complete&quot;)) &amp;&amp;  (NOT(ISNULL(Agency_Checks__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Agency Checks Complete&quot;)) &amp;&amp;  (NOT(ISNULL(Sales__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Sales&quot;)) &amp;&amp;  (NOT(ISNULL(Misc_Options__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Misc Options&quot;)) &amp;&amp;  (NOT(ISNULL(Extra_Fields__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Extra Fields&quot;)) &amp;&amp;  (NOT(ISNULL(Company_Flags__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Company Flags&quot;)) &amp;&amp;  (NOT(ISNULL(Paychex_Options__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Paychex Options&quot;)) &amp;&amp;  (NOT(ISNULL(Conversion_Target_Date__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Conversion Target Date&quot;)) &amp;&amp;  (NOT(ISNULL(Delivery__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Delivery Complete&quot;)) &amp;&amp;  (NOT(ISNULL(Products__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Products&quot;)) &amp;&amp;  (NOT(ISNULL(Employee_Static__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Employee Static&quot;)) &amp;&amp;  (NOT(ISNULL(Recurring_Earning_Deductions__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Recurring Earning &amp; Deductions&quot;)) &amp;&amp;  (NOT(ISNULL(Target_Balance__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Target Balance&quot;)) &amp;&amp;  (NOT(ISNULL(Locals_Setup__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Locals Setup&quot;)) &amp;&amp;  (NOT(ISNULL(Direct_Deposits__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Direct Deposits&quot;)) &amp;&amp;  (NOT(ISNULL(Remove_Prenotes__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Remove Prenotes&quot;)) &amp;&amp;  (NOT(ISNULL(Code_1099_s__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Code 1099&apos;s&quot;)) &amp;&amp;  (NOT(ISNULL(Verification_Kit_to_Client__c)) || INCLUDES(Not_Applicable_Company_Shell__c, &quot;Verification Kit to Client&quot;))</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Scheduled Run Date WF</fullName>
+        <actions>
+            <name>Current_Scheduled_Run_Date_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll__c.Scheduled_Run_Date__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Scheduled Run Date WF2</fullName>
+        <actions>
+            <name>Payroll_Scheduled_Alert</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll__c.Scheduled_Run_Date__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Set-up Fee Workflow Rule</fullName>
+        <actions>
+            <name>Set_up_Fee_Field_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll__c.Setup_Fee_Amount__c</field>
+            <operation>greaterThan</operation>
+            <value>0</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Tax%2C Wage and Balance%3AMandatory WF</fullName>
+        <actions>
+            <name>Tax_Wage_and_Balance_Mandatory_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll__c.Zero_Wage_Start__c</field>
+            <operation>equals</operation>
+            <value>No</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Tax%2C Wage and Balance%3AMandatory WF2</fullName>
+        <actions>
+            <name>Tax_Wage_and_Balance_Mandatory_Update2</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll__c.Zero_Wage_Start__c</field>
+            <operation>equals</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>TaxPay Indication Workflow Rule</fullName>
+        <actions>
+            <name>ENS_Set_up_Mandatory_Field_Update_to_Yes</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll__c.Taxpay_Indicator__c</field>
+            <operation>equals</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Taxpay Indicator from Product Summary WF</fullName>
+        <actions>
+            <name>Taxpay_Indicator_Set</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll__c.Product_Summary__c</field>
+            <operation>contains</operation>
+            <value>Taxpay®</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

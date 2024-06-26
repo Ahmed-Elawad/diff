@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CPR_NPR_Resolution_Required</fullName>
+    <active>true</active>
+    <description>if a value is placed in CPR NPR Call Completed, you must indicate a resolution</description>
+    <errorConditionFormula>OR( AND( ISBLANK(Retention_Call_Completed__c) , NOT(ISBLANK(TEXT( NPR_CPR_Resolution__c )))), AND( NOT(ISBLANK(Retention_Call_Completed__c)), ISBLANK(TEXT( NPR_CPR_Resolution__c))))</errorConditionFormula>
+    <errorMessage>If you select a value in the NPR CPR Resolution field you must have a date in the Retention Call Completed field, if you enter a date in Retention Call Completed you must select an NPR CPR Resoultion.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Total_Discount_Amount_needed_to_Win</fullName>
+    <active>true</active>
+    <description>APR0158877-Created as part of APR to enter Reason Lost field value set to price before selecting Total Discount Amount field</description>
+    <errorConditionFormula>AND(
+NOT(BEGINS($Profile.Name, &apos;System Administrator&apos;)),
+OR($Profile.Name  = &apos;MMS Sales - SB&apos;,  $Profile.Name = &apos;MMS Manager - SB&apos;),
+$RecordType.Name = &apos;MMS Opportunity Record Type&apos;,
+OR(ISPICKVAL( Reason_Not_Sold__c, &apos;Price&apos;),
+   ISPICKVAL( Reason_Not_Sold__c, &apos;Pricing&apos;)), 
+ISPICKVAL( Total_Discount_Amount_needed_to_Win__c, &apos;&apos;)
+)</errorConditionFormula>
+    <errorMessage>MMS users are required to enter in a value into the &apos;Total Discount Amount needed to Win&apos; field upon entering in &apos;Price&apos; into the &apos;Reason Lost&apos; field</errorMessage>
+</ValidationRule>

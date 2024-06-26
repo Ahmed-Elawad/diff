@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <description>Send Client Survey Outbound Message</description>
+        <name>Send_Client_Survey</name>
+        <label>Send Client Survey</label>
+        <locationX>314</locationX>
+        <locationY>455</locationY>
+        <actionName>Contact.SendingClientSurvey</actionName>
+        <actionType>outboundMessage</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <nameSegment>Contact.SendingClientSurvey</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Send Custom Survey Outbound Message</description>
+        <name>Send_Custom_Survey</name>
+        <label>Send Custom Survey</label>
+        <locationX>50</locationX>
+        <locationY>455</locationY>
+        <actionName>Contact.SendingCustomSurvey</actionName>
+        <actionType>outboundMessage</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <nameSegment>Contact.SendingCustomSurvey</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Sending Next Gen Survey Outbound Message</description>
+        <name>Sending_Next_Gen_Survey</name>
+        <label>Sending Next Gen Survey</label>
+        <locationX>578</locationX>
+        <locationY>455</locationY>
+        <actionName>Contact.SendingNextGenCSWSurvey</actionName>
+        <actionType>outboundMessage</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <nameSegment>Contact.SendingNextGenCSWSurvey</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>54.0</apiVersion>
+    <decisions>
+        <name>Check_Qualtrics_Surveys</name>
+        <label>Check Qualtrics Surveys</label>
+        <locationX>446</locationX>
+        <locationY>335</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Qualtrics_Custom</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Qualtrics_Surveys__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Custom</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_Custom_Survey</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Qualtrics Custom</label>
+        </rules>
+        <rules>
+            <name>Qualtrics_Oasis</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Qualtrics_Surveys__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Oasis Client Survey</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_Client_Survey</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Qualtrics Oasis</label>
+        </rules>
+        <rules>
+            <name>Qualtrics_NextGen</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Qualtrics_Surveys__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>NextGen CSW Survey</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Sending_Next_Gen_Survey</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Qualtrics NextGen</label>
+        </rules>
+    </decisions>
+    <description>removed emails for DNC and EEO</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>NotSystemAdmin</name>
+        <dataType>Boolean</dataType>
+        <expression>NOT(CONTAINS({!$Profile.Name}, &quot;System Administrator&quot;))</expression>
+    </formulas>
+    <interviewLabel>Contact After Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Contact After Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>320</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Check_Qualtrics_Surveys</targetReference>
+        </connector>
+        <object>Contact</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <triggerOrder>20</triggerOrder>
+</Flow>

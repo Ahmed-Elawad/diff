@@ -1,0 +1,78 @@
+<aura:component controller="CommunitiesAccountUpdateController" implements="force:appHostable,force:lightningQuickAction" access="global">
+    <aura:attribute name='runUser' type='User' />
+    <aura:attribute name="isReadOnly" type="Boolean" default="true" />
+    <aura:attribute name="isReadOnlyString" type="String" default="" />
+    <aura:attribute name="parentRecordId" type="Id"/>
+    <aura:attribute name="OnbPEOChecklist" type="Object"/>
+    <aura:attribute name='parentAcc' type='Account' />
+    <aura:attribute name='isCommUser' type='boolean' />
+    <aura:attribute name="polPeriodChanged" type="Boolean" default="false"/>
+    <aura:attribute name="allAccountsList" type="Account[]" />
+    <aura:attribute name="tabKind" type="String"/>
+    <aura:attribute name='selectedTabId' type='String' default="epliQuestionnaire"/> 
+    <aura:attribute name='possibleTabs' type='String[]' default="['epliQuestionnaire', '401kQuestionnaire','Addntl_Misc_Docs']"/>
+    <aura:attribute name="communityUser" type="User"/>
+    <aura:attribute name="currTabId" type="String"/>
+    <aura:attribute name='makeReadOnly' type='Boolean' />
+    <aura:attribute name='makeAddtnlReadOnly' type='Boolean' default="true" />
+    
+    <aura:attribute name='activeLabel' type='String' />
+    
+    <!-- <div>
+        <div>
+            <h1 class="tabHeader_title" >{!v.activeLabel}</h1>
+            <h3 class='tabHeader_supportText'>Please add or update any of the information below.</h3>
+        </div>
+    </div> -->
+    
+    <!-- <lightning:tabset variant="{!v.tabKind}"  selectedTabId="{!v.selectedTabId}" >
+        <lightning:tab label="Employment Practices Liability Insurance (EPLI)" id="epliQuestionnaire" onactive="{!c.setActiveTab}">
+            <div aura:id="epliQuestionnaireDiv" style="padding:0px 20px 20px 20px">
+                <c:EPLIQuestionnaire readOnly='{! or(and (v.isReadOnly, v.makeAddtnlReadOnly), v.makeReadOnly) }' 
+                                     readOnlyString='{!v.isReadOnlyString}'
+                                     user='{!v.runUser}'
+                                     parentRecId="{!v.parentRecordId}"
+                                     PEOChecklist="{!v.OnbPEOChecklist}"
+                                     communityUser="{!v.isCommUser}"
+                                     parentAccount="{!v.parentAcc}"
+                                     policyPeriodChanged="{!v.polPeriodChanged}"
+                                     allAccounts="{!v.allAccountsList}" 
+                                     parentTabs='{!v.possibleTabs}'
+                                     ActiveParentTab='{!v.selectedTabId}'/>
+            </div>
+        </lightning:tab>
+        
+        <lightning:tab label="Additional Products of Interest" id="401kQuestionnaire" onactive="{!c.setActiveTab}">
+            <c:Questionnaire401k user='{!v.runUser}'
+                                 readOnly='{! and (v.isReadOnly, v.makeAddtnlReadOnly) }'
+                                 readOnlyString='{!v.isReadOnlyString}'
+                                 parentRecId="{!v.parentRecordId}"
+                                 PEOChecklist="{!v.OnbPEOChecklist}"
+                                 account='{!v.parentAcc}' 
+                                 parentTabs='{!v.possibleTabs}'
+                                 ActiveParentTab='{!v.selectedTabId}'
+                                 commUser="{!v.communityUser}"/>
+        </lightning:tab> -->
+        <!-- <lightning:tab label="Additional Misc Documents" id="Addntl_Misc_Docs" onactive="{!c.setActiveTab}"> -->
+            <!--<lightning:card >-->
+                <!-- <div aura:id="miscDiv" style="padding:20px 20px 20px 20px">
+                    <c:UploadFiles tabOption="{!v.tabType}" 
+                                   checklist="{!v.OnbPEOChecklist}"  
+                                   currentAccount="{!v.parentAcc}"  
+                                   parentAccountToCurrentAccount='{!v.parentAcc.Id}'
+                                   disableFilesUpload="{!v.readOnly}" readOnlyString='{!v.readOnlyString}'
+                                   isCommunityUser="{!v.user.Profile.Name == 'Customer Community Login User Clone'}" misMedReqd = "false"
+                                   censusRequired = "false" claimsReportRequired = "false" 
+                                   hlthInsRenwReqd = "false" hlthInsSummReqd = "false" 
+                                   hlthInvReqd = "false" lossRunsReqd = "false"
+                                   AddntlDocsRqd="true"/>
+                </div> -->
+            <!--</lightning:card>-->
+            <!-- <aura:if isTrue="{! equals(v.selectedTabId, 'Addntl_Misc_Docs')}">
+                <c:communityFormNavButtons parentTabsetUsesIteration='true'
+                                           activeParent='{!v.selectedTabId}'
+                                           allPossibleParents='{!v.possibleTabs}' />
+            </aura:if>
+        </lightning:tab>
+    </lightning:tabset> -->
+</aura:component>

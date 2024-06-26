@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Client_Summary_Field_Required</fullName>
+    <active>true</active>
+    <description>When the Case Origin is &apos;On-Site Visit&apos; on HRS HRBP Case Record Type cases, then Client Summary must be populated</description>
+    <errorConditionFormula>AND(RecordType.Name = &apos;HRS HRBP Case Record Type&apos;, ISPICKVAL(Origin, &apos;On-Site Visit&apos;), ISBLANK(Client_Summary__c))</errorConditionFormula>
+    <errorDisplayField>Client_Summary__c</errorDisplayField>
+    <errorMessage>Client Summary field must be populated with the list of Onsite meeting attendees.</errorMessage>
+</ValidationRule>

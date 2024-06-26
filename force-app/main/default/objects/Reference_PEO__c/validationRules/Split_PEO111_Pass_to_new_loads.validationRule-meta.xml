@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Split_PEO111_Pass_to_new_loads</fullName>
+    <active>true</active>
+    <description>Pass to New loads criteria for Split PEO111</description>
+    <errorConditionFormula>AND
+(
+CONTAINS(RecordTypeId,&apos;012700000001jeX&apos;),
+Pass_to_New_Loads__c = TRUE,
+
+OR(
+NOT(ISPICKVAL(Current_Onboarding_HRIS_Status__c, &quot;Approved&quot;)),
+NOT(ISPICKVAL(Final_Medical_Approval_2__c, &quot;Approved&quot;)),
+(ISBLANK( Onboarding_QC__c )),
+(ISBLANK( Data_Collection_Complete__c )),
+(ISBLANK( Sent_to_WC_Underwriting__c ))
+
+))</errorConditionFormula>
+    <errorDisplayField>Pass_to_New_Loads__c</errorDisplayField>
+    <errorMessage>You need to have the following fields complete in order to pass to deal: HRIS Status = approved, Medical approval, Data collection complete, Onboarding QC, and Sent to WC Underwriting has a value.</errorMessage>
+</ValidationRule>

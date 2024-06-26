@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Fields_Required_for_Ref_Rec_Close_Date</fullName>
+    <active>false</active>
+    <errorConditionFormula>AND(
+NOT(ISBLANK(Coach_review_date__c)),
+
+OR(
+ISPICKVAL(First_Matter_Submission__c, &apos;&apos;),
+ISPICKVAL(Number_Of_Communications__c , &apos;&apos;),
+ISPICKVAL(Overall_Matter_Completion__c , &apos;&apos;),
+ISPICKVAL( Response_Partner_Involvement__c , &apos;&apos;),
+ISPICKVAL( AM_Involvement__c , &apos;&apos;),
+ISPICKVAL( HR_Knowledge__c , &apos;&apos;),
+ISPICKVAL( Issue__c , &apos;&apos;),
+ISPICKVAL( Research__c , &apos;&apos;),
+ISPICKVAL( Past_Precedent__c , &apos;&apos;),
+ISPICKVAL( Supporting_Analysis__c , &apos;&apos;),
+ISPICKVAL( Supporting_Documentation__c , &apos;&apos;),
+ISPICKVAL( Developed_Recommendation__c , &apos;&apos;),
+ISPICKVAL( Submission_Type__c , &apos;&apos;))
+)</errorConditionFormula>
+    <errorMessage>Complete all required fields prior to saving</errorMessage>
+</ValidationRule>

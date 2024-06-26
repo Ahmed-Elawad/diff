@@ -1,0 +1,252 @@
+<!-- Onboarding Overview Component. 
+History
+-------
+03/31/2017 Justin Stouffer             Created  
+-->
+<apex:component controller="OnboardingOverviewController"  >
+    <apex:outputPanel rendered="{!IF((singleRefCollection.size > 0 || singleRefGradCollection.size > 0),TRUE,FALSE)}">
+        <apex:includeScript value="{!URLFOR($Resource.jQuery_Mobile,'jquery-1.11.2.min.js')}"/> 
+        <script>
+        j$=jQuery.noConflict();
+        function reRenderSVG(){             // On panel rerender SVGs are lost,(sf bug) so have to re-draw them.
+            var imageURL = "{!URLFOR($Asset.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#success')}";
+            var SVG = j$("<svg/>", {class: "slds-button__icon",});
+            var SVGUse = j$("<use/>");
+            SVGUse.attr("xlink:href",imageURL);
+            var SVGComplete = SVG.append(SVGUse);
+            j$(".success").each(function() {
+                j$( this ).prepend(SVGComplete);
+                j$( this ).html(j$( this ) .html());
+            });
+            imageURL = "";
+            SVG = j$("<svg/>", {class: "slds-button__icon",});
+            SVGUse = j$("<use/>");
+            SVGUse.attr("xlink:href",imageURL);
+            SVGComplete = SVG.append(SVGUse);
+            j$(".blank").each(function() {
+                j$( this ).prepend(SVGComplete);
+                j$( this ).html(j$( this ) .html());
+            });
+            imageURL = "{!URLFOR($Asset.SLDS, '/assets/icons/standard-sprite/svg/symbols.svg#task2')}";
+            SVG = j$("<svg/>", {class: "slds-icon slds-icon--small slds-icon-standard-task",});
+            SVGUse = j$("<use/>");
+            SVGUse.attr("xlink:href",imageURL);
+            SVGComplete = SVG.append(SVGUse);
+            j$(".task2").each(function() {
+                j$( this ).prepend(SVGComplete);
+                j$( this ).html(j$( this ) .html());
+            });
+            imageURL = "{!URLFOR($Asset.SLDS, '/assets/icons/standard-sprite/svg/symbols.svg#empty')}";
+            SVG = j$("<svg/>", {class: "slds-icon slds-icon--small slds-icon-standard-email",});
+            SVGUse = j$("<use/>");
+            SVGUse.attr("xlink:href",imageURL);
+            SVGComplete = SVG.append(SVGUse);
+            j$(".emptySF1").each(function() {
+                j$( this ).prepend(SVGComplete);
+                j$( this ).html(j$( this ) .html());
+            });
+            imageURL = "{!URLFOR($Asset.SLDS, '/assets/icons/standard-sprite/svg/symbols.svg#avatar')}";
+            SVG = j$("<svg/>", {class: "slds-icon slds-icon--small slds-icon-standard-log-a-call",});
+            SVGUse = j$("<use/>");
+            SVGUse.attr("xlink:href",imageURL);
+            SVGComplete = SVG.append(SVGUse);
+            j$(".avatar").each(function() {
+                j$( this ).prepend(SVGComplete);
+                j$( this ).html(j$( this ) .html());
+            });
+        }
+        </script>
+        <apex:form id="theForm"> 
+            <apex:slds />
+            <div class="slds-scope " xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <article class="slds-card slds-card--narrow">
+                    <div class="slds-card__header slds-grid" >
+                        <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                            <div class="slds-media__figure">
+                                <span class="slds-icon_container slds-icon-standard-assigned-resource" title="Onboarding Overview">
+                                    <svg class="slds-icon slds-icon--small" aria-hidden="true">
+                                        <use xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/standard-sprite/svg/symbols.svg#assigned_resource')}"></use>
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="slds-media__body">
+                                <h2>
+                                    <a href="javascript:void(0);" class="slds-card__header-link slds-truncate">
+                                        <span class="slds-text-heading--medium">Onboarding Overview</span>
+                                    </a>
+                                </h2>
+                            </div>
+                        </header>
+                    </div>
+                    <div class="slds-card__body">
+                        <div class="slds-card__body--inner">
+                            <apex:outputPanel id="Open" rendered="{!IF((singleRefCollection.size == 0),FALSE,TRUE)}" >
+                                <apex:repeat value="{!singleRefCollection}" var="refData" >
+                                    <div class="slds-tile">
+                                        <h3 class="slds-media__figure slds-truncate slds-border--bottom" >
+                                            <apex:outputLink target="_parent" value="/{!refData.Id}" styleClass="slds-text-heading--small" >{!refData.product}</apex:outputLink>
+                                            <apex:outputText rendered="{!refData.product=='401k Conversion'}"><br/>{!refData.refName}</apex:outputText>
+                                        </h3>
+                                        <apex:outputPanel rendered="{!NOT(refData.showStatusText)}"><!--{!NOT(refData.showTimeline)}-->
+                                            <div class="slds-progress slds-m-top--xx-large slds-m-bottom--xx-small">
+                                                <ol class="slds-progress__list">
+                                                    <apex:repeat value="{!refData.statuses}" var="status">
+                                                        <li class="slds-progress__item {!if(status.number__c<refData.statusNumber,'slds-is-completed','')} 
+                                                                   {!if(status.number__c>=refData.statusNumber,'slds-is-active','')}">
+                                                            <button class="slds-button slds-button--icon slds-progress__marker slds-progress__marker--icon" aria-describedby="step-1-tooltip" title="settings">
+                                                                <apex:outputpanel styleClass="success" rendered="{!status.Number__c<refData.statusNumber}">
+                                                                    <svg class="slds-button__icon" aria-hidden="true">
+                                                                        <use xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#success')}"></use>
+                                                                    </svg>
+                                                                </apex:outputpanel>
+                                                                <apex:outputpanel styleClass="blank" rendered="{!status.Number__c==refData.statusNumber}">
+                                                                    <svg class="slds-button__icon slds-icon-text-default" aria-hidden="true">
+                                                                    </svg>
+                                                                </apex:outputpanel>
+                                                            </button>
+                                                            <apex:outputPanel rendered="{!status.Number__c==refData.statusNumber}">
+                                                                <div class="slds-popover slds-popover--tooltip slds-nubbin--bottom slds-truncate_container--50" 
+                                                                     role="tooltip" id="tooltip" 
+                                                                     style="position:absolute;top:0px;transform:translate(-50%,-100%) translateX(-11px);">
+                                                                    <div class="slds-popover__body slds-truncate">
+                                                                        <apex:commandLink value="{!refData.displayStatus}" styleClass="slds-text-color--inverse" action="{!refData.openTimeline}"
+                                                                                          reRender="Open" oncomplete="reRenderSVG();"/>
+                                                                    </div>
+                                                                </div>
+                                                            </apex:outputPanel>
+                                                        </li>
+                                                    </apex:repeat>
+                                                </ol>
+                                                <div class="slds-progress-bar">
+                                                    <span class="slds-progress-bar__value" style="width:100%;">
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!refData.showTimeline}" >
+                                            <div class="slds-modal slds-fade-in-open slds-modal--large" style="width:100%;" role="dialog">
+                                                <div class="slds-modal__container">
+                                                    <div class="slds-modal__header">
+                                                        <h2 id="header43" class="slds-text-heading--medium">{!refData.product}</h2>
+                                                    </div>
+                                                    <div class="slds-modal__content slds-grow slds-p-around--medium">
+                                                        <dl class="slds-popover__body-list">
+                                                            <dd class="slds-tile">
+                                                                <span class="slds-assistive-text">Task</span>
+                                                                <div class="slds-media">
+                                                                    <div class="slds-media__body">
+                                                                        <apex:repeat value="{!refData.statuses}" var="status">
+                                                                            <div class="slds-media slds-media--timeline slds-timeline__media--task">
+                                                                                <div class="slds-media__figure slds-timeline__icon">
+                                                                                    <div class="slds-icon_container">
+                                                                                        <apex:outputPanel styleClass="task2" rendered="{!status.Number__c<refData.statusNumber}">
+                                                                                            <svg class="slds-icon slds-icon--small slds-icon-standard-task" aria-hidden="true">
+                                                                                                <use xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/standard-sprite/svg/symbols.svg#task2')}"></use>
+                                                                                            </svg>
+                                                                                        </apex:outputPanel>
+                                                                                        <apex:outputPanel styleClass="emptySF1" rendered="{!status.Number__c>refData.statusNumber}">
+                                                                                            <svg class="slds-icon slds-icon--small slds-icon-standard-email" aria-hidden="true">
+                                                                                                <use xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/standard-sprite/svg/symbols.svg#empty')}"></use>
+                                                                                            </svg>
+                                                                                        </apex:outputPanel>
+                                                                                        <apex:outputPanel styleClass="avatar" rendered="{!status.Number__c==refData.statusNumber}">
+                                                                                            <svg class="slds-icon slds-icon--small slds-icon-standard-log-a-call" aria-hidden="true">
+                                                                                                <use xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/standard-sprite/svg/symbols.svg#avatar')}"></use>
+                                                                                            </svg>
+                                                                                        </apex:outputPanel>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="slds-media__body">
+                                                                                    <div class="slds-media">
+                                                                                        <div class="slds-media__body">
+                                                                                            <h3 class="slds-truncate 
+                                                                                                       {!if(status.Number__c<refData.statusNumber,'slds-box slds-theme--shade slds-theme--alert-texture','')}">
+                                                                                                <apex:outputPanel rendered="{!status.Number__c!=refData.statusNumber}">
+                                                                                                    {!status.DisplayText__c}
+                                                                                                </apex:outputPanel>
+                                                                                                <apex:outputPanel rendered="{!status.Number__c==refData.statusNumber}">
+                                                                                                    <apex:outputLink target="_parent" value="/{!refData.Id}" >{!status.DisplayText__c}</apex:outputLink>
+                                                                                                </apex:outputPanel>
+                                                                                            </h3>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </apex:repeat>
+                                                                    </div>
+                                                                </div>   
+                                                            </dd>
+                                                        </dl>  
+                                                    </div>
+                                                    <div class="slds-modal__footer slds-grid slds-grid--align-spread">
+                                                        <apex:commandButton value="Close" styleClass="slds-button slds-button--neutral slds-order--3"
+                                                                            action="{!refData.openTimeline}" reRender="Open" oncomplete="reRenderSVG();"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </apex:outputPanel>
+                                        <div class="slds-tile__detail slds-text-body--small">  
+                                            <apex:outputPanel rendered="{!refData.showStatusText}">
+                                                <dl class="slds-list--horizontal slds-wrap">
+                                                    <dt class="slds-item--label slds-text-color--weak slds-truncate" >Status:</dt>
+                                                    <dd class="slds-item--detail slds-truncate">
+                                                        <apex:outputLink target="_parent" value="/{!refData.Id}" >{!refData.displayStatus}</apex:outputLink> 
+                                                    </dd>
+                                                </dl>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!if(refData.runDate != NULL,'TRUE','FALSE')}">
+                                                <dl class="slds-list--horizontal slds-wrap">
+                                                    <dt class="slds-item--label slds-text-color--weak slds-truncate" >Est. Run Date:</dt>
+                                                    <dd class="slds-item--detail slds-truncate">
+                                                        <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                                            <apex:param value="{!refData.runDate}" />
+                                                        </apex:outputText>
+                                                    </dd>
+                                                </dl>
+                                            </apex:outputPanel>
+                                            <dl class="slds-list--horizontal slds-wrap">
+                                                <dt class="slds-item--label slds-text-color--weak slds-truncate" >Assigned To:</dt>
+                                                <dd class="slds-item--detail slds-truncate">{!refData.ownerName}</dd>
+                                            </dl>
+                                            <apex:outputPanel rendered="{!if(refData.ownerPhone != NULL,'TRUE','FALSE')}">
+                                                <dl class="slds-list--horizontal slds-wrap">
+                                                    <dt class="slds-item--label slds-text-color--weak slds-truncate" >Phone:</dt>
+                                                    <dd class="slds-item--detail slds-truncate"><a href="tel:{!refData.ownerPhone}" target="_blank">{!refData.ownerPhone}</a></dd>
+                                                </dl>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!if(refData.ownerEmail != NULL,'TRUE','FALSE')}">
+                                                <dl class="slds-list--horizontal slds-wrap">
+                                                    <dt class="slds-item--label slds-text-color--weak slds-truncate" >Email:</dt>
+                                                    <dd class="slds-item--detail slds-truncate"><a href="mailto:{!refData.OwnerEmail}" target="_blank">{!refData.OwnerEmail}</a></dd>
+                                                </dl>
+                                            </apex:outputPanel>
+                                        </div>
+                                    </div>      
+                                </apex:repeat>
+                            </apex:outputPanel>
+                            <apex:outputPanel id="Graduated" rendered="{!IF((singleRefGradCollection.size == 0),FALSE,TRUE)}" >
+                                <br/><span class="slds-text-heading--small">Completed</span>
+                                <div class="slds-tile slds-border--top">
+                                    <apex:repeat rendered="True" value="{!singleRefGradCollection}" var="refData" >
+                                        <div xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                            <dl class="slds-list--horizontal slds-wrap">
+                                                <dt class="slds-item--label" >
+                                                    <apex:outputLink styleClass="slds-text-heading--small" target="_parent" value="/{!refData.Id}" >{!refData.product}</apex:outputLink> 
+                                                </dt>
+                                                <dd class="slds-item--detail slds-truncate"><svg class="slds-icon slds-icon-text-default slds-icon--x-small" aria-hidden="true">
+                                                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#check')}">
+                                                        </use>
+                                                    </svg>  </dd>
+                                            </dl>
+                                                                               
+                                        </div>      
+                                    </apex:repeat>
+                                </div>
+                            </apex:outputPanel> 
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </apex:form>
+    </apex:outputPanel>
+</apex:component>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NonAudit_Issue_cannot_be_Yes</fullName>
+    <active>true</active>
+    <description>Rule should not allow user to save record if the conditions are met</description>
+    <errorConditionFormula>AND(
+ISPICKVAL(Non_Audit_Issue__c, &apos;Yes&apos;),
+Total_Audit_Score__c &gt; 0
+)</errorConditionFormula>
+    <errorDisplayField>Non_Audit_Issue__c</errorDisplayField>
+    <errorMessage>&quot;Non-Audit Issue? cannot be Yes if Total Audit Score is &gt; 0&quot;</errorMessage>
+</ValidationRule>

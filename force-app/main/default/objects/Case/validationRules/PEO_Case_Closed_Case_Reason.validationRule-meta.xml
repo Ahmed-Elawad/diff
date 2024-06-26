@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PEO_Case_Closed_Case_Reason</fullName>
+    <active>true</active>
+    <description>This is used to make sure that the Case reason is filled in when the case is closed for the PEO Service center Record Type</description>
+    <errorConditionFormula>NOT(BEGINS( $Profile.Name ,&apos;System Admin&apos;)) &amp;&amp;
+RecordTypeId = &quot;01270000000UIeT&quot; &amp;&amp;
+ISPICKVAL(Reason,&quot;&quot;) &amp;&amp;
+(ISPICKVAL(Status,&quot;Closed&quot;)  ||   ISPICKVAL(Status,&quot;Closed - First Call Resolution&quot;))</errorConditionFormula>
+    <errorDisplayField>Reason</errorDisplayField>
+    <errorMessage>Please fill in the Case Reason before closing the case.</errorMessage>
+</ValidationRule>

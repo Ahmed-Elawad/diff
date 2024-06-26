@@ -1,0 +1,351 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes" access="global" >
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/> 
+    <!-- auto save -->
+    <aura:registerEvent name='autoSave' type='c:CommunityFormsAutoSave' />
+    <aura:attribute name='autoSaveRecords' type='map' />
+    
+    <aura:attribute name='contractorIndustryRec' type='Object' />
+    <aura:attribute name='radioGroupOptions' type='List' default="[{'label': 'Yes', 'value':'Yes'},{'label':'No','value':'No'}]" />
+    <aura:attribute name='radioOptionsSold' type='List' default="[{'label': 'Storefront', 'value':'Storefront'},{'label':'Internet','value':'Internet'},{'label':'Both','value':'Both'}]" />
+    <aura:attribute name="dontAllowChanges" type="Boolean" default="true" />
+    <aura:attribute name='naicsInfo' type='String[]' />
+    <aura:attribute name="showSpecific" type="Boolean" default="false"/>
+    <aura:attribute name="parentAccount" type="Account"/>
+    <aura:attribute name="allAccounts" type="Account[]" />
+    
+    <lightning:layout>
+        <lightning:layoutItem size="6"  padding="around-small">
+            <aura:if isTrue="{!v.showSpecific}">
+                <lightning:input aura:id="Per_in_covid_trtmnt_and_santiztion__c"
+                                 disabled='{!v.dontAllowChanges}' 
+                                 type='Number'
+                                 name='Per_in_covid_trtmnt_and_santiztion__c'
+                                 label="Approximately what % of payroll is associated with COVID-19 treatment and sanitization"
+                                 onchange='{!c.handleChange}'
+                                 value="{!v.contractorIndustryRec.Per_in_covid_trtmnt_and_santiztion__c}"
+                                 required="true"/>
+                <lightning:textarea aura:id="trainings_or_controls_to_protect_emp__c"
+                                    name="trainings_or_controls_to_protect_emp__c" 
+                                    onchange="{!c.handleChange}"
+                                    Id='formChildField'
+                                    label="What type of training / controls are utilized to protect employees? " 
+                                    value="{!v.contractorIndustryRec.trainings_or_controls_to_protect_emp__c}"
+                                    disabled='{!v.dontAllowChanges}' />
+                <lightning:radioGroup disabled='{!v.dontAllowChanges}'
+                                      aura:id='emp_in_high_covid_exposures__c'
+                                      label='Are any employees assigned to do janitorial / cleaning work at facilities known to have higher than normal covid exposures (i.e. Hospitals, Physician offices; Assisted Living Facilities, etc.)'
+                                      name="emp_in_high_covid_exposures__c"
+                                      onchange="{!c.handleChange}"
+                                      options="{!v.radioGroupOptions}"
+                                      value="{!v.contractorIndustryRec.emp_in_high_covid_exposures__c}"
+                                      />  
+                <aura:if isTrue="{!v.contractorIndustryRec.emp_in_high_covid_exposures__c == 'Yes'}">
+                    <lightning:textarea aura:id="type_of_facilities_emp_work__c"
+                                        name="type_of_facilities_emp_work__c" 
+                                        onchange="{!c.handleChange}"
+                                        Id='type_of_facilities_emp_work__c'
+                                        label="Confirm the types of facilities at which employees will work" 
+                                        value="{!v.contractorIndustryRec.type_of_facilities_emp_work__c}"
+                                        disabled='{!v.dontAllowChanges}' />
+                    <lightning:textarea aura:id="additional_safety_in_place__c"
+                                        name="additional_safety_in_place__c" 
+                                        onchange="{!c.handleChange}"
+                                        Id='additional_safety_in_place__c'
+                                        label="What additional safety / cleaning protocols are in place?" 
+                                        value="{!v.contractorIndustryRec.additional_safety_in_place__c}"
+                                        disabled='{!v.dontAllowChanges}' />
+                </aura:if>
+                <lightning:radioGroup disabled='{!v.dontAllowChanges}'
+                                      aura:id='designated_emp_for_this_cleaning__c'
+                                      label='Are there designated employees to do this type of cleaning?'
+                                      name="designated_emp_for_this_cleaning__c"
+                                      onchange="{!c.handleChange}"
+                                      options="{!v.radioGroupOptions}"
+                                      value="{!v.contractorIndustryRec.designated_emp_for_this_cleaning__c}"
+                                      />  
+                <aura:if isTrue="{!v.contractorIndustryRec.designated_emp_for_this_cleaning__c == 'Yes'}">
+                    <lightning:input disabled='{!v.readOnlyPermission}' 
+                                     aura:id='Num_of_Emp_Janitorial_spcfc__c'
+                                     label="Number of Employees" 
+                                     placeholder="Enter Number" 
+                                     onchange="{!c.handleChange}" 
+                                     value="{!v.contractorIndustryRec.Num_of_Emp_Janitorial_spcfc__c}" type="number" 
+                                     name="Num_of_Emp_Janitorial_spcfc__c" />
+                    <lightning:textarea aura:id="Any_special_cleaning__c"
+                                        name="Any_special_cleaning__c" 
+                                        onchange="{!c.handleChange}"
+                                        Id='Any_special_cleaning__c'
+                                        label="Any special cleaning?" 
+                                        value="{!v.contractorIndustryRec.Any_special_cleaning__c}"
+                                        disabled='{!v.dontAllowChanges}' />
+                    <lightning:textarea aura:id="Any_special_safety_protocols__c"
+                                        name="Any_special_safety_protocols__c" 
+                                        onchange="{!c.handleChange}"
+                                        Id='Any_special_safety_protocols__c'
+                                        label="Any special safety protocols?" 
+                                        value="{!v.contractorIndustryRec.Any_special_safety_protocols__c}"
+                                        disabled='{!v.dontAllowChanges}' />          
+                </aura:if>
+            </aura:if>
+            <lightning:radioGroup disabled='{!v.dontAllowChanges}' 
+                                  name='Operates_in_residential_commercial_both__c'
+                                  label="Do you operate in residential, commercial or both?"
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.contractorIndustryRec.Operates_in_residential_commercial_both__c}"
+                                  required="true"/>
+            <aura:if isTrue="{!v.contractorIndustryRec.Operates_in_residential_commercial_both__c=='Yes'}">
+                <lightning:input disabled='{!v.dontAllowChanges}' 
+                                 type='Number'
+                                 name='Percentage_of_residential_work__c'
+                                 label="Percentage of residential work"
+                                 onchange='{!c.handleChange}'
+                                 value="{!v.contractorIndustryRec.Percentage_of_residential_work__c}"
+                                 required="true"/>
+                <lightning:input disabled='{!v.dontAllowChanges}' 
+                                 type='Number'
+                                 name='Percentage_of_commercial_work__c'
+                                 label="Percentage of commercial work"
+                                 onchange='{!c.handleChange}'
+                                 value="{!v.contractorIndustryRec.Percentage_of_commercial_work__c}"
+                                 required="true"/>
+            </aura:if>
+            <br />
+            Your services consist of:
+            <lightning:input disabled='{!v.dontAllowChanges}' 
+                             type='Number'
+                             name='Percentage_of_repair_work__c'
+                             label="Percentage of repair work"
+                             onchange='{!c.handleChange}'
+                             value="{!v.contractorIndustryRec.Percentage_of_repair_work__c}"
+                             required="true"/>
+            <lightning:input disabled='{!v.dontAllowChanges}' 
+                             type='Number'
+                             name='percentage_of_new_service_installation__c'
+                             label="Percentage of new service/installation"
+                             onchange='{!c.handleChange}'
+                             value="{!v.contractorIndustryRec.percentage_of_new_service_installation__c}"
+                             required="true"/>
+            <lightning:input disabled='{!v.dontAllowChanges}' 
+                             type='Number'
+                             name='Percentage_of_interior_work__c'
+                             label="Percentage of interior work"
+                             onchange='{!c.handleChange}'
+                             value="{!v.contractorIndustryRec.Percentage_of_interior_work__c}"
+                             required="true"/>
+            <lightning:input disabled='{!v.dontAllowChanges}' 
+                             type='Number'
+                             name='Percentage_of_exterior_work__c'
+                             label="Percentage of exterior work"
+                             onchange='{!c.handleChange}'
+                             value="{!v.contractorIndustryRec.Percentage_of_exterior_work__c}"
+                             required="true"/>
+            <lightning:radioGroup disabled='{!v.dontAllowChanges}' 
+                                  name='Works_on_roofs_rooftops__c'
+                                  label="Do you engage in any type of work involving roof or rooftop exposure?"
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.contractorIndustryRec.Works_on_roofs_rooftops__c}"
+                                  required="true"/>
+            <aura:if isTrue="{!v.contractorIndustryRec.Works_on_roofs_rooftops__c=='Yes'}">
+                <lightning:input disabled='{!v.dontAllowChanges}' 
+                                 name='Description_of_rooftop_work__c'
+                                 label="Description of rooftop work"
+                                 onchange='{!c.handleChange}'
+                                 value="{!v.contractorIndustryRec.Description_of_rooftop_work__c}"
+                                 required="true"/>
+                <lightning:input disabled='{!v.dontAllowChanges}' 
+                                 name='Description_of_rooftop_safety_features__c'
+                                 label="Description of rooftop safety features"
+                                 onchange='{!c.handleChange}'
+                                 value="{!v.contractorIndustryRec.Description_of_rooftop_safety_features__c}"
+                                 required="true"/>
+            </aura:if>
+            <lightning:radioGroup disabled='{!v.dontAllowChanges}' 
+                                  name='Engages_in_work_with_attic_exposure__c'
+                                  label="Do you engage in any type of work involving attic exposure?"
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.contractorIndustryRec.Engages_in_work_with_attic_exposure__c}"
+                                  required="true"/>
+            <aura:if isTrue="{!v.contractorIndustryRec.Engages_in_work_with_attic_exposure__c=='Yes'}">
+                <lightning:input disabled='{!v.dontAllowChanges}' 
+                                 name='Describe_attic_work_exposure__c'
+                                 label="Describe attic work exposure"
+                                 onchange='{!c.handleChange}'
+                                 value="{!v.contractorIndustryRec.Describe_attic_work_exposure__c}"
+                                 required="true"/>
+                <lightning:radioGroup disabled='{!v.dontAllowChanges}' 
+                                      name='Has_call_in_system_for_empl_wellbeing__c'
+                                      label="Is there any type of call-in system for employees well-being?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange='{!c.handleChange}'
+                                      value="{!v.contractorIndustryRec.Has_call_in_system_for_empl_wellbeing__c}"
+                                      required="true"/>
+            </aura:if>
+            <lightning:radioGroup disabled='{!v.dontAllowChanges}' 
+                                  name='Engages_in_airduct_cleaning__c'
+                                  label="Do you engage in any air duct cleaning? "
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.contractorIndustryRec.Engages_in_airduct_cleaning__c}"
+                                  required="true"/>
+            <aura:if isTrue="{!v.contractorIndustryRec.Engages_in_airduct_cleaning__c=='Yes'}">
+                <lightning:input disabled='{!v.dontAllowChanges}' 
+                                 type='Number'
+                                 name='Percentage_of_airduct_cleaning_work__c'
+                                 label="What % of your work is attributable to airduct cleaning?"
+                                 onchange='{!c.handleChange}'
+                                 value="{!v.contractorIndustryRec.Percentage_of_airduct_cleaning_work__c}"
+                                 required="true"/>
+            </aura:if>
+            <lightning:radioGroup disabled='{!v.dontAllowChanges}' 
+                                  name='Engages_in_generator_installation__c'
+                                  label="Do you engage in any generator installation?"
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.contractorIndustryRec.Engages_in_generator_installation__c}"
+                                  required="true"/>
+            <lightning:input disabled='{!v.dontAllowChanges}' 
+                             type='Number'
+                             name='Maximum_height_applicants_work_from__c'
+                             label="What is the maximum height applicant works from (ft) – this includes ladder, lifts, etc..?"
+                             value="{!v.contractorIndustryRec.Maximum_height_applicants_work_from__c}"
+                             onchange='{!c.handleChange}'
+                             required="true"/>
+            <lightning:input disabled='{!v.dontAllowChanges}' 
+                             name='Type_of_equipment_used_include_heavy__c'
+                             label="What type of equipment is used, including heavy equipment?  e.g. Ladder, scaffolding, scissor lifts, booms, cranes,  etc."
+                             onchange='{!c.handleChange}'
+                             value="{!v.contractorIndustryRec.Type_of_equipment_used_include_heavy__c}"
+                             required="true"/>
+            <lightning:radioGroup disabled='{!v.dontAllowChanges}' 
+                                  name='Any_high_voltage_work__c'
+                                  label="Any high voltage work?"
+                                  options="{!v.radioGroupOptions}"
+                                  value="{!v.contractorIndustryRec.Any_high_voltage_work__c}"
+                                  onchange='{!c.handleChange}'
+                                  required="true"/>
+            <aura:if isTrue="{!v.contractorIndustryRec.Any_high_voltage_work__c=='Yes'}">
+                <lightning:input disabled='{!v.dontAllowChanges}' 
+                                 type='Number'
+                                 name='Percentage_of_high_voltage_work__c'
+                                 label="What percentage of the overall work is high voltage?"
+                                 value="{!v.contractorIndustryRec.Percentage_of_high_voltage_work__c}"
+                                 onchange='{!c.handleChange}'
+                                 required="true"/>
+            </aura:if>
+            <lightning:radioGroup disabled='{!v.dontAllowChanges}' 
+                                  name='Any_work_underground_trenching__c'
+                                  label="Any work underground (trenching)?"
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.contractorIndustryRec.Any_work_underground_trenching__c}"
+                                  required="true"/>
+            <aura:if isTrue="{!v.contractorIndustryRec.Any_work_underground_trenching__c=='Yes'}">
+                <lightning:input disabled='{!v.dontAllowChanges}' 
+                                 name='What_kind_of_trenching_work__c'
+                                 label="What kind of trenching work?"
+                                 value="{!v.contractorIndustryRec.What_kind_of_trenching_work__c}"
+                                 onchange='{!c.handleChange}'
+                                 required="true"/>
+            </aura:if>
+            <lightning:radioGroup disabled='{!v.dontAllowChanges}' 
+                                  name='Is_PPE_required__c'
+                                  label="Is Personal Protective Equipment (PPE) required?"
+                                  options="{!v.radioGroupOptions}"
+                                  value="{!v.contractorIndustryRec.Is_PPE_required__c}"
+                                  onchange='{!c.handleChange}'
+                                  required="true"/>
+            <aura:if isTrue="{!v.contractorIndustryRec.Is_PPE_required__c=='Yes'}">
+                <lightning:input disabled='{!v.dontAllowChanges}' 
+                                 name='Please_provide_a_list_of_PPE_required__c'
+                                 label="Please provide a list of PPE required"
+                                 value="{!v.contractorIndustryRec.Please_provide_a_list_of_PPE_required__c}"
+                                 onchange='{!c.handleChange}'
+                                 required="true"/>
+                <lightning:input disabled='{!v.dontAllowChanges}' 
+                                 type='Number'
+                                 name='Percentage_PPE_covered_by_business__c'
+                                 label="What amount do you pay for?"
+                                 value="{!v.contractorIndustryRec.Percentage_PPE_covered_by_business__c}"
+                                 onchange='{!c.handleChange}'
+                                 required="true"/>
+            </aura:if>
+        </lightning:layoutItem>
+        <lightning:layoutItem size="6"  padding="around-small">
+            <lightning:radioGroup disabled='{!v.dontAllowChanges}' 
+                                  name='Has_restriction_on_weight_one_ee_lift__c'
+                                  label="Is there a weight restriction any one EE may/would lift (lbs)?"
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.contractorIndustryRec.Has_restriction_on_weight_one_ee_lift__c}"
+                                  required="true"/>
+            <aura:if isTrue="{!v.contractorIndustryRec.Has_restriction_on_weight_one_ee_lift__c=='Yes'}">
+                <lightning:input disabled='{!v.dontAllowChanges}' 
+                                 type='Number'
+                                 name='Maximum_weight_one_EE_can_lift__c'
+                                 label="What is the maximum weight?"
+                                 onchange='{!c.handleChange}'
+                                 value="{!v.contractorIndustryRec.Maximum_weight_one_EE_can_lift__c}"
+                                 required="true"/>
+                <lightning:input disabled='{!v.dontAllowChanges}' 
+                                 name='Controls_in_place_for_max_over_50lb__c'
+                                 label="What controls / aids are in place if > 50 pounds?"
+                                 value="{!v.contractorIndustryRec.Controls_in_place_for_max_over_50lb__c}"
+                                 onchange='{!c.handleChange}'
+                                 required="true"/>
+            </aura:if>
+            <lightning:radioGroup disabled='{!v.dontAllowChanges}' 
+                                  name='Employs_trainees_or_apprentices__c'
+                                  label="Do you employ any trainees or apprentices?"
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.contractorIndustryRec.Employs_trainees_or_apprentices__c}"
+                                  required="true"/>
+            <lightning:radioGroup disabled='{!v.dontAllowChanges}' 
+                                  name='Training_is_required_for_all_employees__c'
+                                  label="Is a training program required for all employees?"
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.contractorIndustryRec.Training_is_required_for_all_employees__c}"
+                                  required="true"/>
+            <lightning:radioGroup disabled='{!v.dontAllowChanges}' 
+                                  name='Has_lockout_Tagout_program_in_place__c'
+                                  label="Do you have a Lockout – Tagout (LOTO) Program in place?"
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.contractorIndustryRec.Has_lockout_Tagout_program_in_place__c}"
+                                  required="true"/>
+            <lightning:radioGroup disabled='{!v.dontAllowChanges}' 
+                                  name='Has_full_safety_program_in_place__c'
+                                  label="Do you have a full Safety Program in place?"
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.contractorIndustryRec.Has_full_safety_program_in_place__c}"
+                                  required="true"/>
+            <lightning:input disabled='{!v.dontAllowChanges}' 
+                             name='Has_24hr_svc_using_answering_or_on_call__c'
+                             label="If 24 Hour / 7 Days service is advertised, is this an answering service, or will techs be sent out at any time of day or night?"
+                             value="{!v.contractorIndustryRec.Has_24hr_svc_using_answering_or_on_call__c}"
+                             onchange='{!c.handleChange}'
+                             required="true"/>
+           
+            <lightning:radioGroup disabled='{!v.dontAllowChanges}' 
+                                  name='CAL_OSHA_visited_or_cited_bus_past_3_yrs__c'
+                                  label="Has CAL/OSHA visited or cited the business in the last 3 years?"
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.contractorIndustryRec.CAL_OSHA_visited_or_cited_bus_past_3_yrs__c}"
+                                  required="true"/>
+            <lightning:radioGroup disabled='{!v.dontAllowChanges}' 
+                                  name='Are_owners_active_in_daily_operations__c'
+                                  label="Are owners active in daily operations?"
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.contractorIndustryRec.Are_owners_active_in_daily_operations__c}"
+                                  required="true"/>
+        </lightning:layoutItem>
+    </lightning:layout>
+</aura:component>

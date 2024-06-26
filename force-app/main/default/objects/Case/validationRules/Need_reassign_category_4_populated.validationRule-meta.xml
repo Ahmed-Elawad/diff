@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Need_reassign_category_4_populated</fullName>
+    <active>true</active>
+    <description>If the Reassign-Category 1 = Employer Contribution and Reassign-Category 2 = Employer Match and Reassign-Category 3 = Per Pay Match True-Up, then the Reassign-Category 4 needs to be entered before the case can be saved.</description>
+    <errorConditionFormula>AND( RecordType.Name = &apos;Service Support 401k/S125 Case&apos;, 
+ 
+ISPICKVAL(Reassign_Category_1__c,&apos;Employer Contribution&apos;), 
+ISPICKVAL(Reassign_Category_2__c,&apos;Employer Match&apos;), 
+ISPICKVAL(Reassign_Category_3__c,&apos;Per Pay Match True-Up&apos;),
+ISPICKVAL(Reassign_Category_4__c,&apos;&apos;))</errorConditionFormula>
+    <errorDisplayField>Reassign_Category_4__c</errorDisplayField>
+    <errorMessage>Reassign-Category 4 needs to be entered to route the project correctly.</errorMessage>
+</ValidationRule>

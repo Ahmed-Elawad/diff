@@ -1,0 +1,21 @@
+<!-- Page to use the Add to Cadence component from an Lead List view
+
+   History
+   -------
+   10/10/2019 Jake Hinds        Created 
+   05/01/2020 Dan Carmen        Remove deprecated options
+   05/10/2020 Dan Carmen        Modify for the controller to work directly off the component. Simplified parameters.
+   06/20/2022 Dan Carmen        Increment API
+
+ -->
+
+<apex:page standardController="lead"
+           recordSetVar="Leads"
+           extensions="AddToCadenceController"
+           id="cadencePageLead"
+           showHeader="false"
+           lightningStylesheets="true"
+           sidebar="false">
+     <c:AddToCadence recordId="{!lead.Id}" selectedRec="{!rec}" selectedRecs="{!recs}" formType="List" startObjectType="Lead" />
+    
+</apex:page>

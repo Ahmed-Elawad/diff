@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Agency_Sales_Rep_Needed</fullName>
+    <active>true</active>
+    <description>In order for contract complete the agency sales rep must be populated</description>
+    <errorConditionFormula>OR(
+AND
+(
+RecordType.Id = &quot;0120g000000l3qD&quot;,
+NOT (ISBLANK ( NEPs_Complete__c )),
+ISBLANK (Agency_Sales_Rep__c )
+),
+AND
+(
+RecordType.Id = &quot;012700000001jeX&quot;,
+ISPICKVAL(Onboarding_Process__c,&apos;Agency Integrated Online Enrollment&apos;),
+NOT (ISBLANK ( NEPs_Complete__c )),
+ISBLANK (Agency_Sales_Rep__c )
+)
+)</errorConditionFormula>
+    <errorDisplayField>Agency_Sales_Rep__c</errorDisplayField>
+    <errorMessage>You need to have a value in the Agency Sales Rep Field</errorMessage>
+</ValidationRule>

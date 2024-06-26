@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>User_Application_Check</fullName>
+    <active>true</active>
+    <description>The method of creation of this User record. This is populated from the New User application. Enforces the user application usages</description>
+    <errorConditionFormula>ISNEW() &amp;&amp; NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)) &amp;&amp;   ISBLANK(Creation_Type__c) &amp;&amp; NOT(Profile.Name = &quot;Chatter External User&quot;) &amp;&amp; OR(ISPICKVAL(UserType,&apos;Standard&apos;),ISPICKVAL(UserType,&apos;CsnOnly&apos;))</errorConditionFormula>
+    <errorMessage>***** New user records have to be created using the New User tab in the Paychex Data Management application *****</errorMessage>
+</ValidationRule>

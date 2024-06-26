@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Branch_Client_Validation</fullName>
+    <active>true</active>
+    <errorConditionFormula>not(isblank( Branch_Client_Number__c )) &amp;&amp;
+BEGINS( Branch_Client_Number__c ,&quot;0&quot;)  ||    
+MID( Branch_Client_Number__c , 2,1)&lt;&gt;&quot;-&quot;  &amp;&amp;   
+MID(Branch_Client_Number__c, 3,1)&lt;&gt;&quot;-&quot;  &amp;&amp;   
+MID(Branch_Client_Number__c, 4,1)&lt;&gt;&quot;-&quot;  &amp;&amp;   
+MID(Branch_Client_Number__c, 5,1)&lt;&gt;&quot;-&quot; &amp;&amp;
+not(isblank( Branch_Client_Number__c ))</errorConditionFormula>
+    <errorDisplayField>Branch_Client_Number__c</errorDisplayField>
+    <errorMessage>**** Format must be :  location-client number
+**** Can not contain leading zeroes
+example:  50-67890345</errorMessage>
+</ValidationRule>

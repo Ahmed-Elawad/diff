@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Product_Equals_HSA_or_S125</fullName>
+    <active>true</active>
+    <description>If Product = &quot;S125&quot; or &quot;HSA&quot; and Reassign-Category 1 is entered (not null), then the Employer Code field needs to be entered before saving the case.</description>
+    <errorConditionFormula>AND( 
+RecordTypeId=&quot;012700000001U2z&quot;, 
+OR( 
+ISPICKVAL(Product__c,&quot;HSA&quot;), 
+ISPICKVAL(Product__c,&quot;S125&quot;)), 
+NOT(ISPICKVAL(Reassign_Category_1__c,&quot;&quot;)), 
+ISBLANK(Employer_Code__c),
+NOT(ISPICKVAL(Reassign_Category_1__c,&quot;Salesforce Work&quot;)),
+NOT(ISPICKVAL(Reassign_Category_2__c,&quot;POP Compliance&quot;)),
+NOT(ISPICKVAL(Reassign_Category_2__c,&quot;POP New Case Compliance&quot;)),
+NOT(ISPICKVAL(Sub_Product__c,&quot;POP&quot;))
+)</errorConditionFormula>
+    <errorDisplayField>Employer_Code__c</errorDisplayField>
+    <errorMessage>If Product = &quot;S125&quot; or &quot;HSA&quot; and Reassign-Category 1 is entered (not null), then the Employer Code field needs to be entered before saving the Case.</errorMessage>
+</ValidationRule>

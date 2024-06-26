@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>49.0</apiVersion>
+    <assignments>
+        <name>Force_Logout_User</name>
+        <label>Force Logout User</label>
+        <locationX>428</locationX>
+        <locationY>206</locationY>
+        <assignmentItems>
+            <assignToReference>LoginFlow_ForceLogout</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <decisions>
+        <name>Check_Browser</name>
+        <label>Check Browser</label>
+        <locationX>42</locationX>
+        <locationY>197</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>IS_IE_Yes</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>IsIE</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>IE_Login</targetReference>
+            </connector>
+            <label>IS IE: Yes</label>
+        </rules>
+    </decisions>
+    <description>Paychex no longer supports IE login for profiles that should be on Lightning</description>
+    <formulas>
+        <description>check to see if the browser is internet explorer, removed NOT(Contains({!LoginFlow_UserAgent}, &quot;Mozilla&quot;))</description>
+        <name>IsIE</name>
+        <dataType>Boolean</dataType>
+        <expression>AND(
+NOT(Contains({!LoginFlow_UserAgent}, &quot;Firefox&quot;)), 
+NOT(Contains({!LoginFlow_UserAgent}, &quot;Chrome&quot;)), 
+NOT(Contains({!LoginFlow_UserAgent}, &quot;Safari&quot;)),
+NOT(Contains({!LoginFlow_UserAgent}, &quot;Salesforce&quot;)),
+NOT(Contains({!LoginFlow_UserAgent}, &quot;IOS&quot;))
+
+)</expression>
+    </formulas>
+    <interviewLabel>Browser Login Restriction {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Browser Login Restriction</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <screens>
+        <name>IE_Login</name>
+        <label>IE Login</label>
+        <locationX>224</locationX>
+        <locationY>207</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <connector>
+            <targetReference>Force_Logout_User</targetReference>
+        </connector>
+        <fields>
+            <name>Message</name>
+            <fieldText>Paychex no longer supports logging into Salesforce through Internet Explorer, please login using Chrome.
+
+Current Login: {!LoginFlow_UserAgent}</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <startElementReference>Check_Browser</startElementReference>
+    <status>Active</status>
+    <variables>
+        <description>Setting this variable to true to force the user to logout immediately</description>
+        <name>LoginFlow_ForceLogout</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <value>
+            <booleanValue>false</booleanValue>
+        </value>
+    </variables>
+    <variables>
+        <description>this variable holds the details about the users current browser</description>
+        <name>LoginFlow_UserAgent</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>this variable holds the id of the user trying to log in</description>
+        <name>LogingFlow_UserID</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

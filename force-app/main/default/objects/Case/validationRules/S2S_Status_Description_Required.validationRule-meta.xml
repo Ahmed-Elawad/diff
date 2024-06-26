@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>S2S_Status_Description_Required</fullName>
+    <active>true</active>
+    <description>Status Description required to close case</description>
+    <errorConditionFormula>NOT(BEGINS($Profile.Name,&apos;System Administrator&apos;)) &amp;&amp;
+ISCHANGED( Status ) &amp;&amp;
+ISBLANK( Status_Description__c )&amp;&amp;
+
+OR(
+AND(RecordType.Name =&quot;Sales2Service Case&quot;  
+,OR(CONTAINS( TEXT(Status) , &quot;Closed&quot;) 
+,CONTAINS(TEXT(Status), &quot;Cancel&quot;))) ,
+
+AND(RecordType.Name =&quot;Sales2Support Case&quot;  
+,OR(CONTAINS( TEXT(Status) , &quot;Closed&quot;) 
+,CONTAINS(TEXT(Status), &quot;Complete&quot;)
+,TEXT(Status) = &quot;Transferred to Ops&quot;))
+)</errorConditionFormula>
+    <errorMessage>Case cannot be closed/cancelled until Status Description is entered.</errorMessage>
+</ValidationRule>

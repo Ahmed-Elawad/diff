@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Avg_pay_components_per_check_Detail</fullName>
+    <active>true</active>
+    <errorConditionFormula>(ISPICKVAL( Avg_pay_Components_per_check__c , &quot;Yellow: 20 - 29&quot;) ||
+ISPICKVAL(Avg_pay_Components_per_check__c, &quot;Red: 30 +&quot;))&amp;&amp;
+
+OR(
+ISBLANK( Avg_pay_components_per_check_Detail__c ))</errorConditionFormula>
+    <errorDisplayField>Avg_pay_components_per_check_Detail__c</errorDisplayField>
+    <errorMessage>Avg. pay components per check Detail is required when Avg pay Components per check selected as Red or Yellow</errorMessage>
+</ValidationRule>

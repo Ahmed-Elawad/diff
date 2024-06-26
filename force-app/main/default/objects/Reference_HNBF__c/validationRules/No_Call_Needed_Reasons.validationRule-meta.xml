@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>No_Call_Needed_Reasons</fullName>
+    <active>true</active>
+    <description>If imp Call Scheduled, Imp Call Completed, Welcome Call Scheduled, and Welcome Call Completed are populated then No Call Needed Reason cannot be populated.</description>
+    <errorConditionFormula>(ISPICKVAL(No_Call_Needed_Reason__c,&quot;Inside Sales&quot;) ||ISPICKVAL(No_Call_Needed_Reason__c,&quot;Less Than 7 Apps&quot;)||ISPICKVAL(No_Call_Needed_Reason__c,&quot;Child Company&quot;) 
+)
+&amp;&amp;(
+
+AND(NOT(ISBLANK(Implementation_Call_Scheduled__c)) ,NOT(ISBLANK(Welcome_Call_Scheduled__c )),
+NOT(ISBLANK(Welcome_Call_Completed__c )),
+NOT(ISBLANK(Implementation_Call_Completed__c ))
+)
+)</errorConditionFormula>
+    <errorMessage>If imp Call Scheduled, Imp Call Completed, Welcome Call Scheduled, and Welcome Call Completed are populated then you cannot have a value in the No Call Needed Reason field.</errorMessage>
+</ValidationRule>

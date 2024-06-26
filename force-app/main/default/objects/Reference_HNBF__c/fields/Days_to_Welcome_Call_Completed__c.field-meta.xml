@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Days_to_Welcome_Call_Completed__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>Calculates the number of days between the created date and the Welcome Call Complete Date. If Welcome call complete date is blank, null is returned.</description>
+    <externalId>false</externalId>
+    <formula>IF( ISNULL(Welcome_Call_Completed__c) , Null, 
+
+Welcome_Call_Completed__c - datevalue(CreatedDate) - 2*( floor((Welcome_Call_Completed__c - DATE(1985, 6, 24))/7) - floor((datevalue(CreatedDate) - DATE(1985, 6, 24))/7)))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Days to Welcome Call Completed</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

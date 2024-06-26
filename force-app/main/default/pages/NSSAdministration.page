@@ -1,0 +1,298 @@
+<!-- Page to handle the administration of NSS Ownership.
+
+   History
+   -------
+   11/06/2013 Dan Carmen     Created 
+ -->
+<apex:page controller="NSSAdministrationController"
+           tabStyle="NSSAdministration__tab" 
+           id="NssAdminPage">
+<apex:form id="NssAdminForm">
+
+<apex:includeScript value="{!$Resource.selectCheckboxesJs}" />
+
+   <apex:sectionHeader title="NSS Ownership Administration" subtitle="Transfer Ownership" />
+
+   <apex:pageBlock id="NoAccessBlock" rendered="{!showNoAccessBlock}" >
+      <apex:pageMessages /> 
+      <apex:outputText value="You do not have access to this form." />
+   </apex:pageBlock>
+
+   <apex:pageBlock id="OwnerBlock" rendered="{!showRecordSelectionBlock}">
+      <apex:pageMessages /> 
+      
+      <apex:panelGrid id="mainBlockButtons" style="width:100%; text-align:center; ">
+        <apex:outputPanel >
+            <apex:commandButton id="verifyButtonActive" action="{!verifyTransfer}" value="Verify Records for Transfer"/>
+            <apex:commandButton id="endOwnershipButton1" action="{!verifyEndOwnership}" value="End Ownership on Selected"/>
+            <apex:commandButton action="{!cancel}" value="Start Over" />
+         </apex:outputPanel>
+      </apex:panelGrid>
+      
+      <!-- *********   Transfer User Section  ************ -->
+      <apex:pageBlockSection id="transferSection"  columns="2">
+         <!--  ROW 1 start -->
+         <apex:pageBlockSectionItem rendered="{!hasSupervisorOptions}" >
+            <apex:outputLabel value="Which Supervisor Are You Transferring From?" />
+            <apex:selectList value="{!selectedSupervisorFrom}" title="Select A Supervisor" size="1">
+               <apex:selectOptions value="{!supervisorOptions}"/>
+               <apex:actionSupport event="onchange" action="{!supervisorFromChanged}" rerender="OwnerBlock" status="supervisorChangeStatus"/>
+            </apex:selectList>
+         </apex:pageBlockSectionItem>
+
+         <apex:pageBlockSectionItem rendered="{!AND(selectedFromSet,hasDisplayList,hasSupervisorOptions)}" >
+            <apex:outputLabel value="Which Supervisor Are You Transferring To?" />
+            <apex:selectList value="{!selectedSupervisorTo}" title="Select A Supervisor" size="1">
+               <apex:selectOptions value="{!supervisorOptions}"/>
+               <apex:actionSupport event="onchange" action="{!supervisorToChanged}" rerender="OwnerBlock" status="supervisorChangeStatus"/>
+            </apex:selectList>
+         </apex:pageBlockSectionItem>
+
+         <apex:pageBlockSectionItem rendered="{!AND(hasSupervisorOptions,NOT(AND(selectedFromSet,hasDisplayList)))}"/>
+         <!--  ROW 1 end -->
+           
+         <!--  ROW 2 start -->
+         <apex:pageBlockSectionItem rendered="{!hasTransferFromOptions}" >
+            <apex:outputLabel value="Who Are You Transferring From?" />
+            <apex:selectList value="{!selectedTransferFrom}" title="Select a User" size="1">
+               <apex:selectOptions value="{!transferFromOptions}"/>
+               <apex:actionSupport event="onchange" action="{!transferFromChanged}" rerender="OwnerBlock" status="nsrChangeStatus"/>
+            </apex:selectList>
+         </apex:pageBlockSectionItem>
+
+         <apex:pageBlockSectionItem id="transferToSelection" rendered="{!AND(selectedFromSet,hasDisplayList,hasTransferToOptions)}" >
+            <apex:outputLabel value="Who Are You Transferring To?" />
+            <apex:outputPanel >
+               <apex:outputPanel >
+                 <apex:inputCheckbox value="{!selectAllTransferTo}" onclick="selectAll('tranferToUserCheckbox',this)">
+                   <!-- 
+                     <apex:actionSupport event="onclick" onsubmit="selectAll('tranferToUserCheckbox',this)" rerender="transferSection"/>
+                   <apex:actionSupport event="onchange" action="{!changeSelectAllTransferTo}" rerender="transferSection"/>
+                    -->
+                 </apex:inputCheckbox> 
+                 Select All
+               </apex:outputPanel>
+            <apex:selectCheckboxes id="tranferToUserCheckbox" value="{!selectedTransferTo}" title="Select a User" layout="pageDirection">
+               <apex:selectOptions value="{!transferToOptions}"/>
+               <!-- 
+               <apex:actionSupport event="onchange" action="{!transferToChanged}" rerender="OwnerBlock"/>
+                -->
+            </apex:selectCheckboxes>
+            </apex:outputPanel>
+         </apex:pageBlockSectionItem>
+
+         <apex:pageBlockSectionItem rendered="{!AND(hasSupervisorOptions,NOT(AND(selectedFromSet,hasDisplayList)))}"/>
+
+         <!--  ROW 2 end -->
+
+         <!--  ROW 3 start -->
+
+      </apex:pageBlockSection>
+      
+      <apex:pageBlockSection rendered="{!selectedFromSet}" columns="2">
+         <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Filter" />
+            <apex:selectList value="{!selectedFilterOption}" title="To Change the Filter" size="1">
+               <apex:selectOptions value="{!filterOptions}"/>
+               <apex:actionSupport event="onchange" action="{!filterChanged}" rerender="OwnerBlock" status="nsrChangeStatus"/>
+            </apex:selectList>
+         </apex:pageBlockSectionItem>
+
+         <apex:pageBlockSectionItem >
+            <apex:outputLabel value="NSS Team Filter" />
+            <apex:selectList value="{!selectedNssTeam}" title="NSS Team" size="1">
+               <apex:selectOptions value="{!nssTeamOptions}"/>
+               <apex:actionSupport event="onchange" action="{!filterChanged}" rerender="OwnerBlock" status="nsrChangeStatus"/>
+            </apex:selectList>
+         </apex:pageBlockSectionItem>
+
+
+         <!--  ROW 3 end -->
+
+      </apex:pageBlockSection>
+         
+      <apex:pageBlockSection id="statusBlock" columns="1">
+         <apex:actionStatus startText="Retrieving NSRs..." id="supervisorChangeStatus"/>
+         <apex:actionStatus startText="Retrieving Data..." id="nsrChangeStatus"/>
+      
+      </apex:pageBlockSection>
+      
+      <apex:pageBlockSection id="NoRecordsFound" rendered="{!AND(selectedFromSet,NOT(hasDisplayList))}">
+         <apex:outputText value="No Records Found!" />
+      </apex:pageBlockSection>   
+   
+      <apex:pageBlockSection id="ownerListSection" rendered="{!hasDisplayList}" columns="1">
+      
+       
+         <apex:pageBlockTable id="ownershipTable" value="{!displayList}" var="rec">
+            <apex:facet name="header">
+               <apex:panelGrid columns="3" width="100%" border="0" cellPadding="0" cellSpacing="0" rules="none">
+                  <apex:outputText >
+                     {!(ownershipRecs.pageNumber * ownershipRecs.pageSize)+1-ownershipRecs.pageSize}-{!IF((ownershipRecs.pageNumber * ownershipRecs.pageSize)>ownershipRecs.resultSize, ownershipRecs.resultSize,(ownershipRecs.pageNumber * ownershipRecs.pageSize))} of {!ownershipRecs.resultSize}
+                  </apex:outputText>
+                  <apex:outputPanel >
+                     <CENTER>
+                     <apex:commandButton disabled="{!NOT(ownershipRecs.hasPrevious)}" value="|<" action="{!firstPage}" rerender="ownerListSection" title="First Page"/>  
+                     <apex:commandButton disabled="{!NOT(ownershipRecs.hasPrevious)}" value="<" action="{!previous}" rerender="ownerListSection" title="Previous Page"/>
+                     &nbsp;
+                     <apex:commandButton disabled="{!NOT(ownershipRecs.hasNext)}" value=">" action="{!next}" rerender="ownerListSection" title="Next Page"/>      
+                     <apex:commandButton disabled="{!NOT(ownershipRecs.hasNext)}" value=">|" action="{!lastPage}" rerender="ownerListSection" title="Last Page"/>
+                     </CENTER>
+                  </apex:outputPanel>
+                  <apex:outputText style="text-align:right;">
+                    <CENTER>
+                     Page {!ownershipRecs.pageNumber} of {!numOfPages}
+                     </CENTER>
+                  </apex:outputText>      
+               </apex:panelGrid>   
+            </apex:facet>
+            <apex:facet name="footer">
+               <apex:panelGrid columns="3" width="100%" border="0" cellPadding="0" cellSpacing="0" rules="none">
+                  <apex:outputText >
+                     {!(ownershipRecs.pageNumber * ownershipRecs.pageSize)+1-ownershipRecs.pageSize}-{!IF((ownershipRecs.pageNumber * ownershipRecs.pageSize)>ownershipRecs.resultSize, ownershipRecs.resultSize,(ownershipRecs.pageNumber * ownershipRecs.pageSize))} of {!ownershipRecs.resultSize}
+                  </apex:outputText>
+                  <apex:outputPanel >
+                     <CENTER>
+                     <apex:commandButton disabled="{!NOT(ownershipRecs.hasPrevious)}" value="|<" action="{!firstPage}" rerender="ownerListSection" title="First Page"/>  
+                     <apex:commandButton disabled="{!NOT(ownershipRecs.hasPrevious)}" value="<" action="{!previous}" rerender="ownerListSection" title="Previous Page"/>
+                     &nbsp;
+                     <apex:commandButton disabled="{!NOT(ownershipRecs.hasNext)}" value=">" action="{!next}" rerender="ownerListSection" title="Next Page"/>      
+                     <apex:commandButton disabled="{!NOT(ownershipRecs.hasNext)}" value=">|" action="{!lastPage}" rerender="ownerListSection" title="Last Page"/>
+                     </CENTER>
+                  </apex:outputPanel>
+                  <apex:outputText style="text-align:right;">
+                    <CENTER>
+                     Page {!ownershipRecs.pageNumber} of {!numOfPages}
+                     </CENTER>
+                  </apex:outputText>      
+               </apex:panelGrid>   
+            </apex:facet>
+            <apex:column >
+               <apex:facet name="header">Selected
+                  <apex:inputCheckbox value="{!selectAllOption}" id="ownerSelectAll" title="Select All" onclick="selectAll('ownerCheckbox',this)">
+                     <!-- 
+                     <apex:actionSupport event="onclick" onsubmit="selectAll('ownerCheckbox',this)" />
+                     <apex:actionSupport event="onclick" action="{!changeSelectAllOption}" rerender="ownershipTable" >
+                     </apex:actionSupport>
+                      -->
+                  </apex:inputCheckbox>
+               </apex:facet>
+
+               <apex:inputCheckbox disabled="false" id="ownerCheckbox" value="{!rec.selected}" >
+               </apex:inputCheckbox>
+            </apex:column>
+
+            <apex:column headerValue="Status">
+               <apex:outputField value="{!rec.owner.Ownership_Status__c}" />
+            </apex:column>
+
+            <apex:column headerValue="Status Start Date">
+               <apex:outputField value="{!rec.owner.StatusStartDate__c}" />
+            </apex:column>
+
+            <apex:column headerValue="Ownership Start Date">
+               <apex:outputField value="{!rec.owner.StartDate__c}" />
+            </apex:column>
+
+            <apex:column headerValue="NSS Team">
+               <apex:outputField value="{!rec.owner.NSS_Team__c}" />
+            </apex:column>
+
+            <apex:column headerValue="Prospect-Client">
+               <apex:outputField value="{!rec.owner.Prospect_Client__c}" />
+            </apex:column>
+
+            <apex:column headerValue="Lead">
+               <apex:outputField value="{!rec.owner.Lead__c}" />
+            </apex:column>
+
+
+            <apex:column headerValue="Days Left In Status">
+               <apex:outputField value="{!rec.owner.DaysLeftInStage__c}" />
+            </apex:column>
+
+            <apex:column headerValue="Call Disposition">
+               <apex:outputText value="{!rec.callDisposition}" />
+            </apex:column>
+
+            <apex:column headerValue="Additional Info">
+               <apex:outputText value="{!rec.owner.NSSAdminInfo__c}" />
+            </apex:column>
+         </apex:pageBlockTable>
+
+      </apex:pageBlockSection>
+   </apex:pageBlock>
+   
+   <apex:pageBlock id="VerifyBlock" rendered="{!showVerifyTransferBlock}">
+      <apex:pageMessages /> 
+      <apex:panelGrid id="mainBlockButtons" style="width:100%; text-align:center; ">
+        <apex:outputPanel >
+            <apex:actionStatus rendered="{!showVerify}" id="transferButtonStatus">
+               <apex:facet name="stop">
+                  <apex:commandButton id="transferButtonActive" action="{!initializeTransfer}" value="Start Transfer" status="transferButtonStatus" disabled="false" rerender="VerifyBlock"/>
+               </apex:facet>
+               <apex:facet name="start">
+                  <apex:commandButton id="transferButtonDisabled" value="Processing..." status="transferButtonStatus" disabled="true" rerender="VerifyBlock"/>
+               </apex:facet>
+            </apex:actionStatus>
+
+            <apex:commandButton action="{!cancel}" value="Start Over" />
+         </apex:outputPanel>
+      </apex:panelGrid>
+
+      <apex:pageBlockSection rendered="{!showVerify}" columns="1">
+         <apex:repeat value="{!transferGroups}" var="userGrp" id="verifyRepeat">
+            <apex:pageBlockTable id="ownershipTable" value="{!userGrp.ownerRecs}" var="rec">
+               <apex:facet name="header">
+                  Records transferring to {!userGrp.usr.Name}
+               </apex:facet>
+               <apex:column headerValue="Status">
+                  <apex:outputField value="{!rec.owner.Ownership_Status__c}" />
+               </apex:column>
+
+               <apex:column headerValue="Ownership Start Date">
+                  <apex:outputField value="{!rec.owner.StartDate__c}" />
+               </apex:column>
+
+               <apex:column headerValue="Prospect-Client">
+                  <apex:outputField value="{!rec.owner.Prospect_Client__c}" />
+               </apex:column>
+
+               <apex:column headerValue="Lead">
+                  <apex:outputField value="{!rec.owner.Lead__c}" />
+               </apex:column>
+
+               <apex:column headerValue="Status Start Date">
+                  <apex:outputText value="{!rec.owner.StatusStartDate__c}" />
+               </apex:column>
+
+               <apex:column headerValue="Days Left In Status">
+                  <apex:outputText value="{!rec.owner.DaysLeftInStage__c}" />
+               </apex:column>
+            </apex:pageBlockTable>
+         </apex:repeat>
+      </apex:pageBlockSection>
+      
+      <apex:pageBlockSection rendered="{!showResults}" columns="1" title="Transfer Complete">
+         <apex:outputField value="{!transferLog.NbrOfOwnerRecs__c}" />
+         <apex:outputField value="{!transferLog.NbrOfAccts__c}" />
+         <apex:outputField value="{!transferLog.NbrOfLeads__c}" />
+         <apex:outputField value="{!transferLog.NbrOfCallbacks__c}" />
+         <apex:outputField value="{!transferLog.NbrOrphanCallbacks__c}" />
+      </apex:pageBlockSection>
+
+   </apex:pageBlock>
+   
+  <apex:pageBlock id="verifyEndOwnerBlock" rendered="{!showVerifyEndOwnerBlock}">
+      <apex:pageMessages /> 
+      <apex:pageBlockButtons >
+         <apex:commandButton id="confirmEndOwner" action="{!confirmEndOwnership}" value="Confirm End Ownership" />
+         <apex:commandButton id="cancelEndOwner" action="{!cancelEndOwnership}" value="Cancel" />
+      </apex:pageBlockButtons>
+      
+      <apex:outputText value="You have selected {!numberEndOwnerRecs} records to end. Please confirm to continue." />
+  </apex:pageBlock>
+
+
+</apex:form>
+</apex:page>

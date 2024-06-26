@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Billing_and_Contributions</fullName>
+    <active>true</active>
+    <description>If &quot;Type of 401k NSF&quot; is &quot;Billing and Contributions&quot;, then the following fields are required: &quot;401k NSF Amount - Billing&quot; and &quot;Billing NSF Alert Date&quot;  &quot;401k NSF Amount - Contrib.&quot; and &quot;Contribution NSF Alert Date&quot;.</description>
+    <errorConditionFormula>ISPICKVAL( Type_of_NSF__c , &quot;Billing and Contributions&quot;)&amp;&amp; 
+(
+ISBLANK( Outstanding_401_k_NSF_Amount_Billing__c ) ||
+ISBLANK( Outstanding_Billing_NSF_Alert_Date__c )||
+ISBLANK(  Outstanding_401k_NSF_Amount_Contribut__c  )||
+ISBLANK(  Contribution_NSF_Date__c  )
+)</errorConditionFormula>
+    <errorMessage>If the NSF Type is Billing and Contributions, you must enter a value in &quot;401k NSF Amount - Billing&quot; and &quot;Billing NSF Alert Date&quot;  &quot;401k NSF Amount - Contrib.&quot; and &quot;Contribution NSF Alert Date&quot;</errorMessage>
+</ValidationRule>

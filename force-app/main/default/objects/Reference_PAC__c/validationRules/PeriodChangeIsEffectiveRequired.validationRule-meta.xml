@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PeriodChangeIsEffectiveRequired</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+OR(ISPICKVAL( Prevention_Revenue_Request__c,&apos;SUI/MA PFML Rate&apos;),
+ISPICKVAL(Prevention_Revenue_Request__c, &apos;FF&apos;)),
+ISPICKVAL( Period_change_is_effective__c , &apos;&apos;))</errorConditionFormula>
+    <errorDisplayField>Period_change_is_effective__c</errorDisplayField>
+    <errorMessage>If the field Prevention/Revenue Request? equals &quot;SUI/MA PFML Rate&quot; or &quot;FF&quot;, the field Period change is effective? cannot be BLANK</errorMessage>
+</ValidationRule>

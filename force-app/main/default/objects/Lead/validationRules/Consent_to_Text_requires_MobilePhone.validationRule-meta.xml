@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Consent_to_Text_requires_MobilePhone</fullName>
+    <active>true</active>
+    <description>if checking Consent to Text you must fill in Mobile Phone</description>
+    <errorConditionFormula>Consent_to_Text__c &amp;&amp; 
+OR(ISCHANGED(Consent_to_Text__c), ISNEW()) 
+&amp;&amp; $Profile.Name != &apos;System Administrator API-Lead Loader&apos; 
+&amp;&amp; ISBLANK(MobilePhone)</errorConditionFormula>
+    <errorMessage>You must fill in the Mobile Phone if you are checking the Consent to Text box.</errorMessage>
+</ValidationRule>

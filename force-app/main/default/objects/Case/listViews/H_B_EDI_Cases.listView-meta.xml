@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>H_B_EDI_Cases</fullName>
+    <columns>CASES.CREATED_DATE_DATE_ONLY</columns>
+    <columns>CASES.RECORDTYPE</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>Current_Step__c</columns>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>OWNER_NAME</columns>
+    <columns>Assister__c</columns>
+    <columns>Current_Owner_Duration__c</columns>
+    <columns>BeneTrac_Category_1__c</columns>
+    <columns>CASES.SUBJECT</columns>
+    <filterScope>ScopingRule</filterScope>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.BeneTrac_Cases,Case.Flock_Cases,Case.Flock_EDI_New_Connection</value>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Cancelled,Closed,Complete,Completed</value>
+    </filters>
+    <filters>
+        <field>Assister__c</field>
+        <operation>equals</operation>
+        <value>Henry Leigh,Jack Bachmann,Brian Mulla</value>
+    </filters>
+    <label>H&amp;B EDI Cases</label>
+</ListView>

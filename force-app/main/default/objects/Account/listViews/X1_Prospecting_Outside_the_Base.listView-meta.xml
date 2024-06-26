@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>X1_Prospecting_Outside_the_Base</fullName>
+    <columns>LastCadenceClosedDate__c</columns>
+    <columns>In_Cadence__c</columns>
+    <columns>LastCadenceName__c</columns>
+    <columns>OasisPEOAccountOwner__c</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ACCOUNT.PHONE1</columns>
+    <columns>ACCOUNT.ADDRESS1_CITY</columns>
+    <columns>ACCOUNT.EMPLOYEES</columns>
+    <columns>ESR_Renewal_Date__c</columns>
+    <columns>H_B_Renewal_Date__c</columns>
+    <columns>Work_Comp_Renewal_Date__c</columns>
+    <columns>Workers_Comp_Carrier__c</columns>
+    <columns>ACCOUNT.LAST_ACTIVITY</columns>
+    <columns>isParent__c</columns>
+    <columns>isChild__c</columns>
+    <filterScope>Team</filterScope>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>contains</operation>
+        <value>Prospect</value>
+    </filters>
+    <filters>
+        <field>CSCMContractStatus__c</field>
+        <operation>notEqual</operation>
+        <value>Submitted,Accepted,Underwriting,Approved,ContractPending,Implementation,PendingActivation,Client,PendingTermination,UnderContract</value>
+    </filters>
+    <filters>
+        <field>CORE.USERS.LAST_NAME</field>
+        <operation>notEqual</operation>
+        <value>Referral_Owner</value>
+    </filters>
+    <filters>
+        <field>Out_of_Business__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <label>1-  Prospecting Outside the Base</label>
+    <sharedTo>
+        <roleAndSubordinatesInternal>PEO_Zone_Northeast</roleAndSubordinatesInternal>
+    </sharedTo>
+</ListView>

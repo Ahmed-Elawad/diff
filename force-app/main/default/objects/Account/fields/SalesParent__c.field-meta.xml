@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SalesParent__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Manually updated by Sales, Added for Case #19672066</description>
+    <inlineHelpText>Used to identify the primary location or location of the decision maker and used for multi-ID Scenarios.</inlineHelpText>
+    <label>Sales Parent</label>
+    <lookupFilter>
+        <active>true</active>
+        <booleanFilter>(1 AND (2 OR 7) AND 3 AND 4) OR (1 AND (2 OR 7) AND 5 AND 6) OR (1 AND (2 OR 7) AND 8 AND 9)</booleanFilter>
+        <errorMessage>Sales Parent can not be a child of another account AND Sales Parent must have a  corresponding record type to the current account.</errorMessage>
+        <filterItems>
+            <field>Account.isChild__c</field>
+            <operation>equals</operation>
+            <value>False</value>
+        </filterItems>
+        <filterItems>
+            <field>$Source.Child_Count__c</field>
+            <operation>equals</operation>
+            <value>0</value>
+        </filterItems>
+        <filterItems>
+            <field>Account.RecordType.Name</field>
+            <operation>equals</operation>
+            <value>Core Account Record Type,MMS Account Record Type</value>
+        </filterItems>
+        <filterItems>
+            <field>$Source.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Core Account Record Type,MMS Account Record Type</value>
+        </filterItems>
+        <filterItems>
+            <field>Account.RecordType.Name</field>
+            <operation>equals</operation>
+            <value>Core Referral Source Record Type, HRS Referral Source Record Type, Paychex Internal Referral Account Record Type, Referral Account Record Type, Sales Channel Referral Account Record Type, Sales Partner Referral Account Record Type</value>
+        </filterItems>
+        <filterItems>
+            <field>$Source.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Core Referral Source Record Type, HRS Referral Source Record Type, Paychex Internal Referral Account Record Type, Referral Account Record Type, Sales Channel Referral Account Record Type, Sales Partner Referral Account Record Type</value>
+        </filterItems>
+        <filterItems>
+            <field>$Source.Child_Count__c</field>
+            <operation>equals</operation>
+            <value></value>
+        </filterItems>
+        <filterItems>
+            <field>$Source.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Prospect</value>
+        </filterItems>
+        <filterItems>
+            <field>Account.RecordType.Name</field>
+            <operation>equals</operation>
+            <value>Prospect</value>
+        </filterItems>
+        <infoMessage>Sales Parent can not be a child of another account AND Sales Parent must have a  corresponding record type to the current account.</infoMessage>
+        <isOptional>false</isOptional>
+    </lookupFilter>
+    <referenceTo>Account</referenceTo>
+    <relationshipLabel>Sales Child Accounts</relationshipLabel>
+    <relationshipName>Sales_Parent</relationshipName>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackFeedHistory>true</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <type>Lookup</type>
+</CustomField>

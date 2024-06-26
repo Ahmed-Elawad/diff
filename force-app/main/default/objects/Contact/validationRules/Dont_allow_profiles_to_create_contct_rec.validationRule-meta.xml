@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Dont_allow_profiles_to_create_contct_rec</fullName>
+    <active>true</active>
+    <description>Does not allow all profiles except System Admin to create or modify a Paychex Employee Contact record (based on having an HR Person Id)</description>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)), NOT(ISBLANK(HR_Person_Id__c)), NOT($Profile.Name = &apos;Insurance Compliance&apos;)
+)</errorConditionFormula>
+    <errorMessage>You cannot create or modify a Paychex Employee Contact.</errorMessage>
+</ValidationRule>

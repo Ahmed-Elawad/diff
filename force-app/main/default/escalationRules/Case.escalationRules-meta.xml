@@ -1,0 +1,1358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EscalationRules xmlns="http://soap.sforce.com/2006/04/metadata">
+    <escalationRule>
+        <fullName>Paychex Case Escalation</fullName>
+        <active>false</active>
+        <ruleEntry>
+            <businessHours>Sales Support</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Sales Support Cases Record Type</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>notEqual</operation>
+                <value>Cancelled,Complete,Closed</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.OwnerId</field>
+                <operation>startsWith</operation>
+                <value>SFDC Support Email Queue</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.IsClosed</field>
+                <operation>equals</operation>
+                <value>False</value>
+            </criteriaItems>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Agency Call Center</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support Agency Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>New</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Agency_Reassign_Category__c</field>
+                <operation>equals</operation>
+                <value>H&amp;B National</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>240</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+                <notifyTo>ltytler@paychex.com</notifyTo>
+                <notifyToTemplate>Agency_Email_Templates/AGENCY_New_Case_escalation_notification_HTML</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseLastModified</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Agency Call Center</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support Agency Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>New</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Agency_Reassign_Category__c</field>
+                <operation>equals</operation>
+                <value>H&amp;B Local Association</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>240</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+                <notifyEmail>kobrien1@paychex.com</notifyEmail>
+                <notifyTo>mkelly@paychex.com</notifyTo>
+                <notifyToTemplate>Agency_Email_Templates/AGENCY_New_Case_escalation_notification_HTML</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseLastModified</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Agency Call Center</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support Agency Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>New</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Agency_Reassign_Category__c</field>
+                <operation>equals</operation>
+                <value>Agency Call Center Service</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>User.ManagerId</field>
+                <operation>equals</operation>
+                <value>Jean Hogan</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>240</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+                <notifyEmail>kobrien1@paychex.com</notifyEmail>
+                <notifyTo>mkelly@paychex.com</notifyTo>
+                <notifyToTemplate>Agency_Email_Templates/AGENCY_New_Case_escalation_notification_HTML</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Agency Call Center</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support Agency Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>New</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Agency_Reassign_Category__c</field>
+                <operation>equals</operation>
+                <value>Agency Call Center Service</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>User.ManagerId</field>
+                <operation>equals</operation>
+                <value>Rebbeca Royer</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>240</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+                <notifyEmail>kobrien1@paychex.com</notifyEmail>
+                <notifyTo>mkelly@paychex.com</notifyTo>
+                <notifyToTemplate>Agency_Email_Templates/AGENCY_New_Case_escalation_notification_HTML</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseLastModified</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Agency Call Center</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support Agency Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>New</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Agency_Reassign_Category__c</field>
+                <operation>equals</operation>
+                <value>COBRA New Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>User.ManagerId</field>
+                <operation>contains</operation>
+                <value>Andrea O&apos;Dell</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>240</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+                <notifyEmail>aodell@paychex.com</notifyEmail>
+                <notifyEmail>apatrick@paychex.com</notifyEmail>
+                <notifyEmail>mchiarelli@paychex.com</notifyEmail>
+                <notifyEmail>lrogers1@paychex.com</notifyEmail>
+                <notifyTo>aalongi@paychex.com</notifyTo>
+                <notifyToTemplate>Agency_Email_Templates/AGENCY_New_Case_escalation_notification_HTML</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseLastModified</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Agency Call Center</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support Agency Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>New</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Agency_Reassign_Category__c</field>
+                <operation>equals</operation>
+                <value>COBRA Employer Data Sheet,COBRA Employee Data Sheet</value>
+            </criteriaItems>
+            <escalationStartTime>CaseLastModified</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Agency Call Center</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support Agency Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>New</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Agency_Reassign_Category__c</field>
+                <operation>equals</operation>
+                <value>COBRA PBS,COBRA General - APC,COBRA Support,COBRA Refunds,COBRA Payments/Elections,COBRA PIA</value>
+            </criteriaItems>
+            <escalationStartTime>CaseLastModified</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Agency Call Center</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support Agency Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.IsClosed</field>
+                <operation>equals</operation>
+                <value>False</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>High,Medium</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Agency_Reassign_Category__c</field>
+                <operation>equals</operation>
+                <value>H&amp;B National</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>720</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+                <notifyTo>ltytler@paychex.com</notifyTo>
+                <notifyToTemplate>Agency_Email_Templates/AGENCY_Unresolved_Case_escalation_notification</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Agency Call Center</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support Agency Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.IsClosed</field>
+                <operation>equals</operation>
+                <value>False</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>High,Medium</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Agency_Reassign_Category__c</field>
+                <operation>equals</operation>
+                <value>H&amp;B Local Association</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>720</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+                <notifyEmail>kobrien1@paychex.com</notifyEmail>
+                <notifyTo>mkelly@paychex.com</notifyTo>
+                <notifyToTemplate>Agency_Email_Templates/AGENCY_Unresolved_Case_escalation_notification</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Agency Call Center</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support Agency Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.IsClosed</field>
+                <operation>equals</operation>
+                <value>False</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>High,Medium</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Agency_Reassign_Category__c</field>
+                <operation>equals</operation>
+                <value>COBRA Employer Data Sheet,COBRA Employee Data Sheet</value>
+            </criteriaItems>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Agency Call Center</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support Agency Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.IsClosed</field>
+                <operation>equals</operation>
+                <value>False</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>High,Medium</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Agency_Reassign_Category__c</field>
+                <operation>equals</operation>
+                <value>COBRA General - APC,COBRA PBS,COBRA Support,COBRA Payments/Elections,COBRA Refunds,COBRA PIA</value>
+            </criteriaItems>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Agency Call Center</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support Agency Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.IsClosed</field>
+                <operation>equals</operation>
+                <value>False</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>Low</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Agency_Reassign_Category__c</field>
+                <operation>equals</operation>
+                <value>H&amp;B National</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>1440</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+                <notifyTo>ltytler@paychex.com</notifyTo>
+                <notifyToTemplate>Agency_Email_Templates/AGENCY_Unresolved_Case_escalation_notification</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Agency Call Center</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support Agency Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.IsClosed</field>
+                <operation>equals</operation>
+                <value>False</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>Low</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Agency_Reassign_Category__c</field>
+                <operation>equals</operation>
+                <value>H&amp;B Local Association</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>1440</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+                <notifyEmail>kobrien1@paychex.com</notifyEmail>
+                <notifyTo>mkelly@paychex.com</notifyTo>
+                <notifyToTemplate>Agency_Email_Templates/AGENCY_Unresolved_Case_escalation_notification</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Agency Call Center</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support Agency Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.IsClosed</field>
+                <operation>equals</operation>
+                <value>False</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>Low</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Agency_Reassign_Category__c</field>
+                <operation>equals</operation>
+                <value>COBRA New Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>User.ManagerId</field>
+                <operation>contains</operation>
+                <value>Andrea O&apos;Dell</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>1440</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+                <notifyEmail>aodell@paychex.com</notifyEmail>
+                <notifyEmail>apatrick@paychex.com</notifyEmail>
+                <notifyEmail>mchiarelli@paychex.com</notifyEmail>
+                <notifyEmail>lrogers1@paychex.com</notifyEmail>
+                <notifyTo>aalongi@paychex.com</notifyTo>
+                <notifyToTemplate>Agency_Email_Templates/AGENCY_Unresolved_Case_escalation_notification</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseLastModified</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Agency Call Center</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support Agency Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.IsClosed</field>
+                <operation>equals</operation>
+                <value>False</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>Low</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Agency_Reassign_Category__c</field>
+                <operation>equals</operation>
+                <value>COBRA Employer Data Sheet,COBRA New Case,COBRA Employee Data Sheet</value>
+            </criteriaItems>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Agency Call Center</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support Agency Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.IsClosed</field>
+                <operation>equals</operation>
+                <value>False</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>Low</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Agency_Reassign_Category__c</field>
+                <operation>equals</operation>
+                <value>COBRA PBS,COBRA General - APC,COBRA Support,COBRA Refunds,COBRA Payments/Elections,COBRA PIA</value>
+            </criteriaItems>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Agency Call Center</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support Agency Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.IsClosed</field>
+                <operation>equals</operation>
+                <value>False</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>New</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Agency_Reassign_Category__c</field>
+                <operation>equals</operation>
+                <value>PIA New Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>User.ManagerId</field>
+                <operation>contains</operation>
+                <value>Andrea O&apos;Dell</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>240</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+                <notifyEmail>aodell@paychex.com</notifyEmail>
+                <notifyEmail>apatrick@paychex.com</notifyEmail>
+                <notifyEmail>mchiarelli@paychex.com</notifyEmail>
+                <notifyEmail>lrogers1@paychex.com</notifyEmail>
+                <notifyTo>aalongi@paychex.com</notifyTo>
+                <notifyToTemplate>Agency_Email_Templates/AGENCY_Unresolved_Case_escalation_notification</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Agency Call Center</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support Agency Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.IsClosed</field>
+                <operation>equals</operation>
+                <value>False</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Agency_Reassign_Category__c</field>
+                <operation>equals</operation>
+                <value>PIA New Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>Low</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>User.ManagerId</field>
+                <operation>contains</operation>
+                <value>Andrea O&apos;Dell</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>1440</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+                <notifyEmail>apatrick@paychex.com</notifyEmail>
+                <notifyEmail>lrogers1@paychex.com</notifyEmail>
+                <notifyTo>aalongi@paychex.com</notifyTo>
+                <notifyToTemplate>Agency_Email_Templates/AGENCY_Unresolved_Case_escalation_notification</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Agency Call Center</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support Agency Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.IsClosed</field>
+                <operation>equals</operation>
+                <value>False</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>High,Medium</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Agency_Reassign_Category__c</field>
+                <operation>equals</operation>
+                <value>PIA New Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>User.ManagerId</field>
+                <operation>contains</operation>
+                <value>Andrea O&apos;Dell</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>720</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+                <notifyEmail>dBlackburn@paychex.com</notifyEmail>
+                <notifyEmail>aodell@paychex.com</notifyEmail>
+                <notifyEmail>apatrick@paychex.com</notifyEmail>
+                <notifyEmail>mchiarelli@paychex.com</notifyEmail>
+                <notifyEmail>lrogers1@paychex.com</notifyEmail>
+                <notifyTo>aalongi@paychex.com</notifyTo>
+                <notifyToTemplate>Agency_Email_Templates/AGENCY_Unresolved_Case_escalation_notification</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Agency Call Center</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support Agency Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.IsClosed</field>
+                <operation>equals</operation>
+                <value>False</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>New</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Agency_Reassign_Category__c</field>
+                <operation>equals</operation>
+                <value>PIA Enrollments</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>240</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+                <notifyTo>mhayes3@paychex.com</notifyTo>
+                <notifyToTemplate>Agency_Email_Templates/AGENCY_Unresolved_Case_escalation_notification</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Agency Call Center</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support Agency Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.IsClosed</field>
+                <operation>equals</operation>
+                <value>False</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Agency_Reassign_Category__c</field>
+                <operation>equals</operation>
+                <value>PIA Enrollments</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>Low</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>1440</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+                <notifyTo>mhayes3@paychex.com</notifyTo>
+                <notifyToTemplate>Agency_Email_Templates/AGENCY_Unresolved_Case_escalation_notification</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Agency Call Center</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support Agency Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.IsClosed</field>
+                <operation>equals</operation>
+                <value>False</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>High,Medium</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Agency_Reassign_Category__c</field>
+                <operation>equals</operation>
+                <value>PIA Enrollments</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>720</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+                <notifyTo>mhayes3@paychex.com</notifyTo>
+                <notifyToTemplate>Agency_Email_Templates/AGENCY_Unresolved_Case_escalation_notification</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Credit Risk</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Credit Risk Audit Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Current_Step__c</field>
+                <operation>equals</operation>
+                <value>Credit Limit Needed</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Type</field>
+                <operation>equals</operation>
+                <value>New Client MMS</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.IsClosed</field>
+                <operation>equals</operation>
+                <value>False</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>2880</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+                <notifyEmail>kgollnitz@paychex.com</notifyEmail>
+                <notifyEmail>jpereira@paychex.com</notifyEmail>
+                <notifyTo>tbillcliff@paychex.com</notifyTo>
+                <notifyToTemplate>Risk_E_Mailers/Risk_Credit_Limit_Escalation_Notification</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseLastModified</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>HRS 4S M-F (24 Hours)</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support 401k/S125 Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Origin</field>
+                <operation>equals</operation>
+                <value>Email-to-Case 401k Client,Email-to-Case 401k Customer</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>New</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.OwnerId</field>
+                <operation>notEqual</operation>
+                <value>HRS 4S Email Delete</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>1320</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+                <notifyEmail>dmoses@paychex.com</notifyEmail>
+                <notifyEmail>tsimpson1@paychex.com</notifyEmail>
+                <notifyEmail>jmorgante3@paychex.com</notifyEmail>
+                <notifyToTemplate>HRS_4S_Case_Escalation_Rules/HRS_4S_Original_Customer</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <booleanFilter>1 AND 2 AND 3 AND 4 AND (5 OR 6 OR (7 AND 8))</booleanFilter>
+            <businessHours>HRS 4S M-F (24 Hours)</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support 401k/S125 Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.New_E_mail__c</field>
+                <operation>equals</operation>
+                <value>True</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.OwnerId</field>
+                <operation>notEqual</operation>
+                <value>HRS 4S Email Delete</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>notEqual</operation>
+                <value>New</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Origin</field>
+                <operation>equals</operation>
+                <value>Email-to-Case 401k Client,Email-to-Case 401k Customer</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.User_Level_1_Supervisor__c</field>
+                <operation>contains</operation>
+                <value>Pankratz,Emig,Herrick</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Origin</field>
+                <operation>equals</operation>
+                <value>Inbound Call</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Case_Created_By_Role__c</field>
+                <operation>contains</operation>
+                <value>401K CSC</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>1320</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+                <notifyEmail>dmoses@paychex.com</notifyEmail>
+                <notifyEmail>jmorgante3@paychex.com</notifyEmail>
+                <notifyEmail>kstruczewski@paychex.com</notifyEmail>
+                <notifyToTemplate>HRS_4S_Case_Escalation_Rules/HRS_4S_Response_Customer</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseLastModified</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>HRS 4S M-F 7:30-4</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support 401k/S125 Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>High</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>New</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.User_Level_1_Supervisor__c</field>
+                <operation>contains</operation>
+                <value>Kraft</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>480</minutesToEscalation>
+                <notifyCaseOwner>true</notifyCaseOwner>
+                <notifyEmail>nkraft@paychex.com</notifyEmail>
+                <notifyToTemplate>HRS_4S_Case_Escalation_Rules/HRS_4S_Case_Escalation_Email</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>HRS 4S M-F 7:30-4</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support 401k/S125 Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>Medium</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>New</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.User_Level_1_Supervisor__c</field>
+                <operation>contains</operation>
+                <value>Kraft</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>960</minutesToEscalation>
+                <notifyCaseOwner>true</notifyCaseOwner>
+                <notifyEmail>nkraft@paychex.com</notifyEmail>
+                <notifyToTemplate>HRS_4S_Case_Escalation_Rules/HRS_4S_Case_Escalation_Email</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <booleanFilter>(1 AND 2 AND ((3 AND 4) OR 5))</booleanFilter>
+            <businessHours>HRS 4S M-F (24 Hours)</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support 401k/S125 Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Follow_Up_Date__c</field>
+                <operation>equals</operation>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Origin</field>
+                <operation>equals</operation>
+                <value>Inbound Call</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.User_Level_1_Supervisor__c</field>
+                <operation>contains</operation>
+                <value>Scharping</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Origin</field>
+                <operation>equals</operation>
+                <value>Email-to-Case Advisor Support,Email-to-case Broker</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>1320</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+            </escalationAction>
+            <escalationAction>
+                <minutesToEscalation>1380</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+                <notifyEmail>vscharpingii@paychex.com</notifyEmail>
+                <notifyEmail>kthomas3@paychex.com</notifyEmail>
+                <notifyToTemplate>HRS_4S_Case_Escalation_Rules/HRS_4S_Case_Escalation_Email</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseLastModified</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <booleanFilter>1 AND 2 AND 3 AND 4 AND 5</booleanFilter>
+            <businessHours>HRS 4S M-F (24 Hours)</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support 401k/S125 Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Origin</field>
+                <operation>equals</operation>
+                <value>Inbound Call</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.User_Level_1_Supervisor__c</field>
+                <operation>contains</operation>
+                <value>Scharping</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Follow_Up_Date__c</field>
+                <operation>notEqual</operation>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Follow_Up_Date__c</field>
+                <operation>lessThan</operation>
+                <value>TODAY</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>480</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+                <notifyEmail>vscharpingii@paychex.com</notifyEmail>
+                <notifyEmail>kthomas3@paychex.com</notifyEmail>
+                <notifyToTemplate>HRS_4S_Case_Escalation_Rules/HRS_4S_Case_Escalation_Email</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseLastModified</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>HRS 4S M-F 8-4</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support 401k/S125 Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>High</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>New</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.User_Level_1_Supervisor__c</field>
+                <operation>contains</operation>
+                <value>Shoemaker</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Follow_Up_Date__c</field>
+                <operation>equals</operation>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>480</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+            </escalationAction>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <booleanFilter>1 AND 2 AND 3 AND 4 AND 5</booleanFilter>
+            <businessHours>HRS 4S M-F 8-4</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support 401k/S125 Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>Medium</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>New</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.User_Level_1_Supervisor__c</field>
+                <operation>contains</operation>
+                <value>Shoemaker</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Follow_Up_Date__c</field>
+                <operation>equals</operation>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>960</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+            </escalationAction>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6</booleanFilter>
+            <businessHours>HRS 4S M-F 8-4</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support 401k/S125 Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>Low</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>New</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.User_Level_1_Supervisor__c</field>
+                <operation>contains</operation>
+                <value>Shoemaker</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Follow_Up_Date__c</field>
+                <operation>equals</operation>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Large_Market_Indicator__c</field>
+                <operation>equals</operation>
+                <value>Yes</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>1440</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+            </escalationAction>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6</booleanFilter>
+            <businessHours>HRS 4S M-F 8-4</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support 401k/S125 Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>Low</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>New</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.User_Level_1_Supervisor__c</field>
+                <operation>contains</operation>
+                <value>Shoemaker</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Follow_Up_Date__c</field>
+                <operation>equals</operation>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Large_Market_Indicator__c</field>
+                <operation>equals</operation>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>3840</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+            </escalationAction>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6</booleanFilter>
+            <businessHours>HRS 4S M-F 8-4</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support 401k/S125 Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>High,Medium,Low</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>notEqual</operation>
+                <value>Solved,Solved - Call Transferred</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.User_Level_1_Supervisor__c</field>
+                <operation>contains</operation>
+                <value>Shoemaker</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Follow_Up_Date__c</field>
+                <operation>lessThan</operation>
+                <value>TODAY</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Follow_Up_Date__c</field>
+                <operation>notEqual</operation>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>480</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+            </escalationAction>
+            <escalationStartTime>CaseLastModified</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>HRS 4S M-F 7:30-4</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support 401k/S125 Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>Low</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>New</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.User_Level_1_Supervisor__c</field>
+                <operation>contains</operation>
+                <value>Kraft</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Follow_Up_Date__c</field>
+                <operation>equals</operation>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>2400</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+                <notifyEmail>nkraft@paychex.com</notifyEmail>
+                <notifyToTemplate>HRS_4S_Case_Escalation_Rules/HRS_4S_Case_Escalation_Email</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseLastModified</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>HRS 4S M-F 7:30-4</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support 401k/S125 Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>Low</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>notEqual</operation>
+                <value>New,Solved</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.User_Level_1_Supervisor__c</field>
+                <operation>contains</operation>
+                <value>Kraft</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>960</minutesToEscalation>
+                <notifyCaseOwner>true</notifyCaseOwner>
+                <notifyEmail>nkraft@paychex.com</notifyEmail>
+                <notifyToTemplate>HRS_4S_Case_Escalation_Rules/HRS_4S_Case_Escalation_Email</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseLastModified</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>HRS 4S M-F 8-4</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>HRS 4S Project Submission Case,Service Support 401k/S125 Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>High</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>New</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.User_Level_1_Supervisor__c</field>
+                <operation>contains</operation>
+                <value>Wright,Gallipeau</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Follow_Up_Date__c</field>
+                <operation>equals</operation>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>360</minutesToEscalation>
+                <notifyCaseOwner>true</notifyCaseOwner>
+                <notifyToTemplate>HRS_4S_Case_Escalation_Rules/HRS_4S_Case_Escalation_Email</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>HRS 4S M-F 8-4</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>HRS 4S Project Submission Case,Service Support 401k/S125 Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>Medium</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>New</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.User_Level_1_Supervisor__c</field>
+                <operation>contains</operation>
+                <value>Wright,Gallipeau</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Follow_Up_Date__c</field>
+                <operation>equals</operation>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>840</minutesToEscalation>
+                <notifyCaseOwner>true</notifyCaseOwner>
+                <notifyToTemplate>HRS_4S_Case_Escalation_Rules/HRS_4S_Case_Escalation_Email</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6</booleanFilter>
+            <businessHours>HRS 4S M-F 8-4</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>HRS 4S Project Submission Case,Service Support 401k/S125 Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>Low</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>New</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.User_Level_1_Supervisor__c</field>
+                <operation>contains</operation>
+                <value>Wright,Gallipeau</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Follow_Up_Date__c</field>
+                <operation>equals</operation>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Large_Market_Indicator__c</field>
+                <operation>equals</operation>
+                <value>Yes</value>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>1320</minutesToEscalation>
+                <notifyCaseOwner>true</notifyCaseOwner>
+                <notifyToTemplate>HRS_4S_Case_Escalation_Rules/HRS_4S_Case_Escalation_Email</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+        <ruleEntry>
+            <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6</booleanFilter>
+            <businessHours>HRS 4S M-F 8-4</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Service Support 401k/S125 Case</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>Low</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>New</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.User_Level_1_Supervisor__c</field>
+                <operation>contains</operation>
+                <value>Gallipeau</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Follow_Up_Date__c</field>
+                <operation>equals</operation>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Large_Market_Indicator__c</field>
+                <operation>equals</operation>
+            </criteriaItems>
+            <escalationAction>
+                <minutesToEscalation>2280</minutesToEscalation>
+                <notifyCaseOwner>true</notifyCaseOwner>
+                <notifyToTemplate>HRS_4S_Case_Escalation_Rules/HRS_4S_Case_Escalation_Email</notifyToTemplate>
+            </escalationAction>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+    </escalationRule>
+</EscalationRules>

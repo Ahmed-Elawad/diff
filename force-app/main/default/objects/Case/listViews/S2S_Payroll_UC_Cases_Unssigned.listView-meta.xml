@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>S2S_Payroll_UC_Cases_Unssigned</fullName>
+    <booleanFilter>(1 AND 2) OR (1 AND 3) OR (1 AND 4)</booleanFilter>
+    <columns>General_Root_Cause__c</columns>
+    <columns>UC_Task_Id__c</columns>
+    <columns>Assigned_UC_Agent__c</columns>
+    <columns>Status_Description__c</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>Branch_Client_ID__c</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>Initial_Client_Contact_Completed__c</columns>
+    <columns>OWNER_NAME</columns>
+    <columns>ProcessNotes__c</columns>
+    <columns>CREATEDBY_USER.ALIAS</columns>
+    <columns>Created_By_Title__c</columns>
+    <filterScope>Queue</filterScope>
+    <filters>
+        <field>CASES.CLOSED</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Assigned_UC_Agent__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>General_Root_Cause__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>UC_Task_Id__c</field>
+        <operation>equals</operation>
+    </filters>
+    <label>S2S: Payroll UC Cases (Unassigned)</label>
+    <queue>UC_Specialist_Queue</queue>
+</ListView>

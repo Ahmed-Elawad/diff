@@ -1,0 +1,385 @@
+<aura:component controller="CommunitiesAccountUpdateController" implements="force:appHostable" access="global">
+    <!-- allows the discrepancy to be launched from child component -->
+    
+    <aura:registerEvent name="discrepancyEvt" type="c:markPeoUwFormDiscrepancy"/>
+    <!--<aura:handler name="init" value="{!this}" action="{!c.calculatePercentOwnership}" />-->
+    <aura:attribute name='formName' type='String' default='PEO Information Sheet' />
+     <aura:handler name="init" value="{!this}" action="{!c.doinit}"/>
+    
+   <!-- <aura:handler name="init" value="{!this}" action="{!c.calculatePercentOwnership}" />-->
+    <aura:attribute name="parentRecId" type="Id"/>
+    <aura:attribute name="PEOChecklist" type="Object"/>
+    <aura:attribute name="answersChanged" type="Boolean" default="false"/>
+    
+    <!--<aura:attribute name="readOnlyPermission" type="Boolean" default="true" />-->
+    <aura:attribute name="communityUser" type="Boolean"/>
+    <aura:attribute name='peoOnbChecklistOwners' type='Object[]'/>
+    <aura:attribute name='totalOwnershipPercent' type='Integer'/>
+    <aura:attribute name="readOnly" type="Boolean" default="true" />
+    <aura:attribute name='radioGroupOptions' type='List' default="[{'label': 'Yes', 'value':'Yes'},{'label':'No','value':'No'}]" />
+
+    <aura:attribute name="allAccounts" type="Account[]" />
+    <aura:attribute name='accWithPEOOnbChecklistOwners' type='Object[]' />
+    <aura:attribute name='activeAccId' type='Id'/>
+    <aura:attribute name='allAccIdWithPEOChecklist' type='Object'/>
+    <aura:attribute name='accIdWithIndex' type='Object'/>
+    <aura:attribute name='childAccsChecklist' type='PEO_Onboarding_Checklist__c[]'/>
+    <aura:attribute name='user' type='User' />
+    <aura:attribute name='allowDiscLog' type='Boolean' />
+    
+    <aura:html tag="style">
+        .cuf-content {
+        padding: 0 0rem !important;
+        }
+        .slds-p-around--medium {
+        padding: 0rem !important;
+        }       
+        .slds-modal__content{
+        overflow-y:hidden !important;
+        height:unset !important;
+        max-height:unset !important;
+        }
+    </aura:html>
+    
+    <div class="modal-header slds-modal__header slds-size_1-of-1">
+        <h4 class="title slds-text-heading--medium">PEO Information</h4>
+    </div>
+    
+    <div style="height: 10px"></div>
+    <lightning:tabset variant="scoped" onselect="{!c.handleSelect}">
+        <aura:iteration items="{!v.accWithPEOOnbChecklistOwners}" var="accWithPEOOnbChecklist" indexVar="index">
+            <lightning:tab label="{!accWithPEOOnbChecklist.name}" id="{!accWithPEOOnbChecklist.accId}">
+    
+    <div class="slds-grid slds-gutters slds-wrap">
+        <div class="slds-col slds-size_4-of-6" style="padding-bottom:25px">
+             
+            <table border="0" cellpadding="5">
+                <thead border="1">
+                    <tr>
+                        <th></th>
+                        <th>Owner Name</th>
+                        <th>Ownership Percent</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!accWithPEOOnbChecklist.ownerRec}" var="ownerRec" indexVar="ownerRecIndex">  
+                        <tr> 
+                            <td>
+                                {!ownerRecIndex + 1})
+                            </td>
+                            <td style="padding:5px">
+                                <lightning:input disabled='{!v.readOnly}' label="Owner Name" variant="label-hidden" placeholder="Enter text..." onchange="{!c.handleOwnerChange}" value="{!ownerRec.nameOfOwner}" name="{!join('-',index,ownerRecIndex)}"/>
+                            </td>  
+                            <td style="padding:5px">
+                                <lightning:input disabled='{!v.readOnly}' label="Ownership Percent" variant="label-hidden" placeholder="Enter Number" onchange="{!c.calculatePercentOwnership}" value="{!ownerRec.percentOfOwner}" type="number" name="{!join('-',index,ownerRecIndex)}"/>
+                            </td>
+                            <td>
+                                <aura:if isTrue="{!greaterthan(accWithPEOOnbChecklist.ownerRec.length, 1)}">
+                                    <a name="{!index}" onclick="{!c.removeRow}" accessKey="{!ownerRecIndex}">
+                                        <lightning:icon iconName="utility:delete" alternativeText="delete" size="x-small"/>
+                                    </a>
+                                </aura:if>
+                            </td>
+                            
+                        </tr>  
+                    </aura:iteration>
+                </tbody>
+            </table>
+            <aura:if isTrue="{!accWithPEOOnbChecklist.totalOwnershipPercent != 100}">
+                <span style="color:red">Ownership Percentages must add up to 100%.</span> <br></br>
+            </aura:if>
+            <aura:if isTrue="{!lessthan(accWithPEOOnbChecklist.ownerRec.length, 5)}">
+                <lightning:button disabled='{!v.readOnly}' class="slds-m-top_small" variant="brand" type="button" name="{!index}" label="Add Row" onclick="{!c.addNewOwner}" value="{!index}"></lightning:button>
+            </aura:if>
+        </div>
+        <aura:if isTrue="{!index == 0}">
+        <div class="slds-col slds-size_2-of-6" style="padding-bottom:25px">
+        </div>
+        <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+            <span> 
+                <lightning:radioGroup name='has_bankruptcies_in_past_12_months__c'
+                                      label="Any bankruptcies in the past year?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange="{!c.handleChange}" 
+                                      value="{!v.PEOChecklist.has_bankruptcies_in_past_12_months__c}"
+                                      required="true"
+                                      disabled='{!v.readOnly}'/>
+            </span>
+        </div>
+        <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+            <span> 
+                <lightning:radioGroup name='Any_1099_s_Independent_Cntrctrs_on_pyrll__c'
+                                      label="Any 1099's Independent Contractors on Payroll?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange="{!c.handleChange}" 
+                                      value="{!v.PEOChecklist.Any_1099_s_Independent_Cntrctrs_on_pyrll__c}"
+                                      required="true"
+                                      disabled='{!v.readOnly}'/>
+            </span>
+        </div>
+        <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+            <span> 
+                <lightning:radioGroup name='has_Union_Employees_on_Payroll__c'
+                                      label="Any Union Employees on Payroll?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange="{!c.handleChange}" 
+                                      value="{!v.PEOChecklist.has_Union_Employees_on_Payroll__c}"
+                                      required="true"
+                                      disabled='{!v.readOnly}'/>
+            </span>
+        </div>
+        
+        <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+            <aura:if isTrue="{!not(v.communityUser)}">
+                <span> 
+                    <lightning:input disabled='{!v.readOnly}' label="Benefit Effective Date" value="{!v.PEOChecklist.Benefit_Effective_Date__c}" onchange="{!c.handleChange}" required="true" type="date"></lightning:input>
+                </span>
+            </aura:if>
+        </div>
+        
+        <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+            <span> 
+                <lightning:radioGroup name='has_401k_in_place__c'
+                                      label="Is there a 401(k) in place?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange="{!c.handleChange}" 
+                                      value="{!v.PEOChecklist.has_401k_in_place__c}"
+                                      required="true"
+                                      disabled='{!v.readOnly}'/>
+            </span>
+        </div>
+        <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+            <span> 
+                <lightning:radioGroup name='has_fsa_in_place__c'
+                                      label="Is there an FSA/HSA in place?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange="{!c.handleChange}" 
+                                      value="{!v.PEOChecklist.has_fsa_in_place__c}"
+                                      required="true"
+                                      disabled='{!v.readOnly}'/>
+            </span>
+        </div>
+        <div class="slds-col slds-size_1-of-3" style="padding-bottom:25px">
+            <span> 
+                <lightning:radioGroup name='interested_in_Vision__c'
+                                      label="Are you interested in Vision?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange="{!c.handleChange}" 
+                                      value="{!v.PEOChecklist.interested_in_Vision__c}"
+                                      required="true"
+                                      disabled='{!v.readOnly}'/>
+            </span>
+        </div>
+        <div class="slds-col slds-size_1-of-3" style="padding-bottom:25px">
+            <aura:if isTrue="{!v.PEOChecklist.interested_in_Vision__c == 'Yes'}">
+                <span> 
+                    <lightning:radioGroup name='has_current_Vision_Carrier__c'
+                                      label="Do you have a current Vision Carrier?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange="{!c.handleChange}" 
+                                      value="{!v.PEOChecklist.has_current_Vision_Carrier__c}"
+                                      required="true"
+                                          disabled='{!v.readOnly}'/>
+                </span>
+            </aura:if>
+        </div>
+        <div class="slds-col slds-size_1-of-3" style="padding-bottom:25px">
+            <aura:if isTrue="{!and(v.PEOChecklist.interested_in_Vision__c == 'Yes', v.PEOChecklist.has_current_Vision_Carrier__c == 'Yes')}">
+                <span> 
+                    <lightning:input disabled='{!v.readOnly}' label="Who is your current Vision Carrier?" value="{!v.PEOChecklist.Who_is_your_Current_Vision_Carrier__c}" onchange="{!c.handleChange}" required="true" placeholder="Click or tap here to enter text."></lightning:input>
+                </span>
+            </aura:if>
+        </div>
+        <div class="slds-col slds-size_1-of-3" style="padding-bottom:25px">
+            <span> 
+                <lightning:radioGroup name='Interested_in_dental__c'
+                                      label="Are you interested in Dental?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange="{!c.handleChange}" 
+                                      value="{!v.PEOChecklist.Interested_in_dental__c}"
+                                      required="true"
+                                      disabled='{!v.readOnly}'/>
+            </span>
+        </div>
+        <div class="slds-col slds-size_1-of-3" style="padding-bottom:25px">
+            <aura:if isTrue="{!v.PEOChecklist.Interested_in_dental__c == 'Yes'}">
+                <span> 
+                    <lightning:radioGroup name='Has_current_dental_carrier__c'
+                                      label="Do you have a current Dental Carrier?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange="{!c.handleChange}" 
+                                      value="{!v.PEOChecklist.Has_current_dental_carrier__c}"
+                                      required="true"
+                                          disabled='{!v.readOnly}'/>
+                </span>
+            </aura:if>
+        </div>
+        <div class="slds-col slds-size_1-of-3" style="padding-bottom:25px">
+            <aura:if isTrue="{!and(v.PEOChecklist.Interested_in_dental__c == 'Yes', v.PEOChecklist.Has_current_dental_carrier__c == 'Yes')}">
+                <span> 
+                    <lightning:input disabled='{!v.readOnly}' label="Who is your current Dental Carrier?" value="{!v.PEOChecklist.Who_is_your_Current_Dental_Carrier__c}" onchange="{!c.handleChange}" required="true" placeholder="Click or tap here to enter text."></lightning:input>
+                </span>
+            </aura:if>
+        </div>
+     </aura:if>
+   </div>
+  </lightning:tab>
+  </aura:iteration>
+    </lightning:tabset>              
+    
+    <div class="modal-footer slds-modal__footer slds-size_1-of-1">
+        <!--aura:if isTrue='{! and(!v.communityUser, v.allowDiscLog) }'>
+            <lightning:button class="slds-m-top_small" variant="brand" type="button" name="newDiscrepancy" label="Add New Discrepancy" onclick="{!c.openTab}" ></lightning:button>
+        </aura:if-->
+        <lightning:button class="slds-m-top_small" variant="brand" type="button" name="saveProgress" label="Save Progress" onclick="{!c.saveProgress}" ></lightning:button>
+    </div>
+</aura:component>
+
+
+<!--<aura:component controller="CommunitiesAccountUpdateController" implements="force:appHostable" access="global">
+    
+    <aura:method name="saveRecordEditForm" action="{!c.saveForm}" access="PUBLIC" />
+    
+    <aura:attribute name="childStep" type="Integer"/>
+    <aura:attribute name="parentRecId" type="Id"/>
+    <aura:attribute name="PEOChecklist" type="Object"/>
+    <aura:attribute name="communityUser" type="Boolean"/>
+    <aura:attribute name="answersChanged" type="Boolean" default="false"/>
+    <aura:attribute name="readOnlyPermission" type="Boolean" default="true" />
+    
+    <aura:html tag="style">
+        .cuf-content {
+        padding: 0 0rem !important;
+        }
+        .slds-p-around-medium {
+        padding: 0rem !important;
+        }       
+        .slds-modal__content{
+        overflow-y:hidden !important;
+        height:unset !important;
+        max-height:unset !important;
+        }
+    </aura:html>
+    
+    <div class="modal-header slds-modal__header slds-size_1-of-1">
+        <h4 class="title slds-text-heading-medium">PEO Information</h4>
+    </div>
+    
+    
+    
+    <lightning:recordEditForm aura:id="PEOInformationSheet" recordId="{!v.PEOChecklist.Id}" objectApiName="PEO_Onboarding_Checklist__c" onsuccess="{!c.submitSuccessful}">
+        <div style="height: 10px"></div>
+        
+        <div class="slds-grid slds-gutters slds-wrap">
+            <div class="slds-col slds-size_2-of-3" style="padding-bottom:25px">
+                <span>
+                    <label for="Q1">List of Owners</label>
+                    <lightning:inputField fieldName="List_of_Owners__c" Id="Q1" variant="label-hidden" value="{!v.PEOChecklist.List_of_Owners__c}" onclick="{!c.handleChange}"></lightning:inputField>
+                </span>
+            </div>
+            <div class="slds-col slds-size_1-of-3" style="padding-bottom:25px">
+                <span><!-
+  *** Place holder for the second question that isn't in salesforce yet ***
+        <label for="Q2">Percent of Ownership</label>
+        <lightning:inputField fieldName="Current_Medical_Coverage_Provided__c" id="Q2" variant="label-hidden" value="{!v.PEOChecklist.Current_Medical_Coverage_Provided__c}" onchange="{!c.clearFields}"></lightning:inputField>
+        
+        </span>
+            </div>
+            
+            <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                <span> 
+                    <label for="Q3">Any bankruptcies in the past year?</label>
+                    <lightning:inputField fieldName="has_bankruptcies_in_past_12_months__c" Id="Q3" variant="label-hidden" value="{!v.PEOChecklist.has_bankruptcies_in_past_12_months__c}" onchange="{!c.handleChange}"></lightning:inputField>
+                </span>
+            </div>
+            <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                <span> 
+                    <label for="Q4">Any 1099's Independent Contractors on Payroll?</label>
+                    <lightning:inputField fieldName="Any_1099_s_Independent_Cntrctrs_on_pyrll__c" Id="Q4" variant="label-hidden" value="{!v.PEOChecklist.Any_1099_s_Independent_Cntrctrs_on_pyrll__c}" onchange="{!c.handleChange}"></lightning:inputField>
+                </span>
+            </div>
+            <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                <span> 
+                    <label for="Q5">Any Union Employees on Payroll?</label>
+                    <lightning:inputField fieldName="has_Union_Employees_on_Payroll__c" Id="Q5" variant="label-hidden" value="{!v.PEOChecklist.has_Union_Employees_on_Payroll__c}" onchange="{!c.handleChange}"></lightning:inputField>
+                </span>
+            </div>
+            
+            <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                <aura:if isTrue="{!not(v.communityUser)}">
+                    <span> 
+                        <label for="Q6">Benefit Effective Date</label>
+                        <lightning:inputField fieldName="Benefit_Effective_Date__c" Id="Q6" variant="label-hidden" value="{!v.PEOChecklist.Benefit_Effective_Date__c}" onclick="{!c.handleChange}"></lightning:inputField>
+                    </span>
+                </aura:if>
+            </div>
+            
+            <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                <span> 
+                    <label for="Q7">Is there still a 401(k) in place?</label>
+                    <lightning:inputField fieldName="has_401k_in_place__c" Id="Q7" variant="label-hidden" value="{!v.PEOChecklist.has_401k_in_place__c}" onchange="{!c.handleChange}"></lightning:inputField>
+                </span>
+            </div>
+            <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                <span> 
+                    <label for="Q8">Is there an FSA in place?</label>
+                    <lightning:inputField fieldName="has_fsa_in_place__c" Id="Q8" variant="label-hidden" value="{!v.PEOChecklist.has_fsa_in_place__c}" onchange="{!c.handleChange}"></lightning:inputField>
+                </span>
+            </div>
+            <div class="slds-col slds-size_1-of-3" style="padding-bottom:25px">
+                <span> 
+                    <label for="Q9">Are you interested in Vision?</label>
+                    <lightning:inputField fieldName="interested_in_Vision__c" Id="Q9" variant="label-hidden" value="{!v.PEOChecklist.interested_in_Vision__c}" onchange="{!c.handleChange}"></lightning:inputField>
+                </span>
+            </div>
+            <div class="slds-col slds-size_1-of-3" style="padding-bottom:25px">
+                <aura:if isTrue="{!v.PEOChecklist.interested_in_Vision__c == 'Yes'}">
+                    <span> 
+                        <label for="Q10">If yes, do you have a current Vision Carrier?</label>
+                        <lightning:inputField fieldName="has_current_Vision_Carrier__c" Id="Q10" variant="label-hidden" value="{!v.PEOChecklist.has_current_Vision_Carrier__c}" onchange="{!c.handleChange}"></lightning:inputField>
+                    </span>
+                </aura:if>
+            </div>
+            <div class="slds-col slds-size_1-of-3" style="padding-bottom:25px">
+                <aura:if isTrue="{!and(v.PEOChecklist.interested_in_Vision__c == 'Yes', v.PEOChecklist.has_current_Vision_Carrier__c == 'Yes')}">
+                    <span> 
+                        <label for="Q11">If yes, who is your current Vision Carrier?</label>
+                        <lightning:inputField fieldName="Who_is_your_Current_Vision_Carrier__c" Id="Q11" variant="label-hidden" value="{!v.PEOChecklist.Who_is_your_Current_Vision_Carrier__c}" onclick="{!c.handleChange}"></lightning:inputField>
+                    </span>
+                </aura:if>
+            </div>
+            <div class="slds-col slds-size_1-of-3" style="padding-bottom:25px">
+                <span> 
+                    <label for="Q12">Are you interested in Dental?</label>
+                    <lightning:inputField fieldName="Interested_in_dental__c" Id="Q12" variant="label-hidden" value="{!v.PEOChecklist.Interested_in_dental__c}" onchange="{!c.handleChange}"></lightning:inputField>
+                </span>
+            </div>
+            <div class="slds-col slds-size_1-of-3" style="padding-bottom:25px">
+                <aura:if isTrue="{!v.PEOChecklist.Interested_in_dental__c == 'Yes'}">
+                    <span> 
+                        <label for="Q13">If yes, do you have a current Dental Carrier?</label>
+                        <lightning:inputField fieldName="Has_current_dental_carrier__c" Id="Q13" variant="label-hidden" value="{!v.PEOChecklist.Has_current_dental_carrier__c}" onchange="{!c.handleChange}"></lightning:inputField>
+                    </span>
+                </aura:if>
+            </div>
+            <div class="slds-col slds-size_1-of-3" style="padding-bottom:25px">
+                <aura:if isTrue="{!and(v.PEOChecklist.Interested_in_dental__c == 'Yes', v.PEOChecklist.Has_current_dental_carrier__c == 'Yes')}">
+                    <span> 
+                        <label for="Q14">If yes, who is your current Dental Carrier?</label>
+                        <lightning:inputField fieldName="Who_is_your_Current_Dental_Carrier__c" Id="Q14" variant="label-hidden" value="{!v.PEOChecklist.Who_is_your_Current_Dental_Carrier__c}" onclick="{!c.handleChange}"></lightning:inputField>
+                    </span>
+                </aura:if>
+            </div>
+        </div>
+        
+    </lightning:recordEditForm>
+    
+    <div class="modal-footer slds-modal__footer slds-size_1-of-1">
+        
+        <lightning:button class="slds-m-top_small" variant="brand" type="button" name="Previous" label="Previous" onclick="{!c.stepBackward}" />
+        <lightning:button class="slds-m-top_small" variant="brand" type="button" name="saveAndNext" label="Next" onclick="{!c.saveAndNext}" ></lightning:button>
+        
+        <lightning:button class="slds-m-top_small" variant="brand" type="button" name="saveProgress" label="Save Progress" onclick="{!c.saveProgress}" ></lightning:button>
+    </div>
+</aura:component>
+-->

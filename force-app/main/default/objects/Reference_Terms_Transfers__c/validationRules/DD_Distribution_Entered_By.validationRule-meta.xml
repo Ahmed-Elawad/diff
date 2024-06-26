@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DD_Distribution_Entered_By</fullName>
+    <active>true</active>
+    <description>Only LDPS reps can update the Distribution Entered By field</description>
+    <errorConditionFormula>RecordType.Name = &apos;Death Distribution&apos; &amp;&amp; ISCHANGED( Distribution_Entered_by__c ) &amp;&amp; (
+
+Not ($UserRole.Name = &quot;HRS 4S LD Representatives&quot;) &amp;&amp;
+Not ($UserRole.Name = &quot;HRS 4S LD Supervisor&quot; )  &amp;&amp; Not ($UserRole.Name = &quot;HRS 4S Participant Support Rep I&quot; )  &amp;&amp; Not ($UserRole.Name = &quot;HRS 4S Participant Support Supervisor I&quot; ) &amp;&amp;
+Not ($UserRole.Name = &quot;HRS 4S LDPS Representative I&quot; ) &amp;&amp;Not ($UserRole.Name = &quot;HRS 4S LDPS Representative II&quot;)&amp;&amp;Not ($UserRole.Name = &quot;HRS 4S LDPS Supervisor I&quot;)&amp;&amp;Not ($UserRole.Name = &quot;HRS 4S LDPS Supervisor II&quot;) 
+
+
+
+)</errorConditionFormula>
+    <errorDisplayField>Distribution_Entered_by__c</errorDisplayField>
+    <errorMessage>Only LDPS reps can update the Distribution Entered By field</errorMessage>
+</ValidationRule>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>API_Object_Required_on_Insert_or_Update</fullName>
+    <active>true</active>
+    <description>If an insert or update is being performed, the object name must be included</description>
+    <errorConditionFormula>AND(OR(ISPICKVAL(FileType__c  , &quot;Record Update-Inline&quot;) 
+      ,ISPICKVAL(FileType__c  , &quot;Record Update-Bulk Load&quot;) 
+      ,ISPICKVAL(FileType__c  , &quot;Record Insert-Inline&quot;) 
+      ,ISPICKVAL(FileType__c  , &quot;Record Insert-Bulk Load&quot;))
+  , ISBLANK( UpdateAPIObjectName__c ))</errorConditionFormula>
+    <errorDisplayField>UpdateAPIObjectName__c</errorDisplayField>
+    <errorMessage>If an insert or update is being performed, the object name must be included!</errorMessage>
+</ValidationRule>

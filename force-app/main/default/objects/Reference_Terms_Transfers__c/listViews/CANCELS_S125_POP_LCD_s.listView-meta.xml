@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CANCELS_S125_POP_LCD_s</fullName>
+    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6</booleanFilter>
+    <columns>Assigned_Cancels_Rep__c</columns>
+    <columns>NAME</columns>
+    <columns>BIS_ID__c</columns>
+    <columns>Effective_Date_of_Termination__c</columns>
+    <columns>Pending_POP_Tasks__c</columns>
+    <columns>Current_Step__c</columns>
+    <columns>Termination_Milestone_Notes__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_Terms_Transfers__c.S125_POP_Termination</value>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>notEqual</operation>
+        <value>Closed – Paperwork Discrepancy Never Resolved,S125 POP Termination Complete</value>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>notEqual</operation>
+        <value>Term/Transfer Stopped,Paperwork Discrepancy</value>
+    </filters>
+    <filters>
+        <field>Cancel_Date_Entered__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Effective_Date_of_Termination__c</field>
+        <operation>greaterOrEqual</operation>
+        <value>1/1/2020</value>
+    </filters>
+    <filters>
+        <field>Effective_Date_of_Termination__c</field>
+        <operation>lessThan</operation>
+        <value>TODAY</value>
+    </filters>
+    <label>CANCELS: S125 POP LCD&apos;s</label>
+    <sharedTo>
+        <roleAndSubordinates>HRS4SClientRetentionRepresentative</roleAndSubordinates>
+        <roleAndSubordinates>HRS_4S_Client_Retention_Supervisor</roleAndSubordinates>
+    </sharedTo>
+</ListView>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>populate_Reviewed_Plan_Details_first</fullName>
+    <active>true</active>
+    <description>Reviewed Plan Details field must be populated to enter a date for Activation Complete</description>
+    <errorConditionFormula>ISBLANK(PRIORVALUE( Activation_Complete__c )) &amp;&amp;
+NOT(ISBLANK(Activation_Complete__c )) &amp;&amp;
+ISBLANK(Reviewed_Plan_Details__c )</errorConditionFormula>
+    <errorMessage>You must enter a date in Reviewed Plan Details first.</errorMessage>
+</ValidationRule>

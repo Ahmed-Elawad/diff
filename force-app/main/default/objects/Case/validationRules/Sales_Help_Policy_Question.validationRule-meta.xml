@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sales_Help_Policy_Question</fullName>
+    <active>false</active>
+    <description>Policy Question requests must be submitted by Zone level Roles (Zone Managers, Zone Assistants). Please work with your Zone Managers, Zone Assistants to request these changes.</description>
+    <errorConditionFormula>AND(
+	NOT(BEGINS($Profile.Name,&apos;Core Zone&apos;)),
+	NOT($Profile.Name=&apos;HNBF EAST&apos;),
+	NOT($Profile.Name=&apos;HNBF WEST&apos;),
+	NOT($Profile.Name=&apos;HRS INTERNAL WHOLESALER MANAGER&apos;),
+	NOT(BEGINS($Profile.Name,&apos;HRS ZONE&apos;)),
+	NOT(BEGINS($Profile.Name,&apos;MMS REGION&apos;)),
+	NOT($Profile.Name=&apos;MSP ZONE 1&apos;),
+	NOT(BEGINS($Profile.Name,&apos;PEO ZONE&apos;)),
+	NOT($Profile.Name=&apos;VIRTUAL SALES AND NSS&apos;),
+	NOT($Profile.Name=&apos;Sales Engineering&apos;),
+	NOT($Profile.Name=&apos;Strategic Accounts Manager&apos;),
+	NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+
+	$RecordType.Name = &apos;Sales Help Request Case&apos;,
+
+	ISPICKVAL(Type,&apos;Policy Question&apos;)
+)</errorConditionFormula>
+    <errorMessage>Policy Question requests must be submitted by Zone Managers, Zone Assistants. Please work with your Zone Managers, Zone Assistants to request these changes.</errorMessage>
+</ValidationRule>

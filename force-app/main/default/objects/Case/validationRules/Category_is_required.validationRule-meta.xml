@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Category_is_required</fullName>
+    <active>true</active>
+    <description>When &quot;Product&quot; = &quot;myStaffingPro&quot;, please make &quot;Category 1&quot;, &quot;Category 2&quot;, &quot;Category 3&quot;, and &quot;Category 4&quot; required fields.</description>
+    <errorConditionFormula>AND(ISPICKVAL(Product__c ,&apos;myStaffingPro&apos;), RecordTypeId =&apos;01270000000ULbL&apos;,
+NOT( BEGINS( LOWER(TEXT(Origin)) , &quot;email-to-case&quot;)) ,
+NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+NOT(ISPICKVAL(MSP_Client_Type__c,&quot;&quot;)),
+OR(
+ISPICKVAL( Category_1__c ,&quot;&quot;),ISPICKVAL(  Category_2__c  ,&quot;&quot;),ISPICKVAL(  Category_3__c ,&quot;&quot;),ISPICKVAL(  Category_4__c ,&quot;&quot;)))</errorConditionFormula>
+    <errorMessage>&quot;Category 1&quot;, &quot;Category 2&quot;, &quot;Category 3&quot;, and &quot;Category 4&quot; required fields.</errorMessage>
+</ValidationRule>

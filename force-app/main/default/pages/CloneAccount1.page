@@ -1,0 +1,59 @@
+<apex:page controller="CloneAccountController"
+           tabStyle="Account">
+<apex:pageMessages />
+
+<apex:pageBlock rendered="{!isAccountSet}">
+    <!-- Display basic information from original account.
+       Allow users to select products to copy to children.
+       Allow users to select a contact to link to children?
+       Enter the number of children to create.
+       On Page 2, display skeletons of the new accounts to be created.
+          Account number, client name (default to original account name)
+       Select fields to copy to children? 
+   -->
+  <apex:sectionHeader title="Clone Prospect-Client Information"
+                      subtitle="Step 1 of 2"/>
+  <apex:form >
+    <apex:pageBlock title="Prospect-Client Information">
+      <apex:facet name="footer">
+        <apex:outputPanel >
+          <apex:commandButton action="{!nextFromStep1}" value="Next" styleClass="btn"/>
+          <apex:commandButton action="{!cancel}" value="Cancel" styleClass="btn"/>
+        </apex:outputPanel>
+      </apex:facet>
+      <apex:PageBlockSection title="Orginal Prospect-Client Information">
+        <apex:panelGrid columns="2" border="1">
+          <apex:outputLabel value="Prospect-Client Name"/>
+          <apex:outputField id="accountName" value="{!thisAcct.name}"/>
+          <apex:outputLabel value="Prospect-Client Number"/>
+          <apex:outputField id="accountNumber" value="{!thisAcct.accountNumber}"/>
+          <apex:outputLabel value="HRO Number"/>
+          <apex:outputField id="HRO_Number__c" value="{!thisAcct.HRO_Number__c}"/>
+        </apex:panelGrid>
+      </apex:PageBlockSection>
+      <apex:PageBlockSection title="Products and Services - Select the products to clone with the Prospect-Client">
+        <apex:selectCheckboxes value="{!products}">
+          <apex:selectOptions value="{!prods}"/>
+        </apex:selectCheckboxes><br/>
+        <apex:outputPanel rendered="{!(NOT(hasProds))}">
+          <apex:outputText value="No products were found for this Prospect-Client."/>
+        </apex:outputPanel>
+      </apex:PageBlockSection>
+      <apex:PageBlockSection title="Enter the Prospect-Client Number for the clients you are creating (maximum 100)">
+        <apex:dataTable value="{!accts}" var="acct" cellPadding="4" border="1">
+          <apex:column headerValue="Prospect-Client Number"> 
+            <apex:inputField value="{!acct.AccountNumber}"/>
+          </apex:column>
+          <apex:column headerValue="Prospect-Client Name"> 
+            <apex:inputField value="{!acct.Name}" />
+          </apex:column>
+        </apex:dataTable>
+        <br></br>
+        <apex:panelGrid columns="1">
+          <apex:commandButton action="{!addMoreRows}" value="Add 5 More Rows" styleClass="btn"/>
+        </apex:panelGrid>
+      </apex:PageBlockSection>
+    </apex:PageBlock>
+  </apex:form> 
+</apex:pageBlock>
+</apex:page>

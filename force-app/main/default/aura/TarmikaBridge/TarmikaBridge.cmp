@@ -1,0 +1,79 @@
+<aura:component controller="TarmikaBridgeController" implements="force:lightningQuickActionWithoutHeader,flexipage:availableForAllPageTypes,force:hasRecordId,force:appHostable,force:hasSObjectName">
+	
+    <aura:attribute name="isThisOpptyProbability" type="Boolean"/>
+    <aura:attribute name="isThisRecordType" type="Boolean"/>
+    <aura:attribute name="isThisAlreadyQuoted" type="Boolean"/>
+   	<aura:attribute name="isThisPCSalesUser" type="Boolean"/> 
+    <aura:attribute name="isRecCreated" type="Boolean"/>
+    <aura:attribute name="isAPICallSuccess" type="Boolean"/>
+    <aura:attribute name="isOpptyUpdated" type="Boolean"/>
+    <aura:attribute name="valid" type="Boolean"/>
+    <aura:attribute name="message" type="String"/>
+    <aura:attribute name="isLoaded" type="Boolean" default="false"/>
+    <aura:attribute name="showSpinner" type="Boolean" default="true" />
+    <aura:handler name="init" value="{! this }" action="{! c.doInit }"/>
+    
+    <lightning:card>		
+        	<div class="modal-header slds-modal__header">
+                <h1 class="title slds-text-heading-small">PC Quote Data status</h1>
+            </div>
+        	<div class="slds-p-around_none">
+                <!--Spinner Info-->
+                <aura:if isTrue="{!v.showSpinner}">
+                    <div><lightning:spinner alternative-text="Processing" size="small" />
+                    </div>  
+                </aura:if>
+            <aura:if isTrue="{!v.isLoaded}">
+                <center>
+                    * Opportunity at Discovery stage (40%): <aura:if isTrue="{!v.isThisOpptyProbability}"> 
+                    <lightning:icon class='utility-icon' iconName="utility:success" alternativeText="Success!" variant="Success" title='Valid' size='x-small'/>    
+                    <aura:set attribute="else">
+                        <lightning:icon class='utility-icon' iconName="utility:warning" alternativeText="Error!" variant="Warning" title='Items Needing Attention' size='x-small'/>
+                    </aura:set>
+                    </aura:if><br/><br/>
+                    * Opportunity of correct Recordtype: <aura:if isTrue="{!v.isThisRecordType}"> 
+                    <lightning:icon class='utility-icon' iconName="utility:success" alternativeText="Success!" variant="Success" title='Valid' size='x-small'/>    
+                    <aura:set attribute="else">
+                        <lightning:icon class='utility-icon' iconName="utility:warning" alternativeText="Error!" variant="Warning" title='Items Needing Attention' size='x-small'/>
+                    </aura:set>
+                    </aura:if><br/><br/>
+                    * Opportunity already has WC quote: <aura:if isTrue="{!v.isThisAlreadyQuoted}"> 
+                    <lightning:icon class='utility-icon' iconName="utility:warning" alternativeText="Error!" variant="Warning" title='Items Needing Attention' size='x-small'/>    
+                    <aura:set attribute="else">
+                        <lightning:icon class='utility-icon' iconName="utility:success" alternativeText="Success!" variant="Success" title='Valid' size='x-small'/>
+                    </aura:set>
+                    </aura:if><br/><br/>
+                    * Submitter allowed to send to Bridge: <aura:if isTrue="{!v.isThisPCSalesUser}"> 
+                    <lightning:icon class='utility-icon' iconName="utility:success" alternativeText="Success!" variant="Success" title='Valid' size='x-small'/>    
+                    <aura:set attribute="else">
+                        <lightning:icon class='utility-icon' iconName="utility:warning" alternativeText="Error!" variant="Warning" title='Items Needing Attention' size='x-small'/>
+                    </aura:set>
+                    </aura:if><br/><br/>
+                    * PC Quote Data record created: <aura:if isTrue="{!v.isRecCreated}"> 
+                    <lightning:icon class='utility-icon' iconName="utility:success" alternativeText="Success!" variant="Success" title='Valid' size='x-small'/>    
+                    <aura:set attribute="else">
+                        <lightning:icon class='utility-icon' iconName="utility:warning" alternativeText="Error!" variant="Warning" title='Items Needing Attention' size='x-small'/>
+                    </aura:set>
+                    </aura:if><br/><br/>
+                    * Successful send to Tarmika: <aura:if isTrue="{!v.isAPICallSuccess}"> 
+                    <lightning:icon class='utility-icon' iconName="utility:success" alternativeText="Success!" variant="Success" title='Valid' size='x-small'/>    
+                    <aura:set attribute="else">
+                        <lightning:icon class='utility-icon' iconName="utility:warning" alternativeText="Error!" variant="Warning" title='Items Needing Attention' size='x-small'/>
+                    </aura:set>
+                    </aura:if><br/><br/>
+                    * Opportunity updated with Tarmika quote: <aura:if isTrue="{!v.isOpptyUpdated}"> 
+                    <lightning:icon class='utility-icon' iconName="utility:success" alternativeText="Success!" variant="Success" title='Valid' size='x-small'/>    
+                    <aura:set attribute="else">
+                        <lightning:icon class='utility-icon' iconName="utility:warning" alternativeText="Error!" variant="Warning" title='Items Needing Attention' size='x-small'/>
+                    </aura:set>
+                    </aura:if><br/>
+                </center>      
+                <aura:set attribute="else">
+                    Loading.........
+                </aura:set>
+            </aura:if>
+        </div>
+        
+    </lightning:card>
+
+</aura:component>

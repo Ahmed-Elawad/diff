@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NSS_Today_s_Tasked_Records</fullName>
+    <columns>FULL_NAME</columns>
+    <columns>CONTACT.PHONE1</columns>
+    <columns>CONTACT.TITLE</columns>
+    <columns>CONTACT.PHONE3</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>AssignedToNSR__c</columns>
+    <columns>NSSStatus__c</columns>
+    <columns>LastNSSCallDisposition__c</columns>
+    <columns>CONTACT.ADDRESS2_CITY</columns>
+    <columns>CONTACT.ADDRESS2_STATE</columns>
+    <columns>CONTACT.ADDRESS2_ZIP</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>Date_Sent_to_NSS__c</field>
+        <operation>equals</operation>
+        <value>LAST_N_DAYS:4</value>
+    </filters>
+    <filters>
+        <field>CONTACT.DO_NOT_CALL</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>CONTACT.LAST_ACTIVITY</field>
+        <operation>notEqual</operation>
+        <value>LAST_N_DAYS:4</value>
+    </filters>
+    <filters>
+        <field>DialedLastUsed__c</field>
+        <operation>notEqual</operation>
+        <value>LAST_N_DAYS:4</value>
+    </filters>
+    <label>NSS-Today&apos;s Tasked Records</label>
+    <sharedTo>
+        <roleAndSubordinates>NSS_DIRECTOR</roleAndSubordinates>
+    </sharedTo>
+</ListView>

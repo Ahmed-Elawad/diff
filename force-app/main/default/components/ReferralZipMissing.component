@@ -1,0 +1,23 @@
+<apex:component controller="ReferralZipMissingController" allowDML="true">
+    <apex:form >
+        <apex:pageBlock > 
+            <apex:pageBlockSection id="enterZip" columns="1" title="Please Enter Zip to proceed to Submit NSS Referral Screen">
+                <apex:pageBlockSectionItem rendered="{!isLead}">
+                    <apex:outputLabel value="Zip/Postal Code"/>
+                    <apex:inputField value="{!lead.PostalCode}"/> 
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!isContact}">
+                    <apex:outputLabel value="Account Shipping Postal Code"/>
+                    <apex:inputField value="{!ctct.Account.ShippingPostalCode}"/> 
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:commandButton value="Cancel" action="{!cancel}" />
+                    <apex:commandButton value="Save" action="{!save}">
+                        <!--apex:param value="{!lead.PostalCode}"/--> 
+                    </apex:commandButton>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:component>

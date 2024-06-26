@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Change_Ownership_from_Queue_Rule</fullName>
+    <active>false</active>
+    <errorConditionFormula>AND($RecordType.Name &lt;&gt; &apos;Service Onboarding MPSC Core Payroll Case&apos;, NOT(BEGINS($RecordType.Name,&apos;MPSC&apos;)),NOT( BEGINS($Profile.Name,&quot;System Administrator&quot;)),(Client_Load_Received__c || LEN(New_Prospect_Client_Number__c)&lt;&gt;0),NOT(BEGINS(OwnerId, &quot;005&quot;)),OwnerId &lt;&gt; &quot;00G70000001l3Hw&quot; ,OwnerId &lt;&gt; &quot;00G70000001Y5aq&quot;)</errorConditionFormula>
+    <errorMessage>**** Ownership of the Case and Reference Core Payroll records  have to be updated to the NCS before you can save this record.  Go to the Case record to change the owner. ****</errorMessage>
+</ValidationRule>

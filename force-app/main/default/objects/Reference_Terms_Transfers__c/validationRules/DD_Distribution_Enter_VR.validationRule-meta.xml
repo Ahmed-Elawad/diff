@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DD_Distribution_Enter_VR</fullName>
+    <active>true</active>
+    <description>if Distribution Entered is completed, LDPS Rep Name must be completed</description>
+    <errorConditionFormula>RecordType.Name = &apos;Death Distribution&apos; &amp;&amp; NOT(ISBLANK( Distribution_Entered__c)) &amp;&amp; ISBLANK(Distribution_Entered_by__c)</errorConditionFormula>
+    <errorDisplayField>Distribution_Entered__c</errorDisplayField>
+    <errorMessage>When Distribution is completed, Distribution Entered by must  also be populated.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DistributionTypeSourceFullPartialReq</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name, &quot;System Admin&quot;)),
+OR($Profile.Name = &quot;2008-09 HRS 4S Operations&quot;,$Profile.Name = &quot;2008-09 HRS 4S Operations B&quot;,$Profile.Name =&quot;2008-09 HRS 4S Service Manager&quot;),
+
+RecordType.Name = &quot;HRS 4S Manual Trade&quot;) &amp;&amp;
+
+if(
+OR(ISPICKVAL(Type_of_Request__c,&apos;Manual Trade Distribution&apos;),ISPICKVAL(Type_of_Request__c,&apos;Distribution Reinvest&apos;), ISPICKVAL(Type_of_Request__c,&apos;ROE Correction&apos;))
+&amp;&amp;
+OR(ISBLANK(TEXT(Distribution_Type__c )), ISBLANK(Source__c) , ISBLANK(TEXT(Full_Partial__c ))), true, false
+)</errorConditionFormula>
+    <errorMessage>For distribution requests, please fill in Distribution Type, Source, and Full/Partial fields.</errorMessage>
+</ValidationRule>

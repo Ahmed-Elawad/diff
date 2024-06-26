@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pass_to_New_Biz_Requirement</fullName>
+    <active>true</active>
+    <description>If Pass to New Biz then HRIS Status, Onboarding QC, Employee Load Complete and Medical Completed</description>
+    <errorConditionFormula>AND(RecordType.DeveloperName=&quot;PEO_New_Client_Onboarding&quot;,
+Pass_to_New_Loads__c = TRUE,
+OR(
+ISBLANK(Employee_Load_Complete__c),
+ISBLANK( Final_Medical_Approval_Milestone__c),
+ISBLANK( Onboarding_QC__c),
+NOT ISPICKVAL(Current_Onboarding_HRIS_Status__c,&quot;Approved&quot;)))</errorConditionFormula>
+    <errorDisplayField>Pass_to_New_Loads__c</errorDisplayField>
+    <errorMessage>If pass to new biz is checked then you need On-boarding HRIS Status= Approved, Employee load complete, final medical approval-milestone, On boarding QC all populated</errorMessage>
+</ValidationRule>

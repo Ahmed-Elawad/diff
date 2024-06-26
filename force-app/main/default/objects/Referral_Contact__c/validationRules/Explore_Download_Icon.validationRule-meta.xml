@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Explore_Download_Icon</fullName>
+    <active>true</active>
+    <description>Rep may not input this information unless Explore Date is populated with a date of today or past.</description>
+    <errorConditionFormula>AND(OR(  ISNULL( Explore_Date__c) ,Explore_Date__c &gt; TODAY()),   NOT(  ISPICKVAL (Downloaded_Paychex_Icon__c, &quot;&quot;)))</errorConditionFormula>
+    <errorMessage>*** YOU MAY NOT ANSWER DOWNLOAD QUESTION UNTIL EXPLORE DATE IS FILLED IN WITH A DATE OF TODAY OR EARLIER ***</errorMessage>
+</ValidationRule>

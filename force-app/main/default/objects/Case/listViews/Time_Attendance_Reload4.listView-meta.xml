@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Time_Attendance_Reload4</fullName>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>Branch_Client_ID__c</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.LAST_UPDATE</columns>
+    <columns>OWNER_NAME</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>CASES.STATUS</columns>
+    <filterScope>Queue</filterScope>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Closed,Closed - APR Created,Closed - Duplicate,Closed - First Call Resolution</value>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Solved,Do Not Support</value>
+    </filters>
+    <label>!!*Time Attendance Reload</label>
+    <queue>Time_Attendance_Reload</queue>
+    <sharedTo>
+        <role>TimeAttendanceBilling</role>
+        <role>TimeAttendanceLevel2SupportRep</role>
+        <role>TimeAttendanceManager</role>
+    </sharedTo>
+</ListView>

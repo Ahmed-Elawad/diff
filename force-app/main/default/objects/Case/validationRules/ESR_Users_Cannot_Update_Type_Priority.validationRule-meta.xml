@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ESR_Users_Cannot_Update_Type_Priority</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(OR($RecordType.Name = &apos;Service Support ESR Case&apos;,$RecordType.Name=&apos;Service Onboarding ESR Case&apos;), OR($UserRole.Name=&apos;ESR Audit &amp; Rec Rep&apos;,$UserRole.Name=&apos;ESR New Case Rep&apos;,$UserRole.Name=&apos;ESR Calendar Admin&apos;,$UserRole.Name=&apos;ESR IB/OB Service Center Rep&apos;,$UserRole.Name=&apos;ESR Inbound Service Center Rep&apos;,$UserRole.Name=&apos;ESR Outbound Service Center Rep&apos;,$UserRole.Name=&apos;PIA Agency ESR Supervisor&apos;,$UserRole.Name=&apos;PIA Agency ESR Specialist&apos;), OR(ISCHANGED(Type),ISCHANGED(Priority)))</errorConditionFormula>
+    <errorMessage>You are not allowed to change the type or priority.</errorMessage>
+</ValidationRule>

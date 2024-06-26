@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Response_Time_in_Hours__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>IF( 
+ISPICKVAL( Type ,&quot;ACT&quot;),4, 
+
+IF( 
+ISPICKVAL( Type ,&quot;Work Transfers&quot;), 24, 
+
+IF( 
+(ISPICKVAL( Type ,&quot;Annual Enrollment Phase 1&quot;) || ISPICKVAL( Type ,&quot;Carrier&quot;)|| ISPICKVAL( Type ,&quot;COBRA&quot;)|| ISPICKVAL( Type ,&quot;Life Events&quot;)), 24, 
+
+IF( 
+CONTAINS(TEXT(Type),&quot;Supervisor&quot;),8, 
+
+IF( 
+(ISPICKVAL( Type ,&quot;Discrepancies&quot;) &amp;&amp; ISPICKVAL( Sub_Type__c,&quot;Reactivate Client&quot;)), 24, 
+
+IF( 
+(ISPICKVAL( Type ,&quot;Discrepancies&quot;) &amp;&amp; NOT (ISPICKVAL( Sub_Type__c,&quot;Reactivate Client&quot;))), 48, 
+
+IF( 
+(ISPICKVAL( Type ,&quot;Annual Enrollment Phase 2&quot;) || ISPICKVAL( Type ,&quot;Annual Enrollment Phase 3&quot;) || ISPICKVAL( Type ,&quot;Audit Adjustments&quot;) || ISPICKVAL( Type ,&quot;Forms&quot;) || ISPICKVAL( Type ,&quot;H.S.A&quot;) || ISPICKVAL( Type ,&quot;Rework&quot;) || ISPICKVAL( Type ,&quot;Section 125&quot;) || ISPICKVAL( Type ,&quot;Status/ Data Changes&quot;)), 48, 
+
+IF( 
+(ISPICKVAL( Type ,&quot;Analyst&quot;) || ISPICKVAL( Type ,&quot;Letters&quot;)), 72, 
+
+IF( 
+(ISPICKVAL( Type,&quot;Enrollment&quot;) &amp;&amp; ISPICKVAL( Sub_Type__c,&quot;Court Order&quot;)), 120, 
+
+IF( 
+(ISPICKVAL( Type ,&quot;Enrollment&quot;) &amp;&amp; NOT (ISPICKVAL( Sub_Type__c,&quot;Court Order&quot;))), 48, 
+
+IF( 
+(ISPICKVAL( Type ,&quot;Online&quot;) &amp;&amp; (ISPICKVAL( Sub_Type__c,&quot;Access&quot;)||ISPICKVAL( Sub_Type__c,&quot;Enrollment Confirmation&quot;) || ISPICKVAL( Sub_Type__c,&quot;Navigation&quot;))), 24, 
+
+IF( 
+(ISPICKVAL( Type ,&quot;Online&quot;) &amp;&amp; (ISPICKVAL( Sub_Type__c,&quot;Enrollment Discrepancy&quot;)||ISPICKVAL( Sub_Type__c,&quot;Other - Processing&quot;)|| ISPICKVAL( Sub_Type__c,&quot;System&quot;) )), 24, NULL 
+
+))))))))))))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Response Time in Hours</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

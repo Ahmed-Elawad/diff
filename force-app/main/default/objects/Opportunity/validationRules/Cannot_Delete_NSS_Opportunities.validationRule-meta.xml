@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cannot_Delete_NSS_Opportunities</fullName>
+    <active>true</active>
+    <description>If an opportunity is created by NSS, the opportunity cannot be deleted</description>
+    <errorConditionFormula>(LEN(NSS_Prospect_ID__c)  &lt;&gt; 0 ||   
+ISPICKVAL(NSS_Source__c,&apos;Inbound&apos;) ||
+ISPICKVAL(NSS_Source__c,&apos;Outbound&apos;) )
+&amp;&amp;  To_Be_Deleted__c</errorConditionFormula>
+    <errorDisplayField>To_Be_Deleted__c</errorDisplayField>
+    <errorMessage>This Opportunity Record was created by NSS and it cannot be deleted.</errorMessage>
+</ValidationRule>

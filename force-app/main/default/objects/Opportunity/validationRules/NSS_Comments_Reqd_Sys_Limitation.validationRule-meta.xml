@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NSS_Comments_Reqd_Sys_Limitation</fullName>
+    <active>true</active>
+    <description>If the reason lost = system limitation, nss comments are required.</description>
+    <errorConditionFormula>AND(ISPICKVAL( Reason_Not_Sold__c , &apos;System Limitation&apos;),ISPICKVAL(StageName , &apos;Lost&apos;),LEN(Comment_to_NSS__c) &lt; 5,
+NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)))</errorConditionFormula>
+    <errorDisplayField>Reason_Not_Sold__c</errorDisplayField>
+    <errorMessage>Please enter the system limitation in the comments. You need to enter a legit reason (more than a few letters) so we can make our products better.</errorMessage>
+</ValidationRule>

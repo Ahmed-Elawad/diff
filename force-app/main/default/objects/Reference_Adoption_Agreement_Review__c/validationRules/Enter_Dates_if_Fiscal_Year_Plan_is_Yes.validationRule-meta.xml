@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Enter_Dates_if_Fiscal_Year_Plan_is_Yes</fullName>
+    <active>true</active>
+    <description>Start and End dates need to be entered if Fiscal Year Plan is Yes</description>
+    <errorConditionFormula>AND(ISPICKVAL(Fiscal_Year_Plan__c, &apos;Yes&apos;),  OR(ISNULL(Fiscal_Plan_Year_Start_Date__c), ISNULL(Fiscal_Plan_Year_End_Date__c)))</errorConditionFormula>
+    <errorMessage>If Fiscal Year Plan = Yes, you must enter Fiscal Plan Year Start and End Dates</errorMessage>
+</ValidationRule>

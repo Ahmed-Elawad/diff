@@ -1,0 +1,385 @@
+<!-- FSS View for ASO Onboarding
+* History
+* -------
+* 12/10/2016   Jermaine Stukes Created
+* 08/28/2019   Jermaine Stukes Updated
+* 08/22/2022   Eric Porter Updated
+* 03/07/2023   Jaipal Updated with new fields(34) to display
+-->
+<apex:page controller="OnboardingController" showHeader="false" standardStylesheets="true" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0"> 
+    
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">        
+        <head>
+            <title>Paychex Onboarding - FSS</title>
+            <script>
+            function uploadConfirmation()
+            {alert('Your submission has been uploaded to SharePoint.\nYou will be redirected back to the Opportunity');}
+            </script> 
+        </head>
+        <body>
+            <style type="text/css">
+                .banner {
+                background-color: #0469b1;
+                height : 60px;
+                padding: 0px 0px 0px 24px;
+                }
+                .header1 {
+                text-align: left;
+                color: #0469b1;
+                font-family: Helvetica, sans-serif;
+                font-size: 16px;
+                }
+                .label1 {
+                text-align: left;
+                color: #9b9b9b;
+                font-family: Helvetica, sans-serif;
+                font-size: 12px;
+                }
+                @media (min-device-width: 641px)
+                {
+                .textBox {
+                width: 300px;
+                }
+                }
+                @media (max-device-width: 640px)
+                {
+                .textBox {
+                width: 200px;
+                }
+                }
+            </style>
+            <apex:slds />
+            <div class="slds-scope " xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <div class="banner slds-grid slds-grid_vertical-align-center slds-grid_align-center">  
+                    <div><apex:image url="{!$Resource.paychex_logo}"  alt="Paychex Inc"/></div>
+                    <div class="slds-text-heading_medium"><font color="white"><b>Onboarding Application - FSS Display</b></font></div>
+                </div> 
+                <!-- / Account Name Section --> 
+                <apex:outputPanel id="displayAdditional">
+                    <apex:actionRegion rendered="{!IF(onboardingRecord.Product__c != '', 'true', 'false')}">
+                        <div class="slds-card"/>
+                        <div class="slds-card">
+                            <p class="slds-text-heading--small" align="center"><b>Submission Summary Information</b></p>
+                            <div class="slds-box">
+                                <!-- NON UPDATE -->
+                                
+                                <apex:outputPanel id="hideFields">
+                                    <apex:actionRegion rendered="{!(!fssUpdate)}">
+                                        <div class="slds-grid">
+                                            <div class="slds-col--padded slds-size--1-of-3">
+                                                <p class="slds-text-heading--small"><b>Company Name: </b>{!onboardingOpp.Account.Name}</p><br/>
+                                                <p class="slds-text-heading--small"><b>Client Number: </b>{!onboardingRecord.Client_Number__c}</p><br/>
+                                                <p class="slds-text-heading--small"><b>Opportunity: </b>{!onboardingOpp.Name}</p><br/>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Industry__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Industry: </b>{!onboardingRecord.Industry__c}</p><br/>
+                                                </apex:actionRegion>
+                                                <p class="slds-text-heading--small"><b>Sale Type: </b>{!onboardingRecord.Product__c}</p><br/>
+                                                <p class="slds-text-heading--small"><b>New or Existing Client: </b>{!onboardingRecord.New_Existing__c}</p><br/>  
+                                                <apex:outputPanel id="displayExistInfo"> 
+                                                    <apex:actionRegion rendered="{!If(onboardingRecord.Product__c == 'HR Solutions-Flex' && onboardingRecord.New_Existing__c =='Existing Paychex Client','true','false')}">
+                                                        <p class="slds-text-heading--small"><b>Previous Platform: </b>{!onboardingRecord.Previous_Platform__c}</p><br/>
+                                                        <apex:actionRegion rendered="{!If(onboardingOpp.Employees_Paid_Per_Payroll__c < 50,'true','false')}">
+                                                            <p class="slds-text-heading--small"><b>New Branch Number: </b>{!onboardingRecord.New_Branch__c}</p><br/>
+                                                        </apex:actionRegion>
+                                                    </apex:actionRegion>
+                                                </apex:outputPanel>
+                                                <p class="slds-text-heading--small"><b>Federal Id Number: </b>{!onboardingOpp.Account.Federal_ID_Number__c}</p><br/>
+                                                <p class="slds-text-heading--small"><b>Company Contact: </b>{!onboardingRecord.Company_Contact_Name__c}</p><br/>
+                                                <p class="slds-text-heading--small"><b>Client Email: </b>{!onboardingOpp.Account.Email__c}</p><br/>
+                                                <p class="slds-text-heading--small"><b>Client Telephone: </b>{!onboardingOpp.Account.Phone}</p><br/>
+                                                <p class="slds-text-heading--small"><b>Preferred Contact Method: </b>{!onboardingRecord.Preferred_Contact_Method__c}</p><br/>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Authorized_Officer_Name__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Authorized Officer: </b>{!onboardingRecord.Authorized_Officer_Name__c}</p><br/>
+                                                </apex:actionRegion>
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Authorized_Officer_Title__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Authorized Officer's Title: </b>{!onboardingRecord.Authorized_Officer_Title__c}</p><br/>
+                                                </apex:actionRegion>
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Authorized_Officer_Phone__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Authorized Officer's Phone: </b>{!onboardingRecord.Authorized_Officer_Phone__c}</p><br/>
+                                                </apex:actionRegion>
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Authorized_Officer_Email__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Authorized Officer's Email: </b>{!onboardingRecord.Authorized_Officer_Email__c}</p><br/>
+                                                </apex:actionRegion>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Authorized_Off_is_HR_Contact__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Is HR contact the same as Authorized Officer?: </b>{!onboardingRecord.Authorized_Off_is_HR_Contact__c}</p><br/>
+                                                </apex:actionRegion>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.HR_Contact_Name__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>HR Contact Name: </b>{!onboardingRecord.HR_Contact_Name__c}</p><br/>
+                                                </apex:actionRegion>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.HR_Contact_Title__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>HR Contact Title: </b>{!onboardingRecord.HR_Contact_Title__c}</p><br/>
+                                                </apex:actionRegion>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.HR_Contact_Phone__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>HR Contact Phone: </b>{!onboardingRecord.HR_Contact_Phone__c}</p><br/>
+                                                </apex:actionRegion>
+                                                <p class="slds-text-heading--small"><b>Billing Address: </b><br/>{!onboardingOpp.Account.BillingStreet}<br/>
+                                                    {!onboardingOpp.Account.BillingCity}, {!onboardingOpp.Account.BillingState}, {!onboardingOpp.Account.BillingPostalCode}</p><br/>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Contact_Notes__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Contact Notes: </b>{!onboardingRecord.Contact_Notes__c}</p><br/>
+                                                </apex:actionRegion>
+                                                
+                                                
+                                                
+                                                
+                                            </div>
+                                            <div class="slds-col--padded slds-size--1-of-3">
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.How_long_a_client__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>How long have they been a Client?: </b>{!onboardingRecord.How_long_a_client__c}</p><br/>
+                                                </apex:actionRegion>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Business_Structure__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Business Structure: </b>{!onboardingRecord.Business_Structure__c}</p><br/>
+                                                </apex:actionRegion>
+                                                <p class="slds-text-heading--small"><b>Payroll Frequency: </b>{!onboardingOpp.Account.Frequency__c}</p><br/>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Ongoing_Call_Day_of_the_Week__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Normal day to process payroll: </b>{!onboardingRecord.Ongoing_Call_Day_of_the_Week__c}</p><br/>
+                                                </apex:actionRegion>
+                                                <p class="slds-text-heading--small"><b>Total Number of Employees: </b>{!onboardingRecord.Total_Num_EE__c}</p><br/>
+                                                
+                                                
+                                                <p class="slds-text-heading--small"><b>Employees Paid Per Payroll: </b>{!onboardingOpp.Employees_Paid_Per_Payroll__c}</p><br/>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Employee_Headcount_Status__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Employee Headcount Status : </b>{!onboardingRecord.Employee_Headcount_Status__c}</p><br/>
+                                                </apex:actionRegion>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Multi_State__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Multiple States?: </b>{!onboardingRecord.Multi_State__c}</p><br/>
+                                                </apex:actionRegion>
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Employee_Headcount_In_Other_States__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Employee Headcount In Other States: </b>{!onboardingRecord.Employee_Headcount_In_Other_States__c}</p><br/>
+                                                </apex:actionRegion>
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.NumOf1099s__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Does the company Need to issue any 1099s? y/n: </b>{!onboardingRecord.NumOf1099s__c}</p><br/>
+                                                </apex:actionRegion>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.NumMultiIds__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Number of IDs: </b>{!onboardingRecord.NumMultiIds__c}</p><br/>
+                                                </apex:actionRegion>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Client_Company_IDs__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Client Company IDs: </b>{!onboardingRecord.Client_Company_IDs__c}</p><br/>
+                                                </apex:actionRegion>
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Taxed_as_S_Corp__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Is the company filing an S corp election?: </b>{!onboardingRecord.Taxed_as_S_Corp__c}</p><br/>
+                                                </apex:actionRegion>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Flex_Multi_Debit__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Bank Account Preference: </b>{!onboardingRecord.Flex_Multi_Debit__c}</p><br/> 
+                                                </apex:actionRegion>
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.MultiBillingOption__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Is Client part of Multi-ID Billing Group?: </b>{!onboardingRecord.MultiBillingOption__c}</p><br/>
+                                                </apex:actionRegion>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Product__c == 'Paychex HR Essentials', 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b><u>Client Buying Triggers/Priorities/Decision Factors:</u></b></p>
+                                                    <p class="slds-text-heading--small"><b>First Choice: </b>{!onboardingRecord.HRE_Decision_Factors__c}</p>
+                                                    <p class="slds-text-heading--small"><b>Second Choice: </b>{!onboardingRecord.HRE_Decision_Factors_2__c}</p>
+                                                    <p class="slds-text-heading--small"><b>Third Choice: </b>{!onboardingRecord.HRE_Decision_Factors_3__c}</p>
+                                                </apex:actionRegion>
+                                            </div>
+                                            
+                                            <div class="slds-col--padded slds-size--1-of-3">
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Other_Paychex_products_in_use__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Other Paychex products client is currently using: </b>{!onboardingRecord.Other_Paychex_products_in_use__c}</p><br/>
+                                                </apex:actionRegion>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.PayrollProcessed__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Has Paychex processed the first payroll?: </b>{!onboardingRecord.PayrollProcessed__c}</p><br/> 
+                                                </apex:actionRegion>
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Product__c == 'HR Solutions-Flex' && onboardingOpp.Employees_Paid_Per_Payroll__c >= 50, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Multi Product Service Center: </b>{!onboardingRecord.MultiProdServiceCenter__c}</p><br/>
+                                                </apex:actionRegion>
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Product__c == 'HR Solutions-Flex' || onboardingRecord.Product__c == 'HR Solutions for Non-Payroll', 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>First Run Date: </b><apex:outputText value="{0,date,MM/dd/yyyy}"><apex:param value="{!onboardingRecord.Run_Date__c}" /></apex:outputText>
+                                                        <apex:actionRegion rendered="{!If(onboardingRecord.Run_Date__c == Null,'true','false')}">
+                                                            <font color="red">
+                                                                <br/>Note: Run date required for upload to sharepoint.<br/>Click the 'Edit Information" button to enter the run date.
+                                                            </font>
+                                                        </apex:actionRegion>
+                                                    </p><br/>
+                                                </apex:actionRegion>
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Product__c == 'HR Solutions-Flex', 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>First Check Date: </b><apex:outputText value="{0,date,MM/dd/yyyy}"><apex:param value="{!onboardingRecord.First_Check_Date__c}" /></apex:outputText></p><br/>
+                                                </apex:actionRegion>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Best_Call_Time__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Best Time to Call: </b>{!onboardingRecord.Best_Call_Time__c}</p><br/>
+                                                </apex:actionRegion>
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Client_Success_Meeting_Date_Time__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Client Success Meeting Date / Time: </b>{!onboardingRecord.Client_Success_Meeting_Date_Time__c}</p><br/>
+                                                </apex:actionRegion>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Client_Success_Meeting_Next_Step__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Client Success Meeting Next Step: </b>{!onboardingRecord.Client_Success_Meeting_Next_Step__c}</p><br/>
+                                                </apex:actionRegion>
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Product__c == 'HR Solutions-Flex', 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Payroll Rep: </b>{!onboardingRecord.Payroll_Rep_Name__c}</p><br/>
+                                                </apex:actionRegion>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.HRS_Sales_Rep_Name__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>HRS Sales Rep: </b>{!onboardingRecord.HRS_Sales_Rep_Name__c}</p><br/>
+                                                </apex:actionRegion>
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Product__c == 'HR Solutions-Flex' || onboardingRecord.Product__c == 'HR Solutions for Non-Payroll', 'true', 'false')}">
+                                                    
+                                                    <p class="slds-text-heading--small"><b>HR Generalist: </b>{!onboardingRecord.HRG_Name__c}</p><br/>
+                                                </apex:actionRegion>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Handbook_Format__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Handbook Format: </b>{!onboardingRecord.Handbook_Format__c}</p><br/>
+                                                </apex:actionRegion>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.HRE_Existing__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Does Client have an existing handbook?: </b>{!onboardingRecord.HRE_Existing__c}</p><br/>
+                                                </apex:actionRegion>
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.HRE_Existing_Safety_Manual__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Does Client have an existing safety manual?: </b>{!onboardingRecord.HRE_Existing_Safety_Manual__c}</p><br/>
+                                                </apex:actionRegion>
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Top_3_HR_Needs_Why__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Top 3 HR Needs and Why: </b>{!onboardingRecord.Top_3_HR_Needs_Why__c}</p><br/>
+                                                </apex:actionRegion>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.HRE_Decision_Factors__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>HRE Decision Factor 1: </b>{!onboardingRecord.HRE_Decision_Factors__c}</p><br/>
+                                                </apex:actionRegion>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.HRE_Decision_Factors_2__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>HRE Decision Factor 2: </b>{!onboardingRecord.HRE_Decision_Factors_2__c}</p><br/>
+                                                </apex:actionRegion>
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.HRE_Decision_Factors_3__c!= null, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>HRE Decision Factor 3: </b>{!onboardingRecord.HRE_Decision_Factors_3__c}</p><br/>
+                                                </apex:actionRegion>
+                                                
+                                                
+                                                <apex:actionRegion rendered="{!IF(onboardingRecord.Product__c != 'HR Solutions-Flex' || onboardingOpp.Employees_Paid_Per_Payroll__c < 50, 'true', 'false')}">
+                                                    <p class="slds-text-heading--small"><b>Branch Number: </b>{!onboardingRecord.Branch_Number__c}</p><br/>
+                                                </apex:actionRegion>
+                                                
+                                                
+                                                <p class="slds-text-heading--small"><b>Notes: </b>{!onboardingOpp.Description}</p><br/>
+                                                
+                                                
+                                            </div>
+                                        </div>
+                                        <apex:actionRegion rendered="{!If(onboardingRecord.Product__c == 'HR Solutions-Flex' && (onboardingRecord.Branch_Number__c == Null && onboardingRecord.New_Branch__c == Null),'true','false')}">
+                                            <p align="center"><font color="red">
+                                                <br/>Note: Branch number required for upload to sharepoint.  Click the 'Edit Information' button to enter the branch.
+                                                </font></p>
+                                        </apex:actionRegion> 
+                                        <p class="slds-text-heading--small" align="center"><b>Signed Documents and Additional Attachments</b></p>
+                                        <div class="slds-box">
+                                            <apex:relatedList subject="{!onboardingOpp}"  list="CombinedAttachments" />
+                                        </div>
+                                    </apex:actionRegion>
+                                </apex:outputPanel>
+                                
+                            </div>
+                        </div>
+                        <div class="slds-card"> 
+                            <apex:form >
+                                <!-- FSS UPDATE -->
+                                <apex:outputPanel id="showFields">
+                                    <apex:actionRegion rendered="{!fssUpdate}">
+                                        <div class="slds-box">
+                                            <div class="slds-grid">
+                                                <div class="slds-col--padded slds-size--1-of-3">
+                                                    <p class="slds-text-heading--small"><b>Company Name: </b>{!onboardingOpp.Account.Name}</p><br/>
+                                                    <p class="slds-text-heading--small"><b>Opportunity: </b>{!onboardingOpp.Name}</p><br/>
+                                                    <p class="slds-text-heading--small"><b>Sale Type: </b>{!onboardingRecord.Product__c}</p><br/>
+                                                    <apex:actionRegion rendered="{!IF(onboardingRecord.Product__c == 'HR Solutions-Flex', 'true', 'false')}">
+                                                        <p class="slds-text-heading--small"><b>Payroll Rep: </b>{!onboardingRecord.Payroll_Rep_Name__c}</p><br/>
+                                                    </apex:actionRegion>
+                                                    <p class="slds-text-heading--small"><b>New or Existing Client: </b>{!onboardingRecord.New_Existing__c}</p><br/>
+                                                    <p class="slds-text-heading--small"><b>Payroll Frequency: </b><apex:inputField value="{!onboardingOpp.Account.Frequency__c}"/></p><br/>
+                                                    <p class="slds-text-heading--small"><b>Notes:<br/> </b><apex:inputField value="{!onboardingOpp.Description}"/></p><br/>
+                                                </div>
+                                                <div class="slds-col--padded slds-size--1-of-3">
+                                                    <p class="slds-text-heading--small"><b>Employees Paid Per Payroll: </b><apex:inputField value="{!onboardingOpp.Employees_Paid_Per_Payroll__c}">
+                                                        <apex:actionSupport event="onchange" reRender="displayMPSC"/>
+                                                        </apex:inputField></p><br/>
+                                                    <p class="slds-text-heading--small"><b>Federal Id Number: </b><apex:inputField value="{!onboardingOpp.Account.Federal_ID_Number__c}"/></p><br/>
+                                                    <p class="slds-text-heading--small"><b>Company Contact: </b>
+                                                        <apex:selectList size="1" value="{!onboardingRecord.Company_Contact__c}">
+                                                            <apex:selectOptions value="{!Contacts}"/>                                        
+                                                        </apex:selectList>
+                                                    </p><br/>
+                                                    <p class="slds-text-heading--small"><b>Authorized Officer: </b>
+                                                        <apex:selectList size="1" value="{!onboardingRecord.Authorize_Officer__c}">
+                                                            <apex:selectOptions value="{!Contacts}"/>                                        
+                                                        </apex:selectList>
+                                                    </p><br/>
+                                                    <apex:actionRegion rendered="{!IF(onboardingRecord.Product__c == 'HR Solutions-Flex' || onboardingRecord.Product__c == 'HR Solutions for Non-Payroll', 'true', 'false')}">
+                                                        <p class="slds-text-heading--small"><b>First Run Date: </b><apex:inputField style="width: 125px;" value="{!onboardingRecord.Run_Date__c}"/></p><br/>
+                                                        <p class="slds-text-heading--small"><b>HR Generalist: </b><apex:inputField style="width: 175px;" value="{!onboardingRecord.HR_Genralist__c}"/></p><br/>
+                                                    </apex:actionRegion>
+                                                    <apex:actionRegion rendered="{!IF(onboardingRecord.Product__c == 'HR Solutions-Flex', 'true', 'false')}">
+                                                        <p class="slds-text-heading--small"><b>First Check Date: </b><apex:inputField style="width: 125px;" value="{!onboardingRecord.First_Check_Date__c}"/></p><br/>
+                                                    </apex:actionRegion>
+                                                    <apex:actionRegion rendered="{!onboardingRecord.Multi_ID__c}">
+                                                        <p class="slds-text-heading--small"><b>Total Number of Employees: </b><apex:inputField style="width: 125px;" value="{!onboardingRecord.Total_Num_EE__c}"/></p><br/>
+                                                    </apex:actionRegion>
+                                                </div>
+                                                <div class="slds-col--padded slds-size--1-of-3">
+                                                    <apex:actionRegion rendered="{!IF(onboardingRecord.Product__c == 'HR Solutions-Flex' && onboardingOpp.Employees_Paid_Per_Payroll__c >= 50, 'true', 'false')}">
+                                                        <p class="slds-text-heading--small"><b>Multi Product Service Center: </b><apex:inputField value="{!onboardingRecord.MultiProdServiceCenter__c}"/></p><br/>
+                                                    </apex:actionRegion>
+                                                    <apex:actionRegion rendered="{!IF(onboardingRecord.Product__c == 'HR Solutions-Flex' && onboardingOpp.Employees_Paid_Per_Payroll__c < 50, 'true', 'false')}">
+                                                        <p class="slds-text-heading--small"><b>Branch Number: </b><apex:inputField value="{!onboardingRecord.Branch_Number__c}"/></p><br/>
+                                                    </apex:actionRegion>
+                                                    <apex:actionRegion rendered="{!if(onboardingRecord.Product__c == 'HR Solutions-Flex' && onboardingRecord.New_Existing__c =='Existing Paychex Client','true','false')}">
+                                                        <p class="slds-text-heading--small"><b>Previous Client Platform: </b>{!onboardingRecord.Previous_Platform__c}</p><br/>
+                                                        <apex:actionRegion rendered="{!If(onboardingOpp.Employees_Paid_Per_Payroll__c < 50,'true','false')}">
+                                                            <p class="slds-text-heading--small"><b>New Branch Number: </b>
+                                                                <apex:inputField style="width: 300px; slds-text-heading_medium" value="{!onboardingRecord.New_Branch__c}"/>
+                                                            </p><br/>
+                                                        </apex:actionRegion>
+                                                    </apex:actionRegion>
+                                                    <p class="slds-text-heading--small"><b>Client Number: </b><apex:inputField value="{!onboardingRecord.Client_Number__c}"/></p><br />
+                                                    <p class="slds-text-heading--small"><b>Client Email: </b><apex:inputField value="{!onboardingOpp.Account.Email__c}"/></p><br/>
+                                                    <p class="slds-text-heading--small"><b>Client Telephone: </b><apex:inputField value="{!onboardingOpp.Account.Phone}"/></p><br/>
+                                                    <p class="slds-text-heading--small"><b>Preferred Contact Method: </b><apex:inputField value="{!onboardingRecord.Preferred_Contact_Method__c}"/></p><br/>
+                                                    <p class="slds-text-heading--small"><b>Billing Address: </b><br/><apex:inputField value="{!onboardingOpp.Account.BillingStreet}"/></p><br />
+                                                    <p class="slds-text-heading--small"><b>Billing City: </b><br/><apex:inputField value="{!onboardingOpp.Account.BillingCity}"/></p><br />
+                                                    <p class="slds-text-heading--small"><b>Billing State: </b><br/><apex:inputField value="{!onboardingOpp.Account.BillingState}"/></p><br />
+                                                    <p class="slds-text-heading--small"><b>Billing Zip: </b><br/><apex:inputField value="{!onboardingOpp.Account.BillingPostalCode}"/></p><br />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </apex:actionRegion>
+                                </apex:outputPanel>
+                                <div class="slds-box" align="center">
+                                    <apex:outputPanel id="displayButton">
+                                        <apex:actionRegion >
+                                            <apex:actionRegion rendered="{!IF(onboardingRecord.SubmissionDate__c != Null, 'true', 'false')}">
+                                                <p class="slds-text-heading--small"><font color ="red">Submitted On: <apex:outputText value="{0,date,MM/dd/yyyy}"><apex:param value="{!onboardingRecord.SubmissionDate__c}" /></apex:outputText> by {!onboardingRecord.Submitter__c} </font></p><br/>
+                                            </apex:actionRegion>
+                                            <apex:commandButton rendered="{!IF(fssUpdate, 'true', 'false')}" value="Save Changes" action="{!FSSChanges}" />
+                                            <apex:commandButton rendered="{!IF(fssUpdate, 'false', 'true')}" value="Edit Information" action="{!UpdateInformationFSS}" reRender="showFields,hideFields,displayButton" />
+                                            <apex:commandButton value="Upload to SharePoint" rendered="{!(displaySPUpload && (!fssUpdate && fssValid))}" onclick="uploadConfirmation()" action="{!SharePointUpload}" />
+                                            <apex:commandButton value="View Summary" onclick=" window.open('/apex/OnboardingPDF?id={!onboardingOpp.Id}','_blank','height=800,width=800')" action="{!saveSummary}"/>
+                                            <!-- <apex:commandButton value="Send to HRG Service Team"  action="{!EmailHRGServiceTeam}" /> -->
+                                            
+                                            <!-- Add new button here for US6 -->
+                                        </apex:actionRegion>
+                                    </apex:outputPanel>
+                                </div>
+                            </apex:form>
+                        </div>
+                    </apex:actionRegion>
+                </apex:outputPanel>
+            </div> 
+            
+        </body>        
+    </html>
+</apex:page>

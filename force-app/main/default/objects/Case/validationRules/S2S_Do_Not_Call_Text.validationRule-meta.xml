@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>S2S_Do_Not_Call_Text</fullName>
+    <active>true</active>
+    <description>Records for requested Do Not Contact/Text must have a phone number</description>
+    <errorConditionFormula>AND( RecordType.Name =&apos;Sales Support Cases Record Type&apos;, ISPICKVAL(Type,&apos;Do Not Contact&apos;),OR(ISPICKVAL(Sub_Type__c,&apos;Do Not Call&apos;),ISPICKVAL(Sub_Type__c,&apos;Text Opt Out&apos;)),
+NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+OR(
+   AND(NOT(ISBLANK(ContactId)),ISBLANK(Contact.Phone),ISBLANK(Contact.MobilePhone),ISBLANK(Contact.OtherPhone)),
+   AND(NOT(ISBLANK(Lead__c)),ISBLANK(Lead__r.Phone),ISBLANK(Lead__r.MobilePhone))))</errorConditionFormula>
+    <errorMessage>Records for requested Do Not Contact/Text must have a phone number</errorMessage>
+</ValidationRule>

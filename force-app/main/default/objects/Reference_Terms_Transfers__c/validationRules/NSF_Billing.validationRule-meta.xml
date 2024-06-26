@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NSF_Billing</fullName>
+    <active>true</active>
+    <description>If &quot;Type of 401k NSF&quot; is &quot;Billing&quot;, then &quot;401k NSF Amount - Billing&quot; and &quot;Billing NSF Alert Date&quot; is required.</description>
+    <errorConditionFormula>ISPICKVAL( Type_of_NSF__c , &quot;Billing&quot;)&amp;&amp;
+(
+ ISBLANK(  Outstanding_401_k_NSF_Amount_Billing__c  ) ||
+ ISBLANK( Outstanding_Billing_NSF_Alert_Date__c )
+)&amp;&amp;
+(
+NOT( ISPICKVAL( Switch_to_Participant_Asset_Billing__c , &quot;Yes&quot;))||
+NOT( ISPICKVAL( Switch_to_Participant_Asset_Billing__c , &quot;No&quot;))||
+NOT( ISPICKVAL(  Cancelled_Plan_Due_to_NSF_R_coded__c  , &quot;Yes&quot;))||
+NOT( ISPICKVAL( Cancelled_Plan_Due_to_NSF_R_coded__c  , &quot;No&quot;))
+)</errorConditionFormula>
+    <errorMessage>If the NSF type is &quot;Billing&quot; you must enter a value in the &quot;401k NSF Amount - Billing&quot; and &quot;Billing NSF Alert Date&quot; fields</errorMessage>
+</ValidationRule>

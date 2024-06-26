@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Referral_Task_Outcome_Required</fullName>
+    <active>true</active>
+    <description>Outcome is required when completing this task</description>
+    <errorConditionFormula>AND( 
+NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)), 
+OR($RecordType.Name = &apos;Telemarketing Task&apos;,$RecordType.Name = &apos;Referral Source Telemarketing Task&apos;,$RecordType.Name =&apos;CPA Webinar Follow Up&apos;,$RecordType.Name = &apos;Multi-Touch Campaign&apos;), 
+ISPICKVAL(Status,&apos;Completed&apos;), 
+ISBLANK(TEXT(Outcome__c)))</errorConditionFormula>
+    <errorDisplayField>Outcome__c</errorDisplayField>
+    <errorMessage>Outcome is required when completing this task</errorMessage>
+</ValidationRule>

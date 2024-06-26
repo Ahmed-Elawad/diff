@@ -1,0 +1,66 @@
+<apex:page controller="reportManagerController">
+
+    <script>
+        var newWin=null;
+        function openLookupPopup(name)
+        {
+            var url="/apex/ListOfReports?namefield=" + name;
+            newWin=window.open(url, 'Popup','height=500,width=600,left=100,top=100,resizable=no,scrollbars=yes,toolbar=no,status=no');
+            if (window.focus) 
+            {
+                newWin.focus();
+            }
+                
+            return false;
+        }
+                      
+        function closeLookupPopup()
+        {
+           if (null!=newWin)
+           {
+              newWin.close();
+           }  
+        }
+    </script>
+<!-- 
+    <apex:form id="reportForm">
+  
+        <apex:pageBlock title="Please insert report name" mode="edit">
+        
+            <apex:pageMessages id="showmsg"></apex:pageMessages>
+        
+            
+            <apex:pageBlockSection columns="2" >
+            
+                <apex:pageblockSectionItem > 
+                    <apex:outputPanel >
+                        
+                        <apex:inputText size="40" id="targetName" label="Report" value="{!reportName}" /><a href="#" onclick="openLookupPopup('{!$Component.targetName}'); return false">Lookup</a>                    
+                        <apex:actionSupport event="onchange"
+                                action="{!refreshName}" />
+
+                    </apex:outputPanel>
+
+                </apex:pageblockSectionItem>    
+
+        
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Record Count:"></apex:outputLabel> 
+                    <apex:outputText id="recordCount" value="{!recordCount}"></apex:outputText> 
+                </apex:pageBlockSectionItem>
+       
+                   
+            </apex:pageBlockSection>
+            
+    
+            <apex:pageBlockButtons location="bottom" >
+                <apex:commandButton id="submitButton" value="Next..." action="{!SearchItems}" rendered="{!recordCount>0}"/>
+            </apex:pageBlockButtons> 
+                
+    
+        </apex:pageBlock>
+        
+    </apex:form>
+  
+-->     
+</apex:page>

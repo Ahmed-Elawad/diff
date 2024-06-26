@@ -1,0 +1,198 @@
+<aura:component controller="CompetitiveIntelligenceController"  implements="flexipage:availableForAllPageTypes,lightning:isUrlAddressable,force:hasRecordId,force:appHostable" access="global">
+    <aura:handler name='init' value='{!this}' action='{!c.init}' />
+
+    <aura:attribute name="label" type="String" />
+    <aura:attribute name="objectApiName" type="String" />
+    <aura:attribute name="idFieldApiName" type="String" />
+    <aura:attribute name="valueFieldApiName" type="String" />
+    <aura:attribute name="extendedWhereClause" type="String" />
+    <aura:attribute name="maxRecords" type="Integer" default="50"/>
+    <aura:attribute name='disable' type='boolean' default='false' />
+    <aura:attribute name='disableButton' type='boolean' default='false' />
+    <aura:attribute name='optionSelected' type='boolean' default='false' />
+    <aura:attribute name='containsPrimary' type='boolean' default='false' />
+    <aura:attribute name='saved' type='boolean' default='true' />
+    <aura:attribute name='recordId' type='String' />
+    <!-- <aura:attribute name="selectedCompetitor" type="Competitive_Intelligence_Selection__c" default="{ 'sobjectType': 'Competitive_Intelligence_Selection__c' }"/> -->
+    <aura:attribute name="selectedCompetitor" type="Competitor__c" default="{ 'sobjectType': 'Competitor__c' }"/>
+    <aura:attribute name="results" type="List" />
+
+    
+    <aura:attribute name="openDropDown" type="Boolean" default="false" />
+    <aura:attribute name="selectedOption" type="String" />
+    <aura:attribute name="selectedOptions" type="List" />
+    <aura:attribute name="selectedOptionsText" type="List" />
+    <aura:attribute name="selectedOptionsText2" type="List" />
+    <aura:attribute name="selectedCompetitors" type="List" />
+
+    
+    <aura:attribute name="queryFilter" type="List" />
+    <aura:attribute name="selectedNamesView" type="List" />
+    
+
+    <aura:attribute name="inputValue" type="String" />
+    <aura:attribute name="newCompName" type="String" />
+    <aura:attribute name="inputSearchFunction" type="Object" />
+    <aura:attribute name='emptyResult' type='Boolean' default='false' />
+    <aura:attribute name='allSelected' type='Boolean' default='false' />
+    <aura:attribute name='selectedNotSaved' type='Boolean' default='false' />
+    <aura:attribute name='manualEntryNameNotEntered' type='Boolean' default='false' />
+    <aura:attribute name='allowInlineSave' type='Boolean' default='false' />
+    <aura:attribute name='showNameInput' type='Boolean' default='false' />
+
+
+    <lightning:card title="{!v.allowInlineSave ? 'Search Competition' : ''}" >
+        <!-- Primary Competition field search box -->
+        <div class="slds-form-element">
+            <label class="slds-form-element__label" for="combobox-id-21"
+                   style="{! empty(v.label) ? 'display:hidden;' : 'display:block;'}">{!v.label}</label>
+            <div class="{! v.openDropDown ? 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open' : 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click'}"
+                 aria-expanded="true" aria-haspopup="listbox" role="combobox">
+                <div class="slds-form-element slds-form-element_edit slds-input-has-icon slds-input-has-icon_right" role="none">
+                    <input aura:id='naicsInput' type="text" onchange='{!c.updateInput}' disabled="{!v.disable}"
+                           class="slds-input slds-combobox__input slds-has-focus slds-combobox__input-value"
+                           id="combobox-id-21" aria-autocomplete="list" aria-controls="listbox-id-11"
+                           autoComplete="off" onkeyup="{!c.searchHandler}" role="textbox" placeholder="Search..."
+                           value="{!v.inputValue}" />
+                   
+                    <aura:if isTrue="{! empty(v.selectedOption)}">
+                        <span
+                              class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
+                            <lightning:icon iconName="utility:search" size="x-small" />
+                        </span>
+                        <aura:set attribute="else">
+                            <button class="slds-button slds-button_icon slds-input__icon slds-input__icon_right"
+                                    title="Clear the text input" onclick="{!c.clearOption}">
+                                <lightning:icon iconName="utility:clear" size="x-small" />
+                            </button>
+                        </aura:set>
+                    </aura:if>
+                </div>
+                <aura:if isTrue="{! v.showNameInput}">
+                    <div class="slds-form-element slds-form-element_edit slds-input-has-icon slds-input-has-icon_right">
+                        <input aura:id='naicsInput' type="text" onchange='{!c.newCompNamehandler}' 
+                           class="slds-input slds-combobox__input slds-has-focus slds-combobox__input-value"
+                           id="combobox-id-21" aria-autocomplete="list" aria-controls="listbox-id-11"
+                           autoComplete="off"  role="textbox" placeholder="Enter Competitors Name..."
+                           value="{!v.newCompName}" />
+                           
+                           <lightning:button 
+                           class="slds-m-top_small" 
+                           variant="brand" 
+                           type="Submit" 
+                           name="Save_Competition" 
+                           label="Add Competitor Name" 
+                           onclick="{!c.addLostClientOrNotListed}" />                    
+                        </div>
+                </aura:if>
+                <aura:if isTrue='{!v.emptyResult}'>
+                    <span  class="slds-text-color_error">No competitors found for the provided entry. Please try another value</span>
+                </aura:if>
+                <aura:if isTrue='{!v.allSelected}'>
+                    <span  class="slds-text-color_error">All competitors saved. Please remove a competitor to replace it with another</span>
+                </aura:if>
+                <aura:if isTrue='{!v.selectedNotSaved}'>
+                    <span  class="slds-text-color_error">All competitors selected. Please save your selection.</span>
+                </aura:if>
+                <aura:if isTrue='{!v.manualEntryNameNotEntered}'>
+                    <span  class="slds-text-color_error">Please enter a name for the competitor</span>
+                </aura:if>
+                <div id="listbox-id-11" class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid"
+                     role="listbox">
+                    <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                        <aura:iteration items="{!v.results}" var="result">
+                            <li role="presentation" class="slds-listbox__item" data-id="{!result.Id}"
+                                data-value="{!result.Name}" data-record="{!result.ManualEntry__c}" onclick="{!c.optionClickHandler}" >
+                                <div id="{!result.Id}"
+                                     class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small"
+                                     role="option">
+                                    <span class="slds-media__figure slds-listbox__option-icon"></span>
+                                    <span class="slds-media__body">
+                                        <span class="slds-truncate" title="Competitors">
+                                            <span>{!result.Name}</span>
+                                        </span>
+                                    </span>
+                                </div>
+                            </li>
+                        </aura:iteration>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <aura:if isTrue='{!v.allowInlineSave}'>
+            <div class="modal-footer slds-modal__footer slds-size_1-of-1 slds-p-">
+                <div>
+                    <aura:if isTrue="{! empty(v.selectedNamesView)}">
+                            <aura:set attribute="else">
+                                <div>
+                                    <div class="slds-text-align_center"><strong> Selected Competition:</strong></div>
+                                    <aura:iteration items="{!v.selectedNamesView}" indexVar="index" var="selectedOption">
+                                        
+                                    <div  data-id="{!index}"
+                                        data-value="{!selectedOption.Name}" class="slds-grid slds-gutters">
+                                       
+                                        <div  data-value="{!selectedOption.Name}" class="slds-col slds-size_2-of-4 slds-text-align_left">
+                                            <span class="slds-text-align_left">
+                                                {!selectedOption.Name}
+
+                                            </span>
+
+                                        </div>
+                                                <aura:if isTrue ="{!and(v.containsPrimary, not(selectedOption.Primary__c))}" >
+                                                    <div  data-value="{!selectedOption.Name}" class="slds-col slds-size_1-of-4 slds-text-align_left">
+                                                        <span class="slds-text-align_center">
+                                                            <lightning:button variant="Base" onclick="{!c.changetoPrimary}" label="Set As Primary"/>
+                                                        </span>
+                                                    </div>
+                                                    <aura:set attribute="else">
+                                                        <aura:if isTrue="{!and(v.containsPrimary, selectedOption.Primary__c) }">
+                                                            <div  data-value="{!selectedOption.Name}" class="slds-col slds-size_1-of-4 slds-text-align_left">
+                                                            <span class="slds-text-align_center">
+                                                                Primary 
+                                                            </span>
+                                                        </div>
+                                                            <aura:set attribute="else">
+                                                                <div  data-value="{!selectedOption.Name}" class="slds-col slds-size_1-of-4">
+                                                                    <span class="slds-text-align_center">
+                                                                         
+                                                                    </span>
+                                                                </div>
+                                                            </aura:set>
+                                                        </aura:if>
+                                                        
+                                                    </aura:set>
+                                                </aura:if>
+                                                <div  data-value="{!selectedOption.Name}" class="slds-col slds-size_1-of-4">
+                                                    <span class="slds-text-align_right">
+                                                        <lightning:button variant="Base" onclick="{!c.remove}" label="Remove"/>
+        
+                                                    </span>
+                                                </div>
+                                      
+                                            
+                                        </div>
+                                    </aura:iteration>
+                                </div>
+                        </aura:set>
+                    </aura:if>
+                </div>
+                <div class="slds-text-align_center"> 
+                    <lightning:button disabled="{! or(v.disableButton, v.emptyResult) }"
+                    class="slds-m-top_small" 
+                    variant="brand" 
+                    type="Submit" 
+                    name="Save_Competition" 
+                    label="Save Competition" 
+                    onclick="{!c.save}" />
+                    <span class="exampleHolder">
+                        <aura:if isTrue="{! not(v.saved)}">
+                            <lightning:spinner alternativeText="Loading" />
+                        </aura:if>
+                    </span>
+                </div>
+                
+            </div>
+        </aura:if>
+    </lightning:card>
+</aura:component>

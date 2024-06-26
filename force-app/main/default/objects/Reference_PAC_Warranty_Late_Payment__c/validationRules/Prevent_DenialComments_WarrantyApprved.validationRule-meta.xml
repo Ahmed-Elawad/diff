@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_DenialComments_WarrantyApprved</fullName>
+    <active>true</active>
+    <description>Prevent users from populating the Denial Comments field, when a picklist value other than &quot;Denied&quot; is chosen for the Warranty Approved? field.</description>
+    <errorConditionFormula>AND( 
+(NOT(LEN(Denial_Comments__c) = 0)), 
+(NOT(ISPICKVAL(Warranty_Approved__c, &apos;Denied&apos;)) )
+)</errorConditionFormula>
+    <errorDisplayField>Denial_Comments__c</errorDisplayField>
+    <errorMessage>Do not enter a value in the Denial Comment field, unless the the Warranty Approved? value of &quot;Denied&quot; is chosen.</errorMessage>
+</ValidationRule>

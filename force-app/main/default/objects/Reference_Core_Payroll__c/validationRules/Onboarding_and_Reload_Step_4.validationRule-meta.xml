@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Onboarding_and_Reload_Step_4</fullName>
+    <active>false</active>
+    <description>Fields are required for step 4</description>
+    <errorConditionFormula>AND(OR($RecordType.Name = &apos;MPSC Reload&apos;,$RecordType.Name = &apos;Reference MPSC Onboarding Core Payroll&apos;),NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+ISPICKVAL( Current_Step__c,&apos;(4 of 6) Audit complete – Ready to run payroll&apos;),
+OR(
+ISBLANK( Date_IS_Assigned__c ),
+Client_Load_Received__c=false,
+ISBLANK(Initial_Client_Contact_Date__c),
+ISBLANK(Date_Client_Load_Complete__c),
+ISBLANK(New_Load_Audit_Date__c),
+AND(
+NOT(ISPICKVAL(IS_Completed_open_Client_Audit_Items__c,&apos;NA&apos;)),
+NOT(ISPICKVAL(IS_Completed_open_Client_Audit_Items__c,&apos;Yes&apos;)))
+))</errorConditionFormula>
+    <errorMessage>For Current Step 4 of 6, all required fields for Steps 1-3 must be populated plus New Load Audit Date and IS Completed Open Audit Items are required</errorMessage>
+</ValidationRule>

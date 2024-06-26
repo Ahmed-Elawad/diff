@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>NSS_Inbound_Date</fullName>
+        <description>populate todays date in NSS Inbound Date field</description>
+        <field>NSS_Inbound_Date__c</field>
+        <formula>today()</formula>
+        <name>NSS Inbound Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Todays Date in NSS Inbound Date</fullName>
+        <actions>
+            <name>NSS_Inbound_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Campaign.NSS_Inbound__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <description>when NSS Inbound is checked enter todays date in the NSS Inbound Date field</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

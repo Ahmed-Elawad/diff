@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>S125_NSF</fullName>
+    <active>true</active>
+    <description>If &quot;Type of S125 NSF&quot; is &quot;S125&quot;, then &quot;Date of S125 NSF Alert&quot; is required.</description>
+    <errorConditionFormula>ISPICKVAL(Type_of_S125_NSF__c , &quot;S125&quot;) &amp;&amp;
+(
+ ISBLANK( Date_of_S125_NSF_Alert__c ) || 
+ ISBLANK( Outstanding_S125_NSF_Amount__c ) 
+)</errorConditionFormula>
+    <errorMessage>If the Type of S125 NSF is &quot;S125&quot; then you must enter an amount in the Outstanding S125 NSF Amount field and a date in the Date of S125 NSF Alert field.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Call_Topic_or_HCategory_must_be_populate</fullName>
+    <active>true</active>
+    <description>If Product is selected, Call Topic or H_Category 1 must be populated.</description>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)),
+OR( RecordType.Name = &apos;Service Onboarding 401k Conversion&apos;,
+RecordType.Name = &apos;Service Onboarding 401k Large Market New Case&apos;,
+RecordType.Name = &apos;Service Onboarding 401k New Case&apos;,
+RecordType.Name = &apos;Service Onboarding ePlan Record Type&apos;,
+RecordType.Name = &apos;Service Onboarding RRS Record Type&apos;,
+RecordType.Name = &apos;Service Onboarding S125 New Case&apos;,
+RecordType.Name = &apos;Service Onboarding SEBS Record Type&apos;,
+RecordType.Name = &apos;Service Support 401k/S125 Case&apos;),
+NOT(ISPICKVAL(Product__c , &apos;&apos;) ), 
+ AND(ISPICKVAL(Call_Topic__c , &apos;&apos;), 
+ ISPICKVAL(HRS4SCategory1__c  , &apos;&apos;)))</errorConditionFormula>
+    <errorMessage>If a Product is selected, Call Topic or H_Category 1 must be populated.</errorMessage>
+</ValidationRule>

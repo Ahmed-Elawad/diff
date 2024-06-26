@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>GL_OnboardStatus_ApptSched_DateApptSched</fullName>
+    <active>true</active>
+    <description>When On Boarding Status = Appointment Scheduled, make Date of Scheduled Appointment required.</description>
+    <errorConditionFormula>ISPICKVAL( Appt_Set_Status__c   , &quot;Appointment Scheduled&quot;) &amp;&amp; ISBLANK(  Date_of_Scheduled_Appointment__c  )</errorConditionFormula>
+    <errorDisplayField>Date_of_Scheduled_Appointment__c</errorDisplayField>
+    <errorMessage>You must enter a date in the Date of Scheduled Appointment field if you choose the value of Appointment Scheduled in the On Boarding Status field.</errorMessage>
+</ValidationRule>

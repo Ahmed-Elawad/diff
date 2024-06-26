@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CadenceEmpsCheck</fullName>
+    <active>true</active>
+    <description>For an employee range, both Emps Min and Emps Max need a value.</description>
+    <errorConditionFormula>OR (AND( NOT(ISNULL( EmpsMin__c )), ISNULL(EmpsMax__c))
+  ,AND( ISNULL( EmpsMin__c ), NOT(ISNULL(EmpsMax__c))))</errorConditionFormula>
+    <errorDisplayField>EmpsMin__c</errorDisplayField>
+    <errorMessage>For an employee range, both Emps Min and Emps Max need a value.</errorMessage>
+</ValidationRule>

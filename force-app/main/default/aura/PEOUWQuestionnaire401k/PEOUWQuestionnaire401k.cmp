@@ -1,0 +1,492 @@
+<aura:component controller="Community401kController" implements="force:appHostable" access="global">
+    
+      <aura:registerEvent name="discrepancyEvt" type="c:markPeoUwFormDiscrepancy"/>
+    <!-- Added init to handle profile check to log discrepancy: ahmed -->
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    
+    <!--aura:handler name="init" value="{!this}" action="{!c.calculatePercentOwnership}" /-->
+    <aura:attribute name='formName' type='String' default='401K Questionnaire' />
+    
+    <!-- auto save attributes-->
+    <aura:registerEvent name='autoSave' type='c:CommunityFormsAutoSave' />
+    <aura:attribute name='autoSaveRecords' type='map' />
+    <aura:attribute name='saveAction' type='Object' />
+    
+    <!-- reference to save functionality -->
+    <aura:attribute name='saveFunc' type='Object' />
+    
+    <aura:attribute name="parentRecId" type="Id"/>
+    <aura:attribute name="PEOChecklist" type="Object"/>
+    <aura:attribute name="answersChanged" type="Boolean" default="false"/>
+    <aura:attribute name="readOnly" type="Boolean" default="true" />
+    <aura:attribute name="readOnlyString" type="String" default="" />
+    <aura:attribute name='radioGroupOptions' type='List' default="[{'label': 'Yes', 'value':'Yes'},{'label':'No','value':'No'}]" />
+    <aura:attribute name='communityUser' type='boolean' />
+    <aura:attribute name='user' type='User' />
+    <aura:attribute name='allowDiscLog' type='Boolean' /> 
+    <aura:attribute name='formSubmitted' type='boolean' default='false' />
+    <aura:attribute name='buttonLabel' type='String' />
+    <aura:attribute name='account' type='Account' />
+    <aura:attribute name='errMsg' type='String' />
+    <aura:attribute name='parentTabs' type='String[]' />
+    <aura:attribute name='ActiveParentTab' type='String'/>
+    <aura:attribute name='tabList' type='String[]' />
+    <aura:attribute name='selectedTab' type='String' />
+    <aura:attribute name="commUser" type="User"/>
+    <aura:attribute name='relatedFieldList' type='String[]' />
+    
+    <aura:html tag="style">
+        .cuf-content {
+        padding: 0 0rem !important;
+        }
+        .slds-p-around--medium {
+        padding: 0rem !important;
+        }       
+        .slds-modal__content{
+        overflow-y:hidden !important;
+        height:unset !important;
+        max-height:unset !important;
+        }
+    </aura:html>
+    
+    <lightning:tabset variant="scoped"  selectedTabId='{!v.selectedTab}'>
+        
+            <lightning:tab label="401(k)" id="401k">
+                <aura:if isTrue="{!greaterthan(v.readOnlyString.length, 1)}">
+                    <div style="width:100%">
+                        <ui:message title="Evaluation Status" severity="info" closable="false" >
+                            {!v.readOnlyString}
+                        </ui:message>
+                    </div>
+                </aura:if>
+                <div style="height: 10px"></div>
+                
+                <div class="slds-grid slds-gutters slds-wrap">
+                    <div class="slds-col slds-size_3-of-3" style="padding-bottom:25px">
+                        <div class='question'>Does your company offer a retirement plan?</div><br/>
+                        <lightning:radioGroup disabled='{!v.readOnly}' 
+                                              variant="label-hidden"
+                                              name='Does_company_offer_a_retirement_plan__c'
+                                              label="Does your company offer a retirement plan?"
+                                              options="{!v.radioGroupOptions}"
+                                              onchange="{!c.clearFields}" 
+                                              value="{!v.PEOChecklist.Does_company_offer_a_retirement_plan__c}"
+                                              />
+                        <span>
+                            <aura:if isTrue="{!v.PEOChecklist.Does_company_offer_a_retirement_plan__c == 'Yes'}">
+                                <div class='question'>Does your Company offer a MEP (Multiple Employer Plan) through your PEO?</div><br/>
+                                <lightning:radioGroup name='peo_plan_utilized_if_peo_previously_used__c'
+                                                      variant="label-hidden"
+                                                      label="Does your Company offer a MEP (Multiple Employer Plan) through your PEO?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      onchange="{!c.clearFields}" 
+                                                      value="{!v.PEOChecklist.peo_plan_utilized_if_peo_previously_used__c}"
+                                                      disabled='{!v.readOnly}' />
+                            </aura:if>
+                            <div class='question'>Do you work with a financial advisor for your retirement plan?</div><br/>
+                            <lightning:radioGroup disabled='{!v.readOnly}' 
+                                                  variant="label-hidden"
+                                                  name='Advisor_for_your_retirement_plan__c'
+                                                  label="Do you work with a financial advisor for your retirement plan?"
+                                                  options="{!v.radioGroupOptions}"
+                                                  onchange="{!c.clearFields}" 
+                                                  value="{!v.PEOChecklist.Advisor_for_your_retirement_plan__c}"
+                                                  />
+                            
+                        </span>
+                    </div>
+                    <aura:if isTrue="{!v.PEOChecklist.Advisor_for_your_retirement_plan__c == 'No'}">
+                        <div class="slds-col slds-size_3-of-3" style="padding-bottom:25px">
+                            <span>
+                                <div class='question'>Are you interested in working with a financial advisor?</div><br/>
+                                <lightning:radioGroup disabled='{!v.readOnly}' 
+                                                      variant="label-hidden"
+                                                      name='Interested_working_with_financial_ad__c'
+                                                      label="Are you interested in working with a financial advisor?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      onchange="{!c.handleChange}" 
+                                                      value="{!v.PEOChecklist.Interested_working_with_financial_ad__c}"
+                                                      />
+                                <!--lightning:input type="radio" disabled='{!v.readOnly}' label="Are you interested in working with a financial advisor?" value="{!v.PEOChecklist.Interested_working_with_financial_ad__c}" onchange="{!c.handleChange}" required="true" placeholder="Click or tap here to enter text."></lightning:input-->
+                            </span>
+                        </div>
+                    </aura:if>
+                    <div class="slds-col slds-size_3-of-3" style="padding-bottom:25px">
+                        <span>
+                            <div class='question'>Do you currently (or would you) provide a company contribution/match for your employees?</div><br/>
+                            <lightning:radioGroup disabled='{!v.readOnly}' 
+                                                  variant="label-hidden"
+                                                  name='Company_contribution_for_your_employees__c'
+                                                  label="Do you currently (or would you) provide a company contribution/match for your employees?"
+                                                  options="{!v.radioGroupOptions}"
+                                                  onchange="{!c.handleChange}" 
+                                                  value="{!v.PEOChecklist.Company_contribution_for_your_employees__c}"
+                                                  />
+                            <!--lightning:input type="radio" disabled='{!v.readOnly}' label="Do you currently (or would you) provide a company contribution/match for your employees?" value="{!v.PEOChecklist.Company_contribution_for_your_employees__c}" onchange="{!c.handleChange}" required="true" placeholder="Click or tap here to enter text."></lightning:input-->
+                        </span>
+                    </div>
+                    <div class="slds-col slds-size_3-of-3" style="padding-bottom:25px">
+                        <span>
+                            <div class='question'>Do you have a person in your organization who manages or would manage retirement benefits?</div><br/>
+                            <lightning:radioGroup  name='Manage_Retirement_Benefits__c'
+                                                  variant="label-hidden"
+                                                  label="Do you have a person in your organization who manages or would manage retirement benefits?"
+                                                  options="{!v.radioGroupOptions}"
+                                                  onchange="{!c.handleChange}" 
+                                                  value="{!v.PEOChecklist.Manage_Retirement_Benefits__c}"
+                                                  />
+                            <!--lightning:input type="radio" disabled='{!v.readOnly}' label="Do you have a person in your organization who manages or would manage retirement benefits?" value="{!v.PEOChecklist.Manage_Retirement_Benefits__c}" onchange="{!c.handleChange}" required="true" placeholder="Click or tap here to enter text." fieldLevelHelp="i.e. HR manager, office manager, owner etc" ></lightning:input-->
+                        </span>
+                    </div>
+                    <aura:if isTrue="{!v.PEOChecklist.Manage_Retirement_Benefits__c == 'Yes'}">
+                        <div class="slds-col slds-size_3-of-3" style="padding-bottom:25px">
+                            <span>
+                                <lightning:input  label="Position" 
+                                                 name='Position__c'
+                                                 value="{!v.PEOChecklist.Position__c}" 
+                                                 onchange="{!c.handleChange}" 
+                                                 placeholder="Click or tap here to enter text." 
+                                                 fieldLevelHelp="Please enter the personʼs position at your organization"></lightning:input>
+                            </span>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.PEOChecklist.Does_company_offer_a_retirement_plan__c == 'No'}">
+                        <div class="slds-col slds-size_3-of-3" style="padding-bottom:25px">
+                            <span>
+                                <lightning:input disabled='{!v.readOnly}' 
+                                                 label="No retirement plan explanation." 
+                                                 name='no_retierment_plan_explanation__c'
+                                                 value="{!v.PEOChecklist.no_retierment_plan_explanation__c}" 
+                                                 onchange="{!c.handleChange}" 
+                                                 placeholder="Click or tap here to enter text."></lightning:input>
+                            </span>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.PEOChecklist.Does_company_offer_a_retirement_plan__c == 'Yes'}">
+                        <div class="slds-col slds-size_3-of-3" style="padding-bottom:25px">
+                            <span>
+                                <lightning:input disabled='{!v.readOnly}' 
+                                                 name='Who_is_your_retirement_plan_provider__c'
+                                                 label="Who is your retirement plan provider?" 
+                                                 value="{!v.PEOChecklist.Who_is_your_retirement_plan_provider__c}" 
+                                                 onchange="{!c.handleChange}" 
+                                                 placeholder="Click or tap here to enter text."></lightning:input>
+                            </span>
+                        </div>
+                        <aura:if isTrue="{!and(v.PEOChecklist.Who_is_your_retirement_plan_provider__c != 'Paychex', v.PEOChecklist.Who_is_your_retirement_plan_provider__c != 'paychex')}">
+                            <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                                <span>
+                                    <lightning:input disabled='{!v.readOnly}' 
+                                                     name='retirment_plan_kind__c'
+                                                     label="Retirement Plan Type"
+                                                     value="{!v.PEOChecklist.retirment_plan_kind__c}" 
+                                                     onchange="{!c.handleChange}" 
+                                                     placeholder="Click or tap here to enter text."></lightning:input>
+                                </span>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                                <span>
+                                    <lightning:input disabled='{!v.readOnly}' 
+                                                     name='total_asset_size_of_retierment_plan__c'
+                                                     label="Total asset size of retirement plan" 
+                                                     value="{!v.PEOChecklist.total_asset_size_of_retierment_plan__c}" 
+                                                     onchange="{!c.handleChange}" 
+                                                     type="number" 
+                                                     placeholder="Click or tap here to enter text."></lightning:input>
+                                </span>
+                            </div>
+                           <!-- <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                                <span>
+                                    <div class='question'>PEO plan utilized if PEO previously used</div><br/>
+                                    <lightning:radioGroup name='peo_plan_utilized_if_peo_previously_used__c'
+                                                          variant="label-hidden"
+                                                          label="PEO plan utilized if PEO previously used"
+                                                          options="{!v.radioGroupOptions}"
+                                                          onchange="{!c.clearFields}" 
+                                                          value="{!v.PEOChecklist.peo_plan_utilized_if_peo_previously_used__c}"
+                                                          disabled='{!v.readOnly}' />
+                                </span>
+                            </div> -->
+                            <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                                <span>
+                                    <lightning:input disabled='{!v.readOnly}' 
+                                                     name='request_for_changes_to_peo_plan_used__c'
+                                                     label="Was there anything you would change about your plan?" 
+                                                     value="{!v.PEOChecklist.request_for_changes_to_peo_plan_used__c}" 
+                                                     onchange="{!c.handleChange}" 
+                                                     placeholder="Click or tap here to enter text."></lightning:input>
+                                </span>
+                            </div>
+                        </aura:if>
+                    </aura:if>
+                </div>
+            </lightning:tab>
+       
+        
+        <lightning:tab label="Other Products" id="Other">
+            <div class="modal-header slds-modal__header slds-size_1-of-1">
+                <h4 class="title slds-text-heading--medium">Other Products</h4>
+            </div>
+            <aura:if isTrue="{!greaterthan(v.readOnlyString.length, 1)}">
+                <div style="width:100%">
+                    <ui:message title="Evaluation Status" severity="info" closable="false" >
+                        {!v.readOnlyString}
+                    </ui:message>
+                </div>
+            </aura:if>
+            <div style="height: 10px"></div>
+            
+            <div class="slds-grid slds-gutters slds-wrap">
+                <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                    <span>
+                        <div class='question'>Do you offer a Flex Spending Account today?</div><br/>
+                        <lightning:radioGroup name='Do_you_offer_a_Flex_Spending_Account__c'
+                                              variant="label-hidden"
+                                              label="Do you offer a Flex Spending Account today?"
+                                              options="{!v.radioGroupOptions}"
+                                              onchange="{!c.clearFields}" 
+                                              value="{!v.PEOChecklist.Do_you_offer_a_Flex_Spending_Account__c}"
+                                              disabled='{!v.readOnly}' />
+                    </span>
+                </div>
+                <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                    <aura:if isTrue="{!v.PEOChecklist.Do_you_offer_a_Flex_Spending_Account__c == 'No'}">
+                        <span>
+                            <div class='question'>Are you interested in offering a Flex Spending Account?</div><br/>
+                            <lightning:radioGroup name='Interested_in_Flex_Spending_Account__c'
+                                                  variant="label-hidden"
+                                                  label="Are you interested in offering a Flex Spending Account?"
+                                                  options="{!v.radioGroupOptions}"
+                                                  onchange="{!c.clearFields}" 
+                                                  value="{!v.PEOChecklist.Interested_in_Flex_Spending_Account__c}"
+                                                  disabled='{!v.readOnly}' />
+                        </span>
+                    </aura:if>
+                </div>
+                
+                
+                <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                    <span>
+                        <div class='question'>Do you offer short term disability?</div><br/>
+                        <lightning:radioGroup name='Do_you_offer_short_term_disability__c'
+                                              variant="label-hidden"
+                                              label="Do you offer short term disability?"
+                                              options="{!v.radioGroupOptions}"
+                                              onchange="{!c.clearFields}" 
+                                              value="{!v.PEOChecklist.Do_you_offer_short_term_disability__c}"
+                                              disabled='{!v.readOnly}' />
+                    </span>
+                </div>
+                <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                    <aura:if isTrue="{!v.PEOChecklist.Do_you_offer_short_term_disability__c == 'No'}">
+                        <span>
+                            <div class='question'>Are you interested in offering STD?</div><br/>
+                            <lightning:radioGroup name='Are_you_interested_in_offering_STD__c'
+                                                  variant="label-hidden"
+                                                  label="Are you interested in offering STD?"
+                                                  options="{!v.radioGroupOptions}"
+                                                  onchange="{!c.clearFields}" 
+                                                  value="{!v.PEOChecklist.Are_you_interested_in_offering_STD__c}"
+                                                  disabled='{!v.readOnly}' />
+                        </span>
+                    </aura:if>
+                </div>
+                
+                <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                    <span>
+                        <div class='question'>Do you offer long term disability?</div><br/>
+                        <lightning:radioGroup name='Do_you_offer_long_term_disability__c'
+                                              variant="label-hidden"
+                                              label="Do you offer long term disability?"
+                                              options="{!v.radioGroupOptions}"
+                                              onchange="{!c.clearFields}" 
+                                              value="{!v.PEOChecklist.Do_you_offer_long_term_disability__c}"
+                                              disabled='{!v.readOnly}' />
+                    </span>
+                </div>
+                <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                    <aura:if isTrue="{!v.PEOChecklist.Do_you_offer_long_term_disability__c == 'No'}">
+                        <span>
+                            <div class='question'>Are you interested in offering LTD?</div><br/>
+                            <lightning:radioGroup name='Are_you_interested_in_offering_LTD__c'
+                                                  variant="label-hidden"
+                                                  label="Are you interested in offering LTD?"
+                                                  options="{!v.radioGroupOptions}"
+                                                  onchange="{!c.clearFields}" 
+                                                  value="{!v.PEOChecklist.Are_you_interested_in_offering_LTD__c}"
+                                                  disabled='{!v.readOnly}' />
+                        </span>
+                    </aura:if>
+                </div>
+                
+                
+                <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                    <span>
+                        <div class='question'>Do you offer Life Insurance?</div><br/>
+                        <lightning:radioGroup name='Do_you_offer_Life_Insurance__c'
+                                              variant="label-hidden"
+                                              label="Do you offer Life Insurance?"
+                                              options="{!v.radioGroupOptions}"
+                                              onchange="{!c.clearFields}" 
+                                              value="{!v.PEOChecklist.Do_you_offer_Life_Insurance__c}"
+                                              disabled='{!v.readOnly}' />
+                    </span>
+                </div>
+                <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                    <aura:if isTrue="{!v.PEOChecklist.Do_you_offer_Life_Insurance__c == 'No'}">
+                        <span>
+                            <div class='question'>Are you interested in offering Life Insurance?</div><br/>
+                            <lightning:radioGroup name='Interested_in_offering_Life_Insurance__c'
+                                                  variant="label-hidden"
+                                                  label="Are you interested in offering Life Insurance?"
+                                                  options="{!v.radioGroupOptions}"
+                                                  onchange="{!c.clearFields}" 
+                                                  value="{!v.PEOChecklist.Interested_in_offering_Life_Insurance__c}"
+                                                  disabled='{!v.readOnly}' />
+                        </span>
+                    </aura:if>
+                </div>
+                
+                
+                <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                    <span>
+                        <div class='question'>Do you offer Dental Insurance?</div><br/>
+                        <lightning:radioGroup name='Has_current_dental_carrier__c'
+                                              variant="label-hidden"
+                                              label="Do you offer Dental Insurance?"
+                                              options="{!v.radioGroupOptions}"
+                                              onchange="{!c.clearFields}" 
+                                              value="{!v.PEOChecklist.Has_current_dental_carrier__c}"
+                                              disabled='{!v.readOnly}' />
+                    </span>
+                </div>
+                <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                    <aura:if isTrue="{!v.PEOChecklist.Has_current_dental_carrier__c == 'No'}">
+                        <span>
+                            <div class='question'>Are you interested in offering Dental Insurance?</div><br/>
+                            <lightning:radioGroup name='Interested_in_dental__c'
+                                                  variant="label-hidden"
+                                                  label="Are you interested in offering Dental Insurance?"
+                                                  options="{!v.radioGroupOptions}"
+                                                  onchange="{!c.clearFields}" 
+                                                  value="{!v.PEOChecklist.Interested_in_dental__c}"
+                                                  disabled='{!v.readOnly}' />
+                        </span>
+                    </aura:if>
+                    <aura:if isTrue="{!v.PEOChecklist.Has_current_dental_carrier__c == 'Yes'}">
+                        <!--<span>
+                            <div class='question'>Who is your current carrier?</div><br/>
+                            <lightning:radioGroup name='Who_is_your_Current_Dental_Carrier__c'
+                                                  variant="label-hidden"
+                                                  label="Who is your current carrier?"
+                                                  options="{!v.radioGroupOptions}"
+                                                  onchange="{!c.clearFields}" 
+                                                  value="{!v.PEOChecklist.Who_is_your_Current_Dental_Carrier__c}"
+                                                  disabled='{!v.readOnly}' />
+                        </span> -->
+                        <span>
+                            <div class='question'>Who is your current carrier?</div><br/>
+                            <lightning:input disabled='{!v.readOnly}' 
+                                             variant='label-hidden'
+                                             name='Who_is_your_Current_Dental_Carrier__c'
+                                             label="Who is your current carrier?" 
+                                             value="{!v.PEOChecklist.Who_is_your_Current_Dental_Carrier__c}" 
+                                             onchange="{!c.clearFields}" 
+                                             placeholder="Click or tap here to enter text."></lightning:input>
+                        </span>
+                    </aura:if>
+                </div>
+                
+                <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                    <span>
+                        <div class='question'>Do you offer Vision Insurance?</div><br/>
+                        <lightning:radioGroup name='has_current_Vision_Carrier__c'
+                                              variant="label-hidden"
+                                              label="Do you offer Vision Insurance?"
+                                              options="{!v.radioGroupOptions}"
+                                              onchange="{!c.clearFields}" 
+                                              value="{!v.PEOChecklist.has_current_Vision_Carrier__c}"
+                                              disabled='{!v.readOnly}' />
+                    </span>
+                </div>
+                <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                    <aura:if isTrue="{!v.PEOChecklist.has_current_Vision_Carrier__c == 'No'}">
+                        <span>
+                            <div class='question'>Are you interested in offering Vision Insurance?</div><br/>
+                            <lightning:radioGroup name='interested_in_Vision__c'
+                                                  variant="label-hidden"
+                                                  label="Are you interested in offering Vision Insurance?"
+                                                  options="{!v.radioGroupOptions}"
+                                                  onchange="{!c.clearFields}" 
+                                                  value="{!v.PEOChecklist.interested_in_Vision__c}"
+                                                  disabled='{!v.readOnly}' />
+                        </span>
+                    </aura:if>
+                    <aura:if isTrue="{!v.PEOChecklist.has_current_Vision_Carrier__c == 'Yes'}">
+                        <!--<span>
+                            <div class='question'>Who is your current carrier?</div><br/>
+                            <lightning:radioGroup name='Who_is_your_Current_Vision_Carrier__c'
+                                                  variant="label-hidden"
+                                                  label="Who is your current carrier?"
+                                                  options="{!v.radioGroupOptions}"
+                                                  onchange="{!c.clearFields}" 
+                                                  value="{!v.PEOChecklist.Who_is_your_Current_Vision_Carrier__c}"
+                                                  disabled='{!v.readOnly}' />
+                        </span> -->
+                        <span>
+                            <div class='question'>Who is your current carrier?</div><br/>
+                            <lightning:input disabled='{!v.readOnly}' 
+                                             variant='label-hidden'
+                                             name='Who_is_your_Current_Vision_Carrier__c'
+                                             label="Who is your current carrier?" 
+                                             value="{!v.PEOChecklist.Who_is_your_Current_Vision_Carrier__c}" 
+                                             onchange="{!c.clearFields}" 
+                                             placeholder="Click or tap here to enter text."></lightning:input>
+                        </span>
+                    </aura:if>
+                </div>
+                
+                <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                    <span>
+                        <div class='question'>Are you currently using a timekeeping system to track hours?</div><br/>
+                        <lightning:radioGroup name='Using_a_timekeeping_system__c'
+                                              variant="label-hidden"
+                                              label="Are you currently using a timekeeping system to track hours?"
+                                              options="{!v.radioGroupOptions}"
+                                              onchange="{!c.clearFields}" 
+                                              value="{!v.PEOChecklist.Using_a_timekeeping_system__c}"
+                                              disabled='{!v.readOnly}' />
+                    </span>
+                </div>
+                <div class="slds-col slds-size_1-of-2" style="padding-bottom:25px">
+                    <aura:if isTrue="{!v.PEOChecklist.Using_a_timekeeping_system__c == 'No'}">
+                        <span>
+                            <div class='question'>Are you interested in using a timekeeping system to track hours?</div><br/>
+                            <lightning:radioGroup name='Interested_in_timekeeping_system__c'
+                                                  variant="label-hidden"
+                                                  label="Are you interested in using a timekeeping system to track hours?"
+                                                  options="{!v.radioGroupOptions}"
+                                                  onchange="{!c.clearFields}" 
+                                                  value="{!v.PEOChecklist.Interested_in_timekeeping_system__c}"
+                                                  disabled='{!v.readOnly}' />
+                        </span>
+                    </aura:if>
+                </div>
+            </div>
+        </lightning:tab>
+    </lightning:tabset>
+    
+    <div>
+        <!--div class="modal-footer slds-modal__footer slds-size_1-of-1"-->
+        <c:communityFormNavButtons tabNameList='{!v.tabList}' 
+                                   currentPos='{!v.selectedTab}'
+                                   allPossibleParents='{!v.parentTabs}'
+                                   activeParent='{!v.ActiveParentTab}'
+                                   parentTabsetUsesIteration='True'
+                                   saveFunc='{!v.saveFunc}'
+                                   skipSaveEvt='false' />
+        <!--lightning:button  disabled='{!v.readOnly}' class="slds-m-top_small" variant="brand" type="button" name="saveProgress" label="Save and Submit" onclick="{!c.saveProgress}" ></lightning:button>
+    	<lightning:button class="slds-m-top_small" variant="brand" type="button" name="saveLater" label="Save and Finish Later" onclick="{!c.saveProgress}"></lightning:button-->
+    </div>
+    
+</aura:component>

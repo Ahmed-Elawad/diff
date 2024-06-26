@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DoNotProspectReason__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>Used in the banner for Do Not Prospect</description>
+    <externalId>false</externalId>
+    <formula>IF(
+AND(ISPICKVAL(Hold_Out_Reason__c,&apos;Ecommerce&apos;),ISPICKVAL(Restricted_Industry__c,&apos;CRB&apos;)),&apos;Ecommerce&lt;br/&gt;CRB&lt;br/&gt;&apos;,
+IF(ISPICKVAL(Hold_Out_Reason__c,&apos;Ecommerce&apos;),&apos;Ecommerce&lt;br/&gt;&apos;,
+IF(ISPICKVAL(Restricted_Industry__c,&apos;CRB&apos;),&apos;CRB&lt;br/&gt;&apos;,&apos;&apos;)
+)
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Do Not Prospect Reason</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

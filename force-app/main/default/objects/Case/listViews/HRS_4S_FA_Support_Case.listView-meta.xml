@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRS_4S_FA_Support_Case</fullName>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>NAME</columns>
+    <columns>OWNER_NAME</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>CASES.LAST_UPDATE_DATE_ONLY</columns>
+    <columns>Follow_Up_Date__c</columns>
+    <filterScope>Queue</filterScope>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Solved,Solved - Call Transferred,Solved Ops 2 Resolve</value>
+    </filters>
+    <label>HRS 4S FA Support</label>
+    <queue>HRS_4S_FA_Support</queue>
+    <sharedTo>
+        <role>HRS4SDirector</role>
+        <role>HRS4SSalesBrokerRepresentativeI</role>
+        <role>HRS_4S_FA_Support_Supervisor_I</role>
+        <role>HRS_4S_FA_Support_Supervisor_II</role>
+        <role>HRS_4S_Sales_Broker_Representative_III</role>
+    </sharedTo>
+</ListView>

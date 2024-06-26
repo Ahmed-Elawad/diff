@@ -1,0 +1,83 @@
+<template>
+    <lightning-input type="search"
+                    onchange={handleSearchTermChange}
+                    variant="label-hidden"
+                    class="slds-var-m-bottom_small"
+                    label="Search"
+                    placeholder="Search for internal tickets"
+                    value={searchTerm}>
+                </lightning-input> 
+    <lightning-tabset active-tab-value="all">
+        <lightning-tab label="All" value="all">
+            <lightning-layout multiple-rows="true">
+                <template for:each={tilesData} for:item="tile">
+                    <lightning-layout-item key={tile.QualifiedApiName} padding="around-small">
+                        
+                        <c-mid-market-child-menu-l-w-c tile={tile} onselectedtile={handleBearView}></c-mid-market-child-menu-l-w-c>
+                    </lightning-layout-item>
+                </template>
+            </lightning-layout>
+        </lightning-tab>
+        <lightning-tab label="Payroll">
+            <lightning-layout multiple-rows="true">
+                <template for:each={tilesData} for:item="tile">
+                    <template lwc:if={tile.Menu_Tab_Payroll__c}>
+                        <lightning-layout-item key={tile.QualifiedApiName} padding="around-small">
+                            
+                            <c-mid-market-child-menu-l-w-c tile={tile} onselectedtile={handleBearView}></c-mid-market-child-menu-l-w-c>
+                        </lightning-layout-item>
+                    </template>
+                </template>
+            </lightning-layout>
+        </lightning-tab>
+        <lightning-tab label="TAA">
+            <lightning-layout multiple-rows="true">
+                <template for:each={tilesData} for:item="tile">
+                    <template lwc:if={tile.Menu_Tab_TAA__c}>
+                        <lightning-layout-item key={tile.QualifiedApiName} padding="around-small">
+                            
+                            <c-mid-market-child-menu-l-w-c tile={tile} onselectedtile={handleBearView}></c-mid-market-child-menu-l-w-c>
+                        </lightning-layout-item>
+                    </template>
+                </template>
+            </lightning-layout>
+        </lightning-tab>
+        <lightning-tab label="Taxpay">
+            <lightning-layout multiple-rows="true">
+                <template for:each={tilesData} for:item="tile">
+                    <template lwc:if={tile.Menu_Tab_Taxpay__c}>
+                        <lightning-layout-item key={tile.QualifiedApiName} padding="around-small">
+                            
+                            <c-mid-market-child-menu-l-w-c tile={tile} onselectedtile={handleBearView}></c-mid-market-child-menu-l-w-c>
+                        </lightning-layout-item>
+                    </template>
+                </template>
+            </lightning-layout>
+        </lightning-tab>
+        <lightning-tab label="Paychex Flex">
+            <lightning-layout multiple-rows="true">
+                <template for:each={tilesData} for:item="tile">
+                    <template lwc:if={tile.Menu_Tab_Paychex_Flex__c}>
+                        <lightning-layout-item key={tile.QualifiedApiName} padding="around-small">
+                            
+                            <c-mid-market-child-menu-l-w-c tile={tile} onselectedtile={handleBearView}></c-mid-market-child-menu-l-w-c>
+                        </lightning-layout-item>
+                    </template>
+                </template>
+            </lightning-layout>
+        </lightning-tab>
+        <lightning-tab label="Ancillary">
+            <lightning-layout multiple-rows="true">
+                <template for:each={tilesData} for:item="tile">
+                    <template lwc:if={tile.Menu_Tab_Ancillary__c}>
+                        <lightning-layout-item key={tile.QualifiedApiName} padding="around-small">
+                            
+                            <c-mid-market-child-menu-l-w-c tile={tile} onselectedtile={handleBearView}></c-mid-market-child-menu-l-w-c>
+                        </lightning-layout-item>
+                    </template>
+                </template>
+            </lightning-layout>
+        </lightning-tab>
+    </lightning-tabset>
+       
+</template>

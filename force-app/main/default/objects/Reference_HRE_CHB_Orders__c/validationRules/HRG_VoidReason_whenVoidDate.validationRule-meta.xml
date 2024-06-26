@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRG_VoidReason_whenVoidDate</fullName>
+    <active>true</active>
+    <description>C32 - if Void Date = Not Null, then the Void Reason field must be Not Null</description>
+    <errorConditionFormula>AND(
+(NOT(ISNULL(Void_Date__c))),
+( ISPICKVAL(Void_Reason__c, &apos;&apos;) ),
+(NOT(BEGINS($Profile.Name,&quot;HR Essentials&quot;))),
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)))
+)</errorConditionFormula>
+    <errorDisplayField>Void_Reason__c</errorDisplayField>
+    <errorMessage>You must select a Void Reason value when populating the Void Date field.</errorMessage>
+</ValidationRule>

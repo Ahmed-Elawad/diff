@@ -1,0 +1,139 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <!--<div style='width: 40%;height: fit-content;'>-->
+    <!--<lightning:card class="HSFSummaryCard">
+        <div class="superHeader">
+            <div class="maintanenceHeader">
+                Scheduled Maintanence Notification
+            </div>
+            <div class="maintanenceSubHeader">
+                -Service Will Not Be Available-
+            </div>
+        </div>
+        <p class="slds-p-horizontal_small">
+            <div>
+                Please be advised that Salesforce.com will be performing scheduled maintenance during the above time period. This will be effecting the Getting Started Portal.
+                
+                During this time, you may experience unknown errors while using the Getting Started Portal. It is recommended you refrain from using the GSP during the maintenance period to avoid possible issues.  We apologize for any inconvenience. 
+                
+            </div>
+        </p>
+    </lightning:card>-->
+    <!--</div>-->
+    
+    <aura:attribute name="isModalOpen" type="boolean" default="true"/>
+    <aura:attribute name="CurrentUser" type="Object"/>
+    <force:recordData recordId="{!$SObjectType.CurrentUser.Id}"
+                      fields="Profile.Name"
+                      targetFields="{!v.CurrentUser}"/>
+    
+    <div class="slds-m-around_xx-large EdgeMaintanance">
+        <aura:if isTrue="{!v.CurrentUser.Profile.Name == 'Customer Community Login User Clone'}">
+            <!-- Modal/Popup Box starts here-->
+            <aura:if isTrue="{!v.isModalOpen}">
+                <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container maintananceBody">
+                        <header class="slds-modal__header">
+                            <lightning:buttonIcon iconName="utility:close"
+                                                  onclick="{! c.closeModel }"
+                                                  alternativeText="close"
+                                                  variant="bare-inverse"
+                                                  class="slds-modal__close"/>
+                            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">
+                                <div class="superHeader">
+                                    <div class="maintanenceHeader">
+                                        Scheduled Maintanence Notification
+                                    </div>
+                                    <div class="maintanenceSubHeader">
+                                        -Service Will Not Be Available-
+                                    </div>
+                                </div>
+                            </h2>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                            <p>
+                                <b>
+                                    <div class="maintanenceDateHeader">
+                                        Friday August 18, 8:00 PM EST 
+                                    </div>
+                                    <div class="maintanenceDateHeader">
+                                        to
+                                    </div>
+                                    <div class="maintanenceDateHeader">
+                                        Sunday August 20, 11:59 PM EST  
+                                    </div>
+                                    <aura:if isTrue="{!v.CurrentUser.Profile.Name == 'Customer Community Login User Clone'}">
+                                        <div class="maintanenceContentBody">
+                                            Please do not use the Getting Started Portal during this time.
+                                        </div>
+                                        <div class="maintanenceContentBody">
+                                            Thank you for understanding.
+                                        </div>
+                                        <aura:set attribute="else">
+                                            <div class="maintanenceInternalContentBody">
+                                                Please be advised that Salesforce.com will be performing scheduled maintenance during the above time period. This will be affecting the Getting Started Portal.
+                                            </div>
+                                            <div class="maintanenceInternalContentBody">
+                                                During this time, you may experience unknown errors while using the Getting Started Portal. It is recommended you refrain from using the GSP during the maintenance period to avoid possible issues.  We apologize for any inconvenience. 
+                                            </div>
+                                        </aura:set>
+                                    </aura:if>
+                                    
+                                </b>
+                            </p>
+                        </div>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </aura:if>
+        </aura:if>
+        <aura:if isTrue="{!v.CurrentUser.Profile.Name != 'Customer Community Login User Clone'}">
+                    <aura:if isTrue="{!v.isModalOpen}">
+                        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-02" aria-modal="true" aria-describedby="modal-content-id-2" class="slds-modal slds-fade-in-open internalViewMaintanance">
+                            <div class="slds-modal__container">
+                                <header class="slds-modal__header">
+                                    <lightning:buttonIcon iconName="utility:close"
+                                                          onclick="{! c.closeModel }"
+                                                          alternativeText="close"
+                                                          variant="bare-inverse"
+                                                          class="slds-modal__close closeInternal"/>
+                                </header>
+                                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-2">
+                                    <p>
+                                        <b>
+                                            <div class="superHeader">
+                                                <div class="maintanenceIntHeader">
+                                                    Scheduled Maintanence Notification
+                                                </div>
+                                                <div class="maintanenceIntSubHeader">
+                                                    -Service Will Not Be Available-
+                                                </div>
+                                            </div>
+                                            <div style="margin-top:2%"></div>
+                                            <div class="maintanenceDateIntHeader">
+                                                Friday August 18, 8:00 PM EST 
+                                            </div>
+                                            <div class="maintanenceDateIntHeader">
+                                                to
+                                            </div>
+                                            <div class="maintanenceDateIntHeader">
+                                                Sunday August 20, 11:59 PM EST  
+                                            </div>
+                                            <aura:if isTrue="{!v.CurrentUser.Profile.Name != 'Customer Community Login User Clone'}">
+                                                <div class="maintanenceInternalContentBody">
+                                                    Please be advised that Salesforce.com will be performing scheduled maintenance during the above time period. This will be affecting the Getting Started Portal.
+                                                </div>
+                                                <div class="maintanenceInternalContentBody">
+                                                    During this time, you may experience unknown errors while using the Getting Started Portal. It is recommended you refrain from using the GSP during the maintenance period to avoid possible issues.  We apologize for any inconvenience. 
+                                                </div>
+                                            </aura:if>
+                                            
+                                        </b>
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+                        <div class="slds-backdrop slds-backdrop_open"></div>
+                    </aura:if>
+                </aura:if>
+    </div>
+</aura:component>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CANCELS_POP_Terminations</fullName>
+    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5</booleanFilter>
+    <columns>NAME</columns>
+    <columns>Prospect_Client_Name__c</columns>
+    <columns>BIS_ID__c</columns>
+    <columns>Date_Paperwork_Received__c</columns>
+    <columns>Effective_Date_of_Termination__c</columns>
+    <columns>Assigned_Cancels_Rep__c</columns>
+    <columns>Case_Age_Excluding_Weekends__c</columns>
+    <columns>Current_Step__c</columns>
+    <columns>Pending_POP_Tasks__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_Terms_Transfers__c.S125_POP_Termination</value>
+    </filters>
+    <filters>
+        <field>Date_Paperwork_Received__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Cancel_Date_Entered__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Term_Transfer_Stopped__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>notEqual</operation>
+        <value>Closed – Paperwork Discrepancy Never Resolved</value>
+    </filters>
+    <label>CANCELS: POP Terminations</label>
+    <sharedTo>
+        <role>HRS4SCPRRepresentative</role>
+        <role>HRS4SCPRSupervisor</role>
+        <role>HRS4SClientChangesRepresentativeI</role>
+        <role>HRS4SClientChangesSupervisorI</role>
+        <role>HRS4SClientRetentionRepresentative</role>
+        <role>HRS_4S_Client_Retention_Supervisor</role>
+        <role>HRS_4S_Client_Support_Supervisor</role>
+    </sharedTo>
+</ListView>

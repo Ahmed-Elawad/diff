@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>required_if_reactive</fullName>
+    <active>true</active>
+    <description>Fields that are required if Case Origin is Reactive</description>
+    <errorConditionFormula>ISPICKVAL(Case_Lookup__r.Origin, &quot;Reactive&quot;) &amp;&amp; 
+ISPICKVAL( Status__c , &apos;Closed&apos;) &amp;&amp; 
+OR(ISBLANK(Product_of_Concern__c), 
+ISBLANK(Client_At_Risk_Reason__c), 
+ISPICKVAL(Source_of_Business__c, &apos;&apos; ), 
+ISBLANK(Current_Annual_Revenue__c ))</errorConditionFormula>
+    <errorMessage>You must populate Product of Concern, Client At Risk Reason, Source of Business, and Current Annual Revenue.</errorMessage>
+</ValidationRule>

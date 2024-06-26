@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Paychex_Inc_Sa_Lockout_Rule</fullName>
+    <active>true</active>
+    <description>Prevent non Sys Admin from editing the Paychex Inc SA account</description>
+    <errorConditionFormula>BEGINS(Name, &quot;Paychex Inc SA&quot;) &amp;&amp; NOT( ISNEW() ) &amp;&amp; NOT(BEGINS( $Profile.Name , &quot;System Administrator&quot;) )</errorConditionFormula>
+    <errorMessage>**** THIS PROSPECT-CLIENT RECORD CAN NOT BE EDITED ****</errorMessage>
+</ValidationRule>

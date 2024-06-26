@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>EW_Surveys_Sent</fullName>
+    <booleanFilter>(1 and 2 and 3 and 4)</booleanFilter>
+    <columns>FULL_NAME</columns>
+    <columns>CONTACT.DO_NOT_CALL</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>Branch_Client_ID__c</columns>
+    <columns>EW_Contact_Role__c</columns>
+    <columns>CONTACT.EMAIL</columns>
+    <columns>EW_Last_Survey_Date__c</columns>
+    <columns>CONTACT.TITLE</columns>
+    <columns>CONTACT.PHONE1</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>EW_Contact_Role__c</field>
+        <operation>equals</operation>
+        <value>EW Administrator</value>
+    </filters>
+    <filters>
+        <field>CONTACT.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Contact.Service_Complete_Contact_Record_Type</value>
+    </filters>
+    <filters>
+        <field>CONTACT.EMAIL</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>BU_Contact__c</field>
+        <operation>contains</operation>
+        <value>EW</value>
+    </filters>
+    <label>EW: Surveys Sent - Service Complete</label>
+    <sharedTo>
+        <role>ExpenseWire_Client_Service_Manager</role>
+    </sharedTo>
+</ListView>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>My_News_NO_Additionals</fullName>
+    <columns>NAME</columns>
+    <columns>Prospect_Client_Number__c</columns>
+    <columns>Tax_Agency__c</columns>
+    <columns>Tax_Type__c</columns>
+    <columns>First_Period_Listed__c</columns>
+    <columns>Status__c</columns>
+    <columns>Date_1st_Notice_Received_in_PAC__c</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_PAC__c.Reference_PAC_Record_Type</value>
+    </filters>
+    <filters>
+        <field>Status__c</field>
+        <operation>contains</operation>
+        <value>Pending PAC Review</value>
+    </filters>
+    <filters>
+        <field>Status__c</field>
+        <operation>notEqual</operation>
+        <value>Pending PAC Review - Additional Notice Received</value>
+    </filters>
+    <label>My News - NO Additionals</label>
+    <sharedTo>
+        <roleAndSubordinates>Operating_Risk_and_Risk_Review_Manager</roleAndSubordinates>
+    </sharedTo>
+</ListView>

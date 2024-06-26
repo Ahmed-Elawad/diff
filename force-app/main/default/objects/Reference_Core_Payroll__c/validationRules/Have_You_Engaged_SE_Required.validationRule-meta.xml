@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Have_You_Engaged_SE_Required</fullName>
+    <active>true</active>
+    <description>Have You Engaged SE? is required when Interfaces With Outside Vendor?  is Yes</description>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),ISBLANK(TEXT( Have_you_engaged_SE__c)),ISPICKVAL( Interfaces_with_outside_vendor__c,&apos;Yes&apos; ))</errorConditionFormula>
+    <errorDisplayField>Have_you_engaged_SE__c</errorDisplayField>
+    <errorMessage>&quot;Have You Engaged SE?&quot; is required when &quot;Interfaces With Outside Vendor?&quot; is Yes</errorMessage>
+</ValidationRule>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>If_IW_not_performing_normal_job_duties_t</fullName>
+    <active>true</active>
+    <description>If IW was not performing normal job duties then details are needed</description>
+    <errorConditionFormula>AND 
+( 
+ISPICKVAL ( Was_IW_performing_normal_job_duties__c , &quot;No&quot;), 
+ISBLANK ( Details_on_regular_job_duties__c ) 
+)</errorConditionFormula>
+    <errorDisplayField>Details_on_regular_job_duties__c</errorDisplayField>
+    <errorMessage>If IW was not performing normal job duties then details are needed</errorMessage>
+</ValidationRule>

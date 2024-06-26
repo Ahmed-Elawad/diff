@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Discount_Percentage_GT_100</fullName>
+    <active>false</active>
+    <description>Cannot give a discount greater than 100 percent</description>
+    <errorConditionFormula>AND(
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))),
+OR(
+WIN__c &gt;1.0,
+ Discount2_Percentage__c &gt;1.0))</errorConditionFormula>
+    <errorMessage>***You may not give more than 100% discount***</errorMessage>
+</ValidationRule>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Non_MPSC_Zone_Restriction</fullName>
+    <active>true</active>
+    <description>Only MPSC Users can post to the MPSC Zone.</description>
+    <errorConditionFormula>AND( NOT($Profile.Name = &apos;MPSC Profile&apos;),NOT($Profile.Name = &apos;2008-09 Operations Administration&apos;),NOT($Profile.Name = &apos;Enterprise Service Rep&apos;),NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)), Community.Name = &apos;All MPSC/Enterprise&apos;)</errorConditionFormula>
+    <errorMessage>Only MPSC Users can post to the MPSC Zone</errorMessage>
+</ValidationRule>

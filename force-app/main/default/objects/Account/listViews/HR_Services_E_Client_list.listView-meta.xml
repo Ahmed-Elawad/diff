@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HR_Services_E_Client_list</fullName>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ACCOUNT.ACCOUNT_NUMBER</columns>
+    <columns>ACCOUNT.ADDRESS2_ZIP</columns>
+    <columns>ACCOUNT.EMPLOYEES</columns>
+    <columns>SignificantContact__c</columns>
+    <columns>ACCOUNT.PHONE1</columns>
+    <columns>HR_Essentials__c</columns>
+    <columns>X401_k__c</columns>
+    <columns>Time_and_Attendance__c</columns>
+    <columns>ESR__c</columns>
+    <columns>Medical__c</columns>
+    <columns>PAYX_WCPS__c</columns>
+    <columns>SUI_Rate__c</columns>
+    <columns>First_Run_Date__c</columns>
+    <filterScope>Team</filterScope>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>contains</operation>
+        <value>FLEX Client,Advantage Client,HRS Client (Only),HR Solutions FLEX Client,HR Solutions Preview Client,HR Solutions Advantage Client,HR Solutions NPR Client,Lost Client,Preview Client,PEO Client</value>
+    </filters>
+    <filters>
+        <field>Out_of_Business__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Do_Not_Prospect_Reason__c</field>
+        <operation>notEqual</operation>
+        <value>Currently In Implementation</value>
+    </filters>
+    <filters>
+        <field>Do_Not_Call__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <label>HR Services - E-Client List</label>
+    <sharedTo>
+        <roleAndSubordinates>HRSERVICESSRDIR</roleAndSubordinates>
+        <roleAndSubordinatesInternal>PEO_Director</roleAndSubordinatesInternal>
+    </sharedTo>
+</ListView>

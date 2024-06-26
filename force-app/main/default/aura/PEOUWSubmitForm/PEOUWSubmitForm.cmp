@@ -1,0 +1,264 @@
+<aura:component controller="CommunityFileUploadController" implements="force:appHostable,forceCommunity:availableForAllPageTypes" access="global" >
+    
+    <aura:attribute name="routeToStrategicAccount" type="Boolean" default="false"/>
+    <aura:attribute name="strategicAccountUser" type="User"/>
+    <aura:attribute name="submittedAnalyst" type="String"/>
+    <aura:attribute name='submissionStatus' type='String'/>
+    <aura:attribute name="finishButtonClicked" type="Boolean" default="false"/>
+    <aura:attribute name="PEOCheckListData" type="PEO_Onboarding_Checklist__c"/>
+    <aura:attribute name="parentPEOChecklist" type="Object"/>
+    <aura:attribute name="currentPEOChecklist" type="Object"/>
+    <aura:attribute name="accountList" type="Account[]"/>
+    <aura:attribute name="docsAssigned" type="Boolean" default="true"/>
+    <aura:attribute name="commUser" type="User"/>
+    <aura:attribute name="currentRunningUser" type="User"/>
+    <aura:attribute name="parentRecId" type="Id"/>
+    <aura:attribute name='needCovidQuestionnaire' type='boolean' />
+    <aura:attribute name='noIndustryFound' type='Boolean' />
+    <aura:attribute name='industryStruct' type='map' />
+    <aura:attribute name="isCommunityUser" type="Boolean" />
+    <aura:attribute name='QQWCSubmit' type='Boolean' default='false'/>
+    <aura:attribute name='submitOperationInProgress' type='Boolean' default="false"/>
+    <aura:attribute name="disableFinishButton" type="Boolean" default="false"/>
+    <aura:attribute name='progressRate' type='Integer' default='0' />
+    <aura:attribute name='saveOperationInProgress' type='Boolean' />
+    <aura:attribute name='isCompanyInfoAYBFilled' type='Boolean' default='false'/>
+    <aura:attribute name='isCompanyInfoADFilled' type='Boolean' default='false'/>
+    <aura:attribute name='allDocumentsUploaded' type='Boolean' default='false'/>
+    <aura:attribute name='isTraditional' type='Boolean' default='false'/>
+    <aura:attribute name='wCTraditional' type='Boolean' default='false'/>
+    <aura:attribute name="activeSections" type="List" default="[]" />
+    <aura:handler name="init" value="{!this}" action="{!c.checkSubmissionStatus}"/>
+    <aura:attribute name='init2' type='Boolean' default='false'/>
+    <aura:attribute name='readonly' type='Boolean' default='false'/>
+    <aura:attribute name='readOnlyString' type='String'/>
+    <!--refresh logic-->
+    <!-- Register and handle the Refresh Event to refresh the current component -->
+    <aura:registerEvent name="selfRefreshEvt" type="c:compSelfRefresh" />
+    <!-- Now handle the selfRefreshEvt by calling createCntCreateTempl which is the same method called on init to initialize a Contact Obj  -->
+    <aura:handler name="selfRefreshEvt" event="c:compSelfRefresh" action="{!c.checkSubmissionStatus}" />
+    <aura:attribute name='disableRefresh' type='Boolean' default='false'/>
+    
+    <aura:if isTrue="{!greaterthan(v.readOnlyString.length, 1)}">
+                                <div style="width:100%">
+                                    <ui:message title="Evaluation Status" severity="info" closable="false" >
+                                        {!v.readOnlyString}
+                                    </ui:message>
+                                </div>
+                            </aura:if>
+    
+    <div class="slds-p-around_x-small">
+        <lightning:card >
+            <aura:if isTrue="{!!v.init2}">
+                <lightning:spinner alternativeText="Loading" size="medium" />
+                <aura:set attribute="else">
+                    
+                    <aura:if isTrue="{!and(or(v.isTraditional,v.wCTraditional), v.submissionStatus != 'Submitted')}">
+                        <div aura:id="toggle0" style="padding:20px 20px 20px 20px">
+                            <aura:if isTrue="{!v.routeToStrategicAccount}">
+                                <div class="slds-text-heading_small"><b>This Business is linked to a Strategic Account and will be routed to your assigned NBSC Partner - {!v.strategicAccountUser.Name}.</b></div>
+                                <aura:set attribute="else">
+                                    <div class="slds-text-heading_small">When all required documents have been uploaded, click the button below to submit them for review. </div>
+                                </aura:set>
+                            </aura:if> 
+                            
+                            <div style="height:10px"></div>
+                            <div class="slds-grid">
+                            </div>
+                            
+                            <lightning:textarea name="Sales_Notes" disabled="{!v.readonly}"
+                                                value="{!v.PEOCheckListData.PEO_Sales_Notes__c}" 
+                                                label="Medical Sales Notes" />
+                            <br/>
+                            <lightning:textarea name="Workers_Comp_Sales_Notes" disabled="{!v.readonly}"
+                                                value="{!v.PEOCheckListData.Workers_Comp_Sales_Notes__c}" 
+                                                label="Workers Comp Sales Notes" />
+                            <br/>
+                            <lightning:textarea name="Financial_Underwriting_Sales_Notes" disabled="{!v.readonly}"
+                                                value="{!v.PEOCheckListData.Financial_Underwriting_Sales_Notes__c}" 
+                                                label="Financial Underwriting Sales Notes" />
+                            <br/>
+                            <lightning:textarea name="Pricing_Console_Notes__c" disabled="{!v.readonly}"
+                                                value="{!v.PEOCheckListData.Pricing_Console_Notes__c}"
+                                                label="Pricing Console Notes" />
+                            
+                            
+                        </div>
+                         <aura:set attribute="else">
+                             <aura:if isTrue="{!!or(v.isTraditional,v.wCTraditional)}">
+                                 <aura:if isTrue="{!v.QQWCSubmit}">
+									<!-- QQ WC Submission-->
+									<div class="submitHeaderQQ">
+										 Workers' Compensation Submission
+									 </div>
+									 <div class="bodyTextHead">
+										By Clicking, "Submit" you are acknowledging that all portal information is entered and accurate.
+										If any fields are missing, you will receive an error and must resolve the issue prior to submitting the portal.
+										Once you receive a "Success" message, please use the "View in Clientspace" link below to navigate to Clientspace and begin
+										entering the Pricing Console.<br/><br/>
+										The submission here  will not provide the Quick Quote results and eligibility. This is strictly the transmission of information
+										 between Salesforce and Clintspace. You will continue with the Quick Quote submission within Clientspace.<br/><br/>
+									 </div>   
+								</aura:if>
+								
+								<aura:if isTrue="{!!v.QQWCSubmit}">
+									<!-- QQ Medical-->
+									 <div class="submitHeaderQQ">
+										 <lightning:icon iconName="standard:document" alternativeText="Success!" variant="Success"
+														 title="success variant" size="medium" /> Submit Documents
+									 </div>
+									 <div class="bodyTextHead">
+										 Upon submission, the Census and Health Invoice (if applicable) will be sent to Clientspace for the purpose of a Quick Quote review.<br/>
+										 The submission here will not provide the Quick Quote results and eligibility.
+										 This submission is strictly the transmission of documents between Salesforce and Clientspace. You will recieve a chatter/email with the transmission results within a few moments. The results will also be available below. Please proceed as necessary depending on the result received. <br/><br/>
+									 </div>
+									 <div class="bodyText">
+										 <b>1. Success -</b> Navigate to Clientspace via the link below and continue with the Pricing Console and full submission for a Quick Quote review. <br/>
+										 <br/> 
+										 <b>2.  Error -</b> Review and address the found error(s) within the census. The error(s) will be provided in chatter and below. Proceed to upload a new census if needed and &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; resubmit below. <br/>
+									 </div>
+                                 	 	
+                                 <!--JDA Submit screen start-->
+                                    <div class="slds-grid">
+                                        <div class="slds-col">
+                                            <lightning:card class="HSFSummaryCard">
+                                                <aura:if isTrue="{!not(empty(v.PEOCheckListData.HSF_Submission_Status__c))}">
+                                                    <aura:if isTrue="{!v.PEOCheckListData.HSF_Submission_Status__c == 'SUCCESS'}">
+                                                        <lightning:icon iconName="utility:success" alternativeText="Success!" variant="Success"
+                                                                        title="success variant" size="large" style="margin-top: -1%;"/>
+                                                        <b> Medical Census to Clientspace Status &nbsp;<lightning:helptext content="The overall status of the census being sent to Clientspace"/>:  {!v.PEOCheckListData.HSF_Submission_Status__c}  </b>
+                                                    </aura:if>
+                                                    <aura:if isTrue="{!v.PEOCheckListData.HSF_Submission_Status__c == 'FAVORABLE'}">
+                                                        <lightning:icon iconName="utility:success" alternativeText="Success!" variant="Success"
+                                                                        title="success variant" size="large" style="margin-top: -1%;"/>
+                                                        <b> Medical Census to Clientspace Status &nbsp;<lightning:helptext content="The overall status of the census being sent to Clientspace"/>:  {!v.PEOCheckListData.HSF_Submission_Status__c}  </b>
+                                                    </aura:if>
+                                                    <aura:if isTrue="{!v.PEOCheckListData.HSF_Submission_Status__c == 'UNFAVORABLE'}">
+                                                        <lightning:icon iconName="action:close" alternativeText="Success!" variant="error"
+                                                                        title="success variant" size="small" style="margin-top: -1%;"/>
+                                                        <b> Medical Census to Clientspace Status &nbsp;<lightning:helptext content="The overall status of the census being sent to Clientspace"/>:  {!v.PEOCheckListData.HSF_Submission_Status__c}  </b>
+                                                    </aura:if>
+                                                    <aura:if isTrue="{!v.PEOCheckListData.HSF_Submission_Status__c == 'FAIL'}">
+                                                        <lightning:icon iconName="action:close" alternativeText="Success!" variant="error"
+                                                                        title="success variant" size="small" style="margin-top: -1%;"/>
+                                                        <b> Medical Census to Clientspace Status &nbsp;<span style="margin-top: -0.5%;position: absolute;"><lightning:helptext content="The overall status of the census being sent to Clientspace"/></span>&nbsp;&nbsp;>&nbsp;&nbsp;:  {!v.PEOCheckListData.HSF_Submission_Status__c}  </b>
+                                                    </aura:if>
+                                                    <aura:if isTrue="{!v.PEOCheckListData.HSF_Submission_Status__c == 'RESULTS INCONCLUSIVE'}">
+                                                        <lightning:icon iconName="utility:warning" alternativeText="Success!" variant="warning"
+                                                                        title="success variant" size="small" style="margin-top: -1%;"/>
+                                                        <b> Medical Census to Clientspace Status &nbsp;<lightning:helptext content="The overall status of the census being sent to Clientspace"/>:  {!v.PEOCheckListData.HSF_Submission_Status__c}  </b>
+                                                    </aura:if>
+                                                    <lightning:accordion allowMultipleSectionsOpen="true" activeSectionName="hsf_error_log">
+                                                        <lightning:accordionSection name="hsf_error_log" label="Medical Census to Clientspace Results" class="hsfErrorLogSection" >
+                                                            <aura:set attribute="actions">
+                                                                <lightning:helptext class='responseHelpText' content="The response received from Clientspace after the census was submitted."/>
+                                                            </aura:set>
+                                                            <aura:set attribute="body">
+                                                                <lightning:textarea variant="label-hidden" name="HSF_Submission_Response__c" disabled="true" value="{!v.PEOCheckListData.HSF_Submission_Response__c}" label="Error Notes" />
+                                                            </aura:set>
+                                                        </lightning:accordionSection>
+                                                    </lightning:accordion>
+                                                    <aura:set attribute="else">
+                                                        <aura:if isTrue="{!empty(v.PEOCheckListData.pkzPEOUnderwritingChecklistID__c)}">
+                                                            <lightning:icon iconName="action:info" alternativeText="Success!" variant="Success"
+                                                                            title="success variant" size="small" style="margin-top:-1%;"/><b> &nbsp; Clientspace record Sync in Progress</b>
+                                                            
+                                                            <aura:set attribute="else">
+                                                                <lightning:icon iconName="action:info" alternativeText="Success!" variant="Success"
+                                                                                title="success variant" size="small" style="margin-top: -1%;"/><b> Medical Census to Clientspace Status &nbsp;<lightning:helptext content="The overall status of the census being sent to Clientspace"/>:  Awaiting Clientspace Submission  </b>
+                                                                
+                                                            </aura:set>
+                                                        </aura:if>
+                                                    </aura:set>
+                                                </aura:if>
+                                            </lightning:card>
+                                        </div>
+                                        <div class="slds-col"></div>
+                                        <div class="slds-col refreshButton">
+                                            <!--Update the logic for QQ refresh -->
+                                            <!--<lightning:buttonIcon aura:id="refreshButton" class="" iconName="utility:refresh" variant="bare" size="large" onclick="{!c.refreshStatus}" alternativeText="refresh" title="refresh" disabled = "{!v.disableRefresh}"/>-->
+                                            <c:pEOUW_FormRefresh_lwc 
+                                                                     Id="{!v.parentRecId}" 
+                                                                     objectName ="PEO_Onboarding_Checklist__c"
+                                                                     onmyUpdatedChecklist="{!c.getValueFromLwc}"
+                                                                     />
+                                        </div>
+                                    </div>
+                                </aura:if>
+                                 <!--JDA Submit screen end-->
+                                 
+                                 <div class="viewInClientspace">
+                                     <lightning:icon iconName="doctype:gdoc" alternativeText="Template" title="Template" size="small"/>&nbsp;&nbsp;&nbsp;<b><lightning:formattedUrl value="{!v.PEOCheckListData.View_in_Clientspace__c}" label="View in Clientspace" tooltip="View in Clientspace" /></b>
+                                     <div class="viewInClientspaceContent"><p> You may review the uploaded document in their respective bins. Please only submit your documents here, after you have reviewed them for accuracy and completion.
+                                         All portal questions must be answered and required documents uploaded, before you may submit below. </p>
+                                     </div>
+                                     
+                                 </div>
+                             </aura:if>                           
+                        </aura:set>
+                </aura:if>
+                <aura:if isTrue="{!or(v.isTraditional,v.wCTraditional)}">
+                    <aura:if isTrue="{!and(or(v.isTraditional,v.wCTraditional), v.submissionStatus == 'Submitted')}">
+                        <div aura:id="toggle1" class="" style="padding:0px 0px 0px 20px">
+                            The Documents are currently submitted to the following NBSC: {!v.submittedAnalyst} 
+                        </div>
+                    </aura:if>
+                    <div style="height:25px"></div>
+                    <aura:if isTrue="{!and(or(v.isTraditional,v.wCTraditional), v.submissionStatus != 'Submitted')}">
+                        <div aura:id="disablebuttonidTag"> 
+                            <div class="slds-text-align_left slds-p-around_x-small" style="padding:0px 0px 0px 20px">
+                                
+                                <lightning:button class="slds-m-top_small" 
+                                                  variant="brand"  
+                                                  name="SavebuttonSQ" 
+                                                  label="Save"
+                                                  onclick="{!c.SavesubmitQs}" />
+                                <lightning:button aura:id="disablebuttonid" variant="success" 
+                                                  label="Finish" title="Finish" 
+                                                  onclick="{!c.submitDocuments}" 
+                                                  disabled="{!or(v.disableFinishButton,v.readonly)}"/>
+                                <aura:if isTrue="{!v.submitOperationInProgress}">
+                                    <lightning:progressRing value="{!v.progressRate}" variant="active-step" 
+                                                            direction="drain"/>
+                                </aura:if>
+                                
+                            </div>
+                        </div>
+                    </aura:if>
+                    <aura:set attribute="else">
+                        <lightning:button class="slds-m-top_small" 
+                                              variant="brand"   
+                                              name="SavebuttonSQ" 
+                                              label="Save"
+                                              onclick="{!c.SavesubmitQs}" />
+                        	<aura:if isTrue="{!v.QQWCSubmit}">
+                            	<lightning:button aura:id="SubmitQQWC" variant="success"
+                                                    label="Submit" title="Submit" 
+                                                    onclick="{!c.submitDocuments}" 
+                                                    disabled="{!v.readonly}"/>
+                                <aura:set attribute="else">
+                                    <aura:if isTrue="{!or(equals(v.parentPEOChecklist.HSF_Submission_Status__c,'SUCCESS'), equals(v.parentPEOChecklist.HSF_Submission_Status__c,'FAVORABLE')) }"   >           
+                                        <lightning:button aura:id="disablebuttonid" variant="success"
+                                                        label="Submit Census" title="Submit Census" 
+                                                        onclick="{!c.submitDocuments}" 
+                                                        disabled="true"/>
+                                        <aura:set attribute="else">
+                                            <lightning:button aura:id="disablebuttonid" variant="success"
+                                                        label="Submit Census" title="Submit Census" 
+                                                        onclick="{!c.submitDocuments}" 
+                                                        disabled="{!or(v.disableFinishButton,v.readonly)}"/>
+                                        </aura:set>
+                                    </aura:if> 
+                                </aura:set>
+  							</aura:if>                                 	
+                            <aura:if isTrue="{!v.submitOperationInProgress}">
+                                <lightning:progressRing value="{!v.progressRate}" variant="active-step" direction="drain"/>
+                            </aura:if>
+                    </aura:set> 
+                </aura:if>
+                </aura:set>
+            </aura:if>
+             
+        </lightning:card>
+    </div>
+</aura:component>

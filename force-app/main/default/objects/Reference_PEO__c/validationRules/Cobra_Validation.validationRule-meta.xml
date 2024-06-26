@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cobra_Validation</fullName>
+    <active>true</active>
+    <description>Requires the number of cobra participants to be filled in when the client has cobra.</description>
+    <errorConditionFormula>Cobra__c &amp;&amp; NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))&amp;&amp;  isnull(Number_of_Cobra_Participants__c)</errorConditionFormula>
+    <errorDisplayField>Number_of_Cobra_Participants__c</errorDisplayField>
+    <errorMessage>Please enter the number of cobra participants.</errorMessage>
+</ValidationRule>

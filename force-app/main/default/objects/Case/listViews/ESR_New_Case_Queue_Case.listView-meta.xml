@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ESR_New_Case_Queue_Case</fullName>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>CASES.TYPE</columns>
+    <columns>CASES.PRIORITY</columns>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>Action__c</columns>
+    <columns>ESRService__c</columns>
+    <columns>CASES.CLOSED</columns>
+    <filterScope>Queue</filterScope>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.Service_Support_ESR_Case,Case.ESR</value>
+    </filters>
+    <filters>
+        <field>CASES.CLOSED</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <label>ESR: New Case Queue</label>
+    <queue>ESR_New_Case_Queue</queue>
+    <sharedTo>
+        <roleAndSubordinates>ESR_Operations_Manager</roleAndSubordinates>
+        <roleAndSubordinates>ESR_Service_Center_Manager</roleAndSubordinates>
+    </sharedTo>
+</ListView>

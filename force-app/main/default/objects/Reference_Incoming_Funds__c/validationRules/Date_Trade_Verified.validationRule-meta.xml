@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Date_Trade_Verified</fullName>
+    <active>true</active>
+    <description>The Date Trade Verified cannot be entered unless ORM Approved or RC1 Posted(or CRW Posted) is entered. ORM is for Checks record type, CRW is for Wires record type.</description>
+    <errorConditionFormula>AND(NOT(ISBLANK( Date_Trade_Verified__c)),ORM_Approved__c = false,NOT(ISPICKVAL(Transmission_Method__c,&apos;ACH 401k&apos;)),
+
+OR(
+
+AND( RecordType.Name = &apos;401k Incoming Checks and ACHs&apos;,ISBLANK( RC1_Posted__c )),
+
+AND( RecordType.Name = &apos;401k Incoming Wires&apos;,ISBLANK( CRW_Posted__c ))))</errorConditionFormula>
+    <errorMessage>The Date Trade Verified cannot be entered unless ORM Approved or RC1 Posted(or CRW Posted) is entered</errorMessage>
+</ValidationRule>

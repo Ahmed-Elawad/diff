@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Onboarding_Process_must_be_populated</fullName>
+    <active>true</active>
+    <description>You must select an on-boarding process when contract reviewed is checked</description>
+    <errorConditionFormula>AND( 
+RecordTypeId =&quot;0120g000000grzo&quot;, 
+Contract_Reviewed__c =TRUE, 
+ISPICKVAL(Onboarding_Process__c,&quot;&quot; ) )</errorConditionFormula>
+    <errorDisplayField>Onboarding_Process__c</errorDisplayField>
+    <errorMessage>You must select an on-boarding process when contract reviewed is checked</errorMessage>
+</ValidationRule>

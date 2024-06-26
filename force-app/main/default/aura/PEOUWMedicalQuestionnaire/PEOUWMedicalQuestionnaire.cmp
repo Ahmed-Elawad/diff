@@ -1,0 +1,743 @@
+<aura:component controller="CommunityMedicalQuestionnaireController" implements="forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable,lightning:utilityItem,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:appHostable" access="global">
+    <ltng:require styles="{!$Resource.multilineToastCSS}" />
+    
+    <!-- initializers/event related attr -->
+    <aura:handler name="init" value="{!this}" action="{!c.getRecord}" />
+    
+    <!-- auto save -->
+    <aura:registerEvent name='autoSave' type='c:CommunityFormsAutoSave' />
+    <aura:attribute name='saveAction' type='Object' />
+    
+    <!-- navigation -->
+    <aura:attribute name='selectedParentTab' type='String' />
+    <aura:attribute name='parentTabList' type='String[]' />
+    <aura:attribute name="tabNameList" type="String[]" />
+    <aura:attribute name="tabStyle" type="String"/>
+    <aura:attribute name='skipSave' type='Boolean' />
+    
+    <!-- form functionality -->
+    <aura:attribute name="readOnly" type="Boolean" default="true" /> 
+    <aura:attribute name="uploadReadOnly" type="Boolean"/>
+    <aura:attribute name="contractReadOnly" type="Boolean"/>
+    <aura:attribute name="readOnlyString" type="String" default="" />
+    <aura:attribute name="medInfoTabLoaded" type="Boolean" default="false"/>
+    <aura:attribute name="isParentAccount" type="Boolean"/>
+    <aura:attribute name="genericChildLabel" type="String" default='If yes, please provide additional information such as name of condition, date of occurrence-diagnosis &amp;/or treatment-medication'/>
+    <aura:attribute name='aknOptions' type='List' default="[{'label':'I acknowledge the agreement','value': 'option1'},{'label':'I  do not acknowledge the agreement'}]" />   
+    <aura:attribute name='radioGroupOptions' type='List' default="[{'label': 'Yes', 'value':'Yes'},{'label':'No','value':'No'}]" />
+    <aura:attribute name='yesNoSelection' type='List' default="[{'label': '', 'value':'Choose one...'},{'label': 'Yes', 'value':'Yes'},{'label':'No','value':'No'}]" />
+    <aura:attribute name='dissalowAkn' type='boolean' />
+    <aura:attribute name='aknSelected' type='Boolean' default='false'/>
+    <aura:attribute name='needsSaving' type='boolean' />
+    <aura:attribute name='parentNeedsSaving' type='boolean' />
+    <aura:attribute name='errMsg' type='String' />
+    <aura:attribute name='activeLabel' type='String' />
+    <aura:attribute name="acknowledgementNeeded" type="Boolean" default="false" />
+    <aura:attribute name='medPrequal' type='Boolean' default='false'/>
+    
+    <!-- user attributes -->
+    <aura:attribute name='profile' type='String' />
+    <aura:attribute name='user' type='User' />
+    <aura:attribute name='commUser' type='boolean' />
+    
+    <!-- record attributes -->
+    <aura:attribute name="accList" type="Account[]" />
+    <aura:attribute name="currAcct" type="Account" />
+    <aura:attribute name="peoChecklist" type="Object" />
+    <aura:attribute name="parentChecklist" type="Object" />
+    <aura:attribute name="parentRecId" type="String" />
+    <aura:attribute name='questionnaire' type='Map' />
+    <aura:attribute name='parentMedQuestionnaire' type='Map' />
+    <aura:attribute name='parentAcctId' type='String' />
+    
+    <!-- reference attribute used for conditional fields. Couldn't find a better way while retaining reference to record edit form -->
+    <!-- THESE ARE NOT NEEDED ANYMORE. REMOVE AT NEXT POSSIBLE UPDATE TO COMPONENT -->
+    <aura:attribute name='showGroup_cvrg_denied_past_three_yrs__c' type='Boolean' default='false' />
+    <aura:attribute name='showHeart_disease_stroke_diabetes__c' type='Boolean' default='false' />
+    <aura:attribute name='showNervous_system_disorder__c' type='Boolean' default='false' />
+    <aura:attribute name='showCancer_tumor__c' type='Boolean'  default='false' />
+    <aura:attribute name='showLiver_disease_kidney_disorder__c' type='Boolean' default='false' />
+    <aura:attribute name='showAids_HIV_immune_disorder__c' type='Boolean' default='false' />
+    <aura:attribute name='showRespiratory_disease__c' type='Boolean' default='false' />
+    <aura:attribute name='showMuscular_back_arthritis_disorder__c' type='Boolean' default='false' />
+    <aura:attribute name='showSubstance_dependency__c' type='Boolean' default='false' />
+    <aura:attribute name='showMental_illness__c' type='Boolean' default='false' />
+    <aura:attribute name='showOther_serious_conditions__c' type='Boolean' default='false' />
+    <aura:attribute name='showorgan_transplants_scheduled__c' type='Boolean' default='false' />               
+    <aura:attribute name='showParticipant_under_treatment__c' type='Boolean' default='false' />
+    <aura:attribute name='showdisabled_or_handicapped_participant__c' type='Boolean' default='false' />
+    <aura:attribute name='showpregnant_participants__c' type='Boolean' default='false' />
+    <aura:attribute name='showserious_injury_hospitalization_5_yr__c' type='Boolean' default='false' />
+    <aura:attribute name='showcurrently_absent_non_active_emp__c' type='Boolean' default='false' />
+    <aura:attribute name='showparticipants_eligible_for_cobra__c' type='Boolean' default='false' />
+    <aura:attribute name='showHas_any_employee_been_absent__c' type='Boolean' default='false' />	
+    <aura:attribute name='showEmployee_been_out_on_disability__c' type='Boolean' default='false' />	
+    <aura:attribute name='showParticipant_require_a_transition_of_care__c' type='Boolean' default='false' />
+    <aura:attribute name='tabName' type='string' default="medicalGeneralInfo" />
+    <aura:attribute name="actionName" type="string" default="Next" />
+    <aura:attribute name='formSubmitted' type='boolean' default='false' />
+    <aura:attribute name='buttonLabel' type='String' />
+    <aura:attribute name="fewEmp" type="Boolean" default="false" />
+    
+    <!-- reference to save functionality -->
+    <aura:attribute name='saveFunc' type='Object' />
+    <aura:attribute name='getUpdatedChecklsit' type='Object' />
+    
+    <!--for numbering-->
+    <aura:attribute name='MedicalInfoLabel' type='String' default="Medical Information" />
+    <aura:attribute name='GILabel' type='String' default="General Information" />
+    <aura:attribute name='DocsLabel' type='String' default="Required Documents" />
+    <aura:attribute name='CensusLabel' type='String' default="Upload Census" />
+    
+    
+    <aura:attribute name="missingFields" type="Boolean" default="false" /> 
+    <aura:attribute name='relatedFieldList' type='String[]' />
+    <aura:attribute name='BenchmarkLabel' type='String' default="Industry Average" />
+    <aura:attribute name='section' type='String' default="Medical" />
+    <aura:attribute name='benchMarkPosMed' type='String' />
+    <aura:handler name="change" value="{!v.benchMarkPosMed}" action="{!c.updateBenchMarkPos}"/>
+    <aura:attribute name="hasBenchmarkPermission" type="Boolean" default="true"/>
+    
+    <!-- <lightning:card >
+        <aura:if isTrue="{!greaterthan(v.readOnlyString.length, 1)}">
+            <div style="width:100%">
+                <ui:message title="Evaluation Status" severity="info" closable="false" >
+                    {!v.readOnlyString}
+                </ui:message>
+            </div>
+        </aura:if> -->
+        <!-- Tabs for questions -->
+        
+        <!-- <aura:if isTrue="{!not(v.acknowledgementNeeded)}">
+            <div class="c-container">
+                <lightning:tabset variant="{!v.tabStyle}" selectedTabId="{!v.tabName}" > -->
+                    <!-- General information questions --> 
+                    <!-- <lightning:tab label="{!v.GILabel}" id="medicalGeneralInfo" onactive='{!c.handleTabChange}'>
+                        <p>
+                            Please enter the company information requested. For purposes of the Medical Questionnaire, a “full-time” employee is an employee classified as full
+                            time who is normally scheduled to work at least 30 hours per week.
+                        </p> 
+                        <br/>
+                        <div>
+                        </div><br />
+                        <aura:if isTrue="{!v.isParentAccount}">
+                          <lightning:layout multipleRows="true">
+                                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" > -->
+                                    <!-- <div id="Total_Number_of_Full_Time_Employees">
+                                        <lightning:input aura:id='medicalFormField'
+                                                         type="Number"
+                                                         name="Total_Number_of_Full_Time_Employees__c"
+                                                         label='Total Number of Full-time employees' 
+                                                         value="{!v.questionnaire.Total_Number_of_Full_Time_Employees__c}" 
+                                                         disabled="{!or(not(v.isParentAccount), v.readOnly)}" 
+                                                         onchange="{!c.answerChanged}" 
+                                                         fieldLevelHelp= "Please provide count of full-time employees across all entities" 
+                                                         required="{! notequals(v.peoChecklist.Current_Medical_Coverage_Provided__c,'No')}"/>
+                                    </div> -->
+                                    <!-- <lightning:input disabled='{!v.readOnlyPermission}' 
+                                                     label="Approximate Number of Enrolled Employees" 
+                                                     variant="label-stacked" 
+                                                     class="LabelSpace"
+                                                     onchange='{!c.answerChanged}'
+                                                     name='PEO_Onboarding_Checklist__c.Number_of_Enrolled_Employees__c'
+                                                     value="{!v.peoChecklist.Number_of_Enrolled_Employees__c}" 
+                                                     fieldLevelHelp= "You will be required to provide medical claims reports if you meet any of the following criteria:
+                                                                      • Located in TX and 50+ enrolled in medical
+                                                                      • Located in CA and have more than 300+ enrolled in medical
+                                                                      • Located in any state but TX and CA and 100 + enrolled in medical
+                                                                      • Self funded plan"/>
+                                </lightning:layoutItem>
+                    <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"> -->
+                                  <!-- <div id="Total_Number_of_Part_Time_Employees__c">
+                                        <lightning:input aura:id='medicalFormField'
+                                                         type="Number"
+                                                         name="Total_Number_of_Part_Time_Employees__c"
+                                                         label='Total Number of Part-time employees' 
+                                                         value="{!v.questionnaire.Total_Number_of_Part_Time_Employees__c}" 
+                                                         disabled="{!or(not(v.isParentAccount), v.readOnly)}" 
+                                                         onchange="{!c.answerChanged}" 
+                                                         fieldLevelHelp= "Please Provide count of part-time employees across all entities" 
+                                                         required="{! notequals(v.peoChecklist.Current_Medical_Coverage_Provided__c,'No')}"/>
+                                    </div>-->
+                                    <!-- <div>
+                                        <lightning:input 
+                                                         name="Employer_Contribution_Amount__c"
+                                                         label='Employer Contribution Amount' 
+                                                         value="{!v.questionnaire.Employer_Contribution_Amount__c}"
+                                                         onchange="{!c.answerChanged}"
+                                                         fieldLevelHelp= "Please indicate or describe any Employer Contributions amounts that may be in place under your current medical plan(s) offering."
+                                                         />
+                                    </div> -->
+                                <!-- </lightning:layoutItem> 
+                            </lightning:layout> 
+                        </aura:if>
+                          <lightning:layout multipleRows="true">
+                            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" padding="around-small">
+                             <aura:if isTrue="{!v.isParentAccount}">
+                                    <div>
+                                        <form>
+                                            <lightning:radioGroup disabled='{!v.readOnly}'
+                                                                  aura:id="medicalFormField"
+                                                                  label=" 1) Does your company currently have health insurance in place?"
+                                                                  name='PEO_Onboarding_Checklist__c.Current_Medical_Coverage_Provided__c'
+                                                                  class="LabelSpace"
+                                                                  onchange="{!c.answerChanged}" 
+                                                                  options="{!v.radioGroupOptions}"
+                                                                  value="{!v.peoChecklist.Current_Medical_Coverage_Provided__c}"
+                                                                  required="true"
+                                                                  /> -->
+                                            <!-- <lightning:radioGroup aura:id="medicalFormField"
+                                                                  name="previous_peo_client__c"
+                                                                  label=' 2) Has the Company previously been a client of Paychex, Oasis, or HROI PEOs?'
+                                                                  options="{!v.radioGroupOptions}"
+                                                                  value="{!v.questionnaire.previous_peo_client__c}"
+                                                                  disabled='{!v.readOnly}'
+                                                                  onchange="{!c.answerChanged}" 
+                                                                  required="true"/> -->
+                                        <!-- </form>
+                                    </div>
+                                    <div>
+                                        <form> -->
+                                            <!--<lightning:radioGroup aura:id="medicalFormField"
+                                                                  name="group_medical_offered_past_two_years__c"
+                                                                  label=' 3) Has the Company offered group medical coverage in the past 5 years?'
+                                                                  options="{!v.radioGroupOptions}"
+                                                                  value="{!v.questionnaire.group_medical_offered_past_two_years__c}"
+                                                                  disabled="{! or(v.readOnly,v.fewEmp)}"
+                                                                  onchange="{!c.answerChanged}" 
+                                                                  required="true"/> -->
+                                            <!--<aura:if isTrue="{!v.peoChecklist.Current_Medical_Coverage_Provided__c == 'Yes'}">-->
+                                            <!-- <div style="padding: 20px 0px 0px 12px"><p>
+                                                If Yes, please provide the following values.
+                                                </p></div> -->
+                                            <!-- <div>
+                                                <lightning:input aura:id='medicalFormField'
+                                                                 name="Current_PEO_Carrier_if_applicable__c"
+                                                                 label='Current PEO and/or Carrier (if applicable)' 
+                                                                 value="{!v.questionnaire.Current_PEO_Carrier_if_applicable__c}"
+                                                                 disabled="{! or(and(v.peoChecklist.Current_Medical_Coverage_Provided__c == 'No',v.isParentAccount),or( v.readOnly))}"
+                                                                 onchange="{!c.answerChanged}" required="{!v.peoChecklist.Current_Medical_Coverage_Provided__c != 'No'}"/>
+                                            </div>  -->
+                                            <!-- <div aura:id="Renewal_date__c">
+                                                <lightning:input aura:id='medicalFormField'
+                                                                 type="Date"
+                                                                 name="Renewal_date__c"
+                                                                 label='Renewal date' 
+                                                                 value="{!v.questionnaire.Renewal_date__c}"
+                                                                 disabled="{! or(and(v.peoChecklist.Current_Medical_Coverage_Provided__c == 'No',v.isParentAccount),or( v.readOnly))}"
+                                                                 onblur="{!c.handleBlur}" onchange="{!c.answerChanged}" required="{!v.peoChecklist.Current_Medical_Coverage_Provided__c != 'No'}"
+                                                                 />
+                                            </div>     -->
+                                            <!-- <div id="Rate_change_on_last_renewal__c">
+                                                <lightning:input aura:id='medicalFormField'
+                                                                 type="Number"
+                                                                 name="Rate_change_on_last_renewal__c"
+                                                                 label='% rate change on last renewal' 
+                                                                 value="{!v.questionnaire.Rate_change_on_last_renewal__c}"
+                                                                 disabled="{! or(and(v.peoChecklist.Current_Medical_Coverage_Provided__c == 'No',v.isParentAccount),or( v.readOnly))}"
+                                                                 onchange="{!c.answerChanged}" required="{!v.peoChecklist.Current_Medical_Coverage_Provided__c != 'No'}"
+                                                                 formatter="percent-fixed" 
+                                                                 step="0.01" />
+                                                
+                                            </div>  -->
+                                            <!-- <div id="Years_with_current_carrier__c">
+                                                <lightning:input aura:id='medicalFormField'
+                                                                 type="Number"
+                                                                 name="Years_with_current_carrier__c"
+                                                                 label='Years with current carrier' 
+                                                                 value="{!v.questionnaire.Years_with_current_carrier__c}" 
+                                                                 disabled="{! or(and(v.peoChecklist.Current_Medical_Coverage_Provided__c == 'No',v.isParentAccount),or( v.readOnly))}"
+                                                                 onchange="{!c.answerChanged}" required="{!v.peoChecklist.Current_Medical_Coverage_Provided__c != 'No'}"
+                                                                 />
+                                            </div> -->
+                                            
+                                            <!-- </aura:if> -->
+                                        <!-- </form>
+                                    </div>
+                                    <div> -->
+                                        <!-- <form>
+                                            <lightning:radioGroup aura:id="medicalFormField"
+                                                                  name="Group_cvrg_denied_past_three_yrs__c"
+                                                                  label=' 3) Has the Company been denied group medical coverage or had coverage involuntarily terminated by any PEO or carrier in the past 3 years?'
+                                                                  options="{!v.radioGroupOptions}"
+                                                                  onchange="{!c.changeSubFieldView}"
+                                                                  value="{!v.questionnaire.Group_cvrg_denied_past_three_yrs__c}"
+                                                                  disabled='{!v.readOnly}'
+                                                                  required="true"/>
+                                        </form> -->
+                                        <!-- <aura:if isTrue="{!v.showGroup_cvrg_denied_past_three_yrs__c}">
+                                            <div>
+                                                <lightning:input aura:id="medicalFormField"
+                                                                 label="If yes, please state reason" 
+                                                                 name="Group_cvrg_denied_past_three_yrs_reason__c"
+                                                                 value="{!v.questionnaire.Group_cvrg_denied_past_three_yrs_reason__c}"
+                                                                 disabled='{!v.readOnly}'
+                                                                 onchange="{!c.answerChanged}" required="true"/>
+                                            </div>
+                                        </aura:if> -->
+                                    <!-- </div>
+                                    <aura:set attribute="else"> -->
+                                        <!-- <lightning:select aura:id="UseParentData" 
+                                                          label="Carrier?" 
+                                                          name="Use_Parent_Questionnaire_Answers__c"
+                                                          value="{!v.questionnaire.Use_Parent_Questionnaire_Answers__c}"
+                                                          required="true" onchange="{!c.answerChanged}">
+                                            <option value=''></option>
+                                            <option value='No Carrier'>No Carrier</option>
+                                            <option value='Same as Parent'>Same as Parent</option>
+                                            <option value='Different from Parent'>Different from Parent</option>
+                                        </lightning:select> -->
+                                    <!-- </aura:set>
+                                </aura:if>
+                            </lightning:layoutItem>
+                           <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6" padding="around-small">
+                              <aura:if isTrue="{!v.isParentAccount}"> -->
+                                    <!-- <div>
+                                        <form>
+                                            <lightning:radioGroup aura:id="medicalFormField"
+                                                                  name="claims_exp_available__c"
+                                                                  label=' 4) Is claims experience available for your group?'
+                                                                  options="{!v.radioGroupOptions}"
+                                                                  value="{!v.questionnaire.claims_exp_available__c}" 
+                                                                  disabled="{! and(v.peoChecklist.Current_Medical_Coverage_Provided__c == 'No',v.isParentAccount) || v.readOnly}"
+                                                                  onchange="{!c.answerChanged}" 
+                                                                  required="{!v.peoChecklist.Current_Medical_Coverage_Provided__c != 'No'}"/>
+                                        </form>
+                                    </div> -->
+                                    <!-- <div>
+                                        <form>
+                                            <lightning:radioGroup aura:id="medicalFormField"
+                                                                  name="Is_your_current_plan_self_funded__c"
+                                                                  label=' 5) Is your current plan self-funded?'
+                                                                  options="{!v.radioGroupOptions}"
+                                                                  value="{!v.questionnaire.Is_your_current_plan_self_funded__c}" 
+                                                                  disabled="{! and(v.peoChecklist.Current_Medical_Coverage_Provided__c == 'No',v.isParentAccount) || v.readOnly}"
+                                                                  onchange="{!c.answerChanged}" 
+                                                                  required="{!v.peoChecklist.Current_Medical_Coverage_Provided__c != 'No'}"/>
+                                        </form>
+                                    </div> -->
+                                <!-- </aura:if>
+                                <aura:if isTrue="{!AND(NOT(v.isParentAccount), v.questionnaire.Use_Parent_Questionnaire_Answers__c == 'Different from Parent')}">
+                                    <aura:if isTrue= "{!v.questionnaire.Use_Parent_Questionnaire_Answers__c == 'Different from Parent'}"> -->
+                                        <!-- <div>
+                                            <lightning:input aura:id='medicalFormField'
+                                                             name="Current_PEO_Carrier_if_applicable__c"
+                                                             label='1) Current PEO and/or Carrier (if applicable)' 
+                                                             value="{!v.questionnaire.Current_PEO_Carrier_if_applicable__c}"
+                                                             disabled="{! and(v.peoChecklist.Current_Medical_Coverage_Provided__c == 'No',v.isParentAccount) || v.readOnly}"
+                                                             onchange="{!c.answerChanged}" required="{!v.peoChecklist.Current_Medical_Coverage_Provided__c != 'No'}"/>
+                                        </div>  -->
+                                    <!-- </aura:if>
+                                    <aura:if isTrue= "{!v.isParentAccount}">
+                                        <aura:if isTrue= "{!v.questionnaire.Current_Medical_Coverage_Provided__c == 'Yes'}"> -->
+                                            <!-- <div>
+                                                <lightning:input aura:id='medicalFormField'
+                                                                 name="Current_PEO_Carrier_if_applicable__c"
+                                                                 label='7) Current PEO and/or Carrier (if applicable)' 
+                                                                 value="{!v.questionnaire.Current_PEO_Carrier_if_applicable__c}"
+                                                                 disabled="{! or(and(v.peoChecklist.Current_Medical_Coverage_Provided__c == 'No',v.isParentAccount),or( v.readOnly))}"
+                                                                 onchange="{!c.answerChanged}" required="{!v.peoChecklist.Current_Medical_Coverage_Provided__c != 'No'}"/>
+                                            </div>  -->
+                                        <!-- </aura:if>
+                                    </aura:if>
+                                    <aura:if isTrue= "{!v.questionnaire.Use_Parent_Questionnaire_Answers__c == 'Different from Parent'}"> -->
+                                        <!-- <div aura:id="Renewal_date__c">
+                                            <lightning:input aura:id='medicalFormField'
+                                                             type="Date"
+                                                             name="Renewal_date__c"
+                                                             label='2) Renewal date' 
+                                                             value="{!v.questionnaire.Renewal_date__c}"
+                                                             disabled="{! and(v.peoChecklist.Current_Medical_Coverage_Provided__c == 'No',v.isParentAccount) || v.readOnly}"
+                                                             onblur="{!c.handleBlur}" onchange="{!c.answerChanged}" required="{!v.peoChecklist.Current_Medical_Coverage_Provided__c != 'No'}"
+                                                             />
+                                        </div>     -->
+                                        <!-- <div id="Rate_change_on_last_renewal__c">
+                                            <lightning:input aura:id='medicalFormField'
+                                                             type="Number"
+                                                             name="Rate_change_on_last_renewal__c"
+                                                             label='3) % rate change on last renewal' 
+                                                             value="{!v.questionnaire.Rate_change_on_last_renewal__c}"
+                                                             disabled="{! and(v.peoChecklist.Current_Medical_Coverage_Provided__c == 'No',v.isParentAccount) || v.readOnly}"
+                                                             onchange="{!c.answerChanged}" required="{!v.peoChecklist.Current_Medical_Coverage_Provided__c != 'No'}"
+                                                             formatter="percent-fixed" step="0.01"
+                                                             fieldLevelHelp= "Dummy help text" />
+                                        </div>  -->
+                                        <!-- <div id="Years_with_current_carrier__c">
+                                            <lightning:input aura:id='medicalFormField'
+                                                             type="Number"
+                                                             name="Years_with_current_carrier__c"
+                                                             label='4) Years with current carrier' 
+                                                             value="{!v.questionnaire.Years_with_current_carrier__c}" 
+                                                             disabled="{! and(v.peoChecklist.Current_Medical_Coverage_Provided__c == 'No',v.isParentAccount) || v.readOnly}"
+                                                             onchange="{!c.answerChanged}" required="{!v.peoChecklist.Current_Medical_Coverage_Provided__c != 'No'}"/>
+                                        </div> -->
+                                    <!-- </aura:if> -->
+                                    <!--<aura:if isTrue= "{!v.isParentAccount}">
+                                        <div id="Past_medical_carrier_if_applicable__c"> 
+                                            <form>
+                                                <lightning:radioGroup aura:id="medicalFormField"
+                                                                      name="Past_medical_carrier_if_applicable__c"
+                                                                      label=' 8) Do you have a past medical carrier?'
+                                                                      options="{!v.radioGroupOptions}"
+                                                                      value="{!v.questionnaire.Past_medical_carrier_if_applicable__c}"
+                                                                      disabled="{! and(v.peoChecklist.Current_Medical_Coverage_Provided__c == 'No',v.isParentAccount) || v.readOnly || v.fewEmp}"
+                                                                      onchange="{!c.answerChanged}"
+                                                                      required="{!v.peoChecklist.Current_Medical_Coverage_Provided__c != 'No'}"/>
+                                            </form>
+                                        </div>
+                                    </aura:if>-->
+                                    <!-- <aura:if isTrue= "{!v.questionnaire.Use_Parent_Questionnaire_Answers__c == 'Different from Parent'}">
+                                        <div id="Past_medical_carrier_if_applicable__c"> 
+                                            <form>
+                                                <lightning:radioGroup aura:id="medicalFormField"
+                                                                      name="Past_medical_carrier_if_applicable__c"
+                                                                      label=' 5) Do you have a past medical carrier?'
+                                                                      options="{!v.radioGroupOptions}"
+                                                                      value="{!v.questionnaire.Past_medical_carrier_if_applicable__c}"
+                                                                      disabled="{! and(v.peoChecklist.Current_Medical_Coverage_Provided__c == 'No',v.isParentAccount) || v.readOnly || v.fewEmp}"
+                                                                      onchange="{!c.answerChanged}"
+                                                                      required="{!v.peoChecklist.Current_Medical_Coverage_Provided__c != 'No'}"/>
+                                            </form>
+                                        </div>
+                                    </aura:if>   -->
+                                  
+                                    <!-- <form>
+                                            <aura:if isTrue= "{!and(v.questionnaire.Use_Parent_Questionnaire_Answers__c == 'Different from Parent', not(v.isParentAccount))}">
+                                            <div id="medicalFormField"> 
+                                                <form>
+                                                    <lightning:radioGroup aura:id="medicalFormField"
+                                                                          name="group_medical_offered_past_two_years__c"
+                                                                          label=' 5) Has the Company offered group medical coverage in the past 5 years?'
+                                                                          options="{!v.radioGroupOptions}"
+                                                                          value="{!v.questionnaire.group_medical_offered_past_two_years__c}"
+                                                                          disabled="{!v.readOnly}"
+                                                                          onchange="{!c.answerChanged}" 
+                                                                          required="true"/> 
+                                                </form>
+                                            </div>
+                                       </aura:if>
+                                        <aura:if isTrue= "{and(!v.isParentAccount, v.questionnaire.Use_Parent_Questionnaire_Answers__c != 'Different from Parent')}">
+                                            <lightning:radioGroup aura:id="medicalFormField"
+                                                                  name="group_medical_offered_past_two_years__c"
+                                                                  label=' 6) Has the Company offered group medical coverage in the past 5 years?'
+                                                                  options="{!v.radioGroupOptions}"
+                                                                  value="{!v.questionnaire.group_medical_offered_past_two_years__c}"
+                                                                  disabled="{! or(v.readOnly,v.peoChecklist.Current_Medical_Coverage_Provided__c == 'Yes')}"
+                                                                  onchange="{!c.answerChanged}" 
+                                                                  required="true"/> 
+                                        </aura:if> 
+                                        <aura:if isTrue="{!v.questionnaire.group_medical_offered_past_two_years__c == 'Yes'}">
+                                            <div style="padding-top: 5px;"><p>
+                                                If Yes, please provide the following values.
+                                                </p></div>
+                                            <div id="Past_Medical_Carrier__c">
+                                                <lightning:input aura:id='medicalFormField'
+                                                                 name="Past_Medical_Carrier__c"
+                                                                 label='Past Medical Carrier' 
+                                                                 value="{!v.questionnaire.Past_Medical_Carrier__c}"
+                                                                 disabled="{! and(v.questionnaire.group_medical_offered_past_two_years__c == 'No',v.isParentAccount) || v.readOnly}"
+                                                                 onblur="{!c.handleBlur}" onchange="{!c.answerChanged}" required="{!v.peoChecklist.Current_Medical_Coverage_Provided__c != 'No'}"/>
+                                            </div> 
+                                            <div id="Effective_date__c">
+                                                <lightning:input aura:id='medicalFormField'
+                                                                 type="Date"
+                                                                 name="Effective_date__c"
+                                                                 label=' Effective date' 
+                                                                 value="{!v.questionnaire.Effective_date__c}"
+                                                                 disabled="{! and(v.questionnaire.group_medical_offered_past_two_years__c == 'No',v.isParentAccount) || v.readOnly}"
+                                                                 onblur="{!c.handleBlur}" onchange="{!c.answerChanged}" required="{!v.peoChecklist.Current_Medical_Coverage_Provided__c != 'No'}"/>
+                                            </div>  
+                                            <div id="Termination_date__c">
+                                                <lightning:input aura:id='medicalFormField'
+                                                                 type="Date"
+                                                                 name="Termination_date__c"
+                                                                 label=' Termination date' 
+                                                                 value="{!v.questionnaire.Termination_date__c}"
+                                                                 disabled="{! and(v.questionnaire.group_medical_offered_past_two_years__c == 'No',v.isParentAccount) || v.readOnly}"
+                                                                 onblur="{!c.handleBlur}" onchange="{!c.answerChanged}" required="{!v.peoChecklist.Current_Medical_Coverage_Provided__c != 'No'}"/>
+                                            </div> 
+                                            <div id="Reason_for_termination__c">
+                                                <lightning:input aura:id='medicalFormField'
+                                                                 type="Text-area"
+                                                                 name="Reason_for_termination__c"
+                                                                 label=' Reason for termination'
+                                                                 value="{!v.questionnaire.Reason_for_termination__c}"
+                                                                 disabled="{! and(v.questionnaire.group_medical_offered_past_two_years__c == 'No',v.isParentAccount) || v.readOnly}"
+                                                                 onchange="{!c.answerChanged}" required="{!v.peoChecklist.Current_Medical_Coverage_Provided__c != 'No'}"/>
+                                            </div>
+                                        </aura:if>
+                                    </form> -->
+                                <!-- </aura:if>
+                            </lightning:layoutItem>
+                        </lightning:layout>    
+                        <c:communityFormNavButtons tabNameList='{!v.tabNameList}' 
+                                                   currentPos='{!v.tabName}' 
+                                                   allPossibleParents='{!v.parentTabList}'
+                                                   activeParent='{!v.selectedParentTab}'
+                                                   parentTabsetUsesIteration='True'
+                                                   hideBackButton="{! if(and(v.isParentAccount,equals(v.tabName, 'medicalGeneralInfo')), true, false)}"
+                                                   saveFunc='{!v.saveFunc}' 
+                                                   skipSaveEvt='{!v.skipSave}' />
+                    </lightning:tab> -->
+                    
+                    <!-- medical information qustions -->
+                    <!-- <aura:if isTrue="{!v.isParentAccount}">
+                        <lightning:tab label="{!v.MedicalInfoLabel}" id="medicalInfo" onactive='{!c.handleTabChange}'>
+                            <lightning:card title="Medical Information" >
+                                <p>
+                                    Provide information to the best of the Company’s knowledge considering all relevant materials and documents legally
+                                    available and disclosable. If any questions are answered "Yes," please provide details in the text box that appears. -->
+                                    <!--If any questions are answered ‘Yes,’ please provide details in the grid provided; if additional
+                                space is needed, please provide on a separate document.-->
+                                <!-- </p><br />
+                                <div>
+                                    <p>
+                                        Details should not identify specific individuals of the group. Please do not solicit information from your 	
+                                        employees.	 -->
+                                        <!--In the past five (5) years, has any Participant consulted with a healthcare provider, received treatment	
+                                        (including prescription medications), or been hospitalized for any of the following conditions, diseases,	
+                                        or disorders?-->
+                                    <!-- </p>
+                                    <lightning:layout verticalAlign="stretch"  multipleRows="true">
+                                        <lightning:layoutItem  padding="around-small"> -->
+                                            <!-- <div>
+                                                <lightning:radioGroup aura:id="medicalFormField"
+                                                                      name="pregnant_participants__c"
+                                                                      label=' 1) Is any participant pregnant?'
+                                                                      options="{!v.radioGroupOptions}"
+                                                                      onchange="{!c.changeSubFieldView}"
+                                                                      value="{!v.questionnaire.pregnant_participants__c}"
+                                                                      disabled='{!v.readOnly}' required = "true"/>
+                                                <aura:if isTrue="{!v.showpregnant_participants__c}">
+                                                    <div>
+                                                        <lightning:input aura:id="medicalFormField"
+                                                                         label="If yes, please provide additional information including due date if known" 
+                                                                         name="info_pregnant_participants__c" 
+                                                                         value="{!v.questionnaire.info_pregnant_participants__c}"
+                                                                         disabled='{!v.readOnly}' onchange="{!c.answerChanged}" required = "true"/>
+                                                    </div>
+                                                </aura:if>
+                                            </div> -->
+                                            <!-- <div>
+                                                <lightning:radioGroup aura:id="medicalFormField"
+                                                                      name="serious_injury_hospitalization_5_yr__c"
+                                                                      label=' 2) Has any participant been hospitalized or had any surgical procedures within the past 12 months?'
+                                                                      options="{!v.radioGroupOptions}"
+                                                                      onchange="{!c.changeSubFieldView}"
+                                                                      value="{!v.questionnaire.serious_injury_hospitalization_5_yr__c}" 
+                                                                      disabled='{!v.readOnly}' required = 'true'/>
+                                                <aura:if isTrue="{!v.showserious_injury_hospitalization_5_yr__c}">
+                                                    <div>
+                                                        <lightning:input aura:id="medicalFormField"
+                                                                         label="{!v.genericChildLabel}" 
+                                                                         name="info_serious_injury_hospitalization_5_yr__c" 
+                                                                         value="{!v.questionnaire.info_serious_injury_hospitalization_5_yr__c}"
+                                                                         disabled='{!v.readOnly}' onchange="{!c.answerChanged}" required = "true"/>
+                                                    </div>
+                                                </aura:if>
+                                            </div> -->
+                                            <!-- <div>
+                                                <lightning:radioGroup aura:id="medicalFormField"
+                                                                      name="Participant_under_treatment__c"
+                                                                      label=' 3) Has any participant been advised to undergo diagnostic testing, surgical procedures, or hospitalizations in the next 12 months?'
+                                                                      options="{!v.radioGroupOptions}"
+                                                                      onchange="{!c.changeSubFieldView}"
+                                                                      value="{!v.questionnaire.Participant_under_treatment__c}" 
+                                                                      disabled='{!v.readOnly}' required = "true"/>
+                                                <aura:if isTrue="{!v.showParticipant_under_treatment__c}">
+                                                    <div>
+                                                        <lightning:input aura:id="medicalFormField"
+                                                                         label="{!v.genericChildLabel}" 
+                                                                         name="info_Participant_under_treatment__c" 
+                                                                         value="{!v.questionnaire.info_Participant_under_treatment__c}"
+                                                                         disabled='{!v.readOnly}' onchange="{!c.answerChanged}" required = "true"/>
+                                                    </div>
+                                                </aura:if>
+                                            </div> -->
+                                            <!-- <div>
+                                                <lightning:radioGroup aura:id="medicalFormField"
+                                                                      name="currently_absent_non_active_emp__c"
+                                                                      label=' 4) Is any employee currently not actively at work?'
+                                                                      options="{!v.radioGroupOptions}"
+                                                                      onchange="{!c.changeSubFieldView}"
+                                                                      value="{!v.questionnaire.currently_absent_non_active_emp__c}"
+                                                                      disabled='{!v.readOnly}' required = "true"/>
+                                                <aura:if isTrue="{!v.showcurrently_absent_non_active_emp__c}">
+                                                    <div>
+                                                        <lightning:input aura:id="medicalFormField"
+                                                                         label="{!v.genericChildLabel}" 
+                                                                         name="info_currently_absent_non_active_emp__c" 
+                                                                         value="{!v.questionnaire.info_currently_absent_non_active_emp__c}"
+                                                                         disabled='{!v.readOnly}' onchange="{!c.answerChanged}" required = "true"/>
+                                                    </div>
+                                                </aura:if>
+                                            </div> -->
+                                            <!-- <div>
+                                                <lightning:radioGroup aura:id="medicalFormField"
+                                                                      name="Has_any_employee_been_absent__c"
+                                                                      label=' 5) Has any employee been absent for 10 or more consecutive days due to accident, injury, or medical leave?'
+                                                                      options="{!v.radioGroupOptions}"
+                                                                      onchange="{!c.changeSubFieldView}"
+                                                                      value="{!v.questionnaire.Has_any_employee_been_absent__c}"
+                                                                      disabled='{!v.readOnly}' required = "true"/>
+                                                <aura:if isTrue="{!v.showHas_any_employee_been_absent__c}">
+                                                    <div>
+                                                        <lightning:input aura:id="medicalFormField"
+                                                                         label="{!v.genericChildLabel}" 
+                                                                         name="info_has_any_employee_been_absent__c" 
+                                                                         value="{!v.questionnaire.info_has_any_employee_been_absent__c}"
+                                                                         disabled='{!v.readOnly}' onchange="{!c.answerChanged}" required = "true"/>
+                                                    </div>
+                                                </aura:if>
+                                            </div> -->
+                                            <!-- <div>
+                                                <lightning:radioGroup aura:id="medicalFormField"
+                                                                      name="Employee_been_out_on_disability__c"
+                                                                      label=' 6) Has any employee been out on short- or long-term disability within the past 2 years?'
+                                                                      options="{!v.radioGroupOptions}"
+                                                                      onchange="{!c.changeSubFieldView}"
+                                                                      value="{!v.questionnaire.Employee_been_out_on_disability__c}"
+                                                                      disabled='{!v.readOnly}' required = "true"/>
+                                                <aura:if isTrue="{!v.showEmployee_been_out_on_disability__c}">
+                                                    <div>
+                                                        <lightning:input aura:id="medicalFormField"
+                                                                         label="{!v.genericChildLabel}" 
+                                                                         name="info_employee_been_out_on_disability__c" 
+                                                                         value="{!v.questionnaire.info_employee_been_out_on_disability__c}"
+                                                                         disabled='{!v.readOnly}' onchange="{!c.answerChanged}" required = "true"/>
+                                                    </div>
+                                                </aura:if>
+                                            </div> -->
+                                            <!-- <div>
+                                                <lightning:radioGroup aura:id="medicalFormField"
+                                                                      name="participants_eligible_for_cobra__c"
+                                                                      label=' 7) Are any participants and/or dependents currently eligible for or on COBRA?'
+                                                                      options="{!v.radioGroupOptions}"
+                                                                      onchange="{!c.changeSubFieldView}"
+                                                                      value="{!v.questionnaire.participants_eligible_for_cobra__c}"
+                                                                      disabled='{!v.readOnly}' required = "true"/>
+                                                <aura:if isTrue="{!v.showparticipants_eligible_for_cobra__c}">
+                                                    <div>
+                                                        <lightning:input aura:id="medicalFormField"
+                                                                         label="If yes, please provide additional information; indicate COBRA participants/eligible on census" 
+                                                                         name="info_participants_eligible_for_cobra__c" 
+                                                                         value="{!v.questionnaire.info_participants_eligible_for_cobra__c}"
+                                                                         disabled='{!v.readOnly}' onchange="{!c.answerChanged}" required = "true"/>
+                                                    </div>
+                                                </aura:if>
+                                            </div> -->
+                                            <!-- <div>
+                                                <lightning:radioGroup aura:id="medicalFormField"
+                                                                      name="Participant_require_a_transition_of_care__c"
+                                                                      label=' 8) Are any participants in a treatment plan that would require a transition of care when joining the health plan?'
+                                                                      options="{!v.radioGroupOptions}"
+                                                                      onchange="{!c.changeSubFieldView}"
+                                                                      value="{!v.questionnaire.Participant_require_a_transition_of_care__c}"
+                                                                      disabled='{!v.readOnly}' required = "true"/>
+                                                <aura:if isTrue="{!v.showParticipant_require_a_transition_of_care__c}">
+                                                    <div>
+                                                        <lightning:input aura:id="medicalFormField"
+                                                                         label="{!v.genericChildLabel}" 
+                                                                         name="info_participant_req_transition_of_care__c" 
+                                                                         value="{!v.questionnaire.info_participant_req_transition_of_care__c}"
+                                                                         disabled='{!v.readOnly}' onchange="{!c.answerChanged}" required = "true"/>
+                                                    </div>
+                                                </aura:if>
+                                            </div> -->
+                                        <!-- </lightning:layoutItem>
+                                    </lightning:layout>
+                                </div>
+                            </lightning:card>  
+                            <c:communityFormNavButtons tabNameList='{!v.tabNameList}' 
+                                                       currentPos='{!v.tabName}' 
+                                                       allPossibleParents='{!v.parentTabList}'
+                                                       activeParent='{!v.selectedParentTab}'
+                                                       parentTabsetUsesIteration='True'
+                                                       hideBackButton="{! if(and(v.isParentAccount,equals(v.tabName, 'medicalGeneralInfo')), true, false)}"
+                                                       saveFunc='{!v.saveFunc}' 
+                                                       skipSaveEvt='{!v.skipSave}' />
+                        </lightning:tab> -->
+                        
+                        <!--<lightning:tab label="{!v.medPrequal ? v.CensusLabel : v.DocsLabel}" title="{!v.medPrequal ? 'Upload Census' : 'Required Documents'}" aura:id="upload" id="upload" onactive='{!c.handleTabChange}'>
+                            <c:UploadFiles tabOption="{!v.tabType}" 
+                                           checklist="{!v.peoChecklist}"  
+                                           currentAccount="{!v.currAcct}"  
+                                           parentAccountToCurrentAccount='{!v.parentAcctId}'
+                                           disableFilesUpload="{!v.uploadReadOnly}" readOnlyString='{!v.readOnlyString}'
+                                           isCommunityUser="{!v.user.Profile.Name == 'Customer Community Login User Clone'}" 
+                                           censusRequired = "{!v.peoChecklist.CensusRequired__c}" 
+                                           claimsReportRequired = "{!and(not(v.medPrequal),v.peoChecklist.Claims_Report_required__c)}" 
+                                           hlthInsRenwReqd = "{!and(not(v.medPrequal),v.peoChecklist.Health_Insurance_Renewal_required__c)}" 
+                                           hlthInsSummReqd = "{!and(v.peoChecklist.Current_Medical_Coverage_Provided__c == 'Yes', not(v.medPrequal),v.peoChecklist.Health_Insurance_Summary_required__c)}" 
+                                           hlthInvReqd = "{!and(v.peoChecklist.Current_Medical_Coverage_Provided__c == 'Yes', not(v.medPrequal),v.peoChecklist.Health_Invoice_required__c)}"
+                                           misMedReqd = "true" saveFunc='{!v.saveFunc}' 
+                                           parentTabs = '{!v.parentTabList}' ActiveParentTab='{!v.selectedParentTab}'
+                                           section='{!v.section}' benchMarkPos='{!v.benchMarkPosMed}' hasBenchmarkPermission = '{!v.hasBenchmarkPermission}'/>
+                        </lightning:tab>-->
+                        <!-- <aura:if isTrue='{!and(and(and(and(v.currAcct.NAICS_Code__c != null, v.currAcct.SalesParent__c == null),v.currAcct.ShippingPostalCode != null),v.hasBenchmarkPermission == true),v.peoChecklist.display_Benchmark_tab__c)}'>
+                            <lightning:tab label="{!v.BenchmarkLabel}" id="BenchMarkMedPart" >
+                                <c:PEOUWBenchMarkData selectedTab='{!v.tabName}' tabList = '{!v.tabNameList}'
+                                                      parentTabs='{!v.parentTabList}' ActiveParentTab='{!v.selectedParentTab}'
+                                                      currentAccount='{!v.currAcct}' PEOChecklist='{!v.peoChecklist}'
+                                                      saveFunc = '{!v.saveFunc}' section='{!v.section}'
+                                                      />
+                            </lightning:tab>
+                        </aura:if>
+                    </aura:if>
+                </lightning:tabset>
+            </div>
+            <aura:set attribute="else">
+                <lightning:card title="Please note:" >
+                    <div class="slds-p-horizontal_small slds-p-vertical_x-small" >
+                        <p>
+                            Rates cannot be finalized until all employee enrollment forms have been completed and reviewed by Paychex PEO.
+                            Rates may change and/or group participation may be terminated if the Company fails to meet the Paychex PEO eligibility
+                            requirements or if the final enrollment varies by more than 10% from the census that was originally submitted.
+                            If you have any questions regarding the completion of the Medical Questionnaire, please submit a case or reach out
+                            directly to your sales associate.
+                        </p> 
+                    </div>
+                </lightning:card>
+                <lightning:card title="Acknowledgement" >
+                    <div class="slds-p-horizontal_small slds-p-vertical_x-small" >
+                        <p>
+                            <i>On behalf of company I confirm and attest that: The information provided on this Medical Questionnaire is
+                                true, accurate, complete, and not misleading to the best of Company’s knowledge after due inquiry within legal
+                                restrictions, taking into account all information legally available to be disclosed by it. This information will be
+                                relied on to determine the availability of various products and services and to establish rates for such products
+                                and services. Failing to meet the eligibility requirements or failing to provide true, accurate, complete, non-misleading
+                                information to Paychex PEO for any reason, regardless of cause or fault, may result in, among
+                                other things, rate adjustments or unavailability of products and services.  Submission of this information does
+                                not guarantee that any products or services will be offered.
+                            </i>
+                        </p> 
+                    </div>
+                    <div class='slds-form-element slds-p-horizontal_small slds-p-vertical_x-small'>
+                        <aura:if isTrue="{!v.user.Profile.Name != 'Customer Community Login User Clone'}">
+                            <div>
+                                <p class='slds-text-color_error slds-text-body_small'>DISABLED: ONLY THE CLIENT CAN AGREE TO THE ACKNOWLEDGMENT</p>
+                            </div>
+                        </aura:if>
+                        <abbr class="slds-required" title="required">*</abbr>
+                        <div class='slds-show_inline-block '>
+                            <lightning:input type="checkbox"
+                                             checked="{!v.aknSelected}"
+                                             label='I have read and agree with the above statement'
+                                             disabled="{! or(v.user.Profile.Name != 'Customer Community Login User Clone',v.aknSelected)}"
+                                             onchange="{!c.handleAkn}"/>
+                        </div>
+                    </div>
+                    <c:communityFormNavButtons tabNameList='{!v.tabNameList}' 
+                                               currentPos='{!v.tabName}' 
+                                               allPossibleParents='{!v.parentTabList}'
+                                               activeParent='{!v.selectedParentTab}'
+                                               parentTabsetUsesIteration='True'
+                                               hideBackButton="{! if(and(v.isParentAccount,equals(v.tabName, 'medicalGeneralInfo')), true, false)}"
+                                               saveFunc='{!v.saveFunc}' 
+                                               skipSaveEvt='{!v.skipSave}' />
+                </lightning:card>
+            </aura:set> -->
+        <!-- </aura:if>
+    </lightning:card> -->
+    
+</aura:component>

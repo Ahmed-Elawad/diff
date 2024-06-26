@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CANCELS_Pending_CYCLE3</fullName>
+    <columns>NAME</columns>
+    <columns>Prospect_Client_Name__c</columns>
+    <columns>Amended_Plan_for_PPA__c</columns>
+    <columns>SunGard_Number__c</columns>
+    <columns>BIS_ID__c</columns>
+    <columns>Date_Paperwork_Received__c</columns>
+    <columns>Last_Check_Date__c</columns>
+    <columns>New_Case_Notes__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_Terms_Transfers__c.X401k_Termination</value>
+    </filters>
+    <filters>
+        <field>Amended_Plan_for_PPA__c</field>
+        <operation>equals</operation>
+        <value>No</value>
+    </filters>
+    <filters>
+        <field>Termination_Completed_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>notEqual</operation>
+        <value>Closed – Paperwork Discrepancy Never Resolved,Term/Transfer Stopped</value>
+    </filters>
+    <label>*CANCELS: Pending CYCLE3</label>
+    <sharedTo>
+        <role>HRS4SClientRetentionRepresentative</role>
+        <role>HRS_4S_Client_Retention_Supervisor</role>
+    </sharedTo>
+</ListView>

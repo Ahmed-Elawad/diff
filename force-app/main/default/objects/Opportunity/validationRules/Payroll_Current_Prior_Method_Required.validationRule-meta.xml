@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Payroll_Current_Prior_Method_Required</fullName>
+    <active>true</active>
+    <description>Sales Reps populate Payroll Current-Prior Method field when the stage is &apos;Lost&apos; or at or above 40% prob, &amp; before the rep marks it as Sold (80% prob) 
+Do not trigger if the Opp is already marked Sold or another non-Sales user triggers changes</description>
+    <errorConditionFormula>AND(
+  ISCHANGED(StageName),
+  NOT(BEGINS(TEXT(StageName), &apos;Sold&apos;)),
+  OR(
+     $User.Job_Name__c = &apos;Sales Representative&apos;,
+     $Profile.Name = &apos;MMS SDR&apos;),
+  $User.Sales_Division__c != &apos;Virtual TAA&apos;,
+  ISBLANK(TEXT(Payroll_Current_Prior_Method__c)),
+  OR(AND(Probability &gt;= 0.40, Probability &lt;= 0.80), ISPICKVAL(StageName, &apos;Lost&apos;)),
+  OR
+     ($RecordType.Name = &apos;MMS Opportunity (DSA) Record Type&apos;,
+      $RecordType.Name = &apos;MMS Opportunity Record Type&apos;,
+      $RecordType.Name = &apos;Core Opportunity DSA Record Type&apos;,
+      $RecordType.Name = &apos;Core Opportunity Record Type&apos;,
+      $RecordType.Name = &apos;Core Virtual Sales&apos;,
+      $RecordType.Name = &apos;PEO Opportunity FSS Record Type&apos;,
+      $RecordType.Name = &apos;PEO Opportunity Record Type&apos;,
+      $RecordType.Name = &apos;Prism PEO Opportunity FSS Record Type&apos;,
+      $RecordType.Name = &apos;Prism PEO Opportunity Record Type&apos;
+     ,AND(OR($RecordType.Name = &apos;HRS 401(k) Opportunity Record Type&apos;,$RecordType.Name = &apos;HRS 401(k) Opportunity FSS Record Type&apos;)
+	     ,EvaluateProductGroup__c
+		 ,CONTAINS(ProductGroupsSelected__c ,&apos;Payroll&apos;))
+    ),
+  NOT(BEGINS($Profile.Name, &apos;System Administrator&apos;)),
+  NOT($User.Sales_Division__c = &apos;CSSR&apos;)
+)</errorConditionFormula>
+    <errorMessage>You must complete the Payroll Current-Prior Method field before saving this Opportunity to a higher Status or to Lost.</errorMessage>
+</ValidationRule>

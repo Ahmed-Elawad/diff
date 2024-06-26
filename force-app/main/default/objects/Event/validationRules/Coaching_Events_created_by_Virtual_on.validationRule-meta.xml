@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Coaching_Events_created_by_Virtual_on</fullName>
+    <active>true</active>
+    <description>Coaching events should only be created by Virtual Sales users</description>
+    <errorConditionFormula>AND(NOT(CONTAINS(LOWER( $UserRole.Name), &apos;virtual&apos; )) , Location =&apos;Coaching Event&apos;)</errorConditionFormula>
+    <errorMessage>You are not eligible to create a coaching event.</errorMessage>
+</ValidationRule>

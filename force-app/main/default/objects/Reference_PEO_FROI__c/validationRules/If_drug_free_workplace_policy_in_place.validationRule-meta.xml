@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>If_drug_free_workplace_policy_in_place</fullName>
+    <active>true</active>
+    <description>If Drug free workplace in place= yes, then you need details</description>
+    <errorConditionFormula>AND 
+( 
+ISPICKVAL (  Drug_Free_workplace_policy_in_place__c , &quot;Yes&quot;), 
+ISBLANK (  Details_on_Drug_Free_workplace_policy__c  ) 
+)</errorConditionFormula>
+    <errorDisplayField>Details_on_Drug_Free_workplace_policy__c</errorDisplayField>
+    <errorMessage>If Drug free workplace in place= yes, then you need details</errorMessage>
+</ValidationRule>

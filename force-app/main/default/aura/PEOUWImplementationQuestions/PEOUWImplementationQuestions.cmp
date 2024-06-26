@@ -1,0 +1,144 @@
+<aura:component controller="CommunityImplementationController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+                access="global" >
+    
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    <aura:registerEvent name='autoSave' type='c:CommunityFormsAutoSave' />
+    <aura:registerEvent name='communityFormsTabNavigate' type='c:communityFormsTabNavigate' />
+    <aura:attribute name='possibleTabs' type='String[]' />
+    <aura:attribute name="isInit" type="Boolean" default="false" />
+    <aura:attribute name="implChecklists" type="Map" default="{}"/>
+    <aura:attribute name="tabType" type="String"/>
+    <aura:attribute name='selectedAccountId' type='String'/>  
+    <aura:attribute name='totalAccount' type='Integer'/>  
+    <aura:attribute name='recordId' type='String' />
+    <aura:attribute name='userProfile' type='String' />
+    <aura:attribute name='ParentAccountId' type='String' />
+    <aura:attribute name='allAccounts' type='Account[]' />
+    <aura:attribute name='peoFullChecklist' type='PEO_Onboarding_Checklist__c' />
+    <aura:attribute name='recId' type='String' />
+    <aura:attribute name='currentUser' type='Map' />
+    <aura:attribute name='communityUser' type='Object' default="{}"/>
+    <aura:attribute name="isCommunityUser" type="Boolean" default="false" />
+    <aura:attribute name="isFinalizeDisable" type="Boolean" default="false" />
+    <aura:attribute name="showCommunityUserInfo" type="Boolean" default="false" />
+    <aura:attribute name="disableQuestions" type="Boolean" default="false" />
+    <aura:attribute name='readonly' type='Boolean' default='false'/>
+    <aura:attribute name="buttonText" type="String" default="Confirm without notifying the client"/>
+    <aura:attribute name="parentImplChklist" type="PEO_Implementation_Checklist__c" default="{}"/>
+    <aura:attribute name='implementationChecklist' type='PEO_Implementation_Checklist__c' default='{}'/>
+    <aura:attribute name="checked" type="Boolean" default="false"/>
+    <aura:attribute name="isFinalized" type="Boolean" default="false"/>
+    <aura:registerEvent name="cmpEventToCopyParentData" type="c:PEOImpCopyParentData"/>	
+    <aura:attribute name="copyfromParent" type="Boolean" default="false"/>	
+    <aura:handler event="c:PEOImpCopyToChildren" action="{!c.handleCopyToChildrenEvent}"/>	
+    <aura:attribute name='mirrorParentInfo' type="Boolean"  default="false"/>
+    <aura:attribute name='saveAction' type='Object' />
+    <aura:attribute name='readOnlyString' type='String'/>
+
+    
+    <aura:html tag="style">.toastMessage.forceActionsText{white-space : pre-line !important;}</aura:html>
+    <aura:if isTrue="{!!v.isInit}">
+        
+        <lightning:spinner alternativeText="Loading" size="medium" />
+        <aura:set attribute="else">
+            <aura:if isTrue="{!greaterthan(v.readOnlyString.length, 1)}">
+                                <div style="width:100%">
+                                    <ui:message title="Evaluation Status" severity="info" closable="false" >
+                                        {!v.readOnlyString}
+                                    </ui:message>
+                                </div>
+                            </aura:if>
+            <lightning:tabset variant="{!v.scoped}" selectedTabId="{!v.selectedAccountId}" >
+                <aura:iteration items="{!v.allAccounts}" var="acc" indexVar="index">
+                    <lightning:tab onactive="{! c.checkFinalize }" label="{!index+1+'.'+acc.Name}" id="{!acc.Id}">
+                        <c:PEOUWInternalQuestions firstStep='{!index}'
+                                                  aura:id="internalQuestionCmp"
+                                                  readOnlyPermission='{!v.readOnly}'
+                                                  allAccounts='{!v.allAccounts}'
+                                                  tabType='{!v.tabType}'
+                                                  implChecklists='{!v.implChecklists}'
+                                                  currentAccount='{!acc}' 
+                                                  peoChecklist='{!v.peoFullChecklist}' 
+                                                  communityUser="{!v.communityUser}"
+                                                  ActiveParentTab='{!v.selectedAccountId}'
+                                                  ParentAccountId='{!v.ParentAccountId}'
+                                                  disableQuestions='{!v.disableQuestions}'
+                                                  parentTabList = '{!v.possibleTabs}'
+                                                  copyfromParent='{!v.copyfromParent}'	
+                                                  parentImplChecklist = "{!v.parentImplChklist}"
+                                                  saveAction='{!v.saveAction}'
+                                                  />
+                        
+                    </lightning:tab>
+                </aura:iteration>
+                
+                <lightning:tab onactive="{! c.checkFinalize }" label="{!v.totalAccount+1+'.Finalize and Submit'}" id="Finalize">
+                    <div>
+                        <lightning:card>
+                            <div style="padding:20px 20px 20px 20px">
+                                <!--div class=" slds-form slds-grid slds-wrap"-->
+                                    <aura:if isTrue="{!!v.isFinalized}">
+                                        <p>By Finalizing this section you are confirming all fields 
+                                            are complete and accurate. Once the Implementation 
+                                            section has been Finalized, the section will be locked, 
+                                            and your NBSC will begin reviewing prior to generating 
+                                            contracts.</p> 
+                                        <div>
+                                            <lightning:textarea aura:id='implementationNotes' name="PEO_Onboarding_Checklist__c.Notes_for_Implementation__c" 
+                                                                disabled="{!v.disableQuestions}"
+                                                                value="{!v.peoFullChecklist.Notes_for_Implementation__c}" 
+                                                                label="Notes for Implementation" 
+                                                                />
+                                        </div>
+                                        <div class="slds-text-align_right slds-p-around_x-small" style="position: relative;right: 0.5rem;">
+                                            <lightning:button class="slds-m-top_small" 
+                                                              variant="brand"  
+                                                              name="Savebutton" 
+                                                              label="Save"
+                                                              onclick="{!c.save}" />
+                                        </div>
+                                        <!--{!v.isFinalized}-->
+                                        <div style="position: relative; right: -25rem;">
+                                            <lightning:button variant="neutral" label="Finalize" 
+                                                              class="slds-m-right_medium" title="Finalize"
+                                                              onclick="{!c.finalize}"/>
+                                            <!-- disabled="{!!v.isFinalizeDisable}" -->
+                                        </div>
+                                        <aura:set attribute="else">
+                                            <p>This has been submitted to your NBSC</p>
+                                        </aura:set>
+                                    </aura:if>
+                                <!--/div-->
+                                <!--aura:if isTrue="{!v.showCommunityUserInfo}">
+                                    <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-id-1" aria-modal="true" aria-describedby="modal-content-id-1"
+                                         class="slds-modal slds-fade-in-open">
+                                        <div class="slds-modal__container">
+                                            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                                <p>Community User Name: {!v.communityUser.Name}</p>
+                                                <p>Community User Email: {!v.communityUser.Email}</p>
+                                                <lightning:input name="toggle"
+                                                                 label="Do you want to notify the Client?"
+                                                                 type="toggle"
+                                                                 checked="{!v.checked}"
+                                                                 messageToggleActive="Yes" messageToggleInactive="No" 
+                                                                 onchange="{!c.getToggleButtonValue}">
+                                                </lightning:input>
+                                            </div>
+                                            
+                                            <footer class="slds-modal__footer">
+                                                <button class="slds-button slds-button_outline-brand" onclick="{!c.cancelModal}">Cancel</button>
+                                                <button class="slds-button slds-button_brand" onclick="{!c.sendEmail}">{!v.buttonText}</button>
+                                            </footer>
+                                        </div>
+                                    </div>
+                                    <div class="slds-backdrop slds-backdrop_open"/>
+                                </aura:if-->
+                            </div>
+                        </lightning:card>
+                    </div>
+                </lightning:tab>
+            </lightning:tabset>
+        </aura:set>
+    </aura:if>
+    
+</aura:component>

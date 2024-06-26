@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Opportunity_Expired</fullName>
+    <columns>NAME</columns>
+    <columns>Opportunity__c</columns>
+    <columns>New_Stage__c</columns>
+    <columns>SLA_Deadline__c</columns>
+    <columns>Expiration_Deadline__c</columns>
+    <columns>StageExpired__c</columns>
+    <columns>ExpirationProcessed__c</columns>
+    <columns>Exited_Date_Time__c</columns>
+    <columns>Stage_Exited_To__c</columns>
+    <columns>StageIsCurrent__c</columns>
+    <columns>NextVerifyDate__c</columns>
+    <columns>CREATEDBY_USER</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Opportunity__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Exited_Date_Time__c</field>
+        <operation>equals</operation>
+        <value>LAST_N_DAYS:3</value>
+    </filters>
+    <label>Opportunity-Expired</label>
+</ListView>

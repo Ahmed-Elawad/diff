@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cannot_Delete_Opportunities</fullName>
+    <active>true</active>
+    <description>Can not delete Opportunity rules</description>
+    <errorConditionFormula>NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)) &amp;&amp;
+NOT(BEGINS($Profile.Name,&quot;2008-09 Operations Administration&quot;)) &amp;&amp;
+((NOT(ISNULL( LastActivityDate)) &amp;&amp; ISCHANGED(To_Be_Deleted__c) &amp;&amp; To_Be_Deleted__c ) ||
+(CONTAINS($RecordType.Name, &quot;DSA&quot;) &amp;&amp; ISCHANGED(To_Be_Deleted__c) &amp;&amp; To_Be_Deleted__c )||
+(CONTAINS( $RecordType.Name , &quot;FSS&quot;) &amp;&amp; ISCHANGED(To_Be_Deleted__c) &amp;&amp; (To_Be_Deleted__c )||
+(TEXT(StageName) &lt;&gt; &quot;Pending&quot; &amp;&amp; ISCHANGED(To_Be_Deleted__c) &amp;&amp; To_Be_Deleted__c) &amp;&amp;
+ISCHANGED(To_Be_Deleted__c) &amp;&amp; To_Be_Deleted__c) &amp;&amp;
+(TEXT(StageName) &lt;&gt; &quot;Gained Access&quot; &amp;&amp; ISCHANGED(To_Be_Deleted__c) &amp;&amp; To_Be_Deleted__c) &amp;&amp;
+(TEXT(StageName) &lt;&gt; &quot;Qualified&quot; &amp;&amp; ISCHANGED(To_Be_Deleted__c) &amp;&amp; To_Be_Deleted__c) &amp;&amp;
+(TEXT(StageName) &lt;&gt; &quot;IEUP&quot; &amp;&amp; ISCHANGED(To_Be_Deleted__c) &amp;&amp; To_Be_Deleted__c) &amp;&amp;
+(TEXT(StageName) &lt;&gt; &quot;Disqualified&quot; &amp;&amp; ISCHANGED(To_Be_Deleted__c) &amp;&amp; To_Be_Deleted__c)) ||
+(BEGINS(CreatedBy.Profile.Name,&quot;System Administrator&quot;) &amp;&amp; ISCHANGED(To_Be_Deleted__c) &amp;&amp; To_Be_Deleted__c)</errorConditionFormula>
+    <errorDisplayField>To_Be_Deleted__c</errorDisplayField>
+    <errorMessage>No Opportunities with completed activities, No Opportunities created by System Administrator, No Opportunities not in Pending, Create or Qualified status and No DSA or FSS Opportunity Record Type opportunities can be deleted</errorMessage>
+</ValidationRule>

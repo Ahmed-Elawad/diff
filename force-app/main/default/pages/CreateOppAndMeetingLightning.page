@@ -1,0 +1,248 @@
+<!-- creating the Opportunity and Event from a Contact or Lead.
+
+   History
+   -------
+   10/20/2021 Dan Carmen        Add Product of Interest
+
+   
+ -->
+<apex:page docType="html-5.0" Controller="CreateOppAndMeeting" tabStyle="Opportunity" id="createOppAndMeeting"
+		showHeader="true" sidebar="false">
+	<apex:includeScript value="{!URLFOR($Resource.iOSFix)}"/> 
+	<apex:includeScript value="{!$Resource.jQueryJs}" />
+	<apex:includeScript value="{!$Resource.buttonsEnabledJs}" />
+	<apex:includeScript value="{!URLFOR($Resource.toastr_min, 'toastr-min-js.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.toastr_min, 'toastr-min-css.css')}"/>
+	<apex:stylesheet value="{!URLFOR($Resource.pageMessage_lightning, 'pageMessage-lightning.css')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.pageMessage_lightning,'pageMessage-lightning.js')}"/> 
+
+	<apex:stylesheet value="{!$Resource.OppAndMeetingLightningCSS}"/>
+	<apex:includeScript value="{!$Resource.OppAndMeetingLightningJS}"/> 
+
+	<apex:slds />
+    <style>
+		.myCustomMessage .message {
+    background: red  !important;
+    font-size: 14px   !important;
+}
+	</style>
+
+	<apex:form id="PreQuestions">
+		<div class="slds-grid slds-p-horizontal_large">
+			
+			<div class="slds-col slds-size_1-of-3">
+				<h3 class="slds-text-heading_small slds-m-bottom_medium">
+					What Type of Opportunity Are You Creating?
+				</h3>
+				<label class="slds-form-element__label block-display">Select the Opportunity Type</label>
+				<apex:inputField styleClass="slds-input" required="true" value="{!oppTemp.OpportunityType__c}" >
+					<apex:actionSupport event="onchange" action="{!selectOppType}" />
+				</apex:inputField>
+			</div>
+
+		</div>
+	</apex:form>
+	
+	<hr/>
+
+	<apex:form id="OppForm" >
+
+		<apex:actionFunction action="{!saveOpp}" name="jsSaveOpp" />
+		<apex:actionFunction action="{!saveOppGotoMeeting}" name="jsSaveOppGotoMeeting" />
+		<apex:actionFunction name="doCallout" immediate="true" action="{!setRenderTrue}"  rerender="{!IF(renderVForce,'','Vforce')}" oncomplete="document.getElementById('statusSpinner').style.visibility='hidden'"/>
+		
+		<div id="statusSpinner" style="{!IF(renderVForce,'visibility: hidden','visibility: visible')}">
+			<div class="spinner-background" >
+				&nbsp;
+			</div>
+			<div class="spinner-container">
+				<div class="spinner-box">
+					<img src="/img/loading.gif" class="spinner-gif" />
+					<span class="spinner-text" style="">Please Wait...</span>
+				</div>
+			</div>
+		</div>
+
+		<apex:outputPanel id="Vforce">
+			<apex:outputPanel rendered="{!renderVForce}">
+				<apex:outputPanel id="Desktop" rendered="{!NOT($User.UIThemeDisplayed == 'Theme4t')}">
+					<link href="/dCSS/Theme2/default/common.css" type="text/css" rel="stylesheet"/>
+					<script language="JavaScript1.2" src="/js/functions.js"/>
+
+					<div class="slds-p-horizontal_large">
+						<apex:outputPanel rendered="{!isLeadConvert}" id="pbConvertLead">   
+							<h3 class="slds-text-heading_small slds-m-bottom_medium">
+								Convert Lead
+								<span class="titleSeparatingColon">:</span>
+							</h3>
+							<h2 class="pageDescription">{!leadToconvert.Name}</h2>
+							<a href="javascript:openPopupFocusEscapePounds('/help/doc/user_ed.jsp?loc=help&body=%2Fhelp%2Fdoc%2Fen%2Fhelp2.jsp&target=leads_convert.htm&section=Leads', 'Help', 700, 600, 'width=700,height=600,resizable=yes,toolbar=yes,status=no,scrollbars=yes,menubar=yes,directories=no,location=no,dependant=no', false, false);" title="Help for this Page (New Window)">
+								<span class="helpLink">Help for this Page</span>
+								<img src="/s.gif" alt="" class="helpImage"/>
+							</a>       
+								
+							<label class="slds-form-element__label block-display">
+								Converting a lead will create an account, contact, and opportunity as described below.<br/>You should only convert a lead once you have identified it as qualified.<br/>After this lead has been converted, it can no longer be viewed or edited as a lead, but can be viewed in lead reports.<br/><br/>
+							</label>
+
+							<label class="slds-form-element__label block-display">Record Owner</label>
+							<apex:outputPanel styleclass="requiredInput">
+								<apex:outputPanel styleClass="requiredBlock" layout="block"/>
+								<apex:inputField styleClass="lookup-input-slds" value="{!leadToconvert.OwnerId}" id="leadOwner-1"/>   
+							</apex:outputPanel>                      
+							<label class="slds-form-element__label block-display">Prospect-Client Name</label>
+							<apex:outputPanel styleclass="requiredInput">
+								<apex:outputPanel styleClass="requiredBlock" layout="block"/>
+								<apex:actionRegion >
+									<apex:selectList styleClass="slds-select" value="{!selectedCompany}"  id="comanyId-1"  size="1" > 
+										<apex:selectOptions value="{!companyList}"/> 
+										<apex:actionSupport event="onchange" action="{!findExistingOpps}" rerender="Vforce" status="clientNameStatus"/>
+									</apex:selectList>   
+									<a href="javascript: viewAccount('createOppAndMeeting:OppForm:comanyId-1');" title="View (New Window)">View</a>   
+									<br/>
+								</apex:actionRegion>              
+							</apex:outputPanel>
+							<apex:actionStatus startText="Setting Prospect-Client selection" id="clientNameStatus"/>
+						</apex:outputPanel>
+					</div>
+
+
+					<apex:outputPanel id="pageBlock" styleClass="myCustomMessage" > 
+						<apex:pageMessages />
+						
+						<div class="slds-p-horizontal_large">
+
+							<apex:outputPanel id="table" rendered="{!AND(NOT($User.UIThemeDisplayed == 'Theme4t'),companySelected,hasExistingOpps)}">
+								<span class="slds-text-heading_small">	   
+									<h3 class="{!IF(allowCreateOpp,'headerBlack','headerRed')}">{!existingOppMsg}</h3>
+								</span>
+								<apex:actionRegion >
+
+									<table class="slds-table slds-table_bordered slds-table_cell-buffer" style="table-layout: fixed;">
+										<thead>
+											<tr class="slds-text-title_caps">
+												<th scope="col" class="slds-cell-wrap">
+													<div title="Use This One">Use This One</div>
+												</th>
+												<th scope="col" class="slds-cell-wrap">
+													<div title="Opportunity Name">Opportunity Name</div>
+												</th>
+												<th scope="col" class="slds-cell-wrap">
+													<div title="Prospect-Client Name">Prospect-Client Name</div>
+												</th>
+												<th scope="col" class="slds-cell-wrap">
+													<div title="Created Date">Created Date</div>
+												</th>
+												<th scope="col" class="slds-cell-wrap">
+													<div title="Opportunity Owner">Opportunity Owner</div>
+												</th>
+												<th scope="col" class="slds-cell-wrap">
+													<div title="NSS Source">NSS Source</div>
+												</th>
+												<th scope="col" class="slds-cell-wrap">
+													<div title="Lead Source">Lead Source</div>
+												</th>
+												<th scope="col" class="slds-cell-wrap">
+													<div title="Status">Status</div>
+												</th>
+												<th scope="col" class="slds-cell-wrap">
+													<div title="Run-Effective Date">Run-Effective Date</div>
+												</th>
+												<th scope="col" class="slds-cell-wrap">
+													<div title="Opportunity Type">Opportunity Type</div>
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											<apex:repeat value="{!existingOpps}" var="wrap">
+
+												<tr>
+													<td data-label="Use This One">
+														<apex:inputCheckbox value="{!wrap.selected}" disabled="{!NOT(allowCreateOpp)}">
+															<apex:actionSupport event="onchange" action="{!storeSelectedOppty}" rerender="pageBlock" status="existingOpptyStatus"  >
+																<apex:param name="oppId" value="{!wrap.opp.Id}"/>
+																<apex:param name="prevValue" value="{!wrap.selected}"/>
+															</apex:actionSupport>
+														</apex:inputCheckbox>
+
+														<apex:actionStatus id="existingOpptyStatus">
+															<apex:inputCheckbox styleClass="slds-input" value="{!wrap.selected}" disabled="false" />
+														</apex:actionStatus>
+													</td>
+													<td data-label="Opportunity Name" class="slds-cell-wrap" >
+														<apex:outputLink value="{!URLFOR($Action.Opportunity.View, wrap.opp.Id)}">{!wrap.opp.Name}</apex:outputLink>
+													</td>
+													<td data-label="Opportunity" class="slds-cell-wrap" >
+														<apex:outputField value="{!wrap.opp.AccountId}" />
+													</td>
+													<td data-label="Opportunity" class="slds-cell-wrap" >
+														<apex:outputField value="{!wrap.opp.CreatedDate}" />
+													</td>
+													<td data-label="Opportunity" class="slds-cell-wrap" >
+														<apex:outputField value="{!wrap.opp.OwnerId}" />
+													</td>
+													<td data-label="Opportunity" class="slds-cell-wrap" >
+														<apex:outputField value="{!wrap.opp.NSS_Source__c}" />
+													</td>
+													<td data-label="Opportunity" class="slds-cell-wrap" >
+														<apex:outputField value="{!wrap.opp.LeadSource}" />
+													</td>
+													<td data-label="Opportunity" class="slds-cell-wrap" >
+														<apex:outputField value="{!wrap.opp.StageName}" />
+													</td>
+													<td data-label="Opportunity" class="slds-cell-wrap" >
+														<apex:outputField value="{!wrap.opp.CloseDate}" />
+													</td>
+													<td data-label="Opportunity" class="slds-cell-wrap" >
+														<apex:outputField value="{!wrap.opp.OpportunityType__c}" />
+													</td>
+												</tr>
+											</apex:repeat>
+										</tbody>
+									</table>
+								</apex:actionRegion>
+								<br/>
+
+							</apex:outputPanel>
+
+						</div>
+					</apex:outputPanel>
+
+					<apex:outputPanel id="createOppCmp">
+						<c:OpportunityAndMeetingLightning createOppty="{!AND(allowCreateOpp,createOpportunity)}" oppty="{!opp}" acct="{!acct}" ctct="{!tempCtct}"
+											isCore="{!isCore}" isMMS="{!isMMS}" isHRS="{!isHRS}" isMSP="{!isMSP}" isPEO="{!isPEO}" isTAA="{!isTAA}" isPC="{!isPC}" isMS="{!isMS}" isESR="{!isESR}" isPBA="{!isPBA}" isHNB="{!isHNB}"
+											isAncillary="{!isAncillary}" prodName="{!prodName}" salesOrg="{!salesOrg}"
+											existingOpps="{!existingOpps}" storeSelectedOppty="{!storeSelectedOppty}"
+											companySelected="{!companySelected}" hasExistingOpps="{!hasExistingOpps}"
+											eventSubject="{!eventSubject}" eventDescription="{!eventDescription}"
+											allowCreateOpp="{!allowCreateOpp}" existingOppMsg="{!existingOppMsg}"
+											/>             <!-- Updated For myStaffingPro -->   
+						<br/>
+					</apex:outputPanel>
+
+					<div class="centered-buttons">
+						<apex:commandButton styleClass="slds-button slds-button_brand" rendered="{!AND(allowCreateOpp,createOpportunity)}" immediate="true" action="{!removeOppty}" value="Remove Opportunity" />
+						<apex:commandButton styleClass="slds-button slds-button_brand" rendered="{!AND(allowCreateOpp,NOT(createOpportunity))}" immediate="true" action="{!addOppty}" value="Add Opportunity"/>
+						<apex:commandButton styleClass="slds-button slds-button_brand" rendered="{!AND(allowCreateMeeting,createMeeting)}" immediate="true" action="{!removeMeeting}" value="Remove Meeting" />
+						<apex:commandButton styleClass="slds-button slds-button_brand" rendered="{!AND(allowCreateMeeting,NOT(createMeeting))}" immediate="true" action="{!addMeeting}" value="Add Meeting"/>
+					</div>
+
+					<c:MeetingLightning id="MeetingComp" rendered="{!AND(allowCreateMeeting,createMeeting)}" meetingEvent="{!evnt}" />
+					<apex:actionFunction name="rerenderPageBlock" reRender="pageBlock"/>
+
+					<footer class="slds-card__footer">
+						<div class="centered-buttons">
+							<apex:commandButton styleClass="slds-button slds-button_brand" rendered="{!showSaveOppButton}" onclick="if(requiredFieldsPopulated()){return jsSaveOpp();}else{return false;}" value="{!saveOppText}" reRender="none"/>
+							<apex:commandButton styleClass="slds-button slds-button_brand" rendered="{!AND(allowCreateMeeting,NOT(isLeadConvert),createMeeting, $User.UIThemeDisplayed <> 'Theme4d')}" onclick="if(requiredFieldsPopulated()){return jsSaveOppGotoMeeting();}else{return false;}" value="Save and Add Invitees"/>
+							<apex:commandButton styleClass="slds-button slds-button_brand" rendered="{!AND(allowCreateMeeting,isLeadConvert,createMeeting, $User.UIThemeDisplayed <> 'Theme4d')}" action="{!saveOppGotoMeeting}" value="Convert and Add Invitees" />
+							<apex:commandButton styleClass="slds-button slds-button_brand" action="{!cancel}" value="Cancel" immediate="true"/>   
+							
+						</div>
+					</footer>
+
+				</apex:outputPanel>
+
+			</apex:outputPanel>
+		</apex:outputPanel>
+	</apex:form>
+</apex:page>

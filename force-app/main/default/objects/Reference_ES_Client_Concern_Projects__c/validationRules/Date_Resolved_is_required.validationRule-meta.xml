@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Date_Resolved_is_required</fullName>
+    <active>true</active>
+    <description>The Date Resolved field must be populated prior to closing out this case.</description>
+    <errorConditionFormula>AND( 
+ISPICKVAL(  Current_Status__c  ,&apos;Closed&apos;), 
+ISBLANK(  Date_Resolved__c  ) 
+)</errorConditionFormula>
+    <errorMessage>The Date Resolved field must be populated prior to closing out this case</errorMessage>
+</ValidationRule>

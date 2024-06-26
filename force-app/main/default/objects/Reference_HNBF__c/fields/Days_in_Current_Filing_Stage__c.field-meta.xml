@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Days_in_Current_Filing_Stage__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>IF(
+ISPICKVAL(Filing_Stage__c, &quot;Completed&quot;), &quot;Completed&quot;,
+
+IF(
+ISPICKVAL(Filing_Stage__c, &quot;Cancelled&quot;), &quot;Cancelled&quot;, 
+Text( Today() - DATEVALUE(Filing_Stage_Timestamp__c) - 2*( floor((today() - DATE(1985, 6, 24))/7) - floor((DATEVALUE(Filing_Stage_Timestamp__c) - DATE(1985, 6, 24))/7)))))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Days in Current Filing Stage</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

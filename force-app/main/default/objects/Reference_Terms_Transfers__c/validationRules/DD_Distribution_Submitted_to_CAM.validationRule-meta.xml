@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DD_Distribution_Submitted_to_CAM</fullName>
+    <active>true</active>
+    <description>You cannot enter a value in Distribution Submitted to CAM until these fields are completed: Employer Authorization to Distribute, Death Certificate , Distribution Paperwork</description>
+    <errorConditionFormula>RecordType.Name = &apos;Death Distribution&apos; &amp;&amp; NOT ISBLANK( Distribution_Submitted_to_CAM__c) &amp;&amp;  (
+
+ISBLANK(Employer_Authorization_to_Distribute__c) ||
+ISBLANK(Death_Certificate__c)||
+ISBLANK(Distribution_Paperwork__c) 
+)</errorConditionFormula>
+    <errorDisplayField>Distribution_Submitted_to_CAM__c</errorDisplayField>
+    <errorMessage>You cannot enter a value in Distribution Submitted to CAM until these fields are completed: Employer Authorization to Distribute, Death Certificate , Distribution Paperwork</errorMessage>
+</ValidationRule>

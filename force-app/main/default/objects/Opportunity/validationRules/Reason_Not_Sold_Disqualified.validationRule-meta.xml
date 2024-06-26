@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reason_Not_Sold_Disqualified</fullName>
+    <active>true</active>
+    <description>Disqualified is only a valid Reason Lost for NSS and SOAR Opportunities. Please select another valid value.</description>
+    <errorConditionFormula>ISPICKVAL(Reason_Not_Sold__c, &quot;Disqualified&quot;) &amp;&amp;
+(
+NOT(	
+	NOT(ISPICKVAL(NSS_Source__c, &quot;&quot;)) ||
+		(
+			(ISPICKVAL(LeadSource, &quot;Referral-Client-SOAR-New&quot;)) ||
+			(ISPICKVAL(LeadSource, &quot;Referral-Client-SOAR-Additional Product&quot;)) ||
+			(ISPICKVAL(LeadSource, &quot;Referral-Client-SOAR-Additional ID&quot;))
+		)
+	)
+)</errorConditionFormula>
+    <errorDisplayField>Reason_Not_Sold__c</errorDisplayField>
+    <errorMessage>Disqualified is only a valid Reason Lost for NSS and SOAR Opportunities. Please select another valid value.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>HR_Matters_Tracking_Coach_Notes_Clear</fullName>
+        <description>Clears the Coach Notes field</description>
+        <field>Coach_Notes__c</field>
+        <name>HR Matters Tracking Coach Notes Clear</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>HR_Matters_Tracking_Coach_Notes_Clear1</fullName>
+        <description>Clears the Coach Notes field</description>
+        <field>Coach_Notes__c</field>
+        <name>HR Matters Tracking Coach Notes Clear</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>HR_Matters_Tracking_Coach_Notes_Move</fullName>
+        <description>Move comments from editable Coach Notes to read-only Coach Notes Log</description>
+        <field>Coach_Notes_Log__c</field>
+        <formula>upper( $User.FirstName ) &amp; &quot; &quot; &amp; upper( $User.LastName )&amp; &quot; (&quot; &amp; text(month(today())) &amp; &quot;/&quot;&amp; text(day(today())) &amp; &quot;/&quot;&amp; text(year(today()))&amp; &quot; &quot; &amp;Text(CASE(VALUE(MID(TEXT( Now() ) , 12, 2)) , 0, 20, 1, 21, 2, 22,3, 23,4, 0,5, 1,6, 2,7, 3,8, 4,9, 5,10, 6,11, 7,12, 8,13, 9,14,10,15, 11,16, 12,17, 13,18, 14,19, 15,20, 16,21, 17,22, 18,23, 19, 24))
+&amp; &quot;:&quot; &amp; MID(TEXT( Now() ) , 15, 2) &amp; &quot;)&quot; &amp; BR() &amp; &quot;- &quot; &amp; Coach_Notes__c &amp; BR() &amp; BR() &amp; Coach_Notes_Log__c</formula>
+        <name>HR Matters Tracking Coach Notes Move</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>HR_Matters_Tracking_Legal_Notes_Clear</fullName>
+        <description>Clears the Legal Notes field</description>
+        <field>Legal_Notes__c</field>
+        <name>HR Matters Tracking Legal Notes Clear</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>HR_Matters_Tracking_Legal_Notes_Clear1</fullName>
+        <description>Clears the Legal Notes field</description>
+        <field>Legal_Notes__c</field>
+        <name>HR Matters Tracking Legal Notes Clear</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>HR_Matters_Tracking_Legal_Notes_Move</fullName>
+        <description>Move comments from editable Legal Notes to read-only Legal Notes Log</description>
+        <field>Legal_Notes_Log__c</field>
+        <formula>upper( $User.FirstName ) &amp; &quot; &quot; &amp; upper( $User.LastName )&amp; &quot; (&quot; &amp; text(month(today())) &amp; &quot;/&quot;&amp; text(day(today())) &amp; &quot;/&quot;&amp; text(year(today()))&amp; &quot; &quot; &amp;Text(CASE(VALUE(MID(TEXT( Now() ) , 12, 2)) , 0, 20, 1, 21, 2, 22,3, 23,4, 0,5, 1,6, 2,7, 3,8, 4,9, 5,10, 6,11, 7,12, 8,13, 9,14,10,15, 11,16, 12,17, 13,18, 14,19, 15,20, 16,21, 17,22, 18,23, 19, 24))
+&amp; &quot;:&quot; &amp; MID(TEXT( Now() ) , 15, 2) &amp; &quot;)&quot; &amp; BR() &amp; &quot;- &quot; &amp; Legal_Notes__c &amp; BR() &amp; BR() &amp; Legal_Notes_Log__c</formula>
+        <name>HR Matters Tracking Legal Notes Move</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Set_Closed_Date</fullName>
+        <field>Reference_Record_Closed_Date__c</field>
+        <formula>TODAY()</formula>
+        <name>Set Closed Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Set_Sent_to_Legal</fullName>
+        <description>Sets Sent to Legal to TODAY()</description>
+        <field>Sent_to_Legal__c</field>
+        <formula>TODAY()</formula>
+        <name>Set Sent to Legal</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>HR Matters Tracking Coach Notes Tool</fullName>
+        <actions>
+            <name>HR_Matters_Tracking_Coach_Notes_Clear1</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>HR_Matters_Tracking_Coach_Notes_Move</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Moves the text saved in the Coach Notes field to the Coach Notes Log with user name and timestamp, and then clears out the Coach Notes field.</description>
+        <formula>not(isblank(Coach_Notes__c))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>HR Matters Tracking Legal Notes Tool</fullName>
+        <actions>
+            <name>HR_Matters_Tracking_Legal_Notes_Clear1</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>HR_Matters_Tracking_Legal_Notes_Move</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Moves the text saved in the Legal Notes field to the Legal Notes Log with user name and timestamp, and then clears out the Legal Notes field.</description>
+        <formula>not(isblank(Legal_Notes__c))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Reference Record Closed Date</fullName>
+        <actions>
+            <name>Set_Closed_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>HR_Matters_Tracking__c.Coach_Status__c</field>
+            <operation>equals</operation>
+            <value>Closed</value>
+        </criteriaItems>
+        <description>Populate closed date when Coach Status set to closed</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Sent to Legal</fullName>
+        <actions>
+            <name>Set_Sent_to_Legal</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>HR_Matters_Tracking__c.Coach_Status__c</field>
+            <operation>equals</operation>
+            <value>Sent to Legal</value>
+        </criteriaItems>
+        <description>Populate Sent to Legal when Coach Status set to &quot;Sent to Legal&quot;</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

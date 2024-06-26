@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>COE_Cases_for_TAA_open_or_closed</fullName>
+    <booleanFilter>1 and 2 and (3 or 4)</booleanFilter>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>Score__c</columns>
+    <columns>Originator__c</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>CASES.TYPE</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>OWNER_NAME</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>Status_Description__c</columns>
+    <columns>NAME</columns>
+    <columns>Sales_Org__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Sales_Org__c</field>
+        <operation>equals</operation>
+        <value>General Ledger,HR Online,Time &amp; Attendance,POPS</value>
+    </filters>
+    <filters>
+        <field>CASES.CLOSED</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>CASES.TYPE</field>
+        <operation>equals</operation>
+        <value>Fast Track Request,SFDC Enhancement - BAU</value>
+    </filters>
+    <filters>
+        <field>CASES.TYPE</field>
+        <operation>equals</operation>
+        <value>SFDC Issue,SFDC Enhancement - Project</value>
+    </filters>
+    <label>TAA, HRO POP Online Services COE Cases</label>
+    <sharedTo>
+        <role>TimeAttendanceManager</role>
+    </sharedTo>
+</ListView>

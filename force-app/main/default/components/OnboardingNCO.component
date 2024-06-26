@@ -1,0 +1,1141 @@
+<!-- NCO Onboarding Record Page.
+* History
+* -------
+* 11/30/2020   Matt Fritschi Created. 
+* 2/20/2024   Priyanka -> Multi id Submission. 
+-->
+<apex:component allowDml="true" controller="OnboardingController">
+    <div id="Company Info" class="slds-box slds-box_xx-small black_background">
+        <apex:pageMessages id="msg" rendered="{!displayMessages}" escape="false"/>
+        <p  class="header1"><b>Client Information</b></p>
+        <div class="slds-box brand_background">
+            <div class="slds-grid slds-wrap">
+                <div class="slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                    <dl class="slds-dl_vertical">
+                        <dt class="slds-dl_horizontal__label"><abbr class="slds-required">*</abbr>Company Name:</dt>
+                        <dd class="slds-dl_horizontal__detail">{!onboardingOpp.Account.Name}</dd>
+                        <dt class="slds-dl_horizontal__label"><abbr class="slds-required">*</abbr>Legal Address (fed from Billing Address on the Prospect-Client Record):</dt>
+                        <dd class="slds-dl_horizontal__detail">{!onboardingOpp.Account.BillingStreet}<br/>{!onboardingOpp.Account.BillingCity}, {!onboardingOpp.Account.BillingState} {!onboardingOpp.Account.BillingPostalCode}</dd>
+                    </dl>
+                </div>
+                <div class="slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                    <dl class="slds-dl_vertical">
+                        <dt class="slds-dl_horizontal__label"><abbr class="slds-required">*</abbr>Federal Id:</dt>
+                        <dd class="slds-dl_horizontal__detail">{!onboardingOpp.Account.Federal_ID_Number__c}</dd>
+                        <dt class="slds-dl_horizontal__label"><abbr class="slds-required">*</abbr>Telephone Number:</dt>
+                        <dd class="slds-dl_horizontal__detail">{!onboardingOpp.Account.Phone}</dd>
+                    </dl>
+                </div>
+                <div class="slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                    <dl class="slds-dl_vertical">
+                        <dt class="slds-dl_horizontal__label">Industry:</dt>
+                        <dd class="slds-dl_horizontal__detail">{!onboardingOpp.Account.Industry}</dd>
+                        <dt class="slds-dl_horizontal__label"><abbr class="slds-required">*</abbr>Source Of Business:</dt>
+                        <dd class="slds-dl_horizontal__detail">{!onboardingOpp.LeadSource}</dd>
+                    </dl>
+                </div>
+                <div class="slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                    <dl class="slds-dl_vertical">
+                        <dt class="slds-dl_horizontal__label"><abbr class="slds-required">*</abbr>Previous Method:</dt>
+                        <dd class="slds-dl_horizontal__detail">{!onboardingOpp.Payroll_Current_Prior_Method__c}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="Product Information" class="slds-box slds-box_xx-small black_background">
+        <p  class="header1"><b>Product Profile</b></p>
+        <div class="slds-box brand_background">
+            <div class="slds-grid slds-wrap">
+                <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                    <label class="label1">Payroll Frequency:</label><br/>
+                    {!onboardingOpp.Frequency__c}
+                </div>
+                <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                    <label class="label1">Packages Selected:</label><br/>
+                    {!productPackageList}
+                </div>
+                <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                    <label class="label1">Products Selected:</label><br/>
+                    {!productList}
+                </div>
+                <!-- <apex:actionRegion rendered="{!IF(hasExpressPayroll || hasSolo, 'false', 'true')}">
+                    <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                        <br/><label class="label1"><abbr class="slds-required">* </abbr>ReadyChex?</label><br/>
+                        <apex:inputField id="readychex" style="width: 175px;" value="{!onboardingRecord.ReadyChex__c}">
+                            <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                        </apex:inputField>
+                    </div>
+                </apex:actionRegion> -->
+                
+                <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                    
+                    <!-- <apex:actionRegion rendered="{!IF(hasSelect, 'true', 'false')}">
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <br/><label class="label1"><abbr class="slds-required">* </abbr>GL?</label><br/>
+                            <apex:selectList styleClass="textBox1" size="1" value="{!onboardingRecord.GL__c}">
+                                <apex:selectOptions value="{!glOptions}"/>
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="accountingSoftwareInfo,displayFSSButton"/>
+                            </apex:selectList>
+                        </div>
+                    </apex:actionRegion> -->
+                    <apex:outputPanel id="accountingSoftwareInfo">
+                        <!-- <apex:actionRegion rendered="{!IF(hasSelect || hasExpressPayroll || hasSolo, 'false', 'true')}">
+                            <label class="label1"><abbr class="slds-required">* </abbr>GL?</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.GL__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="accountingSoftwareInfo,displayFSSButton"/>
+                            </apex:inputField>
+                        </apex:actionRegion> -->
+                        
+                        <apex:actionRegion >
+                            <div style="display:{!If(AND(onboardingRecord.GL__c == 'GL Service', !hasSelect, !hasExpressPayroll), 'block','none')}"><label class="label1"><abbr class="slds-required">* </abbr>What Accounting software does the client use?</label><br/>
+                                <apex:inputField style="width: 175px;" value="{!onboardingRecord.Accounting_Software__c}">
+                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="accountingSoftwareInfo,displayFSSButton"/>
+                                </apex:inputField>
+                            </div>
+                        </apex:actionRegion>
+                        
+                        <apex:actionRegion >
+                            <div style="display:{!If(AND(onboardingRecord.GL__c == 'GL Service', onboardingRecord.Accounting_Software__c = 'Other Accounting Software', !hasSelect, !hasExpressPayroll), 'block','none')}"><label class="label1"><abbr class="slds-required">* </abbr>Other Accounting Software:</label><br/>
+                                <apex:inputField style="width: 175px;" value="{!onboardingRecord.Other_Accounting_Software__c}">
+                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                                </apex:inputField>
+                            </div>
+                        </apex:actionRegion>
+                        
+                    </apex:outputPanel>
+                </div>
+                
+                <!--                <apex:actionRegion rendered="{!IF(hasSelect, 'true', 'false')}">
+<div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+<br/><label class="label1"><abbr class="slds-required">* </abbr>GL?</label><br/>
+<apex:selectList styleClass="textBox1" size="1" value="{!onboardingRecord.GL__c}">
+<apex:selectOptions value="{!glOptions}"/>
+</apex:selectList>
+</div>
+</apex:actionRegion>
+<apex:actionRegion rendered="{!IF(hasSelect || hasExpressPayroll, 'false', 'true')}">
+<div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+<br/><label class="label1"><abbr class="slds-required">* </abbr>GL?</label><br/>
+<apex:inputField style="width: 175px;" value="{!onboardingRecord.GL__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputField>
+</div>
+</apex:actionRegion>
+
+<apex:actionRegion rendered="{!IF(hasSelect || hasExpressPayroll, 'false', 'true')}">
+<div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">    
+<br/><label class="label1"><abbr class="slds-required">* </abbr>What Accounting software does the client use?</label><br/>
+<apex:inputField style="width: 175px;" value="{!onboardingRecord.Accounting_Software__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputField>
+</div>
+</apex:actionRegion>
+-->				
+                <!-- <apex:actionRegion rendered="{!IF(hasSelect || hasExpressPayroll || hasSolo, 'false', 'true')}">
+                    <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">    
+                        <br/><label class="label1"><abbr class="slds-required">* </abbr>Workers Compensation?</label><br/>
+                        <apex:inputField style="width: 175px;" value="{!onboardingRecord.Workers_Compensation__c}">
+                            <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                        </apex:inputField>
+                    </div>
+                </apex:actionRegion> -->
+                
+                <!-- <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                    <br/><label class="label1"><abbr class="slds-required">* </abbr>Skylight?</label><br/>
+                    <apex:inputField style="width: 175px;" value="{!onboardingRecord.Skylight__c}">
+                        <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                    </apex:inputField>
+                </div> -->
+                
+                 <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                    <br/><label class="label1"><abbr class="slds-required">* </abbr>Pay On Demand?</label><br/>
+                    <apex:inputField id="payondemand" style="width: 175px;" value="{!onboardingRecord.Pay_Demand__c}">
+                        <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                    </apex:inputField>
+                </div> 
+                
+            </div>   
+        </div>
+    </div>
+   <!--  <apex:outputPanel id="displayOptInOptOut">
+        <apex:actionRegion rendered="{!IF(hasEnterprise, 'true', 'false')}">
+            <div class="slds-box slds-box_xx-small black_background">
+                <label class="header1"><b>Opt-In/Opt-Out:</b></label>
+                <div class="slds-box brand_background">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1">Enterprise Opt-In:</label><br/>
+                            <label>*Select to Opt-In</label><br/>
+                            <label>Flex Onboarding </label>
+                            <apex:inputCheckbox value="{!refOppProduct.Paychex_Flex_Onboarding__c}">
+                            </apex:inputCheckbox>
+                            <br/><label>Flex Hiring </label>
+                            <apex:inputCheckbox value="{!refOppProduct.Paychex_Flex_Hiring__c}">
+                            </apex:inputCheckbox>
+                            <br/><label>Flex Ben Admin Essentials </label>
+                            <apex:inputCheckbox value="{!refOppProduct.FLEX_Benefits_Administration_Essentials__c}">
+                            </apex:inputCheckbox>
+                            <br/><label>Flex Time </label>
+                            <apex:inputField value="{!refOppProduct.Paychex_Flex_Time__c}">
+                            </apex:inputField>
+                            <br/><br/><label class="label1">Enterprise Opt-Out:</label><br/>
+                            <label>*Deselect to Opt-Out</label><br/>
+                            <label>Flex Onboarding Essentials </label>
+                            <apex:inputCheckbox value="{!refOppProduct.Onboarding_Essentials__c}">
+                            </apex:inputCheckbox>
+                            <br/><label>Financial Wellness </label>
+                            <apex:inputCheckbox value="{!refOppProduct.Financial_Wellness_Service__c}">
+                            </apex:inputCheckbox>
+                            <br/><label>Tax Credit Services </label>
+                            <apex:inputCheckbox value="{!refOppProduct.Tax_Credit_Service__c}">
+                            </apex:inputCheckbox>
+                            <br/><label>Employee Screening Essentials </label>
+                            <apex:inputField value="{!refOppProduct.Paychex_Employee_Screening_Essentials__c}">
+                            </apex:inputField>
+                            <br/><label>Flex HR Administration </label>
+                            <apex:inputField value="{!refOppProduct.Paychex_Flex_HR_Administration__c}">
+                            </apex:inputField>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </apex:actionRegion>
+        <apex:actionRegion rendered="{!IF(hasAso, 'true', 'false')}">
+            <div class="slds-box slds-box_xx-small black_background">
+                <label class="header1"><b>Opt-In/Opt-Out:</b></label>
+                <div class="slds-box brand_background">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1">ASO Bundle Opt-In:</label><br/>
+                            <label>*Select to Opt-In</label><br/>
+                            <label>Flex Onboarding </label>
+                            <apex:inputCheckbox value="{!refOppProduct.Paychex_Flex_Onboarding__c}">
+                            </apex:inputCheckbox>
+                            <br/><label>Flex Hiring </label>
+                            <apex:inputCheckbox value="{!refOppProduct.Paychex_Flex_Hiring__c}">
+                            </apex:inputCheckbox>
+                            <br/><label>Flex Ben Admin Essentials </label>
+                            <apex:inputCheckbox value="{!refOppProduct.FLEX_Benefits_Administration_Essentials__c}">
+                            </apex:inputCheckbox>
+                            <br/><label>Flex Time </label>
+                            <apex:inputField value="{!refOppProduct.Paychex_Flex_Time__c}">
+                            </apex:inputField>
+                            <br/><br/><label class="label1">ASO Bundle Opt-Out:</label><br/>
+                            <label>*Deselect to Opt-Out</label><br/>
+                            <label>Flex Onboarding Essentials </label>
+                            <apex:inputCheckbox value="{!refOppProduct.Onboarding_Essentials__c}">
+                            </apex:inputCheckbox>
+                            <br/><label>Financial Wellness </label>
+                            <apex:inputCheckbox value="{!refOppProduct.Financial_Wellness_Service__c}">
+                            </apex:inputCheckbox>
+                            <br/><label>Tax Credit Services </label>
+                            <apex:inputCheckbox value="{!refOppProduct.Tax_Credit_Service__c}">
+                            </apex:inputCheckbox>
+                            <br/><label>Employee Screening Essentials </label>
+                            <apex:inputField value="{!refOppProduct.Paychex_Employee_Screening_Essentials__c}">
+                            </apex:inputField>
+                            <br/><label>Flex HR Administration </label>
+                            <apex:inputField value="{!refOppProduct.Paychex_Flex_HR_Administration__c}">
+                            </apex:inputField>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </apex:actionRegion>
+        <apex:actionRegion rendered="{!IF(hasPro, 'true', 'false')}">
+            <div class="slds-box slds-box_xx-small black_background">
+                <label class="header1"><b>Opt-In/Opt-Out:</b></label>
+                <div class="slds-box brand_background">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1">Pro Opt-In:</label><br/>
+                            <label> *Select to Opt-In</label><br/>
+                            <label>Flex Time Essentials </label>
+                            <apex:inputField value="{!refOppProduct.Paychex_Flex_Time_Essentials__c}">
+                            </apex:inputField><br/>
+                            <label class="label1">Pro Opt-Out:</label><br/>
+                            <label> *Deselect to Opt-Out</label><br/>
+                            <label>Onboarding Essentials </label>
+                            <apex:inputField value="{!refOppProduct.Onboarding_Essentials__c}">
+                            </apex:inputField>
+                            <br/><label>Financial Wellness </label>
+                            <apex:inputField value="{!refOppProduct.Financial_Wellness_Service__c}">
+                            </apex:inputField>
+                            <br/><label>Tax Credit Services </label>
+                            <apex:inputField value="{!refOppProduct.Tax_Credit_Service__c}">
+                            </apex:inputField>
+                            <br/><label>Employee Screening Essentials </label>
+                            <apex:inputField value="{!refOppProduct.Paychex_Employee_Screening_Essentials__c}">
+                            </apex:inputField>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </apex:actionRegion>
+        <apex:actionRegion rendered="{!IF(OR(hasSelect, hasExpressPayroll), 'true', 'false')}">
+            <div class="slds-box slds-box_xx-small black_background">
+                <label class="header1"><b>Opt-In/Opt-Out:</b></label>
+                <div class="slds-box brand_background">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1">Flex Select Opt-Out:</label><br/>
+                            <br/>
+                            <label> *Deselect to Opt-Out</label><br/>
+                            <label>Financial Wellness </label>
+                            <apex:inputCheckbox value="{!refOppProduct.Financial_Wellness_Service__c}">
+                            </apex:inputCheckbox>
+                            <br/><label>Tax Credit Services </label>
+                            <apex:inputCheckbox value="{!refOppProduct.Tax_Credit_Service__c}">
+                            </apex:inputCheckbox>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </apex:actionRegion>
+    </apex:outputPanel>!-->
+    
+    <apex:outputPanel id="displayFlextimeInformation">
+        <apex:actionRegion rendered="{!IF(hasFlextime, 'true', 'false')}">
+            <div class="slds-box slds-box_xx-small black_background">
+                <label class="header1"><b>Flextime Information</b></label>
+                <div class="slds-box brand_background">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Flextime implementation date:</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.Flextime_Date__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Anticipated go live date:</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.Anticipated_Start_Date__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Add to existing TAA?</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.Flextime_TAA__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>How many Flextime Id's?</label><br/>
+                            <apex:inputField value="{!onboardingRecord.NumFlexId__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Will client be using time clocks?</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.Flextime_Timeclock__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </apex:actionRegion>
+    </apex:outputPanel>
+    
+    <apex:outputPanel id="displayEsrInformation">
+        <apex:actionRegion rendered="{!IF(hasEsr, 'true', 'false')}">
+            <div class="slds-box slds-box_xx-small black_background">
+                <label class="header1"><b>ESR Information</b></label>
+                <div class="slds-box brand_background">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Is the client categorized as an educational institution?</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.ESR_educationInstitution__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Is the client offering a self insured plan?</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.ESR_selfInsuredPlan__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Does the client have union employees?</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.ESR_UnionEmps__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Prior year medical renewal date:</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.ESR_PriorMedRenewalDate__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </apex:actionRegion>
+    </apex:outputPanel>
+    
+    <div id="Contact Information" class="slds-box slds-box_xx-small black_background">
+        <p  class="header1"><b>Contact Information</b></p>
+        <div class="slds-box brand_background">
+            <div class="slds-grid slds-wrap">
+                <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                    <label class="label1"><abbr class="slds-required">* </abbr>Authorized officer's name:</label><br/>
+                    <apex:actionRegion >
+                        <apex:selectList styleClass="textBox1" size="1" value="{!selectedAuthorizedContact}">
+                            <apex:selectOptions value="{!docDeskContacts}"/>
+                            <apex:actionSupport event="onchange" action="{!getSelectedAuthorizedDocDeskContact}" reRender="authorized"/>
+                        </apex:selectList><br/>
+                    </apex:actionRegion>
+                </div>
+                <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                    <label class="label1"><abbr class="slds-required">* </abbr>Authorized officer's title:</label><br/>
+                    <apex:inputField style="width: 175px;" value="{!onboardingRecord.Authorized_Officer_Title__c}">
+                        <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                    </apex:inputField>
+                </div>
+                <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                    <apex:outputPanel id="authorized">
+                        <label class="label1"><abbr class="slds-required">* </abbr>Authorized officer's phone:</label><br/>
+                        <apex:inputField style="width: 175px;" value="{!onboardingRecord.Authorized_Officer_Phone__c}">
+                            <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                        </apex:inputField>
+                        <br/>
+                        <label class="label1"><abbr class="slds-required">* </abbr>Authorized officer's email:</label><br/>
+                        <apex:inputField style="width: 175px;" value="{!onboardingRecord.Authorized_Officer_Email__c}">
+                            <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                        </apex:inputField>
+                        <br/>
+                    </apex:outputPanel>
+                </div>
+                
+                <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                    <label class="label1"><abbr class="slds-required">* </abbr>Is the Payroll Contact the same as the Authorized Officer?:</label><br/>
+                    <apex:selectList styleClass="textBox1" size="1" value="{!onboardingRecord.Authorized_Off_is_Payroll_Contact__c}">
+                        <apex:selectOptions value="{!authorizedOffOptions}"/>
+                        <apex:actionSupport event="onchange" action="{!Validate}" reRender="payrollContactName,payrollContact,payrollContactTitle"/>
+                    </apex:selectList>
+                    <!--
+<apex:inputCheckbox value="{!onboardingRecord.Authorized_Officer_is_Payroll_Contact__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="payrollContactName,payrollContact,payrollContactTitle"/>
+</apex:inputCheckbox>-->
+                </div>
+                
+                <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                    <label class="label1"><abbr class="slds-required">* </abbr>Spanish Speaking Needs</label><br/>
+                    <apex:inputField style="width: 175px;" value="{!onboardingRecord.Spanish_Speaking_Needs__c}">
+                        <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                    </apex:inputField>
+                </div>
+                
+                <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                    <!--<label class="label1"><abbr class="slds-required">* </abbr>Spanish Speaking Needs</label><br/>
+<apex:inputField style="width: 175px;" value="{!onboardingRecord.Spanish_Speaking_Needs__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputField>-->
+                </div>
+                <!--                
+<apex:outputPanel Id="payrollContactInfo">
+<apex:actionRegion rendered="{!IF(onboardingRecord.Authorized_Officer_is_Payroll_Contact__c == false, true, false)}">
+<div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+
+<apex:actionRegion >
+<apex:selectList styleClass="textBox1" size="1" value="{!selectedPayrollContact}">
+<apex:selectOptions value="{!docDeskContacts}"/>
+<apex:actionSupport event="onchange" action="{!getSelectedPayrollDocDeskContact}" reRender="payrollContact,payrollContactTitle"/>
+</apex:selectList><br/>
+<label class="label1"><abbr class="slds-required">* </abbr>Payroll Contact name:</label><br/>
+</apex:actionRegion>
+</div>
+</apex:actionRegion>
+</apex:outputPanel>
+<div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+<apex:outputPanel id="payrollContactTitle">
+<label class="label1"><abbr class="slds-required">* </abbr>Payroll Contact title:</label><br/>
+<apex:inputField style="width: 175px;" value="{!onboardingRecord.PayrollContact_Title__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputField>
+</apex:outputPanel>
+</div>
+<div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+<apex:outputPanel id="payrollContact">
+<label class="label1"><abbr class="slds-required">* </abbr>Payroll Contact phone:</label><br/>
+<apex:inputField style="width: 175px;" value="{!onboardingRecord.PayrollContact_Phone__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputField>
+<br/>
+<label class="label1"><abbr class="slds-required">* </abbr>Payroll Contact email:</label><br/>
+<apex:inputField style="width: 175px;" value="{!onboardingRecord.PayrollContact_Email__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputField>
+</apex:outputPanel>
+<br/>
+</div>
+
+-->
+                
+                
+                <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                    <apex:outputPanel Id="payrollContactName">
+                        <apex:actionRegion rendered="{!IF(onboardingRecord.Authorized_Off_is_Payroll_Contact__c == 'No' || onboardingRecord.Authorized_Off_is_Payroll_Contact__c == '', true, false)}">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Payroll Contact name:</label><br/>
+                            
+                            <apex:selectList styleClass="textBox1" size="1" value="{!selectedPayrollContact}">
+                                <apex:selectOptions value="{!docDeskContacts}"/>
+                                <apex:actionSupport event="onchange" action="{!getSelectedPayrollDocDeskContact}" reRender="payrollContact,payrollContactTitle"/>
+                            </apex:selectList><br/>
+                        </apex:actionRegion>
+                    </apex:outputPanel>
+                </div>
+                <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                    <apex:outputPanel id="payrollContactTitle">
+                        <apex:actionRegion rendered="{!IF(onboardingRecord.Authorized_Off_is_Payroll_Contact__c == 'No' || onboardingRecord.Authorized_Off_is_Payroll_Contact__c == '', true, false)}">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Payroll Contact title:</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.PayrollContact_Title__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </apex:actionRegion>
+                    </apex:outputPanel>
+                </div>
+                <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                    <apex:outputPanel id="payrollContact">
+                        <apex:actionRegion rendered="{!IF(onboardingRecord.Authorized_Off_is_Payroll_Contact__c == 'No' || onboardingRecord.Authorized_Off_is_Payroll_Contact__c == '', true, false)}">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Payroll Contact phone:</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.PayrollContact_Phone__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                            <br/>
+                            <label class="label1"><abbr class="slds-required">* </abbr>Payroll Contact email:</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.PayrollContact_Email__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </apex:actionRegion>
+                    </apex:outputPanel>
+                    <br/>
+                </div>
+                
+                
+                <!--
+<div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+<label class="label1">Payroll Frequency:</label><br/>
+{!onboardingOpp.Frequency__c}
+</div>
+<div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+<label class="label1">Packages Selected:</label><br/>
+{!productPackageList}
+</div>
+<div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+<label class="label1">Products Selected:</label><br/>
+{!productList}
+</div>
+<apex:actionRegion rendered="{!IF(hasExpressPayroll, 'false', 'true')}">
+<div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+<br/><label class="label1"><abbr class="slds-required">* </abbr>ReadyChex?</label><br/>
+<apex:inputField id="readychex" style="width: 175px;" value="{!onboardingRecord.ReadyChex__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputField>
+</div>
+</apex:actionRegion>
+<apex:actionRegion rendered="{!IF(hasSelect, 'true', 'false')}">
+<div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+<br/><label class="label1"><abbr class="slds-required">* </abbr>GL?</label><br/>
+<apex:selectList styleClass="textBox1" size="1" value="{!onboardingRecord.GL__c}">
+<apex:selectOptions value="{!glOptions}"/>
+</apex:selectList>
+</div>
+</apex:actionRegion>
+<apex:actionRegion rendered="{!IF(hasSelect || hasExpressPayroll, 'false', 'true')}">
+<div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+<br/><label class="label1"><abbr class="slds-required">* </abbr>GL?</label><br/>
+<apex:inputField style="width: 175px;" value="{!onboardingRecord.GL__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputField>
+</div>
+</apex:actionRegion>
+<apex:actionRegion rendered="{!IF(hasSelect || hasExpressPayroll, 'false', 'true')}">
+<div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">    
+<br/><label class="label1"><abbr class="slds-required">* </abbr>Workers Compensation?</label><br/>
+<apex:inputField style="width: 175px;" value="{!onboardingRecord.Workers_Compensation__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputField>
+</div>
+</apex:actionRegion>
+<div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+<br/><label class="label1"><abbr class="slds-required">* </abbr>Skylight?</label><br/>
+<apex:inputField style="width: 175px;" value="{!onboardingRecord.Skylight__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputField>
+</div>
+<div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+<br/><label class="label1"><abbr class="slds-required">* </abbr>Pay On Demand?</label><br/>
+<apex:inputField style="width: 175px;" value="{!onboardingRecord.Pay_Demand__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputField>
+</div>
+-->
+            </div>   
+        </div>
+    </div>
+    <apex:outputPanel id="displayAdditionalInformation">
+        <apex:actionRegion rendered="true">
+            <div class="slds-box slds-box_xx-small black_background">
+                <label class="header1"><b>Paychex Information</b></label>
+                <div class="slds-box brand_background">
+                    <div class="slds-grid slds-wrap">
+                        
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            
+                            <apex:outputPanel id="dbaSection">
+                                <apex:actionRegion >
+                                    <label class="label1"><abbr class="slds-required">* </abbr>Does this client use a DBA?</label><br/>
+                                    <apex:selectList styleClass="textBox1" size="1" value="{!onboardingRecord.Does_Client_Use_DBA__c}">
+                                        <apex:selectOptions value="{!DBAOptions}"/>
+                                        <apex:actionSupport event="onchange" action="{!clearDBAField}" reRender="dbaSection,displayFSSButton"/>
+                                    </apex:selectList>
+                                </apex:actionRegion>
+                                
+                                <apex:actionRegion >
+                                    <div style="display:{!If(onboardingRecord.Does_Client_Use_DBA__c == 'Yes', 'block','none')}"><label class="label1"><abbr class="slds-required">* </abbr>DBA:</label><br/>
+                                        <apex:inputField style="width: 175px;" value="{!onboardingOpp.Account.DBA__c}">
+                                            <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                                        </apex:inputField>
+                                    </div>
+                                </apex:actionRegion>
+                                <apex:actionRegion >
+                                    <div style="display:{!If(onboardingRecord.Does_Client_Use_DBA__c == 'Yes', 'block','none')}"><label class="label1"><abbr class="slds-required">* </abbr>Show DBA name on checks/reports?</label><br/>
+                                        <apex:inputField style="width: 175px;" value="{!onboardingRecord.DBA_Name_on_Checks_and_Reports__c}">
+                                            <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                                        </apex:inputField>
+                                    </div>
+                                </apex:actionRegion>  
+                                
+                                <!--
+<apex:outputPanel id="dba">
+<apex:actionRegion rendered="{!If(onboardingRecord.Does_Client_Use_DBA__c == 'Yes', 'true', 'false')}">
+<div><label class="label1"><abbr class="slds-required">* </abbr>DBA:</label><br/>
+<apex:inputField style="width: 175px;" value="{!onboardingOpp.Account.DBA__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputField>
+</div>
+</apex:actionRegion>
+</apex:outputPanel>
+
+<apex:outputPanel id="dbaOnChecksAndReports">
+<apex:actionRegion rendered="{!If(onboardingRecord.Does_Client_Use_DBA__c == 'Yes', 'true', 'false')}">
+<div><label class="label1"><abbr class="slds-required">* </abbr>Show DBA name on checks/reports?</label><br/>
+<apex:inputField style="width: 175px;" value="{!onboardingRecord.DBA_Name_on_Checks_and_Reports__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputField>
+</div>
+</apex:actionRegion>
+</apex:outputPanel>
+--> 
+                                
+                            </apex:outputPanel>
+                        </div>
+                        
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>New or existing business:</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingOpp.New_or_Existing_Business__c}">
+                                <apex:actionSupport event="onchange" action="{!checkRunDate}" reRender="displaySLAErrorMessage,displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Does "{!onboardingOpp.Account.Name}" have prior wages to be loaded?</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.PriorWagesLoaded__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <apex:outputPanel id="currentFutureRelationship">
+                                <apex:actionRegion >
+                                    <label class="label1"><abbr class="slds-required">* </abbr>Does client have a current/future relationship with another client?</label><br/>
+                                    <apex:inputField style="width: 175px;" value="{!onboardingRecord.RelationWithAddAccount__c}">
+                                        <apex:actionSupport event="onchange" action="{!Validate}" reRender="currentFutureRelationship, displayFSSButton"/>
+                                    </apex:inputField>
+                                </apex:actionRegion>
+                                
+                                <apex:actionRegion >
+                                    <div style="display:{!If(onboardingRecord.RelationWithAddAccount__c == '' || onboardingRecord.RelationWithAddAccount__c != 'Yes', 'none','block')}"><label class="label1"><abbr class="slds-required">* </abbr>Enter Parent Prospect-Client:</label><br/>
+                                        <apex:inputField style="width: 175px;" value="{!onboardingRecord.RelatedAccountId__c}">
+                                            <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                                        </apex:inputField>
+                                    </div>
+                                </apex:actionRegion>
+                                
+                            </apex:outputPanel>
+                            
+                            <!--
+<apex:outputPanel id="displayRelatedAcct">
+<apex:actionRegion rendered="{!If(onboardingRecord.RelationWithAddAccount__c == '' || onboardingRecord.RelationWithAddAccount__c != 'Yes', 'false', 'true')}">
+<div><label class="label1"><abbr class="slds-required">* </abbr>Enter Parent Prospect-Client:</label><br/>
+<apex:inputField value="{!onboardingRecord.RelatedAccountId__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputField>
+</div>
+</apex:actionRegion>
+</apex:outputPanel>
+-->
+                        </div>
+                        
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <apex:outputPanel id="comboIds">
+                                <apex:actionRegion >
+                                    <label class="label1"><abbr class="slds-required">* </abbr>Is "{!onboardingOpp.Account.Name}" a combo?</label><br/>
+                                    <apex:inputField style="width: 175px;" value="{!onboardingRecord.Combo__c}">
+                                        <apex:actionSupport event="onchange" action="{!Validate}" reRender="comboIds,displayFSSButton"/>
+                                    </apex:inputField>
+                                </apex:actionRegion>
+                                
+                                <apex:actionRegion >
+                                    <div style="display:{!If(onboardingRecord.Combo__c == '' || onboardingRecord.Combo__c != 'Yes', 'none','block')}"><label class="label1"><abbr class="slds-required">* </abbr>Enter number of Ids:</label><br/>
+                                        <apex:inputField style="width: 175px;" value="{!onboardingRecord.NumComboIds__c}">
+                                            <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                                        </apex:inputField>
+                                    </div>
+                                </apex:actionRegion>
+                            </apex:outputPanel>
+                            
+                            <!--
+<apex:outputPanel id="displayComboIds">
+<apex:actionRegion rendered="{!If(onboardingRecord.Combo__c == '' || onboardingRecord.Combo__c != 'Yes', 'false', 'true')}">
+<div><label class="label1"><abbr class="slds-required">* </abbr>Enter number of Ids:</label><br/>
+<apex:inputField style="width: 175px;" value="{!onboardingRecord.NumComboIds__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputField>
+</div>
+</apex:actionRegion>
+</apex:outputPanel>
+-->
+                        </div>
+                        
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <apex:outputPanel id="multiIdSection">
+                                <apex:actionRegion >
+                                    <label class="label1"><abbr class="slds-required">* </abbr>Is this a multi id submission?</label><br/>
+                                    <apex:inputField style="width: 175px;" value="{!onboardingRecord.Multi_Id_Submission__c}">
+                                        <apex:actionSupport event="onchange" action="{!Validate}" reRender="multiIdSection,displayFSSButton"/>
+                                    </apex:inputField>
+                                    <apex:outputLink rendered="{!If(onboardingRecord.Multi_Id_Submission__c == '' || onboardingRecord.Multi_Id_Submission__c != 'Yes', 'false','true')}" value="https://paychex.my.salesforce.com/sfc/p/300000006M6H/a/4u000000swGe/fAJn9hISLfVXqPHSQasDfriYSmN2FCMAr0HidUUJjoY" id="theLink">         Multi-ID Worksheet</apex:outputLink>
+                                </apex:actionRegion>
+                                
+                                <apex:actionRegion >
+                                    <div style="display:{!If(onboardingRecord.Multi_Id_Submission__c == '' || onboardingRecord.Multi_Id_Submission__c != 'Yes', 'none','block')}"><label class="label1"><abbr class="slds-required">* </abbr>Enter number of Ids:</label><br/>
+                                        <apex:inputField style="width: 175px;" value="{!onboardingRecord.NumMultiIds__c}">
+                                            <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                                        </apex:inputField>
+                                    </div>
+                                </apex:actionRegion>
+                                <!-- Multi id account/child notes -->
+                                 <apex:actionRegion >
+                                    <div style="display:{!If(onboardingRecord.Multi_Id_Submission__c == '' || onboardingRecord.Multi_Id_Submission__c != 'Yes', 'none','block')}">
+                                        <label class="label1">Multi-ID/Child Account Notes:</label><br/>
+                                        <apex:outputText ><font color = 'Blue'>Is there anything additional that the HRP or Implementation Team needs to know about the additional IDs included in this sale?</font></apex:outputText><br/>
+                                        <apex:inputField style="width: 300px; height: 100px" value="{!onboardingRecord.Multi_ID_Child_Account_Notes__c}">                                            
+                                        </apex:inputField>                                        
+                                    </div>
+                                </apex:actionRegion>
+                            </apex:outputPanel>
+                            <!--
+<apex:outputPanel id="displayMultiIds">
+<apex:actionRegion rendered="{!If(onboardingRecord.Multi_Id_Submission__c == '' || onboardingRecord.Multi_Id_Submission__c != 'Yes', 'false', 'true')}">
+<div><label class="label1"><abbr class="slds-required">* </abbr>Enter number of Ids:</label><br/>
+<apex:inputField style="width: 175px;" value="{!onboardingRecord.NumMultiIds__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputField>
+</div>
+</apex:actionRegion>
+</apex:outputPanel>
+-->
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <apex:outputPanel id="irsAddressSection">
+                                <apex:actionRegion >
+                                    <label class="label1"><abbr class="slds-required">* </abbr>Is the delivery address the same as the legal address?</label><br/>
+                                    <apex:inputField style="width: 175px;" value="{!onboardingRecord.IrsIsDelivery__c}">
+                                        <apex:actionSupport event="onchange" action="{!Validate}" reRender="irsAddressSection,displayFSSButton"/>
+                                    </apex:inputField>
+                                </apex:actionRegion>
+                                
+                                <apex:actionRegion >
+                                    <div style="display:{!If(onboardingRecord.IrsIsDelivery__c == '' || onboardingRecord.IrsIsDelivery__c != 'No', 'none','block')}"><label class="label1"><abbr class="slds-required">* </abbr>Enter Delivery Address:</label><br/>
+                                        <apex:inputField style="width: 175px;" value="{!onboardingRecord.Irs_Address__c}">
+                                            <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                                        </apex:inputField>
+                                    </div>
+                                </apex:actionRegion>
+                                
+                                
+                            </apex:outputPanel>
+                            <!--
+<apex:outputPanel id="displayIrsAddressField">
+<apex:actionRegion rendered="{!If(onboardingRecord.IrsIsDelivery__c == '' || onboardingRecord.IrsIsDelivery__c != 'No', 'false', 'true')}">
+<div><label class="label1"><abbr class="slds-required">* </abbr>Enter Delivery Address:</label><br/>
+<apex:inputField style="width: 300px;" value="{!onboardingRecord.Irs_Address__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputField>
+</div>
+</apex:actionRegion>
+</apex:outputPanel>
+-->
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <apex:outputPanel id="businessTypeSection">
+                                <apex:actionRegion >
+                                    <label class="label1"><abbr class="slds-required">* </abbr>Business Type:</label><br/>
+                                    <apex:inputField style="width: 175px;" value="{!onboardingRecord.Business_Structure__c}">
+                                        <apex:actionSupport event="onchange" action="{!Validate}" reRender="businessTypeSection,displayFSSButton"/>
+                                    </apex:inputField>
+                                </apex:actionRegion>
+                                
+                                <apex:actionRegion >
+                                    <div style="display:{!If  (onboardingRecord.Business_Structure__c == 'LLC', 'block','none')}"><label class="label1">Check if the client will be filing an S corp election</label><br/>
+                                        <apex:inputCheckbox value="{!onboardingRecord.Taxed_as_S_Corp__c}">
+                                            <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                                        </apex:inputCheckbox>
+                                        <apex:outputLink rendered="{!If(onboardingRecord.Business_Structure__c == 'LLC', 'true','false')}" value="https://paychex.rightanswers.com/portal/app/portlets/results/viewsolution.jsp?solutionid=200518200232384&page=1&position=2&q=200518200232384" id="theLink1">         Link to explain S corp election</apex:outputLink>
+                                    </div>
+                                </apex:actionRegion>
+                                
+                            </apex:outputPanel>
+                            <!--
+<apex:outputPanel id="displaySCorpField">
+<apex:actionRegion rendered="{!If  (onboardingRecord.Business_Structure__c == 'LLC', 'true', 'false')}">
+<div><label class="label1">Check if the client will be filing an S corp election</label><br/>
+<apex:inputCheckbox value="{!onboardingRecord.Taxed_as_S_Corp__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputCheckbox>
+</div>
+</apex:actionRegion>
+</apex:outputPanel>
+-->
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <!--
+<label class="label1"><abbr class="slds-required">* </abbr>Business Type:</label><br/>
+<apex:inputField style="width: 175px;" value="{!onboardingRecord.Business_Structure__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displaySCorpField,displayFSSButton"/>
+</apex:inputField>
+-->
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>First run date:</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.Run_Date__c}">
+                                <apex:actionSupport event="onchange" action="{!checkRunDate}" reRender="displaySLAErrorMessage,displayFSSButton"/>
+                            </apex:inputField>
+                            
+                            <apex:outputPanel id="displaySLAErrorMessage">
+                                <apex:actionRegion rendered="{!IF(AND(newBusinessRunDateOkay, existingBusinessRunDateOkay), false, true)}">
+                                    <div>
+                                        <label class="label1"><abbr class="slds-required">Based on the employee count and run date Entered, this client falls below SLA. For a positive client experience, please select a new run date.</abbr></label><br/>
+                                    </div>
+                                </apex:actionRegion>
+                            </apex:outputPanel>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>First check date:</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.First_Check_Date__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Period end date:</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.PeriodEndDate__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Ongoing pay period end date:</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.Ongoing_Pay_Period_End_Date__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Ongoing call day of the week:</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.Ongoing_Call_Day_of_the_Week__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Ongoing check day of the week:</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.Ongoing_Check_Day_of_the_Week__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">  
+                            <apex:actionRegion rendered="{!IF(hasExpressPayroll || hasSolo, false, true)}">
+                                <label class="label1"><abbr class="slds-required">* </abbr>1st payroll delivery method:</label><br/>
+                                <apex:inputField style="width: 175px;" value="{!onboardingOpp.First_Payroll_Delivery_Method__c}">
+                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                                </apex:inputField>
+                            </apex:actionRegion>
+                            <apex:actionRegion rendered="{!IF(hasExpressPayroll || hasSolo, true, false)}">
+                                <label class="label1"><abbr class="slds-required">* </abbr>1st payroll delivery method:</label><br/>
+                                {!onboardingOpp.First_Payroll_Delivery_Method__c}
+                            </apex:actionRegion>
+                        </div>
+                        
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">  
+                            <apex:actionRegion rendered="{!IF(hasExpressPayroll || hasSolo, false, true)}">
+                                <label class="label1"><abbr class="slds-required">* </abbr>Ongoing delivery:</label><br/>
+                                <apex:inputField style="width: 175px;" value="{!onboardingRecord.Ongoing_Delivery__c}">
+                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                                </apex:inputField>
+                            </apex:actionRegion>
+                            <apex:actionRegion rendered="{!IF(hasExpressPayroll || hasSolo, true, false)}">
+                                <label class="label1"><abbr class="slds-required">* </abbr>Ongoing delivery:</label><br/>
+                                {!onboardingRecord.Ongoing_Delivery__c}
+                            </apex:actionRegion>
+                        </div>
+                        
+                        <!--
+<label class="label1"><abbr class="slds-required">* </abbr>Ongoing delivery:</label><br/>
+<apex:inputField style="width: 175px;" value="{!onboardingRecord.Ongoing_Delivery__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputField> 
+</div>-->
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Checks per pay period:</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingOpp.Employees_Paid_Per_Payroll__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Number of employees to load:</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.EmpsToLoad__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        <!--<div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Number of 1099s:</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.NumOf1099s__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>-->
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+							<apex:outputPanel id="need1099Section">
+								<apex:actionRegion >
+									<label class="label1">Does the company Need to issue any 1099s?</label><br/>
+									<apex:inputField style="width: 175px;" value="{!onboardingRecord.Does_Company_Need_1099s__c}">
+                                        <apex:actionSupport event="onchange" action="{!Validate}" reRender="need1099Section,displayFSSButton"/>
+                                    </apex:inputField>
+								</apex:actionRegion>
+								<apex:actionRegion >
+                                    <div style="display:{!If(onboardingRecord.Does_Company_Need_1099s__c == '' || onboardingRecord.Does_Company_Need_1099s__c != 'Yes', 'none','block')}">
+										<label class="label1"><abbr class="slds-required">* </abbr>Number of 1099s:</label><br/>
+										<apex:inputField style="width: 175px;" value="{!onboardingRecord.NumOf1099s__c}">
+											<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+										</apex:inputField>
+									</div>
+								</apex:actionRegion>
+							</apex:outputPanel>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>States Client is registered in:</label><br/>
+                            <apex:inputField value="{!onboardingRecord.StateProcessedIn__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3"></div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3"></div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Does client require instructions to apply for state or SUI IDs?</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.Client_Require_Instructions__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1">Client State Id:</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.Client_State_Id__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1">Client SUI Id:</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.Client_SUI_Id__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Does the client have a workers comp policy?</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.Workers_Comp_Policy__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="insuranceCarrier,workersCompPolicy,displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <apex:outputPanel id="insuranceCarrier">
+                                <apex:actionRegion >
+                                    <div style="display:{!IF(onboardingRecord.Workers_Comp_Policy__c == 'Yes', 'block','none')}"><label class="label1"><abbr class="slds-required">* </abbr>Insurance carrier</label><br/>
+                                        <apex:inputField style="width: 175px;" value="{!onboardingRecord.Insurance_Carrier__c}">
+                                            <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                                        </apex:inputField>
+                                    </div>
+                                </apex:actionRegion>
+                            </apex:outputPanel>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <apex:outputPanel id="workersCompPolicy">
+                                <apex:actionRegion >
+                                    <div style="display:{!IF(onboardingRecord.Workers_Comp_Policy__c == 'Yes', 'block','none')}"><label class="label1"><abbr class="slds-required">* </abbr>Workers Compensation Expiration Date</label><br/>
+                                        <apex:inputField style="width: 175px;" value="{!onboardingRecord.Workers_Comp_Expiration_Date__c}">
+                                            <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                                        </apex:inputField>
+                                    </div>
+                                </apex:actionRegion>
+                            </apex:outputPanel>
+                        </div> 
+                        
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1">Notes:</label><br/>
+                            <apex:inputField style="width: 300px; height: 100px" value="{!onboardingOpp.Description}"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </apex:actionRegion>
+    </apex:outputPanel>
+    
+    
+    <!--
+
+<div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+<label class="label1"><abbr class="slds-required">* </abbr>Source of business:</label><br/>
+<apex:outputField style="width: 175px;" value="{!onboardingOpp.LeadSource}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:outputField>
+</div>
+<div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+<label class="label1"><abbr class="slds-required">* </abbr>Training?</label><br/>
+<apex:inputField style="width: 175px;" value="{!onboardingRecord.Training__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputField>
+</div>
+<div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+<label class="label1"><abbr class="slds-required">* </abbr>Service location:</label><br/>
+<apex:inputField style="width: 300px;" value="{!onboardingOpp.Service_Location__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputField>
+<br/><apex:outputText ><font color = 'Red'>Note: Level 2 or 3 MMS reps combos can only be submitted to local branches</font></apex:outputText><br/>
+<br/>
+<label class="label1"><abbr class="slds-required">* </abbr>Payroll platform:</label><br/>
+<apex:inputField style="width: 175px;" value="{!onboardingOpp.Payroll_Platform__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputField>
+</div>
+<div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+<label class="label1"><abbr class="slds-required">* </abbr>Has client chosen 3 year price lock?</label><br/>
+<apex:inputField value="{!onboardingRecord.PriceLock3Year__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputField>
+</div>
+<div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+<label class="label1"><abbr class="slds-required">* </abbr>Preassigned Client Number Needed:</label><br/>
+<apex:selectList styleClass="textBox1" size="1" value="{!onboardingRecord.PreAssignedClientNum__c}">
+<apex:selectOptions value="{!preAssignedClientNumOptions}"/>
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="preassignedClientNum,displayFSSButton"/>
+</apex:selectList>
+<apex:outputPanel id="preassignedClientNum">
+<apex:actionRegion rendered="{!If(onboardingRecord.PreAssignedClientNum__c == 'Yes', 'true', 'false')}">
+<div><label class="label1"><abbr class="slds-required">* </abbr>Preassigned Client Number</label><br/>
+<apex:inputField style="width: 175px;" value="{!onboardingRecord.PreAssignedId__c}">
+<apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+</apex:inputField>
+</div>
+</apex:actionRegion>
+</apex:outputPanel>
+</div>
+-->                       
+    <!--
+<apex:outputPanel id="displayNCOFields">
+<apex:actionRegion rendered="true">
+<div class="slds-box slds-box_xx-small black_background">
+<label class="header1"><b>NCO Required Fields</b></label>
+<div class="slds-box brand_background">
+<div class="slds-grid slds-wrap">
+</div>
+</div>
+</div>
+</apex:actionRegion>
+</apex:outputPanel>
+-->
+    <apex:outputPanel id="asoFields">
+        <apex:actionRegion rendered="{!displayASOForMMS}">
+            <div class="slds-box slds-box_xx-small black_background">
+                <label class="header1"><b>ASO Required Fields</b></label>
+                <div class="slds-box brand_background">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Handbook Contact:</label><br/>
+                            <apex:inputText disabled="true"  styleClass="textBox1" style="slds-text-heading_medium" value="{!onboardingOpp.Handbook_Contact__r.Name}"/>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Does your Employee Handbook require Spanish Translation?   </label><br/>
+                            <apex:inputField value="{!onboardingRecord.Spanish__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Handbook Format:</label><br/>
+                            <apex:inputField styleClass="textBox1" style="slds-text-heading_medium" value="{!onboardingRecord.Handbook_Format__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>HR Administrator:</label><br/>
+                            <apex:selectList styleClass="textBox1" size="1" value="{!onboardingRecord.HR_Admin__c}">
+                                <apex:selectOptions value="{!docDeskContacts}"/>
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:selectList>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Number of Locations:</label><br/>
+                            <apex:inputField styleClass="textBox1" style="slds-text-heading_medium" value="{!onboardingRecord.HRE_Num_of_Locations__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Reason(s) client selected HR Essentials:</label><br/>
+                            <apex:inputField styleClass="textBox1" style="slds-text-heading_medium" value="{!onboardingRecord.HRE_Reason_Selected__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:inputField>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Does client have an existing handbook?</label><br/>
+                            <apex:selectList style="width: 150px;" size="1" value="{!onboardingRecord.HRE_Existing__c}">
+                                <apex:selectOptions value="{!BoolOption}"/>
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:selectList>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-p-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <label class="label1"><abbr class="slds-required">* </abbr>Does the client have an existing safety manual?</label><br/>
+                            <apex:selectList style="width: 150px;" size="1" value="{!onboardingRecord.HRE_Existing_Safety_Manual__c}">
+                                <apex:selectOptions value="{!BoolOption}"/>
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                            </apex:selectList>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </apex:actionRegion>
+    </apex:outputPanel>
+    
+    <br />
+    <div class="slds-box slds-box_xx-small black_background">
+        <div class="slds-box brand_background" align="center">
+            <label class="label1">All required fields must be completed prior to submission</label><br/>
+            <apex:actionRegion >
+                <apex:commandButton styleClass="slds-button--neutral" value="Save Changes - Return to Opportunity" onclick="saveConfirmation()" action="{!saveChanges}" />
+            </apex:actionRegion>
+            <apex:outputPanel id="displayFSSButton">
+                <apex:actionRegion rendered="{!IF(validRecord, 'true', 'false')}">
+                    <apex:commandButton styleClass="slds-button--neutral" value="Submit New Client Profile" onclick="NcpSubmitOnClick(this)" />
+                    <apex:actionFunction name="doNcpSubmit" action="{!submitNCP}" />
+                </apex:actionRegion>
+                <!--<apex:actionRegion rendered="{!IF(isFSS, 'true', 'false')}">
+<apex:commandButton value="View Summary"  onclick=" window.open('/apex/OnboardingPDF?id={!incomingId}','_blank','height=800,width=800')" action="{!saveSummary}"/>
+</apex:actionRegion>-->
+            </apex:outputPanel>
+        </div>
+    </div>
+</apex:component>

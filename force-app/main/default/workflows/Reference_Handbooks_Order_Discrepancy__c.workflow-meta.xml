@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>HBK_Discrepancy_Order_Resolved_Date_Upd</fullName>
+        <description>set the Resolved Date to the current date</description>
+        <field>Resolved_Date__c</field>
+        <formula>Today()</formula>
+        <name>HBK: Discrepancy Order Resolved Date Upd</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>HBK%3A Update Resolved Date</fullName>
+        <actions>
+            <name>HBK_Discrepancy_Order_Resolved_Date_Upd</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>This rule updates the Resolved Date field when the Status field is set to either &quot;Resolved&quot; or &quot;Disregard&quot;.</description>
+        <formula>ISCHANGED(Status__c)  &amp;&amp; ( (ISPICKVAL(Status__c, &apos;Resolved&apos;)) || (ISPICKVAL(Status__c, &apos;Disregard&apos;)) )</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

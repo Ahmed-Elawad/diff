@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Do_Not_Prospect_Reason__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>Used in the banner for Do Not Prospect</description>
+    <externalId>false</externalId>
+    <formula>IF(ISPICKVAL(Type,&apos;HROi Client&apos;),&apos;HROi Client &apos;,&apos;&apos;)+
+IF(ISPICKVAL(Type,&apos;SurePayroll HR&apos;),&apos;SurePayroll HR &apos;,&apos;&apos;)+
+IF( CONTAINS( OpportunityTypes__c , &apos;SurePayroll ASO&apos;), &apos; SurePayroll ASO &apos;,&apos;&apos;)+
+IF( CONTAINS( OpportunityTypes__c , &apos;SurePayroll HRE&apos;), &apos; SurePayroll HRE &apos;,&apos;&apos;)+
+IF($RecordType.Name = &apos;Core Referral Source Record Type&apos;,&apos;Referral Source Shell Record &apos;,&apos;&apos;)+
+IF($RecordType.Name = &apos;HRS Referral Source Record Type&apos;,&apos;Referral Source Shell Record &apos;,&apos;&apos;)+
+IF($RecordType.Name = &apos;Referral Account Record Type&apos;,&apos;Referral Source Shell Record &apos;,&apos;&apos;)+
+IF(OR(Service_Model_Type__c=&apos;NCO&apos;,Service_Model_Type__c=&apos;New Client Onboarding&apos;,ISPICKVAL(Client_Onboarding_Status__c,&apos;In Progress&apos;),!ISBLANK(Current_Implementation_Type__c)),&apos;Currently in Implementation &apos;,&apos;&apos;)+
+IF(ISPICKVAL(Permanent_Hold_Out_Description__c,&apos;Ecommerce&apos;),&apos;Ecommerce &apos;,&apos;&apos;)+
+IF(ISPICKVAL(Permanent_Hold_Out_Description__c,&apos;Surepayroll ERTC&apos;),&apos;Surepayroll ERTC &apos;,&apos;&apos;)+
+IF(ISPICKVAL(Restricted_Industry__c,&apos;CRB&apos;),&apos;CRB &apos;,&apos;&apos;)+
+IF( CONTAINS( SensitivityList__c , &apos;ERTC&apos;),&apos;ERTC &apos;,&apos;&apos;)+
+IF( CONTAINS( Lead_List__c , &apos;MM1&apos;),&apos;Acquisition &apos;,&apos;&apos;)</formula>
+    <label>Do Not Prospect Reason</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

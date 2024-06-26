@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Required_when_Stabilize_is_selected</fullName>
+    <active>true</active>
+    <description>New Annual Revenue is required when &apos;Stabilize &apos; value is selected in Resolution Type.</description>
+    <errorConditionFormula>ISPICKVAL( Case_Lookup__r.Reason , &apos;Reactive&apos;) &amp;&amp; 
+ISPICKVAL(Resolution_type__c, &apos;Stabilize&apos;) &amp;&amp; 
+ISBLANK(New_Annual_Revenue__c )</errorConditionFormula>
+    <errorDisplayField>New_Annual_Revenue__c</errorDisplayField>
+    <errorMessage>Required when any &apos;Stabilize&apos; is selected in Resolution Type.</errorMessage>
+</ValidationRule>

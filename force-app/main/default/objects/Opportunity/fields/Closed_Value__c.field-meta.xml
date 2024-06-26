@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Closed_Value__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>If an opportunity is won or better, the field shows a 1. If the opportunity is lost, the field shows a 0</description>
+    <externalId>false</externalId>
+    <formula>IF(AND(BEGINS(TEXT(StageName),&apos;Sold&apos;)),1,
+IF(OR(TEXT(StageName) == &apos;Not Sold&apos;, TEXT(StageName) == &apos;Lost&apos;, TEXT(StageName) == &apos;No Decision&apos;, TEXT(StageName) == &apos;Rejected&apos;,TEXT(StageName) == &apos;Disqualified&apos;,TEXT(StageName) == &apos;Rescinded&apos;),0,
+NULL
+))</formula>
+    <label>Closed Value</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

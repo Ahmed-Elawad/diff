@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRE_Control_Stop_Welcome_Call_Automated</fullName>
+    <active>true</active>
+    <description>Force update of the Stop Welcome Call Automated Emails field when the Interview scheduled field has been checked.</description>
+    <errorConditionFormula>AND(
+( Send_Welcome_Call_Automated_Emails__c = True), 
+( Stop_Welcome_Call_Automated_Emails__c = False), 
+( Interview_Scheduled__c = TRUE ),
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)))
+)</errorConditionFormula>
+    <errorDisplayField>Stop_Welcome_Call_Automated_Emails__c</errorDisplayField>
+    <errorMessage>You must click the &apos;Stop Welcome Call Automated Emails&apos; field to move forward</errorMessage>
+</ValidationRule>

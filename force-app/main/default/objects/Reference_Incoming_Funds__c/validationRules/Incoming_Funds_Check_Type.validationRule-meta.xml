@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Incoming_Funds_Check_Type</fullName>
+    <active>true</active>
+    <description>Other fields are required if check type is Misc Check</description>
+    <errorConditionFormula>AND( ISPICKVAL(Check_Type__c,&apos;Misc Check&apos;),OR(ISBLANK( Check_Amount__c ),ISBLANK( Check_Payable_To__c ),ISBLANK(TEXT( Address__c ))))</errorConditionFormula>
+    <errorMessage>If Check Type is Misc Check, Check Amount, Check Payable To and Address are required</errorMessage>
+</ValidationRule>

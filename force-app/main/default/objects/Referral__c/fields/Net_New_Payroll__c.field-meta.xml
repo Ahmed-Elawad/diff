@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Net_New_Payroll__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>Field used to report for Marketing, Finance, and Sales net new Inbound &apos;Payroll&apos; Opportunities. &quot;Net New&quot; is a non-payroll client and &apos;Payroll&apos; is defined as a product that includes a payroll package.</description>
+    <formula>IF(
+   (Primary__c=true &amp;&amp; TEXT(Referral_Partner__r.Referral_Product_Type__c) = &apos;Payroll&apos;) ||
+   (Primary__c=true &amp;&amp; TEXT(Referral_Partner__r.Referral_Product_Type__c) = &apos;ASO&apos; &amp;&amp; Inbound_Integrated_Selling__c = false &amp;&amp;  
+    Selling_Opportunity__r.Payroll_Client__c = false)||
+   (Primary__c=true &amp;&amp; TEXT(Referral_Partner__r.Referral_Product_Type__c) = &apos;PEO&apos; &amp;&amp; Inbound_Integrated_Selling__c = false &amp;&amp; 
+   Selling_Opportunity__r.Payroll_Client__c = false),
+true, false)</formula>
+    <inlineHelpText>This field is true if the Inbound Opportunity is a Referral Product Type of Payroll, ASO, or PEO, a net new Account (not using Payroll Services), and a Primary Referral.</inlineHelpText>
+    <label>Net New Payroll</label>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

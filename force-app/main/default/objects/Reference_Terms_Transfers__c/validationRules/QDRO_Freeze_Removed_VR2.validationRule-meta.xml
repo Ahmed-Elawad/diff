@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>QDRO_Freeze_Removed_VR2</fullName>
+    <active>true</active>
+    <description>Date cannot be entered in Freeze Removed and ppwk sent to Alt. Payee when an unresolved Kit issue or Authorization issue</description>
+    <errorConditionFormula>ISBLANK( X401_k_PEP__c ) &amp;&amp; RecordType.Name = &apos;QDRO&apos;  &amp;&amp;  NOT(ISBLANK( Freeze_Removed_ppwk_Sent_to_Alt_Payee__c))  &amp;&amp; ((NOT(ISBLANK(TEXT(Kit_Issue__c))) &amp;&amp; ISBLANK(Kit_Issue_Resolved__c)) || (NOT(ISBLANK(TEXT(Authorization_Issue__c))) &amp;&amp; ISBLANK(Authorization_Issue_Resolved__c)))</errorConditionFormula>
+    <errorDisplayField>Freeze_Removed_ppwk_Sent_to_Alt_Payee__c</errorDisplayField>
+    <errorMessage>Date cannot be entered in Freeze Removed and ppwk sent to Alt. Payee when an unresolved Kit issue or Authorization issue</errorMessage>
+</ValidationRule>

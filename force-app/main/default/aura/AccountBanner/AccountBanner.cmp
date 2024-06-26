@@ -1,0 +1,127 @@
+<!--
+History
+02/22/2021 Dan Carmen      		Changed parameter for the Do Not Prospect banner
+06/24/2021 Dan Carmen      		Add Current Package section
+11/10/2022 Dan Carmen      		Add ERTC
+16/02/2023 Lalan Kumar	   		Changed BannerInCadence to display CadenceType__c
+05/05/2023 Shilpa Govindarajulu	Changed Open Cases banner to not display for certain Account Types
+11/09/2023 Susmitha Somavarapu  Added Secure Act Est.Tax banner to display on account with the certain criteria(APR0155431)
+12/14/2023 Shilpa Govindarajulu APR0155814: Added Intent Banner to replace Insights Banner
+
+-->
+<aura:component description="AccountBanner" controller="ObjectBannerAuraService">
+    <aura:attribute name="accountId" type="Id" required="true" />
+    <aura:attribute name="bannerSettings" type="Object" required="true" />
+	<aura:attribute name="isPilot" type="Boolean"/>
+    
+    <aura:attribute name="account" type="Object" />
+
+    <aura:attribute name="accountWrapper" type="Object" />
+    <aura:attribute name="recordError" type="String" />
+    <aura:attribute name ="sensitivityList" type = "String"/> 
+
+    <force:recordData aura:id="accountLoader"
+                      fields=" Name,Do_Not_Call__c,Do_Not_Call_Flag__c,SensitivityList__c,PEO_Potential_Indicator__c,Email_Opt_Out__c,Email_Opt_Out_Flag__c,CPA_Sensitivity_Checkbox__c,isParent__c,isChild__c,NumberOfEmployees,Referral_National_Account__c,Referral_National_Account__r.Name,LastActivityDate,ParentId,Id,SalesParent__c,Do_Not_Prospect_Reason__c,In_Cadence__c,CadenceType__c,LastCadenceName__c,LastCadenceClosedType__c,Current_Package__c,ERTCEligible__c,ERTC_Estimated_Credit_Amount__c,ERTCConversationOutcome__c,Type, Secure_Act_Est_Credit__c,HRS_401k_Workable__c, Any_401k__c"
+                      recordId="{!v.accountId}"
+                      targetFields="{!v.account}"
+                      targetError="{!v.recordError}"
+                      recordUpdated="{!c.handleRecordUpdated}" 
+                      mode="VIEW" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/> 
+
+
+
+    
+    <div class="slds-tile__detail">
+        <div class="grid-wrapper">
+            <!-- DNC -->
+            <aura:if isTrue="{!or(or(v.account.Do_Not_Call__c, v.account.Email_Opt_Out__c), or(v.accountWrapper.DNCContacts.length > 0, v.accountWrapper.EmailOptOutContacts.length > 0))}">
+                <c:BannerAccountDNC account="{!v.account}" accountWrapper="{!v.accountWrapper}" />
+            </aura:if>
+            
+            <!-- Do Not Prospect -->
+            <aura:if isTrue="{!v.account.Do_Not_Prospect_Reason__c.length>0}">
+                <c:BannerDoNotProspect noProspectReason="{!v.account.Do_Not_Prospect_Reason__c}" />
+            </aura:if>
+
+            <!-- ERTC  -->
+            <aura:if isTrue="{!and(v.account.ERTCEligible__c.length>0, or (v.account.ERTCConversationOutcome__c == null, v.account.ERTCConversationOutcome__c == 'Unable to Make Contact'))}">
+                <c:BannerERTC ertcEligible="{!v.account.ERTCEligible__c}" ertcEstCredit="{!v.account.ERTC_Estimated_Credit_Amount__c}" />
+            </aura:if>
+
+            <!-- Product Sensitivity -->
+            <aura:if isTrue="{!v.account.SensitivityList__c.length>0}">
+                <c:BannerProductSensitivity sensitivityList ="{!v.account.SensitivityList__c}" />
+            </aura:if>
+
+            <!-- PEO Potential Indicator -->
+            <aura:if isTrue="{!v.account.PEO_Potential_Indicator__c.length>0}">
+                <c:BannerPEOPotential PEOPotential ="{!v.account.PEO_Potential_Indicator__c}" />
+            </aura:if>
+            
+            <!-- Multi ID -->
+            <c:BannerMultiID account="{!v.account}" />
+
+            <!-- Employees -->
+            <!--<aura:if isTrue="{!or(and(!v.bannerSettings.Account_Show_Employee_Count_If_Zero__c, v.account.NumberOfEmployees > 0), v.bannerSettings.Account_Show_Employee_Count_If_Zero__c)}">-->
+                <!--<c:BannerEmployees numOfEmployees="{!v.account.NumberOfEmployees}" />-->
+            <!--</aura:if>-->
+            
+            <!-- Current Package -->
+            <aura:if isTrue="{!v.account.Current_Package__c.length>0}">
+                <c:BannerCurrentPackage currentPackage="{!v.account.Current_Package__c}" />
+            </aura:if>
+
+            <!-- In Cadence -->
+            <aura:if isTrue="{!v.account.In_Cadence__c}">
+                <c:BannerInCadence record="{!v.account}" recordId="{!v.account.Id}" cadenceType="{!v.account.CadenceType__c}" cadenceName="{!v.account.LastCadenceName__c}"/>
+            </aura:if>
+            
+            <!-- Marketing Owned Contact -->
+            <aura:if isTrue="{!v.accountWrapper.MarketingOwnedContact.length > 0}">
+                <c:MarketingOwnedContact account="{!v.account}"/>
+            </aura:if>
+
+            <!-- Strategic Account -->
+            <aura:if isTrue="{!v.account.Referral_National_Account__c}">
+                <c:BannerStrategicAccount accountName="{!v.account.Referral_National_Account__r.Name}" />
+            </aura:if>
+
+            <!-- Opportunities -->
+            <aura:if isTrue="{!or(and(!v.bannerSettings.Account_Show_Opportunities_If_Zero__c, v.accountWrapper.OpenOpportunities.length > 0), v.bannerSettings.Account_Show_Opportunities_If_Zero__c)}">
+                <c:BannerOpenOpportunities recordId="{!v.account.Id}" openOpportunities="{!v.accountWrapper.OpenOpportunities}" opportunityType="Prospect-Client" objectType="Account"/>
+            </aura:if>
+
+            <!-- Activity -->
+            <aura:if isTrue="{!or(and(!v.bannerSettings.Account_Show_Activities_If_None__c, or(v.account.LastActivityDate, v.accountWrapper.OpenActivities.length > 0)), v.bannerSettings.Account_Show_Activities_If_None__c)}">
+                <c:BannerOpenActivities recordId="{!v.account.Id}" openActivities="{!v.accountWrapper.OpenActivities}" lastActivityDate="{!v.account.LastActivityDate}" />
+            </aura:if>
+
+            <!-- Open Cases -->
+            <aura:if isTrue="{!and(v.account.Type!='Lost Client',v.account.Type!='Prospect',v.account.Type!='Prospect - January',v.account.Type!='PEO Prospect',v.account.Type!='Oasis Prospect',v.account.Type!='HROi Prospect',v.account.Type!='Competitor',v.account.Type!='Decision Maker Elsewhere')}">
+                <aura:if isTrue="{!or(and(!v.bannerSettings.Account_Show_Cases_If_Zero__c, v.accountWrapper.OpenCases.length > 0), v.bannerSettings.Account_Show_Cases_If_Zero__c)}">
+                    <c:BannerOpenCases recordId="{!v.account.Id}" openCases="{!v.accountWrapper.OpenCases}" caseType="Prospect-Client"  objectType="Account" />
+                </aura:if>
+            </aura:if>
+            
+            <!-- Insights available -->
+            <!--<aura:if isTrue="{!and(v.isPilot, v.accountWrapper.marketingInsights.length > 0)}">
+                <c:BannerInsights recordId="{!v.accountId}" objectType="Account" openInsights="{!v.contactWrapper.marketingInsights}"/>
+            </aura:if>-->
+            
+            <!-- Intent available -->
+            <aura:if isTrue="{!and(v.isPilot, v.accountWrapper.customerIntentSignals.length > 0)}">
+                <c:BannerInsights recordId="{!v.accountId}" objectType="Account" openInsights="{!v.accountWrapper.customerIntentSignals}"/>
+            </aura:if>
+           
+            <!-- Secure Act Tax Credit  -->       
+    
+             <aura:if isTrue="{!and(v.account.NumberOfEmployees >= 3,v.account.HRS_401k_Workable__c)}">      
+                <aura:if isTrue="{!not(v.account.Any_401k__c)}" >
+                    <c:BannerSecureActTax  secTaxCred="{!v.account.Secure_Act_Est_Credit__c}" />
+                </aura:if>
+            </aura:if>   
+          </div>
+   </div>
+</aura:component>

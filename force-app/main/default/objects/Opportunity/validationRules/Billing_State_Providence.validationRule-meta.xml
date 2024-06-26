@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Billing_State_Providence</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name, &quot;System Admin&quot;)),
+OR(RecordType.DeveloperName = &apos;Payment_Processing_Opportunity&apos;,
+RecordType.DeveloperName=&apos;Payment_Processing_DSA_Opportunity&apos;)&amp;&amp;
+IF(ISPICKVAL(StageName,&apos;Sold&apos;),OR(
+ISBLANK(Account.BillingState)),false))</errorConditionFormula>
+    <errorMessage>Before updating your opportunity to Sold, you **must** update the client prospect record with the Billing State/Providence. Move the status back to an open status and update as needed.</errorMessage>
+</ValidationRule>

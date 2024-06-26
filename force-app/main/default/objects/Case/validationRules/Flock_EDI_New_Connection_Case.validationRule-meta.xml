@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Flock_EDI_New_Connection_Case</fullName>
+    <active>true</active>
+    <description>APR0153141 Agency - Flock EDI Case for improved trackingAND()</description>
+    <errorConditionFormula>AND(
+NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+($RecordType.Name = &apos;Flock EDI New Connection&apos;),
+IF(ISPICKVAL(Current_Step__c,&quot;Data Gathering&quot;),OR(
+ISBLANK(Policy_ID_Group_Number__c),ISBLANK(Carrier_Contact_Email__c)), false)
+)</errorConditionFormula>
+    <errorMessage>You must enter the values Carrier Contact Email or Policy Id/Group Number if you select the value Data Gathering under Current Step</errorMessage>
+</ValidationRule>

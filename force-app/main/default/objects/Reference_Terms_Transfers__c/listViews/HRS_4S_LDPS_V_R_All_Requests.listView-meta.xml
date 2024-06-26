@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRS_4S_LDPS_V_R_All_Requests</fullName>
+    <columns>NAME</columns>
+    <columns>Contact_Name__c</columns>
+    <columns>BIS_ID__c</columns>
+    <columns>Check_Date__c</columns>
+    <columns>Current_Step__c</columns>
+    <columns>Discrepancy_Reason__c</columns>
+    <columns>Discrepancy_Closed_Date__c</columns>
+    <columns>Request_Sent_to_Risk__c</columns>
+    <columns>Completed_by_Risk__c</columns>
+    <columns>Estimated_Date_of_Completion__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_Terms_Transfers__c.X401k_Void_and_Reissue</value>
+    </filters>
+    <filters>
+        <field>Date_Time_Opened__c</field>
+        <operation>greaterOrEqual</operation>
+        <value>5/22/2019 12:00 AM</value>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>notEqual</operation>
+        <value>Complete - New Check Approved,Closed - Cannot be Processed</value>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>notEqual</operation>
+        <value>Closed - Check Already Cashed</value>
+    </filters>
+    <label>HRS 4S LDPS V&amp;R_All Requests</label>
+    <sharedTo>
+        <roleAndSubordinates>HRS_4S_LDPS_Supervisor_I</roleAndSubordinates>
+        <roleAndSubordinates>HRS_4S_LDPS_Supervisor_II</roleAndSubordinates>
+    </sharedTo>
+</ListView>

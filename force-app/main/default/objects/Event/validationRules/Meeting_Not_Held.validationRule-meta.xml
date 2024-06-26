@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Meeting_Not_Held</fullName>
+    <active>true</active>
+    <description>32656391 - Users are not able to edit the Meeting Not Held checkbox after they set it to True.</description>
+    <errorConditionFormula>AND(
+ISCHANGED(Meeting_Not_Held__c),
+Meeting_Not_Held__c != True,
+$Profile.Name &lt;&gt; &quot;System Administrator&quot;,
+$Profile.Name &lt;&gt; &quot;Sales Enablement&quot;
+)</errorConditionFormula>
+    <errorMessage>You cannot edit the Meeting Not Held checkbox after it has been checked.</errorMessage>
+</ValidationRule>

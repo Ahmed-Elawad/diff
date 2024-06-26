@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_Penalty_Interest_Assessed_Warranty</fullName>
+    <active>true</active>
+    <description>Force the related Reference PAC.Penalty &amp; Interest Assessed value via the Penalty &amp; Interest Assessed link field to have a value greater than zero in order to save a 
+Reference PAC Warranty/Late Payment record where the Payment Type = Warranty.</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;PAC Warranty Record Type&quot;),
+(ISPICKVAL(Payment_Type__c, &apos;Warranty&apos;)), 
+( (NOT(Penalty_Interest_Assessed_link__c &gt; 0)) || ISNULL(Penalty_Interest_Assessed_link__c ) ),
+($Profile.Name &lt;&gt;&quot;System Administrator&quot;) 
+)</errorConditionFormula>
+    <errorDisplayField>Payment_Type__c</errorDisplayField>
+    <errorMessage>P&amp;I assessment field on related Reference PAC record is zero or blank and needs to be updated before requesting warranty.</errorMessage>
+</ValidationRule>

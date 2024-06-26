@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Unable_to_Change_Ethnicity_field</fullName>
+    <active>true</active>
+    <description>Prevents Users from changing value to the Ethnicity field if it already has a value.</description>
+    <errorConditionFormula>AND(ISCHANGED(Ethnicity__c ), 
+OR( 
+ISPICKVAL(PRIORVALUE( Ethnicity__c ) , &apos;HA1&apos;), 
+ISPICKVAL(PRIORVALUE( Ethnicity__c ) , &apos;HA2&apos;), 
+ISPICKVAL(PRIORVALUE( Ethnicity__c ) , &apos;HA3&apos;), 
+ISPICKVAL(PRIORVALUE( Ethnicity__c ) , &apos;HA4&apos;), 
+ISPICKVAL(PRIORVALUE( Ethnicity__c ) , &apos;HA5&apos;) 
+))</errorConditionFormula>
+    <errorDisplayField>Ethnicity__c</errorDisplayField>
+    <errorMessage>Ethnicity field already has an HA value, you cannot change it.</errorMessage>
+</ValidationRule>

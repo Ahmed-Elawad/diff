@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TAA_Time_n_Attendance_AS_field</fullName>
+    <active>false</active>
+    <description>This will prevent the the field to be updated if the field is already populated unless the user is a system admin, delegated admin or API Profile</description>
+    <errorConditionFormula>($User.ProfileId &lt;&gt; &quot;00e30000000mTjP&quot; &amp;&amp; $User.ProfileId &lt;&gt; &quot;00e700000013g38&quot; &amp;&amp; $User.ProfileId &lt;&gt; &quot;00e700000013gAF&quot; &amp;&amp; $User.ProfileId &lt;&gt; &quot;00e70000001K2zl&quot;) 
+&amp;&amp;( ISblank((Time_Attendance_AS__c)) &amp;&amp; ischanged(Time_Attendance_AS__c))</errorConditionFormula>
+    <errorMessage>You do not have permission to update the Time &amp; Attendance AS field.</errorMessage>
+</ValidationRule>

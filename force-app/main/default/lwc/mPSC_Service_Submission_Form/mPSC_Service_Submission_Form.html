@@ -1,0 +1,33 @@
+<template>
+	<template if:true={showIframe}>
+		<iframe src={iFrameUrl}  height={height} width={width} referrerpolicy={referrerPolicy}
+			sandbox={sandbox}></iframe>
+	</template>
+	<!--Add Sharepoint work around-->
+		<!--
+	<template if:true={showSharepoint}>	
+		<div class="slds-m-top_medium slds-m-bottom_medium">
+		<div class="slds-text-heading_medium">Taxpay Adjustments</div>
+		
+		</div>
+	
+		<div class="slds-p-around_small">
+			<div class="slds-text-title slds-m-bottom_small">To Submit Taxpay Adjustments please click in the following link </div>
+            <p><lightning-formatted-url value={iFrameUrl}
+				 tooltip="Taxpay Adjustments Form" target="_blank" label="Taxpay Adjustments Form"></lightning-formatted-url></p>
+        </div>
+		
+	</template>
+	-->
+	<!--END Add Sharepoint work around-->
+	<template if:true={showDetailTemp}>
+		<template if:true={showDetail}>
+			<lightning-record-form object-api-name="Reference_MPSC_Service_Submission__c" record-id={childREcordId}
+				fields={FINAL_REFERENCE_MPSC_SERVICE_SUBMISSION_FIELDS} columns="2" mode="readonly"></lightning-record-form>
+		</template>
+		<template if:false={showDetail}>
+			<h1>No Details to Show</h1>
+		</template>
+		
+	</template>
+</template>

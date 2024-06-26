@@ -1,0 +1,43 @@
+<apex:page controller="TaskController" tabStyle="Task">
+<apex:form >
+    <apex:pageBlock >
+    <apex:pageMessages /> 
+    <apex:pageBlockButtons >
+    <apex:commandButton value="Save" action="{!save}"/>
+    <apex:commandButton value="Cancel" action="{!cancel}"/>
+    </apex:pageBlockButtons>
+        <apex:pageBlockTable value="{!TaskList}" var="a">
+            <apex:column >
+            <apex:facet name="header">Name</apex:facet>
+            <apex:inputField value="{!a.whatId}"/>
+            </apex:column>
+            <apex:column >
+            <apex:facet name="header">Type</apex:facet>
+            <apex:inputField value="{!a.Type}" required="true"/>
+          <!--  </apex:column>
+            <apex:column >
+            <apex:selectList id="type" value="{!a.Type}"
+             size="1" required="true" style="width:150px">
+             <apex:selectOptions value="{!tasktype}"/>
+            </apex:selectList>-->
+            </apex:column>
+            <apex:column rendered="{!$ObjectType.Task.Fields.CPE_Topic__c.updateable}">
+            <apex:facet name="header">CPE Topic</apex:facet>
+            <apex:inputField value="{!a.CPE_Topic__c}" style="width:150px"/>
+            </apex:column> 
+            <apex:column rendered="{!$ObjectType.Task.Fields.TAP_Topic__c.updateable}">
+            <apex:facet name="header">TAP Topic</apex:facet>
+            <apex:inputField value="{!a.TAP_Topic__c}" style="width:150px"/>
+            </apex:column>            
+            <apex:column >
+            <apex:facet name="header">Subject</apex:facet>
+            <apex:inputField value="{!a.Subject}" required="true"/>
+            </apex:column>
+            <apex:column >
+            <apex:facet name="header">Comments</apex:facet>
+            <apex:inputField value="{!a.Description}" required="false"/>
+            </apex:column>
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+</apex:form>
+</apex:page>

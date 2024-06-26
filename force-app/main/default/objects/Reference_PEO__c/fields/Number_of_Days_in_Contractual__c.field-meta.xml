@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Number_of_Days_in_Contractual__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>This will show you how many days from Contract Received to Today excluding weekends</description>
+    <externalId>false</externalId>
+    <formula>(5 * ( FLOOR( ( TODAY() - DATE( 1900, 1, 8) ) / 7 ) ) + MIN( 5, MOD( TODAY() - DATE( 1900, 1, 8), 7 ) ) )
+-
+(5 * ( FLOOR( ( Contract_Received__c - DATE( 1900, 1, 8) ) / 7 ) ) + MIN( 5, MOD( Contract_Received__c - DATE( 1900, 1, 8), 7 ) ) )</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Number of Days in Contractual</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

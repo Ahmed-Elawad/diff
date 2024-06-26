@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <description>APR0114898 - Fast Track - Create Auto Email for HRS Act Mgr Case when parent case is closed or solved</description>
+        <name>HRS_Act_Mgr_Service_Chatter_Post</name>
+        <label>HRS Act Mgr Service Chatter Post</label>
+        <locationX>327</locationX>
+        <locationY>316</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <elementReference>HRSActMgrServiceChatterPostBody</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>50.0</apiVersion>
+    <description>APR0114898 - Fast Track - Create Auto Email for HRS Act Mgr Case when parent case is closed or solved</description>
+    <interviewLabel>HRS Act Mgr Service Chatter Post {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>HRS Act Mgr Service Chatter Post</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>FREE_FORM_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>50</locationY>
+        <connector>
+            <targetReference>HRS_Act_Mgr_Service_Chatter_Post</targetReference>
+        </connector>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterLogic>1 AND 2 AND (3 OR 4)</filterLogic>
+        <filters>
+            <field>RecordTypeId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>0120g000000l3kjAAA</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>ParentId</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Status</field>
+            <operator>Contains</operator>
+            <value>
+                <stringValue>Solved</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Status</field>
+            <operator>Contains</operator>
+            <value>
+                <stringValue>Closed</stringValue>
+            </value>
+        </filters>
+        <object>Case</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <description>APR0114898</description>
+        <name>HRSActMgrServiceChatterPostBody</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>@[{!$Record.CreatedById}],
+Please be advised that the HRS Account Manager (HRAM) case {!$Record.CaseNumber} created by you for {!$Record.Account.Name} {!$Record.Prospect_Client_Number__c} has been closed. If you or the client have additional questions, please reach out directly to the HRAM who worked the case.
+Please follow the link below to review the details on the request you submitted.
+https://paychex.my.salesforce.com/{!$Record.Id}
+
+Thank you,
+{!$Record.Owner:User.FirstName} {!$Record.Owner:User.LastName}</text>
+    </textTemplates>
+</Flow>

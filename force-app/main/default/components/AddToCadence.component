@@ -1,0 +1,137 @@
+<!-- Component for AddToCadence
+* History
+* -------
+   10/10/2019 Jake Hinds        Created
+   04/27/2020 Dan Carmen        Add Target List to the form
+   05/10/2020 Dan Carmen        Modify for the controller to work directly off the component. Simplified parameters.
+   03/07/2022 LoAnn Desmond     Per APR0132093 to remove the link 
+   06/20/2022 Dan Carmen        Update to Send to Partner routing
+-->
+<apex:component allowDML="true" controller="AddToCadenceController">
+    <apex:attribute name="recordId"
+      type="Id"
+      required="false"
+      description="The Id of the record we are coming from"
+      />
+
+    <apex:attribute name="selectedRec"
+      type="SObject"
+      required="true"
+      description="The Id of the record we are coming from"
+      assignTo="{!rec}"
+      />
+
+    <apex:attribute name="selectedRecs"
+      type="SObject[]"
+      required="true"
+      description="The Id of the record we are coming from"
+      assignTo="{!recs}"
+      />
+
+    <apex:attribute name="formType"
+      type="String"
+      required="true"
+      description="The type of form we are starting from"
+      default="Record"
+      assignTo="{!startedFrom}"
+      />
+
+    <apex:attribute name="startObjectType"
+      type="String"
+      required="true"
+      description="The type of object we are starting from"
+      assignTo="{!objectType}"
+      />
+
+    <style type="text/css">
+        .requiredText{
+        color:red !important;
+        }
+        .test{
+        font-size:30pt !important;
+        color:red !important;
+        }
+    </style>
+    
+    <script type="text/javascript">
+
+       refreshPage = function() {
+        if ({!$User.UIThemeDisplayed == 'Theme3'}) {
+            window.top.location.href = '{!redirectUrl}';
+        } else {
+            sforce.one.navigateToURL("{!redirectUrl}", false);
+         }
+
+       } // handleGetPartners
+       </script>
+    
+        <apex:form id="addToCadenceForm" > 
+            <apex:pageBlock id="mainPageBlock">
+                <apex:pageMessages id="messages"/>
+    <apex:pageBlockSection id="cannotStartSection" title="Cannot Start" columns="1" collapsible="false" rendered="{!isStepCannotStart}">
+        <apex:outputPanel >
+         <center>
+            {!errorDescription}
+             <br/>
+            <apex:commandButton value="{!buttonLabel}" action="{!done}"/>
+            </center>
+        </apex:outputPanel>
+    </apex:pageBlockSection>
+    <apex:pageBlockSection id="referOptionSection" title="{!referOptionLabel}" columns="1" collapsible="false" rendered="{!isStepStart}">
+      
+        <apex:selectRadio rendered="{!allowReferToElse}" value="{!referTo}" layout="lineDirection">
+            <apex:selectOptions value="{!referToOptions}"/>
+            <apex:actionSupport event="onchange" rerender="mainPageBlock" status="referStatus"/>
+        </apex:selectRadio>
+        <apex:actionStatus id="referStatus" startText="Loading..."/>
+        <apex:pageBlockSectionItem >
+            <apex:outputText value="{!limitText}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem rendered="{!referToSelf}">
+            <apex:outputLabel value="Cadence"/>
+            <apex:outputPanel >
+               <apex:selectList rendered="{!hasCadenceOptions}" label="Cadence" value="{!selectedCadence}" size="1">
+                  <apex:selectOptions value="{!cadenceOptions}"/>
+               </apex:selectList>
+               <apex:outputText rendered="{!NOT(hasCadenceOptions)}" value="You do not have any cadences available!"/>
+            </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+
+        <apex:outputText rendered="{!referToElse}" value="If you select a Preferred Partner, only records that are eligible will be routed to them."/>
+        <apex:outputText rendered="{!referToElse}" value="If that partner is not able to work a record, or a partner was not selected, record(s) will be routed to an appropriate partner queue to be worked."/>
+        <apex:inputField rendered="{!referToElse}" value="{!tempCar.Telemarketing_Rep__c}"/>
+
+        <apex:inputField rendered="{!OR(referToSelf,referToElse)}" value="{!tempCar.Start_Date__c}" />
+        <apex:inputField id="descriptionFld" rendered="{!OR(referToSelf,referToElse)}" value="{!tempCar.Description__c}"/>
+        <apex:inputField rendered="{!referToSelf}" value="{!tempCar.TargetList__c}"/>
+        <apex:outputPanel rendered="{!referToElse}">
+        <!--<a href="https://paychex.my.salesforce.com/sfc/p/300000006M6H/a/0g000000kpys/_AZ9arg6y62TOTZsFlHB22Xl2Q1nIw6ZiQgRf7_7.UU" target="_blank">Refer to this link if you do not have an established partner</a>-->
+        </apex:outputPanel>
+
+    </apex:pageBlockSection>
+    <apex:outputPanel >
+         <center>
+            <apex:commandButton rendered="{!isStepCompleted}" value="{!buttonLabel}" action="{!done}"/>
+            &nbsp;
+             <!--  <apex:commandButton value="Next old" action="{!next}" rendered="{!AND(NOT(isStepCannotStart),NOT(isStepCompleted))}" rerender="mainPageBlock"/>  -->
+               <apex:actionStatus id="nextButtonStatus" rendered="{!AND(NOT(isStepCannotStart),NOT(isStepCompleted))}">
+                    <apex:facet name="stop">
+                       <apex:commandButton id="nextButtonActive" action="{!next}" styleClass="button-spacing" value="Submit" status="nextButtonStatus" disabled="false" rerender="mainPageBlock"/>
+                       </apex:facet>
+                       <apex:facet name="start">
+                          <apex:commandButton id="nextButtonDisabled" value="Processing..." styleClass="button-spacing" status="nextButtonStatus" disabled="true" rerender="mainPageBlock"/>
+                       </apex:facet>
+                    </apex:actionStatus>
+
+            &nbsp;<apex:commandButton rendered="{!isStepCompleted}" value="Go To Touchpoint" action="{!gotoWorkQueue}"/>
+         </center>
+        </apex:outputPanel>
+            </apex:pageBlock>
+        </apex:form>
+    <script>
+  function setFocus() {
+   document.getElementById('{!$Component.addToCadenceForm.mainPageBlock.referOptionSection.descriptionFld}').focus();
+  }   
+</script>
+
+</apex:component>

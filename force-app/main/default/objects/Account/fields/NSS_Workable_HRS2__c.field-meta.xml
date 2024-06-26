@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NSS_Workable_HRS2__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>Case 21098563</description>
+    <formula>IF(ISPICKVAL(Restricted_Industry__c,&apos;CRB&apos;),false,
+AND(
+		OR(ISBLANK(LastHrsOppCreated__c),AND(NOT(ISBLANK(LastHrsOppCreated__c)),LastHrsOppCreated__c &lt; (NOW() - 90))) 
+		,NOT(Contains(Name,&quot;Paychex&quot;)) 
+		,NOT(Contains(Name,&quot;PAYCHEX&quot;)) 
+		,NOT(Contains(Name,&quot;Sample&quot;)) 
+		,NOT(Contains(Name,&quot;SAMPLE&quot;)) 
+		,NOT(Contains(Name,&quot;sample&quot;)) 
+		,NOT(Contains(Name,&quot;paychex&quot;)) 
+		, NOT(ISPICKVAL(Permanent_Hold_Out_Description__c,&apos;Ecommerce&apos;))
+		, NOT(ISPICKVAL(Type,&apos;HROi Client&apos;))
+		, NOT(ISPICKVAL(Type,&apos;Oasis Client&apos;))
+		, NOT(ISPICKVAL(Type,&apos;PEO Client&apos;))
+		,ISBLANK(ParentId) 
+		,ISBLANK( SalesParent__c) 
+		,OwnerId != $Label.ReferralOwnerName 
+		,CPA_Name_Ref__r.Sensitivity_401_k__c = false 
+		,Do_Not_Call__c = false 
+		,Hosted_Client__c = false 
+		,Related_Contact_has_Do_Not_Call__c = false 
+		,ISPICKVAL(Permanent_Hold_Out_Description__c,&apos;Bank Referral&apos;) = false 
+		,ISNULL(Referral_National_Account__r.Dedicated_Rep__c)=false 
+		,(NOT(ISPICKVAL( NSSStatus__c, &quot;Not Interested&quot;)) &amp;&amp; NOT(ISPICKVAL( NSSStatus__c, &quot;Disqualified&quot;))&amp;&amp; NOT(ISPICKVAL(NSSStatus__c ,&quot;Current/Lost Client&quot;)) &amp;&amp; NOT(ISPICKVAL(NSSStatus__c, &quot;Already Contacted/Duplicate&quot;))&amp;&amp; NOT(ISPICKVAL( NSSStatus__c, &quot;Wash&quot;))&amp;&amp;NOT(ISPICKVAL( NSSStatus__c, &quot;Current Client&quot;)) 
+		) 
+		&amp;&amp; ( X401_k__c = false || FSA__c = FALSE ||(NOT(CONTAINS(TEXT(Type), &quot;Premier&quot;)) &amp;&amp; NOT(CONTAINS(TEXT(Type), &quot;HR Solutions&quot;))&amp;&amp; NOT(CONTAINS(TEXT(Type), &quot;HR Services&quot;)))) 
+	
+		, NumberOfEmployees &gt;= 2 
+		, Client_Status__c =&quot;A&quot; 
+		, NOT(ISPICKVAL( Type, &quot;Advantage Client&quot;)) 
+		, NOT(ISPICKVAL( Type, &quot;Premier Advantage Client&quot;))
+		, Workable_Override__c = FALSE 
+                , Benetrac_Indicator__c = false
+	    , CurrentClient__c = TRUE 
+	    , (NumberOfEmployees &lt;=50 || (First_Run_Date__c &lt;= (Today()-90) &amp;&amp; NumberOfEmployees &gt;50))
+	    , ISPICKVAL(Account_Managed__c,&quot;&quot; )
+	    , NOT(AdvancedPartnerClients__c)
+	    , NOT(ISPICKVAL( Permanent_Hold_Out_Description__c   , &apos;Paychex Referral Network&apos;))
+		,(ISBLANK( Insurance_Broker_Name_Ref__c) || Insurance_Broker_Name_Ref__r.Sensitivity_BenAdmin__c = false)
+	)
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>NSS Workable-HRS2</label>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

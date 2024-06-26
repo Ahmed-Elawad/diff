@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CPA_Referral_Validation_Rule</fullName>
+    <active>true</active>
+    <description>Referral Contact required when Lead Source is 51 CPA  Referral and is Core or MMS record type</description>
+    <errorConditionFormula>AND (ISPICKVAL( LeadSource, &quot;51 CPA Referral&quot;) , LEN (Referral_Contact__c)=0 , OR (RecordTypeId=&quot;012500000000n3w&quot;, RecordTypeId=&quot;012300000000hNq&quot;))</errorConditionFormula>
+    <errorDisplayField>Referral_Contact__c</errorDisplayField>
+    <errorMessage>Referral Contact required when Lead Source is 51 CPA  Referral</errorMessage>
+</ValidationRule>

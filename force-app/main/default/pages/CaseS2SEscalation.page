@@ -1,0 +1,27 @@
+<!-- Page to escalate s2s cases
+
+   History
+   -------
+   07/08/2020 Jake Hinds        Created 
+
+ -->
+<apex:page standardController="Case"
+           extensions="CaseS2SEscalationController"
+           id="s2sEscalation"
+           showHeader="false"
+           lightningStylesheets="true"
+           sidebar="false">
+    
+    <apex:form >
+        <apex:pageMessages />
+        <apex:pageBlock title="S2S Escalation">
+            <apex:pageBlockSection columns="1">
+                Please confirm the assigned specialist to escalate the case
+                <apex:inputField required="true" Label="Assigned Specialist" value="{!rec.Assister__c}"/>
+                <apex:inputField required="true" Label="Escalation Reason" value="{!rec.Reason_for_escalation__c}"/>
+                <apex:commandButton action="{!save}" value="Escalate Case"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+
+</apex:page>

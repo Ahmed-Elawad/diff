@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>S2S_Restricted_Phrase_Error</fullName>
+    <active>true</active>
+    <description>Status Description for S2S cannot contain out of office</description>
+    <errorConditionFormula>AND(RecordType.Name =&quot;Sales2Service Case&quot; 
+, OR( 
+CONTAINS( Status_Description__c ,&quot;Out of Office&quot;), 
+CONTAINS( Status_Description__c ,&quot;out of office&quot;), 
+CONTAINS( Status_Description__c ,&quot;Out of the office&quot;), 
+CONTAINS( Status_Description__c ,&quot;Out of the Office&quot;), 
+CONTAINS( Status_Description__c ,&quot;out of the office&quot;) 
+) 
+)</errorConditionFormula>
+    <errorMessage>Status Description cannot contain the phrases &quot;out of office&quot; or &quot;out of the office&quot;. Please revise prior to saving.</errorMessage>
+</ValidationRule>

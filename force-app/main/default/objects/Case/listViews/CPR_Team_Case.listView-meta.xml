@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CPR_Team_Case</fullName>
+    <booleanFilter>(1 AND 2) OR (3 AND 4 AND 5)</booleanFilter>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>Follow_Up_Date__c</columns>
+    <columns>Branch_Client_ID__c</columns>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <columns>NAME</columns>
+    <columns>CREATEDBY_USER.ALIAS</columns>
+    <columns>UPDATEDBY_USER.ALIAS</columns>
+    <columns>CASES.LAST_UPDATE</columns>
+    <filterScope>Queue</filterScope>
+    <filters>
+        <field>OWNER_NAME</field>
+        <operation>equals</operation>
+        <value>OS CPR Team</value>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Solved</value>
+    </filters>
+    <filters>
+        <field>OWNER_NAME</field>
+        <operation>equals</operation>
+        <value>Time Attendance Cancel</value>
+    </filters>
+    <filters>
+        <field>Product__c</field>
+        <operation>equals</operation>
+        <value>PNG TLO,STM,TLO,Essentials</value>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Completed Visit/Mtg,Cancelled,Completed,Do Not Support,Refused,Solved</value>
+    </filters>
+    <label>OS CPR Team</label>
+    <queue>OS_CPR_Team</queue>
+    <sharedTo>
+        <group>OS_Analysts</group>
+        <role>Client_Migration_Imp_Specialist_Team_A</role>
+        <role>MPSC_NBCER_Supervisor</role>
+        <role>MPSC_NBCER_Supervisor_I</role>
+        <role>TimeAttendanceBilling</role>
+        <role>TimeAttendanceSupervisorAS</role>
+        <role>TimeAttendanceSupervisorInbound</role>
+        <role>TimeAttendanceSupervisorLevel2</role>
+        <role>TimeAttendanceSupervisorOperations</role>
+        <role>TimeAttendanceSupervisorOutbound</role>
+        <roleAndSubordinates>Online_Services_Technical_Support_Supervisor</roleAndSubordinates>
+        <roleAndSubordinates>TimeAttendanceManager</roleAndSubordinates>
+    </sharedTo>
+</ListView>

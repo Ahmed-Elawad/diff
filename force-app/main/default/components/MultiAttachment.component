@@ -1,0 +1,68 @@
+<apex:component controller="MultiAttachmentController" allowDML="true">
+    <apex:attribute name="objId" type="String" description="The id of the object to manage attachments for" required="true" assignTo="{!sobjId}"/>
+    <apex:outputPanel id="MAMain">
+        <apex:outputPanel rendered="{!showMain}">
+        <apex:form id="attForm">
+        
+    <apex:pageBlock >        
+        <apex:pageBlockSection columns="1">
+            1. Please select ‘Choose File’ to browse for and select a copy of the tax notice you would like to submit.
+            <br/><br/>
+            2. To submit multiple tax notices, click on the ‘Add More’ button and repeat step 1.
+            <br/><br/>
+            3. To submit your completed form, click the ‘Done’ button. 
+            <br/><br/><br/>
+            <font color="black"><b> </b></font>
+            <br/><br/>             
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+        
+        
+            <apex:pageBlock title="">
+                <apex:repeat value="{!newAttachments}" var="newAtt">
+                    <apex:pageBlockSection columns="3">
+                       <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="File"/>                         
+                            <apex:inputFile value="{!newAtt.body}" filename="{!newAtt.name}"/>
+                        </apex:pageBlockSectionItem>
+                    </apex:pageBlockSection>
+                </apex:repeat>
+                <apex:commandButton value="Add More" action="{!addMore}"/>
+                <!--<apex:commandButton value="Save" action="{!save}"/>-->
+           <!--     <apex:commandButton value="Done" action="{!done}"/>  -->
+
+            </apex:pageBlock>
+        <!-- </apex:form> -->
+        <apex:pageBlock title="Existing Attachments">
+            <apex:pageBlockTable value="{!attachments}" var="attachment">
+                <apex:column headerValue="Action">
+                   <apex:outputLink value="{!URLFOR($Action.Attachment.Download, attachment.Id)}" target="_blank">View</apex:outputLink>
+                </apex:column>
+                <apex:column value="{!attachment.Name}"/>
+                <apex:column value="{!attachment.Description}"/>
+            </apex:pageBlockTable>
+                           <apex:commandButton value="Done" action="{!done}"/>
+
+        </apex:pageBlock>
+        
+                </apex:form>
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!NOT(showMain)}">
+            <div style="text-align:center;border-style: double;">
+            <br/>
+            Thank you for your submission!
+            <br/><br/>
+            We will begin to research your notice right away. We typically provide status updates within 10 business days of submission. Please note that some items require additional time to research; however, we will get back to you as soon as possible.
+            <br/><br/>
+            One of our specialists may reach out to you if we need additional information to help resolve your notice.
+            <br/><br/>            
+            We appreciate your patience while we work to investigate this issue.  If you have questions, please email us at PAC_PenaltyNotice@paychex.com.
+            <br/><br/>
+            Thank you,
+            <br/>
+            The PAC Penalty Group
+            <br/><br/>
+            </div>
+        </apex:outputPanel>
+    </apex:outputPanel>
+</apex:component>

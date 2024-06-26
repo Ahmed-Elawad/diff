@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Hold_Out_Exp_Required</fullName>
+    <active>true</active>
+    <description>Hold out expiration date or reason required when hold out is checked</description>
+    <errorConditionFormula>AND( 
+Hold_Out__c = true
+,ISBLANK( Hold_Out_Expiration__c )
+,ISPICKVAL(Hold_Out_Reason__c,&apos;&apos;)
+)</errorConditionFormula>
+    <errorDisplayField>Hold_Out_Expiration__c</errorDisplayField>
+    <errorMessage>**** You are required to set the Hold out Expiration date or Reason when checking the Hold out checkbox****</errorMessage>
+</ValidationRule>

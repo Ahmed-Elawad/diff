@@ -1,0 +1,21 @@
+<aura:component controller="ReferenceClientRetRelatedListController" implements="lightning:isUrlAddressable">
+
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="refClientRets" type="Object[]"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="sortedBy" type="String" default="Name"/>
+    <aura:attribute name="sortedDirection" type="String" default="asc"/>
+    <aura:attribute name="objectType" type="String"/>
+    <lightning:workspaceAPI aura:id="workspace" />
+   
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+    <c:HeaderTemplate title="Reference Client Retentions" iconName="standard:account"/>  
+    <lightning:dataTable keyField="id" data="{!v.refClientRets}" 
+                         columns="{!v.columns}" hideCheckboxColumn="true" 
+                         onsort="{!c.updateColumnSorting}"
+                         sortedBy="{!v.sortedBy}"
+                         sortedDirection="{!v.sortedDirection}" />
+    <footer class="slds-p-top_x-small"></footer>
+
+</aura:component>

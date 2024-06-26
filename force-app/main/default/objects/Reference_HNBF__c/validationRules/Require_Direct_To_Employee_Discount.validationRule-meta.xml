@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Require_Direct_To_Employee_Discount</fullName>
+    <active>true</active>
+    <errorConditionFormula>( ISPICKVAL( Direct_To_Employee__c , &quot;Yes&quot; ) 
+&amp;&amp; ISBLANK( Direct_To_Employee_Discount__c ) 
+) 
+|| 
+( ISPICKVAL( Direct_To_Employee__c , &quot;No&quot; ) 
+&amp;&amp; NOT( ISBLANK( Direct_To_Employee_Discount__c )) 
+)</errorConditionFormula>
+    <errorDisplayField>Direct_To_Employee_Discount__c</errorDisplayField>
+    <errorMessage>Direct To Employee Discount is required if Direct To Employee = Yes and must be blank if it is No.</errorMessage>
+</ValidationRule>

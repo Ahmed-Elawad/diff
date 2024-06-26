@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pending_Transfer_Tasks__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>IF(NOT (ISBLANK ( Term_Transfer_Stopped__c )) , &quot;Term/Transfer Stopped&quot;&amp;BR()&amp; 
+( 
+IF(ISPICKVAL( NPR_CPR_Resolution__c , &quot;Client Saved - Keeping Payroll&quot;), &quot;Client Saved - Keeping Payroll&quot;&amp;BR(),&quot;&quot;)&amp; 
+
+IF(ISPICKVAL( NPR_CPR_Resolution__c , &quot;Client Saved - Set Up Non Payroll&quot;), &quot;Client Saved - Set Up Non Payroll&quot;&amp;BR(),&quot;&quot;) &amp; 
+
+IF( Flag_Notes_as_Important__c ==True, &quot;See 401k Plan Asset Transfer Notes&quot;&amp;BR(), &quot;&quot;) 
+
+) 
+, 
+( 
+IF( ISPICKVAL( Discrepancy__c , &quot;Yes&quot;) &amp;&amp; ISBLANK( Discrepancy_Closed_Date__c ) , &quot;Unresolved Paperwork Discrepancy&quot;&amp;BR(), &quot;&quot;) &amp; 
+IF( Last_Check_Date__c &gt; Today(), &quot;Future Last Check Date&quot;&amp;BR(), &quot;&quot;) &amp; 
+IF(NOT (ISBLANK (Date_NPR_Callout_Sent_to_CPR__c)) &amp;&amp; ISBLANK( Retention_Call_Completed__c ) , &quot;CPR NPR Callout&quot;&amp;BR(), &quot;&quot;) &amp; 
+IF(NOT (ISBLANK ( Date_Forfeitures_Send_to_CAM__c )) &amp;&amp; ISBLANK( Plan_Liquidation_Complete_Date__c ), &quot;Plan Liquidation&quot;&amp;BR(),&quot;&quot;) &amp; 
+IF(NOT (ISBLANK ( Valuation_Edit_Sent_to_CAM_Date__c )) &amp;&amp; ISBLANK( Valuation_Edit_Complete_Date__c ), &quot;Resolve Valuation Edit Issue&quot;&amp;BR(),&quot;&quot;)&amp; 
+IF(ISPICKVAL ( SDBA_Balance_Issue__c, &quot;Yes&quot; ) &amp;&amp; ISBLANK( SDBA_Balance_Issue_Resolved__c), &quot;SDBA Balance Issue&quot;&amp;BR(),&quot;&quot;)&amp; 
+IF(ISPICKVAL ( Asset_Liquidation_Issue__c, &quot;Yes&quot; ) &amp;&amp; ISBLANK( Asset_Liquidation_Issue_Complete__c ),&quot;Resolve Plan Liquidation Issue&quot;&amp;BR(),&quot;&quot;)&amp; 
+IF( Flag_Notes_as_Important__c ==True, &quot;See 401k Plan Asset Transfer Notes&quot;&amp;BR(), &quot;&quot;)&amp; 
+IF(NOT (ISBLANK ( Date_Group_Notified__c )) &amp;&amp; ISBLANK( Date_Audit_Issue_Resolved__c ), &quot;Audit Issue&quot;&amp;BR(),&quot;&quot;) &amp; 
+IF(ISPICKVAL( NPR_CPR_Resolution__c , &quot;Client Saved - Keeping Payroll&quot;), &quot;Client Saved - Keeping Payroll&quot;&amp;BR(),&quot;&quot;)&amp; 
+IF(ISPICKVAL( NPR_CPR_Resolution__c , &quot;Client Saved - Set Up Non Payroll&quot;), &quot;Client Saved - Set Up Non Payroll&quot;&amp;BR(),&quot;&quot;)&amp; 
+IF(NOT (ISBLANK ( Date_Wire_Returned__c )) &amp;&amp; ISBLANK( Date_of_Wire_Resolution__c ) , &quot;Wire Returned&quot;&amp;BR(), &quot;&quot;)&amp; 
+IF( ISPICKVAL( Stable_Value_Funds__c , &quot;Yes&quot;) &amp;&amp; ISBLANK( Stable_Value_Fund_Waiver_Approved__c ) , &quot;Stable Value Funds&quot;&amp;BR(), &quot;&quot;) &amp; 
+IF(NOT (ISBLANK ( Date_Sent_to_CAM_to_Liquidate_Assets__c )) &amp;&amp; ISBLANK( Plan_Liquidation_Complete_Date__c )&amp;&amp; ISBLANK( Asset_Liquidation_Issue_Date__c ) , &quot;Asset Liquidation&quot;&amp;BR(), &quot;&quot;) &amp; 
+IF(NOT (ISBLANK ( Date_Sent_to_CAM_to_Liquidate_Assets__c )) &amp;&amp; ISBLANK( Plan_Liquidation_Complete_Date__c )&amp;&amp; NOT(ISBLANK( Asset_Liquidation_Issue_Date__c ))&amp;&amp;ISBLANK( Asset_Liquidation_Issue_Resolved__c ), &quot;Asset Liquidation&quot;&amp;BR(), &quot;&quot;) &amp; 
+IF(NOT (ISBLANK ( Date_Sent_to_CAM_to_Liquidate_Assets__c )) &amp;&amp; ISBLANK( Plan_Liquidation_Complete_Date__c )&amp;&amp; NOT(ISBLANK( Asset_Liquidation_Issue_Date__c ))&amp;&amp;NOT(ISBLANK( Asset_Liquidation_Issue_Resolved__c )) , &quot;Asset Liquidation Issue Resolved - Waiting on Liquidation&quot;&amp;BR(), &quot;&quot;) &amp; 
+IF(NOT (ISBLANK ( Send_to_Trade_Rec_to_Conf_Liquid_Ammoun__c )) &amp;&amp; ISBLANK(Trade_Confirm_Amt_Approval__c), &quot;Confirm Liquidation Amount&quot;&amp;BR(),&quot;&quot;) &amp; 
+
+IF( ISPICKVAL( Loans__c , &quot;Yes&quot;) &amp;&amp; ISBLANK( Loans_Cleared_from_Sungard__c ) , &quot;Clear Loans from Sungard&quot;&amp;BR(), &quot;&quot;) 
+) 
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Pending Transfer Tasks</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

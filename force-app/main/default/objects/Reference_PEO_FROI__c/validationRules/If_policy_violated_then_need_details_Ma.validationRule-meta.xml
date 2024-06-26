@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>If_policy_violated_then_need_details_Ma</fullName>
+    <active>true</active>
+    <description>If Safety policy was violated then you need details</description>
+    <errorConditionFormula>AND 
+(
+ISPICKVAL ( Safety_or_procedure_violated__c , &quot;Yes&quot;),
+ISBLANK (  Details_on_procedures_violated__c  )
+
+)</errorConditionFormula>
+    <errorDisplayField>Details_on_procedures_violated__c</errorDisplayField>
+    <errorMessage>If Safety policy was violated then you need details</errorMessage>
+</ValidationRule>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>My_Send_to_SDR_List_PEO</fullName>
+    <columns>OasisPEOAccountOwner__c</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>ACCOUNT.EMPLOYEES</columns>
+    <columns>ACCOUNT.ADDRESS1_ZIP</columns>
+    <columns>ACCOUNT.ADDRESS1_STATE</columns>
+    <columns>ACCOUNT.SIC</columns>
+    <columns>ACCOUNT.INDUSTRY</columns>
+    <columns>Current_Prior_Method__c</columns>
+    <columns>H_B_Renewal_Date__c</columns>
+    <columns>ACCOUNT.LAST_ACTIVITY</columns>
+    <columns>LastCadenceName__c</columns>
+    <columns>LastCadenceClosedDate__c</columns>
+    <columns>Work_Comp_Renewal_Date__c</columns>
+    <columns>LastCadenceClosedReason__c</columns>
+    <filterScope>Team</filterScope>
+    <filters>
+        <field>LastCadenceName__c</field>
+        <operation>startsWith</operation>
+        <value>PEO</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>equals</operation>
+        <value>FLEX Client,HROi Prospect,HRS Client (Only),HR Solutions FLEX Client,Lost Client,Oasis Prospect,PEO Prospect,Prospect,Prospect - January</value>
+    </filters>
+    <filters>
+        <field>CSCMContractStatus__c</field>
+        <operation>notEqual</operation>
+        <value>Submitted,Accepted,Underwriting,Approved,ContractPending,Implementation,PendingActivation,Client,PendingTermination,UnderContract</value>
+    </filters>
+    <filters>
+        <field>Out_of_Business__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>In_Cadence__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>OpportunityTypes__c</field>
+        <operation>notContain</operation>
+        <value>PEO,PAY</value>
+    </filters>
+    <filters>
+        <field>LastCadenceClosedReason__c</field>
+        <operation>notContain</operation>
+        <value>error,opportunity</value>
+    </filters>
+    <label>My PEO Completed Touchpoint List</label>
+</ListView>

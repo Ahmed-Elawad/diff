@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Create_Initial_Presentation</fullName>
+    <availability>online</availability>
+    <description>Used to create Initial Presentation when Opportunity is crated by NSS or Convert crashed the browser in the middle of the process
+7/11/17 LM Updated button to include new opp statuses</description>
+    <displayType>link</displayType>
+    <linkType>javascript</linkType>
+    <masterLabel>Create Initial Presentation</masterLabel>
+    <openType>onClickJavaScript</openType>
+    <protected>false</protected>
+    <url>{!REQUIRESCRIPT(&quot;/soap/ajax/16.0/connection.js&quot;)} 
+{!REQUIRESCRIPT(&quot;/soap/ajax/16.0/apex.js&quot;)} 
+
+
+var oppId = &apos;{!Opportunity.Id}&apos;; 
+var oppStatus=&apos;{!Opportunity.StageName}&apos;; 
+
+var queryResult = sforce.connection.query(&quot;Select Id from Event where WhatId = &apos;&quot; + oppId + &quot;&apos; and Type=&apos;Presentation - Initial&apos;&quot;); 
+var records = queryResult.getArray(&quot;records&quot;); 
+
+if(oppStatus==&apos;Qualified.&apos; || oppStatus==&apos;Qualified&apos; || oppStatus==&apos;Pre-Qualifying&apos; || oppStatus==&apos;Pre-Qualified&apos; || oppStatus==&apos;Pending&apos; || oppStatus==&apos;Pending - Cold&apos;|| oppStatus==&apos;Create - Received&apos; || oppStatus ==&apos;Create - Qualified&apos; || oppStatus ==&apos;Plan&apos;){ 
+
+if(records.length != 0) 
+{ 
+var answer=window.confirm(&quot;An Initial Presentation already exists on this opportunity. If this is a new sales cycle please click OK button below and create a new opportunity and meeting&quot;); 
+
+if (answer) 
+window.location = &apos;/{!Contact.Id}&apos;; 
+
+} 
+else 
+{ 
+
+var url =&quot;/00U/e?&amp;retURL=/{!Opportunity.Id}&amp;who_id={!Contact.Id}&amp;what_id={!Opportunity.Id}&amp;tsk4={!Today}&amp;00N50000001HEKm={!Opportunity.LeadSource}&amp;evt5={!Opportunity.Name} {!Contact.Name} {!Contact.Phone}&amp;evt6={!Contact.Name}%0D%0APhone: {!Contact.Phone}%0D%0AMobile: {!Contact.MobilePhone}%0D%0A{!Account.BillingCity}&amp;evt12={!Account.Phone}&amp;evt10=Presentation - Initial&quot; 
+window.top.location =url; 
+
+} 
+
+}else{ 
+
+var answer1=window.confirm(&quot;You can only create a new End User Presentation if the Status is PENDING, PENDING - COLD, PRE-QUALIFIED, PRE-QUALIFYING, QUALIFIED., QUALIFIED,Create - Received, Create - Qualified or Plan. If this is a new sales cycle click OK and create a new Opportunity from the contact&quot;); 
+
+if (answer1) 
+window.location = &apos;/{!Contact.Id}&apos;; 
+
+}</url>
+</WebLink>

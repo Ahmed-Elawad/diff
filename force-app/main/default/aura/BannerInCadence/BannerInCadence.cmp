@@ -1,0 +1,38 @@
+<aura:component description="BannerInCadence">
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="record" type="Object" />
+    <aura:attribute name="cadenceType" type="String" />
+    <aura:attribute name="cadenceName" type="String" />
+    
+    <div class="box" title="In Cadence">
+        <div class="banner-header slds-align_absolute-center">
+            <h4 class="slds-item_label slds-text-color_weak slds-truncate slds-text-align_center">In Cadence</h4>
+        </div>
+        <div class="banner-body" style="max-width: 500px">
+            <div class="{!'slds-item_detail slds-truncate slds-align_absolute-center column'}" title="In Cadence" >
+                <span>
+                   
+                    <div class="no-text-overflow" >
+                        <aura:if isTrue="{!v.cadenceName.length > 0}">
+                             <b>Name: </b> {!v.cadenceName} 
+                           
+                    </aura:if> 
+                    <aura:if isTrue="{!not(v.cadenceName.length > 0)}">
+                        <span><b>No Cadence Name.</b></span>
+                    </aura:if>
+                    </div>
+                    <div style="max-width: 282px">
+                        <aura:if isTrue="{!v.cadenceType.length > 0}">
+                        <b>Cadence Type: </b>{!v.cadenceType} 
+                    </aura:if> 
+                    <aura:if isTrue="{!not(v.cadenceType.length > 0)}">
+                        <span><b>No Cadence Type.</b></span>
+                    </aura:if>
+                    </div>
+                    
+                    
+                </span>
+            </div>
+        </div>
+    </div>
+</aura:component>

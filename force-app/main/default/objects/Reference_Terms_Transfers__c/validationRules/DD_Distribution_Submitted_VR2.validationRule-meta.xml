@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DD_Distribution_Submitted_VR2</fullName>
+    <active>true</active>
+    <description>Required fields when Distribution Submitted to CAM is populated: Sungard Number, Transaction Code, EE Search ID, Amount/Sources</description>
+    <errorConditionFormula>RecordType.Name = &apos;Death Distribution&apos; &amp;&amp;  NOT(ISNULL( Distribution_Submitted_to_CAM__c )) &amp;&amp; (ISBLANK(TEXT( Transaction_Code__c)) || ISBLANK(TEXT( Amount_Sources__c)) || ISBLANK(SunGard_Number__c))</errorConditionFormula>
+    <errorDisplayField>SunGard_Number__c</errorDisplayField>
+    <errorMessage>* Required fields when Distribution Submitted to CAM is populated: Sungard Number, Transaction Code, EE Search ID, Amount/Sources *</errorMessage>
+</ValidationRule>

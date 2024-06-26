@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Percent_of_Payroll_Required</fullName>
+    <active>true</active>
+    <description>Percent of Payroll Value is required when commission method is % of Payroll</description>
+    <errorConditionFormula>AND(
+     ISPICKVAL(Commission_Method__c,&apos;PctPayroll&apos;),
+  ISBLANK(Pct_Payroll_Value__c )
+
+
+)</errorConditionFormula>
+    <errorMessage>Percent of Payroll Value is required when commission method is % of Payroll</errorMessage>
+</ValidationRule>

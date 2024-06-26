@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ESR_Amendments_Queue</fullName>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ESRService__c</columns>
+    <columns>Processing_Type__c</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <filterScope>Queue</filterScope>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.Service_Support_ESR_Case</value>
+    </filters>
+    <filters>
+        <field>Processing_Type__c</field>
+        <operation>equals</operation>
+        <value>Amendments</value>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Completed</value>
+    </filters>
+    <label>ESR: Amendments Queue OLD</label>
+    <queue>ESR_Processing_Queue</queue>
+    <sharedTo>
+        <roleAndSubordinates>ESR_Operations_Manager</roleAndSubordinates>
+        <roleAndSubordinates>ESR_Service_Center_Manager</roleAndSubordinates>
+    </sharedTo>
+</ListView>

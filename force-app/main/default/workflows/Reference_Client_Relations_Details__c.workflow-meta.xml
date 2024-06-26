@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>CRD_Update_Status</fullName>
+        <description>To update the Client Relations Status to solved once the date has been entered</description>
+        <field>Status__c</field>
+        <literalValue>Closed</literalValue>
+        <name>CRD - Update Status</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>CRD - Update Status</fullName>
+        <actions>
+            <name>CRD_Update_Status</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_Client_Relations_Details__c.Date_Time_Closed__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>Update status once the date closed is entered</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

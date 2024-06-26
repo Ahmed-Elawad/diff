@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Setup_Fees7</fullName>
+    <columns>NAME</columns>
+    <columns>Branch_Client_Number__c</columns>
+    <columns>Client_Name__c</columns>
+    <columns>Controlled_With__c</columns>
+    <columns>Common_With__c</columns>
+    <columns>Revenue_Location__c</columns>
+    <columns>First_Check__c</columns>
+    <columns>Setup_Actual__c</columns>
+    <columns>Setup_Installments__c</columns>
+    <columns>Setup_fee_QC__c</columns>
+    <columns>Contractual_Specialist__c</columns>
+    <columns>Setup_fee_entered_in_PARIS__c</columns>
+    <columns>Setup_fee_entered_by__c</columns>
+    <columns>Setup_fee_entered_on__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>notEqual</operation>
+        <value>Reference_PEO__c.PEO_Client_Risk_Assessment,Reference_PEO__c.PEO_Existing_Client_Onboarding</value>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>notEqual</operation>
+        <value>Cancelled,Completed</value>
+    </filters>
+    <filters>
+        <field>Setup_fee_entered_on__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>First_Check__c</field>
+        <operation>greaterOrEqual</operation>
+        <value>1/1/2016</value>
+    </filters>
+    <filters>
+        <field>Pass_to_New_Loads__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <label>Setup Fees</label>
+</ListView>

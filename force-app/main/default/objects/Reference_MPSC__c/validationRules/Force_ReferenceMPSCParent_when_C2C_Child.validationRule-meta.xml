@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_ReferenceMPSCParent_when_C2C_Child</fullName>
+    <active>true</active>
+    <description>Force user to populate the ReferenceMPSCParent field when &quot;Child&quot; is selected for C2C.</description>
+    <errorConditionFormula>AND( 
+( ISPICKVAL(C2C__c, &apos;Child&apos;) ),
+  ISCHANGED(C2C__c), 
+  ISBLANK(Reference_MPSC_Parent__c), 
+  $Profile.Name &lt;&gt;&quot;System Administrator&quot; 
+)</errorConditionFormula>
+    <errorDisplayField>C2C__c</errorDisplayField>
+    <errorMessage>You must enter a Reference MPSC Parent when selecting Child for the C2C field</errorMessage>
+</ValidationRule>

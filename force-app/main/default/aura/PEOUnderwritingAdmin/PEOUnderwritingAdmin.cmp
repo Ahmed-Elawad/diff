@@ -1,0 +1,274 @@
+<aura:component controller="PEOUnderwritingAdminController" implements="forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable,lightning:utilityItem,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:appHostable" access="global">
+	<!-- CREATE ATTRIBUTE/VARIABLE-->
+    <aura:handler name="init" value="{!this}" action="{!c.onLoad}" />
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <aura:attribute name="pageReference" type="Object"/>
+    <lightning:pageReferenceUtils aura:id="pageRefUtils"/>    
+    <lightning:navigation aura:id="navService"/>
+    
+    <aura:attribute name="contentLoaded" type="Boolean" default="false"/>
+    <aura:attribute name="isProcessing" type="Boolean" default="false"/>
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="checklistClientOptions" type="List"/>
+    <aura:attribute name="pageAccordionActiveSections" type="List" default="['discMgmt','docMgmt']" />
+    
+    <!--Discrepancy Management-->
+    <aura:attribute name="newDiscrepancyShow" type="Boolean" default="false"/>    
+    <aura:attribute name="hasDiscrepancies" type="Boolean" default="false"/>
+    <aura:attribute name="discrepancyList" type="PEO_Onboarding_Document_Discrepency__c[]"/>
+    <aura:attribute name="discrepancyColumns" type="List"/>
+    <aura:attribute name="discTableSortedBy" type="String" default="Prospect_Client_Name__c"/>
+    <aura:attribute name="discTableSortedDirection" type="String" default="asc"/>
+    <aura:attribute name="selectedDiscs" type="List"/>
+    <aura:attribute name="discButtonChosen" type="String"/>
+    <aura:attribute name="updateDiscrepancy" type="PEO_Onboarding_Document_Discrepency__c"
+                    default="{ 'sobjectType': 'PEO_Onboarding_Document_Discrepency__c',
+                   'Status__c': '',
+                   'additional_information__c':'',
+                   'Follow_Up_Date__c':''}" />
+    <aura:attribute name="newDiscrepancyFields"
+                    type="String[]"
+                    default="['Status__c', 'Discrepancy_Type__c','Discrepancy_Sub_Type__c']"/>
+    <aura:attribute name="newDiscChecklistId" type="String"/>
+    <aura:attribute name="newDiscStatus" type="String"/>
+    <aura:attribute name="newDiscType" type="String"/>
+    <aura:attribute name="newDiscSubType" type="String"/>
+    <aura:attribute name="newDiscDate" type="String"/>
+    <aura:attribute name="newDiscInfo" type="String"/>
+    
+    <!--Doc Management-->
+    <aura:attribute name="getDocChecklistId" type="String"/>
+    <aura:attribute name="docRecordList" type="List"/>
+    <aura:attribute name="completedDocRecordList" type="List"/>
+    <aura:attribute name="discDocRecordList" type="List"/>
+    <aura:attribute name="actionableDocRecordList" type="List"/>
+    <aura:attribute name="docFileColumns" type="List"/>
+    <aura:attribute name="selectedFiles" type="List"/>    
+    <aura:attribute name="moveFileNewDoc" type="String"/>
+    
+    <aura:html tag="style">
+        .slds-modal__container{
+        max-width: 90rem !important;
+        width:90% !important;
+        } 
+        .slds-modal__footer{ 
+         display: none !important; 
+       }
+       .slds-grid{
+        	max-width: 100rem !important;
+        	width:100% !important;
+        } 
+    </aura:html>
+    <aura:if isTrue="{! v.contentLoaded }">
+        <div class="loadingBox">
+            <aura:if isTrue="{! v.isProcessing }">
+                <div class="saveSpinner">
+                    <lightning:spinner alternativeText="Loading" />
+                </div>
+            </aura:if>
+            <lightning:messages />
+        	<lightning:notificationsLibrary aura:id="notifLib" />
+        </div>
+        <div class="pageBody">
+            <lightning:accordion allowMultipleSectionsOpen="true" aura:id="pageAccordion" activeSectionName="{! v.pageAccordionActiveSections }">
+                <lightning:accordionSection name="discMgmt" label="Discrepancy Management" class="slds-section">
+                    <aura:set attribute="actions">
+                        <lightning:buttonMenu aura:id="discMenu" alternativeText="Show menu" iconSize="x-small" menuAlignment="right" onselect="{!c.handlePageMenuSelect}">
+                            <lightning:menuItem value="New Discrepancy" label="New Discrepancy"/>
+                        </lightning:buttonMenu>
+                    </aura:set>
+                    <aura:set attribute="body">
+                        <aura:if isTrue="{! v.newDiscrepancyShow }">
+                            <lightning:layout >
+                                <lightning:layoutItem size="12" padding="around-small">
+                                    <h1><b>New Peo Underwriting Discrepancy</b></h1><br/>
+                                    
+                                    <!--newDiscChecklistId{!v.newDiscChecklistId}-->
+                                    <lightning:recordEditForm aura:id="newDiscrepancyForm"
+                                                              objectApiName="PEO_Onboarding_Document_Discrepency__c"
+                                                              onsuccess="{!c.insertDiscrepancySuccess}"
+                                                              onerror="{!c.insertDiscrepancyError}">
+                                        <lightning:select class="slds-form-element slds-form-element_horizontal" name="Prospect-Client" label="Prospect-Client" value="{! v.newDiscChecklistId }" required="true">
+                                            <aura:iteration var="option" items="{! v.checklistClientOptions }">
+                                                <option value="{! option.value }">{! option.label }</option>
+                                            </aura:iteration>
+                                        </lightning:select>
+                                        <lightning:inputField fieldName="Status__c" required="true" value= "{!v.newDiscStatus}"/>
+                                        <lightning:inputField fieldName="Discrepancy_Type__c" required="true" value= "{!v.newDiscType}"/>
+                                        <lightning:inputField fieldName="Discrepancy_Sub_Type__c" required="true" value= "{!v.newDiscSubType}"/>
+                                        <lightning:inputField type="date-local" fieldName="Follow_Up_Date__c" value= "{!v.newDiscDate}"/>
+                                        <lightning:inputField fieldName="additional_information__c" value= "{!v.newDiscInfo}"/>
+                                        <lightning:inputField fieldName="PEO_Underwriting_Checklist__c" value="{!v.newDiscChecklistId}" class="slds-hidden"/>
+                                        <lightning:button class="slds-m-top_small" onclick="{!c.insertDiscrepancySubmit}" aura:id="discSubmit" label="Submit" variant="brand"/>
+                                        <lightning:button class="slds-m-top_small" onclick="{!c.insertDiscrepancySubmit}" aura:id="discSubmitNew" label="Submit and New" variant="brand"/>
+                                        <lightning:button class="slds-m-top_small" onclick="{!c.hideNewDiscrepancy}" label="Cancel" variant="neutral"/>
+                                        
+                                    </lightning:recordEditForm>
+                                </lightning:layoutItem>  
+                            </lightning:layout>
+                        </aura:if>
+                        <aura:if isTrue="{! v.hasDiscrepancies }">
+                            <aura:if isTrue="{! v.selectedDiscs.length > 0 }">
+                                <div class="slds-size_12-of-12">
+                                    <h1><b>Update Selected Discrepancies</b></h1>
+                                    <lightning:select aura:id="editFormStatus" label="Status" name="Status" value='{!v.updateDiscrepancy.Status__c}' >
+                                        <option value=""></option>
+                                        <option value="Open">Open</option>
+                                        <option value="Resolved">Resolved</option>
+                                        <option value="Waiting on Sales Rep">Waiting on Sales Rep</option>
+                                        <option value="Waiting on Agency/Carrier">Waiting on Agency/Carrier</option>
+                                    </lightning:select>
+                                    <lightning:input type="date" aura:id="editFormDate" label="Follow Up Date" value='{!v.updateDiscrepancy.Follow_Up_Date__c}'/>
+                                    <lightning:textArea aura:id="editFormAddtlInfo" label="Additional Information" name="Additional Info" value='{!v.updateDiscrepancy.additional_information__c}' />
+                                    
+                                    <lightning:button onclick="{!c.updateDiscrepancies}" label="Update Records" variant="brand"/>
+                                    <br/>
+                                    
+                                </div>
+                                
+                            </aura:if>
+                            <br/>
+                            
+                            <div class="slds-align_absolute-center"><h1><b>Existing Discrepancies</b></h1></div>
+                            <lightning:datatable data="{! v.discrepancyList }" 
+                                                 columns="{! v.discrepancyColumns }" 
+                                                 keyField="id"
+                                                 onrowselection="{!c.handleDiscSelect}"
+                                                 sortedBy="{!v.discTableSortedBy}"
+                                                 sortedDirection="{!v.discTableSortedDirection}"
+                                                 onsort="{!c.updateDiscSorting}"/>
+                            <aura:set attribute="else">
+                                <h1>There are no discrepancies logged at this time.</h1>
+                            </aura:set>
+                        </aura:if>
+                    </aura:set>
+                </lightning:accordionSection>
+            
+            <br/>
+                <lightning:accordionSection name="docMgmt" label="Document Management" class="slds-section">
+                    <aura:set attribute="actions">
+                        <lightning:buttonMenu alternativeText="Show menu" iconSize="x-small" menuAlignment="right" onselect="{!c.handleDocMenuSelect}">
+                            <lightning:menuSubheader label="Submit Docs to Clientspace" />
+                            <lightning:menuItem label="Medical" value="{!join('-','Submit','Medical')}"/>
+                            <lightning:menuItem label="Risk" value="{!join('-','Submit','Risk')}"/>
+                            <lightning:menuItem label="All" value="{!join('-','Submit','All')}"/>
+                        </lightning:buttonMenu>
+                    </aura:set>
+                    <aura:set attribute="body">
+                        <lightning:layout class="slds-grid slds-wrap slds-size_full slds-size_12-of-12">
+                            <lightning:layoutItem flexibility="auto" padding="around-small">
+                                <lightning:select class="slds-form-element slds-form-element_horizontal" name="docPCSelect" label="Prospect-Client" value="{! v.getDocChecklistId }" onchange="{!c.changeProspect}">
+                                    <aura:iteration var="option" items="{! v.checklistClientOptions }">
+                                        <option value="{! option.value }">{! option.label }</option>
+                                    </aura:iteration>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                            <aura:if isTrue="{!not(empty(v.selectedFiles))}">
+                                <lightning:layoutItem flexibility="auto" padding="around-small">
+                                    <lightning:select class="slds-form-element slds-form-element_horizontal" name="docMoveSelect" label="Move Selected Files:" value="{!v.moveFileNewDoc}">
+                                        <option value=""></option>
+                                        <aura:iteration var="doc" items="{!v.docRecordList}">
+                                            <option value="{!doc.docId}">{!doc.name}</option>
+                                        </aura:iteration>
+                                    </lightning:select>
+                                    <lightning:button variant="brand" label="Save" title="Move Selected Files" onclick="{!c.moveSelectedFiles}" class="slds-m-left_x-small"/>
+                                    <lightning:button variant="destructive" label="Delete" title="Delete Selected Files" onclick="{!c.deleteSelectedFiles}" class="slds-m-left_x-small"/>
+                                </lightning:layoutItem>
+                            </aura:if>
+                        </lightning:layout>
+                        
+                        <!--Approved Docs-->
+                        <aura:if isTrue="{! v.completedDocRecordList.length > 0 }">
+                            <lightning:icon class='utility-icon' iconName="utility:success" alternativeText="Success!" variant="success" title='Approved' size='x-small'/>
+                            <span class="docAccordionTitle">Approved</span>
+                            <lightning:accordion allowMultipleSectionsOpen="true" aura:id="docAccordion">
+                                <aura:iteration var="doc" items="{! v.completedDocRecordList }">
+                                    <lightning:accordionSection name="{!doc.name}" label="{!doc.name+' - '+doc.status}" class="{!doc.class}">
+                                        <aura:set attribute="actions">
+                                            <lightning:buttonMenu alternativeText="Show menu" iconSize="x-small" menuAlignment="right" onselect="{!c.handleFileMenuSelect}">
+                                                <lightning:menuItem label="Approve" value="{!join('-','Approve',doc.docId)}"/>
+                                            </lightning:buttonMenu>
+                                        </aura:set>
+                                        <aura:set attribute="body">
+                                            <div id="{!doc.name+'Body'}">
+                                                <aura:if isTrue="{!doc.docLinks}">
+                                                    <div class="slds-align_absolute-center"><h1><b>Uploaded Files</b></h1></div>
+                                                    <lightning:datatable data="{!doc.docLinks}" 
+                                                                         columns="{! v.docFileColumns }" 
+                                                                         keyField="id"
+                                                                         onrowselection="{!c.handleFileSelect}"
+                                                                         onrowaction="{! c.handleFileAction }"/>
+                                                </aura:if>
+                                            </div>
+                                        </aura:set>
+                                    </lightning:accordionSection>
+                                </aura:iteration>
+                            </lightning:accordion>
+                        </aura:if>
+                        
+                        <br/>
+                        <!--Discrepancy Docs-->
+                        <aura:if isTrue="{! v.discDocRecordList.length > 0 }">
+                            <lightning:icon class='utility-icon' iconName="utility:error" alternativeText="Discrepancy" variant="error" title='Discrepancy' size='x-small'/>
+                            <span class="docAccordionTitle">Open Discrepancy</span>
+                            <lightning:accordion allowMultipleSectionsOpen="true" aura:id="docAccordion">
+                                <aura:iteration var="doc" items="{! v.discDocRecordList }">
+                                    <lightning:accordionSection name="{!doc.name}" label="{!doc.name+' - '+doc.status}" class="{!doc.class}">
+                                        <aura:set attribute="body">
+                                            <div id="{!doc.name+'Body'}">
+                                                <aura:if isTrue="{!doc.docLinks}">
+                                                    <div class="slds-align_absolute-center"><h1><b>Uploaded Files</b></h1></div>
+                                                    <lightning:datatable data="{!doc.docLinks}" 
+                                                                         columns="{! v.docFileColumns }" 
+                                                                         keyField="id"
+                                                                         onrowselection="{!c.handleFileSelect}"
+                                                                         onrowaction="{! c.handleFileAction }"/>
+                                                </aura:if>
+                                            </div>
+                                        </aura:set>
+                                    </lightning:accordionSection>
+                                </aura:iteration>
+                            </lightning:accordion>
+                        </aura:if>
+                        <br/>
+                        <!--Actionable Docs-->
+                        <aura:if isTrue="{! v.actionableDocRecordList.length > 0 }">
+                            <lightning:icon class='utility-icon' iconName="utility:warning" alternativeText="Actionable Docs" title='Actionable Docs' size='x-small'/>
+                            <span class="docAccordionTitle">Actionable Docs</span>
+                            <lightning:accordion allowMultipleSectionsOpen="true" aura:id="docAccordion">
+                                <aura:iteration var="doc" items="{! v.actionableDocRecordList }">
+                                    <lightning:accordionSection name="{!doc.name}" label="{!doc.name+' - '+doc.status}" class="{!doc.class}">
+                                        <aura:set attribute="actions">
+                                            <lightning:buttonMenu alternativeText="Show menu" iconSize="x-small" menuAlignment="right" onselect="{!c.handleFileMenuSelect}">
+                                                <lightning:menuItem label="Approve" value="{!join('-','Approve',doc.docId)}"/>
+                                            </lightning:buttonMenu>
+                                        </aura:set>
+                                        <aura:set attribute="body">
+                                            <div id="{!doc.name+'Body'}">
+                                                <aura:if isTrue="{!doc.docLinks}">
+                                                    <div class="slds-align_absolute-center"><h1><b>Uploaded Files</b></h1></div>
+                                                    <lightning:datatable data="{!doc.docLinks}" 
+                                                                         columns="{! v.docFileColumns }" 
+                                                                         keyField="id"
+                                                                         onrowselection="{!c.handleFileSelect}"
+                                                                         onrowaction="{! c.handleFileAction }"/>
+                                                </aura:if>
+                                            </div>
+                                        </aura:set>
+                                    </lightning:accordionSection>
+                                </aura:iteration>
+                            </lightning:accordion>
+                        </aura:if>
+                    </aura:set>
+                </lightning:accordionSection>
+            </lightning:accordion>
+        </div>
+        
+        <aura:set attribute="else">
+        	<lightning:spinner alternativeText="Loading" />
+        </aura:set>
+    </aura:if>
+    
+                    
+    
+</aura:component>

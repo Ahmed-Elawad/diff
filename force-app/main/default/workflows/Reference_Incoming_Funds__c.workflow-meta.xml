@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>ACH_401k_Trade_Complete</fullName>
+        <description>ACH 401k Trade Complete</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Contact_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>401kdonotreply@paychex.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>HRS_4S_401k_Incoming_Funds/New_ACH</template>
+    </alerts>
+    <alerts>
+        <fullName>ACH_401k_Trade_Complete_for_Broker</fullName>
+        <description>ACH 401k Trade Complete for Broker</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Broker_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>401kdonotreply@paychex.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>HRS_4S_401k_Incoming_Funds/New_ACH</template>
+    </alerts>
+    <alerts>
+        <fullName>Chase_401k_Pending_CAM_Trade</fullName>
+        <description>Chase 401k Pending CAM Trade</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Contact_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>401kdonotreply@paychex.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>HRS_4S_401k_Incoming_Funds/Chase_401k_Pending_CAM_Trade_New</template>
+    </alerts>
+    <alerts>
+        <fullName>Chase_401k_Trade_Complete</fullName>
+        <description>Chase 401k Trade Complete</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Contact_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>401kdonotreply@paychex.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>HRS_4S_401k_Incoming_Funds/Chase_401k_Trade_Complete_New</template>
+    </alerts>
+    <alerts>
+        <fullName>Chase_401k_Trade_Complete_for_Broker</fullName>
+        <description>Chase 401k Trade Complete for Broker</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Broker_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>401kdonotreply@paychex.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>HRS_4S_401k_Incoming_Funds/Chase_401k_Trade_Complete_New</template>
+    </alerts>
+    <alerts>
+        <fullName>Pending_ACH_Collection</fullName>
+        <description>Pending ACH Collection</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Contact_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>401kdonotreply@paychex.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>HRS_4S_401k_Incoming_Funds/Pending_ACH_Collection_New</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>Date_Time</fullName>
+        <field>X100k_Approval_Date__c</field>
+        <formula>LastModifiedDate</formula>
+        <name>Date/Time</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Incoming_CRW_Updated</fullName>
+        <field>CRW_Needed__c</field>
+        <formula>Amount__c</formula>
+        <name>Incoming CRW Updated</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Tentative_Trade_Date_Entered_by_CAM</fullName>
+        <field>Tentative_Trade_Date_Entered_by_CAM__c</field>
+        <formula>TODAY()</formula>
+        <name>Tentative Trade Date Entered by CAM</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Tentative_Trade_Date_Entered_by_CAM_cl</fullName>
+        <description>clear Tentative Trade Date Entered by CAM when Tentative Trade Date is cleared</description>
+        <field>Tentative_Trade_Date_Entered_by_CAM__c</field>
+        <name>Tentative Trade Date Entered by CAM - cl</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Amount</fullName>
+        <description>sum the values of multiple fields to the Amount field</description>
+        <field>Amount__c</field>
+        <formula>BLANKVALUE(Pretax_Dollars__c,0)  +  BLANKVALUE(Match_Dollars__c,0)  +  BLANKVALUE(Loan_Dollars__c,0)  +  BLANKVALUE(After_Tax__c,0)  +  BLANKVALUE(Employee_Catch_Up__c,0)  +  BLANKVALUE(ER_Match_Catch_Up__c,0)  +  BLANKVALUE(  +  Roth_401k__c,0)  +  BLANKVALUE(Roth_Catch_Up__c,0)  +  BLANKVALUE(Per_Pay_Profit_Sharing__c,0)  +  BLANKVALUE(Per_Pay_NEC__c,0)</formula>
+        <name>Update Amount</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_CRW_Approved_By</fullName>
+        <field>CRW_Approved_By__c</field>
+        <formula>LastModifiedBy.FirstName + &apos; &apos; +  LastModifiedBy.LastName</formula>
+        <name>Update CRW Approved By</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Contact_Email</fullName>
+        <description>Fills in the Contact Email field so that we can use it in an email template</description>
+        <field>Contact_Email__c</field>
+        <formula>Case_Lookup__r.Contact.Email</formula>
+        <name>Update Contact Email</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Entered_By</fullName>
+        <field>Entered_By__c</field>
+        <formula>LastModifiedBy.FirstName +&apos; &apos;+ LastModifiedBy.LastName</formula>
+        <name>Update Entered By</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_ORM_Approved_By</fullName>
+        <field>ORM_Approved_By__c</field>
+        <formula>LastModifiedBy.FirstName +&apos; &apos;+ LastModifiedBy.LastName</formula>
+        <name>Update ORM Approved By</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_ORM_Approved_Date</fullName>
+        <field>ORM_Approved_Date__c</field>
+        <formula>TODAY()</formula>
+        <name>Update ORM Approved Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_RC1</fullName>
+        <field>RC1_Needed__c</field>
+        <formula>Amount__c</formula>
+        <name>Update RC1</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_RC1_Posted_By</fullName>
+        <field>RC1_Posted_By__c</field>
+        <formula>LastModifiedBy.FirstName+&apos; &apos;+LastModifiedBy.LastName</formula>
+        <name>Update RC1 Posted By</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_RCK_Needed</fullName>
+        <field>RCK_Needed__c</field>
+        <formula>Amount__c</formula>
+        <name>Update RCK Needed</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>X100k_Approval_Name</fullName>
+        <description>populate automatically with the person who checked the $100k Approval box</description>
+        <field>X100k_Approval_Name__c</field>
+        <formula>$User.FirstName &amp; &quot; &quot; &amp; $User.LastName</formula>
+        <name>$100k Approval Name</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>populate_RFI_Broker_Email</fullName>
+        <description>pull Broker email down from Account to Ref Incoming Funds, case #22090355</description>
+        <field>Broker_Email__c</field>
+        <formula>Case_Lookup__r.Account.Broker_Name_Ref__r.Email__c</formula>
+        <name>populate RFI Broker Email</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>populate_RFI_Broker_Name</fullName>
+        <description>pulled from Account.Broker, case #22090355</description>
+        <field>Broker_Name__c</field>
+        <formula>Case_Lookup__r.Account.Broker_Name_Ref__r.Name</formula>
+        <name>populate RFI Broker Name</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Populate Broker Fields</fullName>
+        <actions>
+            <name>populate_RFI_Broker_Email</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>populate_RFI_Broker_Name</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Reference_Incoming_Funds__c.Broker_Email__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <description>move data from Account down to Ref Incoming Funds for case #22090355</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ref Incoming Funds CRW Approved By</fullName>
+        <actions>
+            <name>Update_CRW_Approved_By</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <description>Updates the CRW Approved By when CRW Posted is entered</description>
+        <formula>AND(ISCHANGED(CRW_Posted__c),ISBLANK(PRIORVALUE(CRW_Posted__c)))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ref Incoming Funds Entered into HRIS update Entered By</fullName>
+        <actions>
+            <name>Update_Entered_By</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>ISCHANGED( Entered_into_HRIS__c )</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ref Incoming Funds Incoming CRW Updated</fullName>
+        <actions>
+            <name>Incoming_CRW_Updated</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>AND( RecordType.Name = &apos;401k Incoming Wires&apos;, OR(ISPICKVAL(Pending_Task__c,&apos;Trade Pending ORM Approval&apos;),ISPICKVAL(Pending_Task__c,&apos;Pending Trade Verification&apos;),ISPICKVAL(Pending_Task__c,&apos;Adjustment Pending Approval&apos;)))</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ref Incoming Funds Incoming RC1 Updated</fullName>
+        <actions>
+            <name>Update_RC1</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Reference_Incoming_Funds__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>401k Incoming Checks and ACHs</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_Incoming_Funds__c.Pending_Task__c</field>
+            <operation>equals</operation>
+            <value>Pending Trade Verification,Miscellaneous Check Requested,Return – Pending Adjustment Approval,Adjustment Pending Approval,LDPS Processing</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_Incoming_Funds__c.RCK_Needed__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <description>Updates the RC1 Needed Field</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ref Incoming Funds Incoming RCK Updated</fullName>
+        <actions>
+            <name>Update_RCK_Needed</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Reference_Incoming_Funds__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>401k Incoming Checks and ACHs</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_Incoming_Funds__c.Pending_Task__c</field>
+            <operation>equals</operation>
+            <value>Trade Pending ORM Approval</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ref Incoming Funds ORM Approved</fullName>
+        <actions>
+            <name>Update_ORM_Approved_By</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Update_ORM_Approved_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <description>Updates ORM Approved By and ORM Approved Date when the ORM Approved Box is checked</description>
+        <formula>AND(ISCHANGED(ORM_Approved__c),PRIORVALUE(ORM_Approved__c)=false)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ref Incoming Funds RC1 Posted By Update</fullName>
+        <actions>
+            <name>Update_RC1_Posted_By</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <description>Updates RC1 Posted By when RC1 Posted is filled.</description>
+        <formula>AND(ISCHANGED(RC1_Posted__c),ISNULL(PRIORVALUE(RC1_Posted__c)))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ref Incoming Funds Update Amount</fullName>
+        <actions>
+            <name>Update_Amount</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Reference_Incoming_Funds__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Manual Collection</value>
+        </criteriaItems>
+        <description>Update the Amount field</description>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Reference Incoming Funds</fullName>
+        <actions>
+            <name>Date_Time</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>X100k_Approval_Name</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <description>$100k Approval Name and $100k Approval Date 
+Formula fields that populate automatically with the person who checked the $100k Approval box and the date/time.</description>
+        <formula>AND ( 
+OR( 
+ISNEW(), 
+ISCHANGED( X100k_Approval__c ) 
+), 
+X100k_Approval__c = TRUE 
+)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Tentative Trade Date Entered by CAM</fullName>
+        <actions>
+            <name>Tentative_Trade_Date_Entered_by_CAM</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <description>auto populates a date when Tentative Trade Date entered by CAM</description>
+        <formula>AND( OR(Record_Type_Name__c=&quot;401k Incoming Checks and ACHs&quot;, Record_Type_Name__c=&quot;401k Incoming Wires&quot;, Record_Type_Name__c =&quot;Manual Collection&quot;, Record_Type_Name__c=&quot;401k Miscellaneous Checks&quot;), ISCHANGED(Tentative_Trade_Date__c), NOT(ISNULL(Tentative_Trade_Date__c)) )</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Tentative Trade Date Entered by CAM cleared</fullName>
+        <actions>
+            <name>Tentative_Trade_Date_Entered_by_CAM_cl</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Reference_Incoming_Funds__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>401k Incoming Checks and ACHs,401k Incoming Wires,Manual Collection,401k Miscellaneous Checks</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_Incoming_Funds__c.Tentative_Trade_Date__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <description>clear the field when Tentative Trade Date is cleared</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

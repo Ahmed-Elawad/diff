@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NSS_can_not_remove_Account_Name</fullName>
+    <active>true</active>
+    <description>make sure NSS can&apos;t clear out Account linked to a contact</description>
+    <errorConditionFormula>AND( BEGINS($Profile.Name, &apos;NSS&apos;), ISBLANK(AccountId ))</errorConditionFormula>
+    <errorDisplayField>AccountId</errorDisplayField>
+    <errorMessage>A Contact must be linked  to a Prospect-Client.</errorMessage>
+</ValidationRule>

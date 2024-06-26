@@ -1,0 +1,20 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction,force:hasSObjectName" >
+	<!--populated from the force:hasRecordId-->
+    <aura:attribute name="recordId" type="Id" required="true" default="{!v.recordId}"/> <!--what should this default be?-->
+    <!--populated from the force:hasSObjectName-->
+ 	<aura:attribute name="sobjecttype" type="String" default="{!v.sObjectName}"/>
+    
+       <div>
+        <!--determine which object this component is displayed on and then use the component specified for that object-->
+        <div class="banner-container">
+            <aura:if isTrue="{!v.sobjecttype == 'Account'}">
+                <c:LinkOppsFromAccount accountId="{!v.recordId}"/>
+            </aura:if>
+
+            <aura:if isTrue="{!v.sobjecttype == 'Opportunity'}">
+                <c:LinkOppsFromOpp opportunityId="{!v.recordId}"/>
+            </aura:if>
+        </div>
+       </div>
+    
+</aura:component>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_MainIssue_populated</fullName>
+    <active>true</active>
+    <description>Force users to populate the Main Issue field, when specific Status values are chosen.</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;Reference PAC Record Type&quot; ), 
+ (ISPICKVAL(Main_Issue__c, &apos;&apos;)),
+ ( (ISPICKVAL(Status__c, &apos;Reviewed in PAC - Late Payment/Warranty Requested&apos;))  ||  (ISPICKVAL(Status__c, &apos;Reviewed in PAC - Attempting Abatement with Agency&apos;))  ||  (ISPICKVAL(Status__c, &apos;Reviewed in PAC - Attempting Appeal with Agency&apos;))  ||  (ISPICKVAL(Status__c, &apos;Paid Balance - PAC working with agency to abate/refund&apos;))  ||  (ISPICKVAL(Status__c, &apos;Paid Balance - PAC working with agency to appeal/refund&apos;))  ||  (ISPICKVAL(Status__c, &apos;Closed in PAC - Communicated Findings to Client&apos;))  ||  (ISPICKVAL(Status__c, &apos;Closed in PAC - Field to Relay Findings to Client&apos;))  ),
+ ($Profile.Name &lt;&gt;&quot;System Administrator&quot;)
+)</errorConditionFormula>
+    <errorDisplayField>Main_Issue__c</errorDisplayField>
+    <errorMessage>You must enter a value in the Main Issue field.</errorMessage>
+</ValidationRule>

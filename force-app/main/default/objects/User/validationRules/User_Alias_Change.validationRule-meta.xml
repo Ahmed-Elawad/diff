@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>User_Alias_Change</fullName>
+    <active>true</active>
+    <description>Prevents anyone except system admin, zone assistant, DSA or Operations Delegated Administrators from changing Alias.</description>
+    <errorConditionFormula>AND( 
+         AND
+           (NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)) ,
+	NOT(BEGINS($Profile.Name,&quot;Core Zone Administration&quot;)),
+	$Profile.Name &lt;&gt;&quot;Sales Enablement&quot;,
+$Profile.Name &lt;&gt;&quot;Sales Data Steward&quot;,
+        NOT(BEGINS($Profile.Name,&quot;MMS Sales ZSA&quot;)),
+        $Profile.Name &lt;&gt;&quot;HR Essentials&quot;,
+        NOT(BEGINS($Profile.Name,&quot;HRS Regional Sales Admin&quot;)),   $Profile.Name &lt;&gt;&quot;MPSC Profile&quot;,
+        NOT(BEGINS($Profile.Name,&quot;HNBF Sales Administration&quot;)),
+	$Profile.Name &lt;&gt;&quot;2008-09 Operations Administration&quot;,
+	$Profile.Name &lt;&gt;&quot;2008-09 MMS Hub Manager - DA&quot;,
+        $Profile.Name &lt;&gt;&quot;PEO New Business Delegated Admin&quot;,
+$Profile.Name &lt;&gt;&quot;HRS PEO Centric Administration&quot;,
+	$Profile.Name &lt;&gt;&quot;2008-09 HRS Premier Safety Delegated Admin&quot;, 
+$Profile.Name &lt;&gt;&quot;NSS Manager Admin&quot;,
+	$Profile.Name &lt;&gt;&quot;2008-09 HRS Premier Support - DA&quot;,
+                     $Profile.Name &lt;&gt;&quot;Field Ops Regional Assistant&quot;,
+	$Profile.Name &lt;&gt;&quot;PIA Agency Delegated Admin&quot;,
+                     $Profile.Name &lt;&gt;&quot;Credit Risk Analyst&quot;
+,$Profile.Name &lt;&gt; &quot;BeneTrac Operations&quot;),
+ ISCHANGED(Alias))</errorConditionFormula>
+    <errorDisplayField>Alias</errorDisplayField>
+    <errorMessage>** This field can only be changed by the System Administrator, Zone Assistants or Operations Delegated Administrators **</errorMessage>
+</ValidationRule>

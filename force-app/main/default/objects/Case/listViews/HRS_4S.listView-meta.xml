@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRS_4S</fullName>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>NAME</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>Large_Market_Indicator__c</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>CASES.PRIORITY</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <columns>Reassign_Category_3__c</columns>
+    <columns>Reassign_Category_2__c</columns>
+    <columns>Reassign_Category_1__c</columns>
+    <filterScope>Queue</filterScope>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Solved,Solved - Call Disconnected,Solved - Call Transferred</value>
+    </filters>
+    <label>HRS 4S Dist Processing I</label>
+    <queue>HRS_4S_Dist_Processing_I</queue>
+    <sharedTo>
+        <group>HRS_4S_LDPS_Reports</group>
+        <roleAndSubordinates>HRS_4S_LDPS_Representative_I</roleAndSubordinates>
+        <roleAndSubordinates>HRS_4S_LDPS_Representative_II</roleAndSubordinates>
+        <roleAndSubordinates>HRS_4S_LDPS_Supervisor_I</roleAndSubordinates>
+        <roleAndSubordinates>HRS_4S_LDPS_Supervisor_II</roleAndSubordinates>
+    </sharedTo>
+</ListView>

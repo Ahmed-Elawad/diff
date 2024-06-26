@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Outbound_Clock_Appointments</fullName>
+    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 and 6</booleanFilter>
+    <columns>NAME</columns>
+    <columns>Branch_Client_ID__c</columns>
+    <columns>Date_Opened__c</columns>
+    <columns>Act_Clock_Appointment__c</columns>
+    <columns>Clock_Install_Specialist__c</columns>
+    <columns>TAA_Status__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Clock_Type__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>TAA_Status__c</field>
+        <operation>notEqual</operation>
+        <value>,Reference Parent case,Cancelled,On Hold,Refused,Client Unresponsive</value>
+    </filters>
+    <filters>
+        <field>Clock_Install_Specialist__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Clock_Installed_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Graduated_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>TAA_Status__c</field>
+        <operation>notEqual</operation>
+        <value>Order denied,solved</value>
+    </filters>
+    <label>Outbound: Clock Appointments for Ric</label>
+    <sharedTo>
+        <group>OS_Analysts</group>
+        <group>TimeAttendanceManagement</group>
+        <role>TimeAttendanceSupervisorAS</role>
+        <role>TimeAttendanceSupervisorLevel2</role>
+        <role>TimeAttendanceSupervisorOperations</role>
+        <role>TimeAttendanceSupervisorOutbound</role>
+    </sharedTo>
+</ListView>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Timecard_task_to_be_required</fullName>
+    <active>true</active>
+    <description>When &quot;Timecard Category&quot; is completed, &quot;Timecard task&quot; to be required</description>
+    <errorConditionFormula>NOT(ISPICKVAL(Timecard_Category__c,&quot;&quot;))&amp;&amp;
+ RecordTypeId  =  &quot;012700000001kHA&quot;&amp;&amp;
+ ISBLANK(Text( Timecard_Task__c ))</errorConditionFormula>
+    <errorDisplayField>Timecard_Task__c</errorDisplayField>
+    <errorMessage>&quot;Timecard task&quot; required when &quot;Timecard Category&quot; is marked as completed</errorMessage>
+</ValidationRule>

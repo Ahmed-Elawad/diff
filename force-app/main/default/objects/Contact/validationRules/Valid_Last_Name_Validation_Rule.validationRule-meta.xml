@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Valid_Last_Name_Validation_Rule</fullName>
+    <active>true</active>
+    <errorConditionFormula>ISBLANK( Mirror_Ref_Ctct__c ) &amp;&amp;
+ISCHANGED(LastName) &amp;&amp;  NOT(BEGINS($Profile.Name,&apos;System Administrator&apos;)) &amp;&amp;
+(LOWER(LastName) = &quot;unknown&quot; || LEN(LastName) &lt; 2 || 
+BEGINS(LastName, &quot;0&quot;) || BEGINS(LastName, &quot;1&quot;) || 
+BEGINS(LastName, &quot;2&quot;) || BEGINS(LastName, &quot;3&quot;) || 
+BEGINS(LastName, &quot;4&quot;) || BEGINS(LastName, &quot;5&quot;) || 
+BEGINS(LastName, &quot;6&quot;) || BEGINS(LastName, &quot;7&quot;) || 
+BEGINS(LastName, &quot;9&quot;) || BEGINS(LastName, &quot;?&quot;) || 
+BEGINS(LastName, &quot;-&quot;) || BEGINS(LastName, &quot;&lt;&quot;) || 
+BEGINS(LastName, &quot;[&quot;) || BEGINS(LastName, &quot;*&quot;) || 
+BEGINS(LastName, &quot;&amp;&quot;) || BEGINS(LastName, &quot;!&quot;) || 
+BEGINS(LastName, &quot;~&quot;) || BEGINS(LastName, &quot;&gt;&quot;) || 
+BEGINS(LastName, &quot;#&quot;) || BEGINS(LastName, &quot;@&quot;) || 
+LastName = FirstName || 
+BEGINS(LastName, &quot;/&quot;) || BEGINS(LastName, &quot;.&quot;))</errorConditionFormula>
+    <errorDisplayField>LastName</errorDisplayField>
+    <errorMessage>**** Invalid Last Name.  Please enter a valid Last Name. ****</errorMessage>
+</ValidationRule>

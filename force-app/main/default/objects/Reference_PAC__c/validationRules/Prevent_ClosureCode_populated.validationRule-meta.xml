@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_ClosureCode_populated</fullName>
+    <active>true</active>
+    <description>Prevent users from populating the Closure Code when setting the Status to non-‘Closed in PAC’ value.</description>
+    <errorConditionFormula>AND(
+($RecordType.Name = &quot;Reference PAC Record Type&quot; ),
+( NOT(ISPICKVAL(Closure_Code__c, &apos;&apos;))),
+( NOT(ISPICKVAL(Status__c, &apos;Closed in PAC - Communicated Findings to Client&apos;)) &amp;&amp; NOT(ISPICKVAL(Status__c, &apos;Closed in PAC - Field to Relay Findings to Client&apos;))  &amp;&amp; NOT(ISPICKVAL(Status__c, &apos;Closed in PAC - No Communication Necessary&apos;)) ),
+($Profile.Name &lt;&gt;&quot;System Administrator&quot;) 
+)</errorConditionFormula>
+    <errorDisplayField>Closure_Code__c</errorDisplayField>
+    <errorMessage>You cannot populate the Closure Code unless the Status starts with ‘Closed in PAC’.</errorMessage>
+</ValidationRule>

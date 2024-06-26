@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Client_Success_Manager_Last_Date_Update</fullName>
+        <description>FIeld update for date of last completed assessment.</description>
+        <field>Date_Of_Last_Analysis__c</field>
+        <formula>Analysis_Completed_Date__c</formula>
+        <name>Client_Success_Manager_Last_Date_Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+        <targetObject>Client_Success_Manager__c</targetObject>
+    </fieldUpdates>
+    <rules>
+        <fullName>Client_Assessment Completed Date Update</fullName>
+        <actions>
+            <name>Client_Success_Manager_Last_Date_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Workflow to update Date of last assessment on the related client success manager object.</description>
+        <formula>Analysis_Completed_Date__c &gt; Client_Success_Manager__r.Date_Of_Last_Analysis__c  ||   ISBLANK(Client_Success_Manager__r.Date_Of_Last_Analysis__c)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

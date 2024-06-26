@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HNBF_Clients_no_activity_last_30</fullName>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>H_B_Renewal_Date__c</columns>
+    <columns>H_B_Prospect_Notes__c</columns>
+    <columns>ACCOUNT.PHONE1</columns>
+    <columns>ACCOUNT.EMPLOYEES</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>ACCOUNT.ADDRESS2_CITY</columns>
+    <columns>ACCOUNT.ADDRESS2_STATE</columns>
+    <columns>ACCOUNT.ADDRESS2_ZIP</columns>
+    <columns>miedge_crm__Master_MSID__c</columns>
+    <columns>H_B_Brokerage_Firm__c</columns>
+    <columns>H_B_Carrier__c</columns>
+    <columns>CadenceType__c</columns>
+    <columns>In_Cadence__c</columns>
+    <columns>ACCOUNT.INDUSTRY</columns>
+    <filterScope>Team</filterScope>
+    <filters>
+        <field>Out_of_Business__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>H_B_Indicator__c</field>
+        <operation>notEqual</operation>
+        <value>1</value>
+    </filters>
+    <filters>
+        <field>Other_PEO_Client_Number__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>notContain</operation>
+        <value>Prospect,Prospect - January,Advantage Client,HRS Client (Only),Lost Client,SurePayroll,Premier Advantage Client,Premier NPR Client,PEO Prospect,HROi Client,Oasis Prospect,Oasis Client,HROi Prospect</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.LAST_ACTIVITY</field>
+        <operation>notEqual</operation>
+        <value>LAST_N_DAYS:30</value>
+    </filters>
+    <filters>
+        <field>DO_NOT_CONTACT__c</field>
+        <operation>notEqual</operation>
+        <value>True</value>
+    </filters>
+    <label>HNBF - Clients no activity last 30</label>
+    <sharedTo>
+        <roleAndSubordinates>HNBFDIRECTOR</roleAndSubordinates>
+    </sharedTo>
+</ListView>

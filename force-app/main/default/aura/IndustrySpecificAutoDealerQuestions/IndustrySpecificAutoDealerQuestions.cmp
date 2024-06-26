@@ -1,0 +1,26 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes" access="global" >
+    
+    <!-- auto save -->
+    <aura:registerEvent name='autoSave' type='c:CommunityFormsAutoSave' />
+    <aura:attribute name='autoSaveRecords' type='map' />
+    
+    <aura:attribute name='autoIndustryRec' type='Object' />
+    <aura:attribute name='radioGroupOptions' type='List' default="[{'label': 'Yes', 'value':'Yes'},{'label':'No','value':'No'}]" />
+    <aura:attribute name='radioOptionsSold' type='List' default="[{'label': 'Storefront', 'value':'Storefront'},{'label':'Internet','value':'Internet'},{'label':'Both','value':'Both'}]" />
+    <aura:attribute name="disableEdit" type="Boolean" default="true" />
+    <aura:attribute name="parentAccount" type="Account"/>
+    <aura:attribute name="allAccounts" type="Account[]" />
+    
+    <!-- question set -->
+    <lightning:radioGroup disabled='{!v.disableEdit}' 
+                          name='Has_service_auto_body_repair_department__c'
+                          label="Does dealership have service department / auto body repair?"
+                          options="{!v.radioGroupOptions}"
+                          value="{!v.autoIndustryRec.Has_service_auto_body_repair_department__c}"
+                          onchange='{!c.handleChange}'
+                          required="true"/>
+    <aura:if isTrue="{!v.autoIndustryRec.Has_service_auto_body_repair_department__c=='Yes'}">
+        <c:IndustrySpecificAutoServiceQuestions serviceIndustryRec='{!v.autoIndustryRec}' 
+                                                dontAllowChanges='{!v.disableEdit}'/>
+    </aura:if>
+</aura:component>

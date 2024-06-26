@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HasHoldOutDate__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <formula>OR( AND(Hold_Out__c, NOT(ISNULL(Hold_Out_Expiration__c)))
+   ,AND(HNBF_Hold_Out__c, NOT(ISNULL( HNBF_Hold_Out_Expiration__c)))
+   ,AND(HRS_Hold_Out__c, NOT(ISNULL(  HRS_Hold_Out_Expiration__c)))
+   ,AND(MS_Hold_Out__c, NOT(ISNULL(  MS_Hold_Out_Expiration__c)))
+   ,AND(Premier_PBS_Hold_Out__c, NOT(ISNULL( Premier_PBS_Hold_Out_Expiration__c )))
+   )</formula>
+    <inlineHelpText>Are any of the hold out fields set to true with an expiration date?</inlineHelpText>
+    <label>Has Hold Out With Date</label>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

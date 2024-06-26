@@ -1,0 +1,339 @@
+<aura:component controller="CommunitiesAccountUpdateController" implements="forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable,lightning:utilityItem,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:appHostable" access="global">
+<!-- 
+History
+=====================================
+12.17.2021	Ahmed Elawad	Added refreshWCRelatedProperties and related attribute indAttributesRefresh to forms for INC2871415
+-->
+    <!-- init action -->
+    <aura:handler name="init" value="{!this}" action="{!c.myAction}" />
+    
+    <!-- tab nav -->
+    <aura:handler name='communityFormsTabNavigate' event='c:communityFormsTabNavigate' action='{!c.handleTabNav}' />
+    <aura:attribute name="selectedStep" type="string"/>
+    <aura:attribute name="currStep" type="string"/>
+    <aura:attribute name="allSteps" type="List"/>
+    <aura:attribute name="completedSteps" type="string[]" default="[]"/>
+    <aura:attribute name="CurrentTabId" type="string" default=''/>
+    
+    <!-- auto save -->
+    <aura:handler name="autoSave" event="c:CommunityFormsAutoSave" action="{!c.handleAutoSave}"/>
+    <aura:attribute name='RecordsToSave' type='Map' />
+    <aura:attribute name='needToAutoSave' type='Boolean' default='false' />
+    <aura:attribute name='autoSaveFunction' type="Object" />
+    <aura:attribute name='indAttributesRefresh' type='Object' />
+    
+    <!-- handlers for opening new tab to create discrepancy against forms -->
+    <aura:handler name="discrepancyEvt" event="c:markPeoUwFormDiscrepancy" action="{!c.markDiscrepancy}"/>
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <aura:attribute name="pageReference" type="Object"/>
+    <lightning:pageReferenceUtils aura:id="pageRefUtils"/>    
+    <lightning:navigation aura:id="navService"/>
+    
+    <!-- aura component UI width -->
+    <lightning:flexipageRegionInfo width="70rem"/>
+    
+    <!-- User related attributes -->
+    <aura:attribute name="runningUser" type="User" />
+    <aura:attribute name="isCommunityUser" type="Boolean" default="false" />
+    <aura:attribute name="communityUser" type="User" />
+    <aura:attribute name='createUser' type='boolean' />
+    <aura:attribute name="hasAccess" type="Boolean"/>
+    
+    <!-- form functionality attributes -->
+    <aura:attribute name="contentLoaded" type="Boolean" default="false"/>
+    <aura:attribute name="Step" type="Integer" default="1" />
+    <aura:attribute name="selectedTab" type="String" default="CommGeneralInfo"/>
+    <aura:attribute name="formToSave" type="String" default="CommGeneralInfo"/>
+    <aura:attribute name="tabStyle" type="String"/>
+    <aura:attribute name="answersHaveChanged" type="Boolean" default="false" />
+    <aura:attribute name="chosenExperience" type="String" />
+    <aura:attribute name='lockEditing' type='boolean' default = "false"/>
+    <aura:attribute name='lockMedicalEditing' type='boolean' default = "false" />
+    <aura:attribute name='lockWCEditing' type='boolean' default = "false"/>
+    <aura:attribute name='lockMessage' type='String' default=""/>
+    <aura:attribute name='disableFilesUpload' type='boolean' default='false'/>
+    <aura:attribute name='scrollFlag' type='boolean' />
+    
+    <!-- account attributes -->
+    <aura:attribute name="currAccountId" type="Integer" default="1" />
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="Account" type="Account" />
+    <aura:attribute name="parentAccountId" type="Id" />
+    <aura:attribute name="Accounts" type="Account[]" />
+    
+    <!-- PEO CHecklist attributes -->
+    <aura:attribute name="PEOOnboardingChecklist" type="Object" />
+    <aura:attribute name='epliPolicyPeriodChanged' type='boolean' default='false'/>
+    <aura:attribute name='peoOnbCheckOwners' type='Object[]'/>
+    <aura:attribute name='requestedMedical' type='boolean' />
+    <aura:attribute name='covidQuestionsNeeded' type='boolean' default="false"/>
+    <aura:attribute name='medicalQuestionnaire' type='Map' />
+    <aura:attribute name='childAccsChecklist' type='PEO_Onboarding_Checklist__c[]'/>
+    <aura:attribute name='WCFastPass' type='boolean' default="false"/>
+    <aura:attribute name='isMedicalPrequal' type='boolean' default="false"/>
+    
+    <!-- Document upload related attributes -->
+    <aura:attribute name="numberOfEmployeesGreaterThanVerified" type="Boolean"/>
+    <aura:attribute name="numberOfEmployeesLessThanVerified" type="Boolean"/>
+    <aura:attribute name="medBenUnderwritingRequested" type="Boolean"/>
+    <aura:attribute name="inRenewalTimeframe" type="Boolean"/>
+    <aura:attribute name="hasSelfOrLevelFundedPlans" type="Boolean"/>
+    <aura:attribute name="hasClaims" type="Boolean"/>
+    <aura:attribute name="curMedCoverageProvided" type="Boolean"/>
+    <aura:attribute name='fileUploadSelectedAccId' type='String'/>
+    
+    <!-- Industry Specific -->
+    <aura:attribute name='industrySpecificRequiredWithFastPass' type='boolean' default="true"/>
+    
+    <!--Code refactoring: new attributes created:start-->
+    <aura:attribute name='censusRequired' type='boolean' default="false"/>
+    <aura:attribute name='claimsReportRequired' type='boolean' default="false"/>
+    <aura:attribute name='hlthInsRenwReqd' type='boolean' default="false"/>
+    <aura:attribute name='hlthInsSummReqd' type='boolean' default="false"/>
+    <aura:attribute name='hlthInvReqd' type='boolean' default="false"/>
+    <aura:attribute name='lossRunsReqd' type='boolean' default="false"/>
+    <aura:attribute name='payrollRegReqd' type='boolean' default="false"/>
+    <aura:attribute name='suiReqd' type='boolean' default="false"/>
+    <aura:attribute name='wcDecReqd' type='boolean' default="false"/>
+    <aura:attribute name='wcRtNPrcReqd' type='boolean' default="false"/>
+    <!--Code refactoring: new attributes created:end--> 
+    <aura:attribute name='noIndustryFound' type='boolean' />
+    <aura:attribute name='industries' type='String[]' />
+    <aura:attribute name='noMatchingQuestions' type='boolean' default="false"/>
+    <aura:attribute name="loadingSpin" type="Boolean" default="true" />
+    
+    <aura:html tag="style">
+        html {
+        	background-color: #F2F4F7;
+        }
+        .slds-vertical-tabs { 
+            border:none;
+            background-color: rgb(242 244 247);
+        }
+    </aura:html>
+    
+    <aura:if isTrue="{! v.contentLoaded }">
+        <div class="slds-grid slds-grid_vertical-align-top">
+            <div class="slds-size_2-of-12" >
+            <aura:if isTrue="{! v.isCommunityUser}">
+                <div class="" style="width:22rem">
+                    <div class="whyWeNeed">
+                        <!--<aura:if isTrue="{!or(or(v.selectedStep == 'medical',v.CurrentTabId == 'fileUploadWC'),or(v.CurrentTabId == 'WC', v.CurrentTabId == 'epliQuestionnaire'))}">-->
+                            <div class="slds-p-horizontal_small">
+                                <c:PEOUWHelpText checklist='{!v.PEOOnboardingChecklist}'
+                                                 stepSelected="{!v.selectedStep}"
+                                                 currTabId="{!v.CurrentTabId}"/>
+                            </div>
+                        <!--</aura:if>-->
+                    </div>
+                </div>
+            </aura:if>
+            </div>
+            <!--<div class="slds-size_1-of-12"></div>-->
+            <div class="slds-size_9-of-12">
+                
+                <div aria-labelledby="parentAccountInfo" 
+                     class="slds-container_large" 
+                     aura:id="housingDiv" 
+                     id='housingDiv' >
+                    <aura:if isTrue="{! v.hasAccess == true}">
+                        <div id="progressBar" class="progressBar">
+                            <lightning:progressIndicator currentStep="{!v.currStep}" type="path" variant="base">
+                                <aura:iteration items="{! v.allSteps }" var="step">
+                                    <lightning:progressStep label="{! step.label }" value="{! step.value }" onclick="{!c.changeStep}"/>
+                                </aura:iteration>
+                            </lightning:progressIndicator>
+                        </div>
+                        <br/><br/><br/>
+                        <aura:if isTrue="{!v.selectedStep == 'acctUpdate'}">
+                            <c:CommunityAccountEditFormAccSelector tabType="{!v.tabStyle}"
+                                                                   medQuestionnaire="{!v.medicalQuestionnaire}"
+                                                                   readOnly='{!v.lockEditing}'
+                                                                   medReadOnly='{!v.lockMedicalEditing}'
+                                                                   wcReadOnly='{!v.lockWCEditing}'
+                                                                   readOnlyMsg='{!v.lockMessage}'
+                                                                   allAccounts="{!v.Accounts}"
+                                                                   checklist='{!v.PEOOnboardingChecklist}'
+                                                                   parentRec='{!v.Account}'
+                                                                   medicalRequested="{!v.requestedMedical}"
+                                                                   currentRunningUser="{!v.runningUser}"
+                                                                   communityUser="{!v.isCommunityUser}"
+                                                                   indAttributesRefresh='{!v.indAttributesRefresh}' />
+                            
+                        </aura:if><!--acctUpdate-->
+                        <aura:if isTrue="{!v.selectedStep == 'medical'}">
+                            <c:MedQuestionnaireAccSelector tabType="{!v.tabStyle}"
+                                                           ReadOnly='{!or(v.lockMedicalEditing,v.lockEditing)}'
+                                                           readOnlyMsg='{!v.lockMessage}'
+                                                           User='{!v.runningUser}'
+                                                           AccountList="{!v.Accounts}"
+                                                           parentPEOChecklist="{!v.PEOOnboardingChecklist}"
+                                                           parentQuestionnaire='{!v.medicalQuestionnaire}'
+                                                           CommunityUser="{!v.isCommunityUser}"
+                                                           aura:id="medicalQuestionnaire" 
+                                                           medicalPrequal="{!v.isMedicalPrequal}"/>
+                        </aura:if><!--medical-->
+                        <aura:if isTrue="{!v.selectedStep == 'wc'}">
+                            <c:CommunityWCJourney tabType='{!v.tabStyle}'
+                                                  Checklist='{!v.PEOOnboardingChecklist}'
+                                                  Account='{!v.Account}'
+                                                  AllAccounts='{!v.Accounts}'
+                                                  isComunityUser='{!v.isCommunityUser}'
+                                                  User='{!v.runningUser}'
+                                                  FoundIndustryQuestions='{!v.noMatchingQuestions}'
+                                                  loadingSPinner="{!v.loadingSpin}"
+                                                  industryAnsChanged="{!v.answersHaveChanged}" 
+                                                  policyPerChanged="{!v.epliPolicyPeriodChanged}" 
+                                                  industryNames="{!v.industries}"
+                                                  reqFastPass="{!v.WCFastPass}" 
+                                                  disableUpload="{!v.disableFilesUpload}"
+                                                  medRequested = "{!v.misMedReqd}"
+                                                  lossRunsRequired = "{!v.lossRunsReqd}" 
+                                                  suiRequired = "{!v.suiReqd}" 
+                                                  wcDecRequired = "{!v.wcDecReqd}" 
+                                                  wcRtNPrcReqd='{!v.wcRtNPrcReqd}'
+                                                  lockWcSection='{!v.lockWCEditing}' 
+                                                  readOnlyString='{!v.lockMessage}' 
+                                                  showCovidQuestionnaire='{!v.covidQuestionsNeeded}'
+                                                  noIndustryFound='{!v.noIndustryFound}'
+                                                  currTabId="{!v.CurrentTabId}"/>
+                            
+                            <!--lightning:tabset variant="{!v.tabStyle}" selectedTabId="WC">
+                        <lightning:tab label="Workers' Compensation" id="WC">
+                            <c:workersCompQuestionnaire user='{!v.runningUser}'
+                                                        readOnly='{!or(v.lockWCEditing,v.lockEditing)}'
+                                                        readOnlyString='{!v.lockMessage}'
+                                                        PEOChecklist="{!v.PEOOnboardingChecklist}"
+                                                        FastPassRequired="{!v.WCFastPass}"
+                                                        account='{!v.Account}' />
+                        </lightning:tab--><!--wcQ-->
+                            <!--aura:if isTrue="{!v.noIndustryFound != true}">
+                            <lightning:tab label="Industry Specific Questionnaire" id="industry">
+                                <c:IndustrySpecificIndustrySelect readOnly='{!or(v.lockWCEditing,v.lockEditing)}' 
+                                                                  readOnlyMsg='{!v.lockMessage}'
+                                                                  user='{!v.runningUser}' 
+                                                                  parentRecId="{!v.Account.Id}" 
+                                                                  PEOChecklist="{!v.PEOOnboardingChecklist}" 
+                                                                  communityUser="{!v.isCommunityUser}" 
+                                                                  answersChanged="{!v.answersHaveChanged}" 
+                                                                  parentAccount="{!v.Account}" 
+                                                                  policyPeriodChanged="{!v.epliPolicyPeriodChanged}" 
+                                                                  allAccounts="{!v.Accounts}"
+                                                                  industries = "{!v.industries}"
+                                                                  noMatchingQuestions = "{!v.noMatchingQuestions}"
+                                                                  loadingSpin = "{!v.loadingSpin}"
+                                                                  />
+                            </lightning:tab>
+                        </aura:if--><!--industry-->
+                            <!--aura:if isTrue="{! v.covidQuestionsNeeded }" >
+                            <lightning:tab label="COVID-19 Questionnaire" id="covidQuestionnaire">
+                                <c:CovidQuestionnaire user='{!v.runningUser}'
+                                                      readOnly='{!or(v.lockWCEditing,v.lockEditing)}'
+                                                      readOnlyString='{!v.lockMessage}'
+                                                      parentRecId="{!v.Account.Id}"
+                                                      PEOChecklist="{!v.PEOOnboardingChecklist}"
+                                                      account='{!v.Account}' />
+                            </lightning:tab>
+                        </aura:if--><!--covid-->
+                            <!--lightning:tab label="Upload Files" id="fileUploadWC">
+                            <c:UploadFiles tabOption="{!v.tabType}" 
+                                           checklist="{!v.PEOOnboardingChecklist}"
+                                           parentAccountToCurrentAccount='{!v.Account}'
+                                           disableFilesUpload="{!v.disableFilesUpload}"
+                                           WCFastPassSelected="{!v.WCFastPass}" 
+                                           isCommunityUser="{!v.communityUser}" misMedReqd = "{!v.misMedReqd}"
+                                           lossRunsReqd = "{!v.lossRunsReqd}" 
+                                           suiReqd = "{!v.suiReqd}"
+                                           wcDecReqd = "{!v.wcDecReqd}" />
+                        </lightning:tab-->
+                            <!--/lightning:tabset-->
+                        </aura:if><!--wc-->
+                        <aura:if isTrue="{!v.selectedStep == 'addtlInfo'}">
+                            <c:AdditionalProdOfInterestTabSelect tabKind="{!v.tabStyle}"
+                                                                 runUser="{!v.runningUser}"
+                                                                 isReadOnly="{!v.lockEditing}"
+                                                                 isReadOnlyString="{!v.lockMessage}"
+                                                                 parentRecordId="{!v.Account.Id}"
+                                                                 OnbPEOChecklist="{!v.PEOOnboardingChecklist}"
+                                                                 parentAcc="{!v.Account}"
+                                                                 isCommUser="{!v.isCommunityUser}"
+                                                                 polPeriodChanged="{!v.epliPolicyPeriodChanged}"
+                                                                 allAccountsList="{!v.Accounts}"
+                                                                 experienceChosen="{!v.chosenExperience}"
+                                                                 communityUser="{!v.communityUser}"
+                                                                 currTabId="{!v.CurrentTabId}"/>
+                        </aura:if><!--addtlProds-->
+                        <aura:if isTrue="{!v.selectedStep == 'submit'}">
+                            <aura:if isTrue="{!v.isCommunityUser != true}">
+                                <c:SubmitForm
+                                              parentPEOChecklist="{!v.PEOOnboardingChecklist}"
+                                              accountList="{!v.Accounts}"
+                                              commUser="{!v.communityUser}"
+                                              experienceChosen="{!v.chosenExperience}"
+                                              currentRunningUser="{!v.runningUser}" 
+                                              parentRecId="{!v.Account.Id}"
+                                              needCovidQuestionnaire='{!v.covidQuestionsNeeded}'
+                                              hasIndustrySpecific='{!v.noIndustryFound}'
+                                              />
+                                <aura:set attribute="else">
+                                    <lightning:card>
+                                        <div class="slds-text-heading_medium">Congratulations, you’re all set! We have received all of the information we need to create a custom Paychex HR package for your business. Your Strategic Business Consultant will contact you soon to discuss the best solution. Thank you for your interest in Paychex HR.</div>
+                                    </lightning:card>
+                                    </aura:set>
+                            </aura:if>
+                            <!--<lightning:tab label="Upload Documents" id="uploadFiles">
+                        
+                        <c:UploadFilesAccountSelector tabType="{!v.tabStyle}" parentRecId="{!v.Account.Id}" medicalRequested="{!v.requestedMedical}" 
+                                                      parentPEOChecklist="{!v.PEOOnboardingChecklist}" 
+                                                      uploadFilesSelectedAccId="{!v.fileUploadSelectedAccId}" currentRunningUser="{!v.runningUser}" 
+                                                      communityUser="{!v.isCommunityUser}" accountList="{!v.Accounts}" 
+                                                      parentToAccount='{!v.parentAccountId}'
+                                                      disableFilesUpload="{!v.disableFilesUpload}" disableMedicalUpload="{!v.lockMedicalEditing}"
+                                                      disableWCUpload="{!v.lockWCEditing}"	readOnlyMsg='{!v.lockMessage}'
+                                                      WCFastPassChosen="{!v.WCFastPass}" 
+                                                      experienceChosen="{!v.chosenExperience}" commUser="{!v.communityUser}"
+                                                      censusRequired = "{!v.censusRequired}" claimsReportRequired = "{!v.claimsReportRequired}" 
+                                                      hlthInsRenwReqd = "{!v.hlthInsRenwReqd}" hlthInsSummReqd = "{!v.hlthInsSummReqd}" 
+                                                      hlthInvReqd = "{!v.hlthInvReqd}" lossRunsReqd = "{!v.lossRunsReqd}" 
+                                                      payrollRegReqd = "{!v.payrollRegReqd}" suiReqd = "{!v.suiReqd}"  hasIndustrySpecific='{!v.noIndustryFound}'
+                                                      wcDecReqd = "{!v.wcDecReqd}" needCovidQuestionnaire='{!v.covidQuestionsNeeded}'
+                                                      />
+                    </lightning:tab>-->
+                        </aura:if><!--submit-->
+                        <aura:if isTrue="{!v.selectedStep == 'summary'}">
+                            <c:PeoOnboardingSummaryAccSelect tabType="{!v.tabStyle}"
+                                                             medicalChecklist='{!v.medicalQuestionnaire}'
+                                                             ParentAccountId='{!v.parentAccountId}'
+                                                             ParentAccount='{!v.parentAccountId}'
+                                                             allAccounts='{!v.Accounts}'
+                                                             peoFullChecklist='{!v.PEOOnboardingChecklist}'
+                                                             recId='{!v.recordId}'
+                                                             userProfile='{!v.runningUser.Profile.Name}'
+                                                             currentUser='{!v.runningUser}'
+                                                             covidQuestionnaireNeeded="{!v.covidQuestionsNeeded}"
+                                                             WCFastPassChosen="{!v.WCFastPass}"/>
+                        </aura:if>
+                        <aura:set attribute="else">
+                            <h1>You do not have access to this page.  Please contact an admin for support.</h1>
+                        </aura:set>
+                        <div class="scrollDiv"
+                             style="padding:0.5%;" >
+                            <lightning:button aura:Id='scrollTop'
+                                              iconName='utility:arrow_top'
+                                              class='scrollToTop slds-button slds-button_outline-brand'
+                                              label='Scroll to top'
+                                              value='Scroll to top'
+                                              onclick='{!c.scrollToTop}' >
+                                Scroll to Top
+                            </lightning:button>
+                        </div>
+                    </aura:if>    
+                </div>
+            </div>
+        </div>
+        
+        <aura:set attribute="else">
+            <lightning:spinner alternativeText="Loading" />
+        </aura:set>
+    </aura:if>
+</aura:component>

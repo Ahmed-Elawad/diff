@@ -1,0 +1,573 @@
+<!-- ASO Onboarding page.  Used by Sales to capture client onboarding information necessary to complete the onboarding process.
+ * History
+ * -------
+ * 12/10/2016 Jermaine Stukes Created
+ * 
+-->
+<apex:component controller="OnboardingController" allowDML="true">
+    <apex:slds />
+    <div class="slds-scope " xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <div class="slds-box slds-theme_alt-inverse">
+            <p class="slds-text-heading_medium" align="center"><b>Paychex Onboarding Application</b></p>
+        </div> 
+        <apex:form id="onboarding" >  
+            <div class="slds-page-header">
+                <p class="slds-text-heading_small" align="center">
+                    <font color="red">
+                        <b>Required information is highlighted with an *</b>
+                    </font>
+                </p>
+                <p class="slds-text-heading_small"><b>Prospect Client: </b>{!onboardingOpp.Account.Name}<br/>
+                    <b>Opportunity:</b> {!opptyName}</p><br/>
+                <p class="slds-text-heading_small">
+                    <font color="red"><b>* </b></font><label><b>Product:</b> </label>
+                    <apex:inputField value="{!onboardingASO.Product__c}">
+                        <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayPOP2
+                                                                                            ,displayTotalEE2
+                                                                                            ,displayPOPInformation2
+                                                                                            ,displayAdditional2
+                                                                                            ,displayPayrollContacts2
+                                                                                            ,displayOnboardingInformation2
+                                                                                            ,displayHRContacts2
+                                                                                            ,displayHRGeneralist2
+                                                                                            ,displayOnboarding2
+                                                                                            ,displayMultiDebit2
+                                                                                            ,displayEE2
+                                                                                            ,displayTaxPay2
+                                                                                            ,displayMultiId2
+                                                                                            ,displayDate2
+                                                                                            ,displayCheckDate2
+                                                                                            ,displayProcessedPayroll2
+                                                                                            ,displayHRAdmin2
+                                                                                            ,displayProductInformation2
+                                                                                            ,displayButton2
+                                                                                            ,displayExistInfo2
+                                                                                            ,displayExistInfo3
+                                                                                            ,displayExistInfo4
+                                                                                            ,displayFSSInfo2
+                                                                                            ,displayRunDate2
+                                                                                            ,displayFlexRecruiting3
+                                                                                            ,displayNumManageEE2"/>
+                    </apex:inputField><br/>
+                    <br /><font color="red"><b>* </b></font><label><b>Client Type:</b> </label>
+                    <apex:inputField value="{!onboardingASO.New_Existing__c}">
+                        <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayAdditional2,displayExistInfo3,displayExistInfo4"/>
+                    </apex:inputField>
+                </p>
+            </div>
+            <apex:outputPanel id="displayProductInformation2">
+                <apex:actionRegion rendered="{!IF(onboardingASO.Product__c != '', 'true', 'false')}">
+                    <div class="slds-card"/>
+                    <div class="slds-card">
+                        <p class="slds-text-heading_small"><b>Client Product Profile</b></p>
+                        <div class="slds-box">
+                            <apex:outputPanel id="displayTaxPay2">
+                                <apex:actionRegion rendered="{!IF(onboardingASO.Product__c != '' 
+                                                             && onboardingASO.Product__c != 'PESS' 
+                                                             && onboardingASO.Product__c != 'HR Solutions for Non-Payroll', 'true', 'false')}">
+                                    <apex:inputField value="{!onboardingASO.Taxpay__c}">
+                                        <apex:actionSupport event="onchange" action="{!Validate}" reRender="displaySupportingDocumentation2"/>
+                                    </apex:inputField><label class="slds-text-heading_small"> Currently using Taxpay services?</label><div/>
+                                    <apex:outputPanel id="displaySupportingDocumentation2">
+                                        <apex:actionRegion rendered="{!IF(onboardingASO.Taxpay__c, 'true', 'false')}">
+                                            <apex:inputField value="{!onboardingASO.Supporting_Documentation__c}">
+                                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                            </apex:inputField>
+                                            <label class="slds-text-heading_small">Select if you have supporting documentation</label><div/><div/>
+                                        </apex:actionRegion>
+                                    </apex:outputPanel>
+                                </apex:actionRegion>
+                            </apex:outputPanel>
+                            <apex:outputPanel id="displayPOP2">
+                                <apex:actionRegion rendered="{!IF(!onboardingOpp.Account.Any_Pop__c &&(onboardingASO.Product__c == 'HR Solutions-Flex' || onboardingASO.Product__c == 'HR Solutions-Preview'), 'true', 'false')}">
+                                    <apex:inputField value="{!onboardingASO.POP__c}">
+                                        <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayPOPInformation2,displayButton2"/>
+                                    </apex:inputField>
+                                    <label class="slds-text-heading_small">Will client be offering POP?</label><div/>
+                                </apex:actionRegion>
+                            </apex:outputPanel>
+                            <apex:inputField value="{!onboardingASO.PESS__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayPESSInformation2,displayButton2"/>
+                            </apex:inputField>
+                            <label class="slds-text-heading_small">Will client be adding PESS?</label><div/>
+                            <apex:outputPanel id="displayOnboarding2">
+                                <apex:actionRegion rendered="{!IF(onboardingASO.Product__c == 'HR Solutions-Flex', 'true', 'false')}">
+                                    <apex:inputField value="{!onboardingASO.Add_Onboarding__c}">
+                                        <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayOnboardingInformation2,displayButton2"/>
+                                    </apex:inputField>
+                                    <label class="slds-text-heading_small">Will client be adding Onboarding?</label><div/>
+                                </apex:actionRegion>
+                            </apex:outputPanel>
+                        </div>
+                    </div>
+                </apex:actionRegion>
+            </apex:outputPanel>
+            <apex:outputPanel id="displayPOPInformation2">
+                <apex:actionRegion rendered="{!IF((onboardingASO.Product__c == 'HR Solutions-Flex'|| onboardingASO.Product__c == 'HR Solutions-Preview') 
+                                             && onboardingASO.Pop__c, 'true', 'false')}">
+                    <div class="slds-card"/>
+                    <div class="slds-card">
+                        <p class="slds-text-heading_small"><b>POP Information</b> 
+                            <font color = "red"> -Select at least one option:</font></p>
+                        <div class="slds-box">
+                            <apex:inputField value="{!onboardingASO.Dental__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayOnboardingInformation2,displayButton2"/>
+                            </apex:inputField>
+                            <label class="slds-text-heading_small">Dental</label><div/>
+                            <apex:inputField value="{!onboardingASO.Group_Term_Life__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayOnboardingInformation2,displayButton2"/>
+                            </apex:inputField>
+                            <label class="slds-text-heading_small">Group Term Life</label><div/>
+                            <apex:inputField value="{!onboardingASO.Short_Term_Disability__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayOnboardingInformation2,displayButton2"/>
+                            </apex:inputField>
+                            <label class="slds-text-heading_small">Short Term Disability</label><div/>
+                            <apex:inputField value="{!onboardingASO.Core_Medical__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayOnboardingInformation2,displayButton2"/>
+                            </apex:inputField>
+                            <label class="slds-text-heading_small">Core Medical</label><div/>
+                            <apex:inputField value="{!onboardingASO.Vision__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayOnboardingInformation2,displayButton2"/>
+                            </apex:inputField>
+                            <label class="slds-text-heading_small">Vision</label><div/>
+                            <apex:inputField value="{!onboardingASO.Accidental_Death__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayOnboardingInformation2,displayButton2"/>
+                            </apex:inputField>
+                            <label class="slds-text-heading_small">Accidental Death</label><div/>
+                            <apex:inputField value="{!onboardingASO.Long_Term_Disability__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayOnboardingInformation2,displayButton2"/>
+                            </apex:inputField>
+                            <label class="slds-text-heading_small">Long Term Disability</label><div/>
+                        </div>
+                    </div>
+                </apex:actionRegion>
+            </apex:outputPanel>
+            <apex:outputPanel id="displayPESSInformation2">
+                <apex:actionRegion rendered="{!IF(onboardingASO.PESS__c, 'true', 'false')}">
+                    <div class="slds-card"/>
+                    <div class="slds-card">
+                        <p class="slds-text-heading_small"><b>PESS Information</b><font color = "red"> -Select PESS options</font></p>
+                        <div class="slds-box">
+                            <apex:inputField value="{!onboardingASO.PESS_Background_Screening__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                            </apex:inputField>
+                            <label class="slds-text-heading_small">International Background Screening</label><div/>
+                            <apex:inputField value="{!onboardingASO.PESS_Drug_Testing__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                            </apex:inputField>
+                            <label class="slds-text-heading_small">Drug Testing</label><div/>
+                            <apex:inputField value="{!onboardingASO.PESS_I9_Verification__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                            </apex:inputField>
+                            <label class="slds-text-heading_small">I-9 Verification</label><div/>
+                            <apex:inputField value="{!onboardingASO.PESS_Motor_Vehicle_Report__c}">
+                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                            </apex:inputField>
+                            <label class="slds-text-heading_small">Motor Vehicle Report</label><div/>
+                        </div>
+                    </div>
+                </apex:actionRegion>
+            </apex:outputPanel>
+            <apex:outputPanel id="displayOnboardingInformation2">
+                <apex:actionRegion rendered="{!IF(onboardingASO.Product__c == 'HR Solutions-Flex' && onboardingASO.Add_Onboarding__c, 'true', 'false')}">
+                    <div class="slds-card"/>
+                    <div class="slds-card">
+                        <p class="slds-text-heading_small"><b>Onboarding Information</b>
+                            <font color = "red"> -Complete all onboarding information below:</font></p>
+                        <div class="slds-box">
+                            <div class="slds-grid">
+                                <div class="slds-col--padded slds-size--1-of-4 slds-text-heading_small">
+                                    <label><font color="red"><b>* </b></font>Onboarding contact:</label><div/>
+                                    <apex:selectList style="width: 200px;" size="1" value="{!onboardingASO.Onboarding_Contact__c}">
+                                        <apex:selectOptions value="{!Contacts}"/>
+                                        <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                    </apex:selectList>
+                                </div>
+                                <div class="slds-col--padded slds-size--1-of-4 slds-text-heading_small">
+                                    <label><font color="red"><b>* </b></font>Onboarding accounts payable contact:</label><div/>
+                                    <apex:selectList style="width: 200px;" size="1" value="{!onboardingASO.Accounts_Payable_Contact__c}">
+                                        <apex:selectOptions value="{!Contacts}"/>
+                                        <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                    </apex:selectList>
+                                </div>
+                                <div class="slds-col--padded slds-size--2-of-4 slds-text-heading_small">
+                                    <label><font color="red"><b>* </b></font>Onboarding anticipated start date:</label><div/>
+                                    <apex:inputField style="width: 125px;" value="{!onboardingASO.Anticipated_Start_Date__c}">
+                                        <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                    </apex:inputField>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </apex:actionRegion>
+            </apex:outputPanel>
+            <apex:outputPanel id="displayAdditional2">
+                <apex:actionRegion rendered="{!IF(onboardingASO.Product__c != '', 'true', 'false')}">
+                    <div class="slds-card"/>
+                    <div class="slds-card">
+                        <p class="slds-text-heading_small"><b>Paychex Information</b></p>
+                        <div class="slds-box">
+                            <div class="slds-grid">
+                                <div class="slds-col--padded slds-size--1-of-4 slds-text-heading_small">
+                                    <apex:outputPanel id="displayExistInfo3">
+                                        <apex:actionRegion rendered="{!If(onboardingASO.Product__c == 'HR Solutions-Flex' && onboardingASO.New_Existing__c =='Existing Paychex Client','true','false')}">
+                                            <label><font color="red"><b>* </b></font>Previous Platform:</label><div/>
+                                            <apex:inputField style="width: 150px;" value="{!onboardingASO.Previous_Platform__c}">
+                                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                            </apex:inputField><br/><br/>
+                                        </apex:actionRegion>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel id="displayMultiDebit2">
+                                        <apex:actionRegion rendered="{!IF(onboardingASO.Product__c == 'HR Solutions-Flex', 'true', 'false')}">
+                                            <p class="slds-text-heading_small">Business Structure:<br/>
+                                                <apex:inputField style="width: 300px;" value="{!onboardingASO.Business_Structure__c}">
+                                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                                </apex:inputField>
+                                            </p><br/>
+                                            <p class="slds-text-heading_small"><font color="red"><b>* </b></font>Bank Account Preference:<br/>
+                                                <apex:inputField style="width: 300px;" value="{!onboardingASO.Flex_Multi_Debit__c}">
+                                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                                </apex:inputField>
+                                            </p><br/>
+                                        </apex:actionRegion>
+                                    </apex:outputPanel>
+                                    <p class="slds-text-heading_small"><font color="red"><b>* </b></font>Company Contact:<br/>
+                                        <apex:selectList style="width: 300px;" size="1" value="{!onboardingASO.Company_Contact__c}">
+                                            <apex:selectOptions value="{!Contacts}"/>
+                                            <apex:actionSupport event="onchange" action="{!updateContacts}" reRender="displayButton2,displayCompanyContact2,displayHRAdmin2"/>
+                                        </apex:selectList>
+                                        <br/><apex:inputField value="{!onboardingASO.IsCompanyContact__c}">
+                                        <apex:actionSupport event="onchange" action="{!updateContacts}" reRender="displayButton2,displayCompanyContact2,displayHRAdmin2"/>
+                                        </apex:inputField>
+                                        <label>Company Contact is also the Authorized Officer</label>
+                                    </p><br/>
+                                    <apex:outputPanel id="displayCompanyContact2">
+                                        <apex:actionRegion rendered="true">
+                                            <p class="slds-text-heading_small"><font color="red"><b>* </b></font>Authorized Officer's Name:<br/>
+                                                <apex:selectList style="width: 300px;" size="1" value="{!onboardingASO.Authorize_Officer__c}">
+                                                    <apex:selectOptions value="{!Contacts}"/>
+                                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                                </apex:selectList>
+                                            </p><br/>
+                                        </apex:actionRegion>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel id="displayFlexRecruiting3">
+                                        <apex:actionRegion rendered="{!IF(onboardingASO.Product__c == 'HR Solutions-Flex', 'true', 'false')}">
+                                            <p class="slds-text-heading_small"><font color="red"><b>* </b></font>Is this client part of a multi ID billing group?<br/>
+                                                <apex:selectList style="width: 150px;" size="1" value="{!onboardingASO.MultiBillingOption__c}">
+                                                    <apex:selectOptions value="{!BoolOption}"/>
+                                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                                </apex:selectList>
+                                            </p><br/>
+                                        </apex:actionRegion>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel id="displayDate2">
+                                        <apex:actionRegion rendered="{!IF(onboardingASO.Product__c == 'Paychex HR Essentials'
+                                                                     || onboardingASO.Product__c == 'HR Solutions for Non-Payroll'
+                                                                     || onboardingASO.Product__c == 'Custom Employee Handbook', 'true', 'false')}">
+                                            <p class="slds-text-heading_small"><font color="red"><b>* </b></font>Date business formed:<br/>
+                                                <apex:inputField style="width: 150px;" value="{!onboardingASO.Date_Business_Formed__c}">
+                                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                                </apex:inputField>
+                                            </p><br/>
+                                        </apex:actionRegion>
+                                    </apex:outputPanel>
+                                    <apex:actionRegion rendered="{!IF(onboardingASO.Product__c != 'PESS' && 
+                                                                 (onboardingASO.Product__c != 'HR Solutions-Flex' || 
+                                                                 onboardingASO.Product__c == 'HR Solutions-Flex' && onboardingOpp.Employees_Paid_Per_Payroll__c < 50), 'true', 'false')}">
+                                        <p class="slds-text-heading_small"><font color="red"><b>* </b></font>Client Buying Triggers/Priorities/Decision Factors:<br/>
+                                            <label class="slds-text-heading_small">First Choice:</label><br/>
+                                            <apex:inputField style="width: 300px;" value="{!onboardingASO.HRE_Decision_Factors__c}">
+                                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2,displayDecisionOther2"/>
+                                            </apex:inputField><br/>
+                                            <label class="slds-text-heading_small">Second Choice:</label><br/>
+                                            <apex:inputField style="width: 300px;" value="{!onboardingASO.HRE_Decision_Factors_2__c}">
+                                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2,displayDecisionOther2"/>
+                                            </apex:inputField><br/>
+                                            <label class="slds-text-heading_small">Third Choice:</label><br/>
+                                            <apex:inputField style="width: 300px;" value="{!onboardingASO.HRE_Decision_Factors_3__c}">
+                                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2,displayDecisionOther2"/>
+                                            </apex:inputField>
+                                            <apex:outputPanel id="displayDecisionOther2">
+                                                <apex:actionRegion rendered="{!IF(onboardingASO.HRE_Decision_Factors__c =='Other'|| 
+                                                                             onboardingASO.HRE_Decision_Factors_2__c =='Other'||
+                                                                             onboardingASO.HRE_Decision_Factors_3__c =='Other','true', 'false')}">
+                                                    <br/><label class="slds-text-heading_small"><font color="red"><b>* </b></font>Other information helpful for HRG Onboarding:</label><br/>
+                                                    <apex:inputField style="width: 300px;" value="{!onboardingASO.Decision_Factors_Other__c}">
+                                                        <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                                    </apex:inputField>
+                                                </apex:actionRegion>
+                                            </apex:outputPanel>
+                                        </p><br/>
+                                    </apex:actionRegion>
+                                </div>                                            
+                                <div class="slds-col--padded slds-size--1-of-4 slds-text-heading_small">
+                                    <apex:outputPanel id="displayEE2">
+                                        <p class="slds-text-heading_small"><font color="red"><b>* </b></font>Payroll Platform:<br/>
+                                            <apex:inputField style="width: 150px;" value="{!onboardingOpp.Payroll_Platform__c}">
+                                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                            </apex:inputField></p><br/>
+                                        <apex:actionRegion rendered="{!IF(onboardingASO.Product__c == 'HR Solutions-Flex', 'true', 'false')}">
+                                            <p class="slds-text-heading_small"><font color="red"><b>* </b></font>Employees Paid Per Payroll:<br/>
+                                                <apex:inputField style="width: 150px;" value="{!onboardingOpp.Employees_Paid_Per_Payroll__c}">
+                                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayMPSC, displayAdditional2,displayExistInfo4, displayButton2"/>
+                                                </apex:inputField></p><br/>
+                                            <apex:outputPanel id="displayMPSC">
+                                                <apex:actionRegion rendered="{!IF(onboardingOpp.Employees_Paid_Per_Payroll__c !=Null && onboardingOpp.Employees_Paid_Per_Payroll__c >= 50, 'true', 'false')}">
+                                                    <p class="slds-text-heading_small"><font color="red"><b>* </b></font>Multi Product Service Center:<br/>
+                                                        <apex:inputField style="width: 300px;" value="{!onboardingASO.MultiProdServiceCenter__c}">
+                                                            <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                                        </apex:inputField></p><br/>
+                                                </apex:actionRegion>
+                                            </apex:outputPanel>
+                                        </apex:actionRegion>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel id="displayExistInfo4">
+                                        <apex:actionRegion rendered="{!If(onboardingASO.Product__c == 'HR Solutions-Flex' && onboardingASO.New_Existing__c =='Existing Paychex Client' && onboardingOpp.Employees_Paid_Per_Payroll__c !=Null && onboardingOpp.Employees_Paid_Per_Payroll__c < 50,'true','false')}">
+                                            <label><font color="red"><b>* </b></font>New ASO Branch Number:</label><div/>
+                                            <apex:selectList size="1" style="width: 300px;" value="{!onboardingASO.New_Branch__c}" required="true">
+                                                <apex:selectOptions value="{!Branch}"/>
+                                                <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton"/>
+                                            </apex:selectList><br/><br/>
+                                        </apex:actionRegion>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel id="displayTotalEE2">
+                                        <apex:actionRegion rendered="{!onboardingASO.Multi_ID__c}">
+                                            <p class="slds-text-heading_small"><font color="red"><b>* </b></font>Total Number of Employees:<br/>
+                                                <apex:inputField style="width: 150px;" value="{!onboardingASO.Total_Num_EE__c}">
+                                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                                </apex:inputField></p><br/>
+                                        </apex:actionRegion>
+                                    </apex:outputPanel>
+                                    <p class="slds-text-heading_small"><font color="red"><b>* </b></font>Preferred Contact Method:<br/>
+                                        <apex:inputField style="width: 300px;" value="{!onboardingASO.Preferred_Contact_Method__c}">
+                                            <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                        </apex:inputField>
+                                    </p><br/>
+                                    <p class="slds-text-heading_small"><font color="red"><b>* </b></font>Best Time to Call:<br/>
+                                        <apex:inputField style="width: 150px;" value="{!onboardingASO.Best_Call_Time__c}">
+                                            <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                        </apex:inputField>
+                                    </p><br/>
+                                    <apex:outputPanel id="displayProcessedInformation2">
+                                        <apex:actionRegion rendered="{!IF(onboardingASO.Product__c == 'Paychex HR Essentials'
+                                                                     || onboardingASO.Product__c == 'Custom Employee Handbook', 'true', 'false')}">
+                                            <p class="slds-text-heading_small"><font color="red"><b>* </b></font>Has Paychex processed the first payroll?<br/>
+                                                <apex:selectList size="1" value="{!onboardingASO.PayrollProcessed__c}" >
+                                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                                    <apex:selectOptions value="{!BoolOption}"/>
+                                                </apex:selectList>
+                                            </p><br/>
+                                            <p class="slds-text-heading_small"><font color="red"><b>* </b></font>Handbook Format:<br/>
+                                                <apex:inputField style="width: 150px;" value="{!onboardingASO.Handbook_Format__c}">
+                                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                                </apex:inputField>
+                                            </p><br/>
+                                            <p class="slds-text-heading_small">
+                                                <apex:inputField value="{!onboardingASO.Tax_Exempt__c}">
+                                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayTaxId2,displayButton2"/>
+                                                </apex:inputField>
+                                                <label>Tax exempt?</label>
+                                                <apex:outputPanel id="displayTaxId2">
+                                                    <apex:actionRegion rendered="{!IF(onboardingASO.Tax_Exempt__c, 'true', 'false')}">
+                                                        <div/><br/><label><font color="red"><b>* </b></font>Tax exempt Id:</label><div/>
+                                                        <apex:inputField value="{!onboardingASO.Tax_Exempt_Id__c}">
+                                                            <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                                        </apex:inputField>
+                                                    </apex:actionRegion>
+                                                </apex:outputPanel>
+                                            </p><br/>
+                                        </apex:actionRegion>
+                                    </apex:outputPanel>
+                                </div>                                            
+                                <div class="slds-col--padded slds-size--1-of-4 slds-text-heading_small">
+                                    <p class="slds-text-heading_small"><font color="red"><b>* </b></font>Client Email Address:<br/>
+                                        <apex:inputField style="width: 300px;" value="{!onboardingOpp.Account.Email__c}">
+                                            <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                        </apex:inputField>
+                                    </p><br/>
+                                    <apex:outputPanel id="displayHRGeneralist2">
+                                        <apex:actionRegion rendered="{!IF(onboardingASO.Product__c == 'Custom Employee Handbook'
+                                                                     || onboardingASO.Product__c == 'PESS'
+                                                                     || onboardingASO.Product__c == 'Paychex HR Essentials', 'false', 'true')}">
+                                            <p class="slds-text-heading_small"><font color="red"><b>* </b></font>HR Generalist:<br/>
+                                                <apex:inputField style="width: 300px;" value="{!onboardingASO.HR_Genralist__c}">
+                                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                                </apex:inputField>
+                                            </p><br/>
+                                        </apex:actionRegion>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel id="displayHRAdmin2">
+                                        <apex:actionRegion rendered="{!IF(onboardingASO.Product__c == 'Paychex HR Essentials', 'true', 'false')}">
+                                            <p class="slds-text-heading_small"><font color="red"><b>* </b></font>HR Administrator:<br/>
+                                                <apex:selectList style="width: 300px;" size="1" value="{!onboardingASO.HR_Admin__c}">
+                                                    <apex:selectOptions value="{!Contacts}"/>
+                                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                                </apex:selectList>
+                                            </p><br/>
+                                            <p class="slds-text-heading_small"><font color="red"><b>* </b></font>Number of Locations:<br/>
+                                                <apex:inputField style="width: 150px;" value="{!onboardingASO.HRE_Num_of_Locations__c}">
+                                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                                </apex:inputField>
+                                            </p><br/>
+                                            <p class="slds-text-heading_small"><font color="red"><b>* </b></font>Reason(s) client selected HR Essentials:<br/>
+                                                <apex:inputField style="width: 300px;" value="{!onboardingASO.HRE_Reason_Selected__c}">
+                                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                                </apex:inputField>
+                                            </p><br/>
+                                            <p class="slds-text-heading_small"><font color="red"><b>* </b></font>Does client have an existing handbook?<br/>
+                                                <apex:selectList style="width: 150px;" size="1" value="{!onboardingASO.HRE_Existing__c}">
+                                                    <apex:selectOptions value="{!BoolOption}"/>
+                                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2,displayExistHandbook2"/>
+                                                </apex:selectList>
+                                            </p><br/>
+                                            <apex:outputPanel id="displayExistHandbook2">
+                                                <apex:actionRegion rendered="{!IF(onboardingASO.HRE_Existing__c == 'True', 'true', 'false')}">
+                                                    <div/><label class="slds-text-heading_small"><font color="red"><b>* </b></font>Did Paychex create existing handbook?</label><div/>
+                                                    <apex:selectList style="width: 150px;" size="1" value="{!onboardingASO.HRE_Paychex_created_existing__c}">
+                                                        <apex:selectOptions value="{!BoolOption}"/>
+                                                        <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                                    </apex:selectList>
+                                                </apex:actionRegion>
+                                            </apex:outputPanel>
+                                            <p class="slds-text-heading_small"><font color="red"><b>* </b></font>Does the client have an existing safety manual?<br/>
+                                                <apex:selectList style="width: 150px;" size="1" value="{!onboardingASO.HRE_Existing_Safety_Manual__c}">
+                                                    <apex:selectOptions value="{!BoolOption}"/>
+                                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2,displayExistSafety2"/>
+                                                </apex:selectList>
+                                            </p><br/>
+                                            <apex:outputPanel id="displayExistSafety2">
+                                                <apex:actionRegion rendered="{!IF(onboardingASO.HRE_Existing_Safety_Manual__c == 'True', 'true', 'false')}">
+                                                    <div/><label class="slds-text-heading_small"><font color="red"><b>* </b></font>Did Paychex create existing safety manual?</label><div/>
+                                                    <apex:selectList style="width: 150px;" size="1" value="{!onboardingASO.HRE_Paychex_created_existing_safety__c}">
+                                                        <apex:selectOptions value="{!BoolOption}"/>
+                                                        <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                                    </apex:selectList>
+                                                </apex:actionRegion>
+                                            </apex:outputPanel>
+                                        </apex:actionRegion>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel id="displayHRContacts2">
+                                        <apex:actionRegion rendered="{!IF(onboardingASO.Product__c == 'HR Solutions-Flex'
+                                                                     || onboardingASO.Product__c == 'HR Solutions for Non-Payroll'
+                                                                     || onboardingASO.Product__c == 'HR Solutions-Preview', 'true', 'false')}">
+                                            <p class="slds-text-heading_small"><font color="red"><b>* </b></font>HRS Sales Rep:<br/>
+                                                <apex:inputField style="width: 300px;" value="{!onboardingASO.HRS_Sales_Rep__c}">
+                                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                                </apex:inputField>
+                                            </p><br/>
+                                        </apex:actionRegion>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel id="displayLM">
+                                        <apex:actionRegion rendered="{!IF(onboardingASO.Product__c == 'HR Solutions-Flex'
+                                                                     || onboardingASO.Product__c == 'HR Solutions for Non-Payroll'
+                                                                     || onboardingASO.Product__c == 'HR Solutions-Preview', 'true', 'false')}">
+                                            <apex:actionRegion rendered="{!showLargeMarketRep}">
+                                                <p class="slds-text-heading_small"><font color="red"><b>* </b></font>Large Market Sales Rep:<br/>
+                                                    <apex:inputField style="width: 300px;" value="{!onboardingASO.Large_Market_Sales_Rep__c}">
+                                                        <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                                    </apex:inputField>
+                                                </p><br/>
+                                            </apex:actionRegion>
+                                        </apex:actionRegion>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel id="displayPayrollContacts2">
+                                        <apex:actionRegion rendered="{!IF(onboardingASO.Product__c == 'HR Solutions-Flex'
+                                                                     || onboardingASO.Product__c == 'HR Solutions-Preview', 'true', 'false')}">
+                                            <p class="slds-text-heading_small"><font color="red"><b>* </b></font>Payroll Rep:<br/>
+                                                <apex:inputField style="width: 300px;" value="{!onboardingASO.PayrollRep__c}">
+                                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                                </apex:inputField>
+                                            </p><br/>
+                                        </apex:actionRegion>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel id="displayRunDate2">
+                                        <apex:actionRegion rendered="{!IF(onboardingASO.Product__c == 'HR Solutions-Flex'
+                                                                     || onboardingASO.Product__c == 'HR Solutions for Non-Payroll', 'true', 'false')}">                                                    
+                                            <p class="slds-text-heading_small"><font color="red"><b>* </b></font>First Run Date:<br/>
+                                                <apex:inputField style="width: 150px;" value="{!onboardingASO.Run_Date__c}">
+                                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                                </apex:inputField>
+                                            </p><br/>
+                                        </apex:actionRegion>
+                                    </apex:outputPanel> 
+                                    <apex:outputPanel id="displayCheckDate2">
+                                        <apex:actionRegion rendered="{!IF(onboardingASO.Product__c == 'HR Solutions-Flex', 'true', 'false')}">                                                    
+                                            <p class="slds-text-heading_small"><font color="red"><b>* </b></font>First Check Date:<br/>
+                                                <apex:inputField style="width: 150px;" value="{!onboardingASO.First_Check_Date__c}">
+                                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayButton2"/>
+                                                </apex:inputField>
+                                            </p><br/>
+                                        </apex:actionRegion>
+                                    </apex:outputPanel>
+                                </div>
+                                <div class="slds-col--padded slds-size--1-of-4 slds-text-heading_small"></div>
+                            </div>
+                            <p class="slds-text-heading_small"><b>Notes:</b><br/>
+                                <apex:inputField style="width: 300px;" value="{!onboardingOpp.Description}"/>
+                            </p>
+                        </div>
+                    </div>
+                </apex:actionRegion>
+            </apex:outputPanel>
+            <apex:outputPanel id="displayFSSInfo2">
+                <apex:actionRegion rendered="{!IF(onboardingASO.Product__c != '', 'true', 'false')}">
+                    <div class="slds-card"/>
+                    <div class="slds-card">
+                        <p class="slds-text-heading_small"><b>FSS Information</b></p>
+                        <div class="slds-box">
+                            <apex:actionRegion rendered="{!IF(hasFSS, 'true', 'false')}">
+                                <p class="slds-text-heading_small">
+                                    <apex:outputText >FSS Name: {!onboardingASO.FSS_Name__c}</apex:outputText><br />
+                                    <apex:inputCheckbox id="changeFSSOption2" value="{!onboardingASO.changeFSS__c}">
+                                        <apex:actionSupport event="onchange" action="{!clearEmail}" reRender="displayNewEmail2"/>
+                                    </apex:inputCheckbox>Check to change FSS
+                                    <apex:outputPanel id="displayNewEmail2">
+                                        <apex:actionRegion rendered="{!onboardingASO.changeFSS__c}">
+                                            <br />
+                                            <apex:outputText ><font color = 'Red'>Enter alternate Paychex email address</font></apex:outputText><br/>
+                                            <apex:inputText size="50" value="{!onboardingASO.Alternative_Email__c}">
+                                                <apex:actionSupport event="onchange" action="{!EmailValidation}" reRender="displayInvalidError"/>
+                                            </apex:inputText>
+                                            <apex:outputPanel id="displayInvalidError">
+                                                <apex:actionRegion rendered="{!IF(onboardingASO.Alternative_Email__c!='' && InvalidEmail, 'true', 'false')}">
+                                                    <apex:outputText ><font color = 'Red'>Note: You have entered an invalid Paychex email address.</font></apex:outputText><br/>
+                                                </apex:actionRegion>
+                                            </apex:outputPanel>
+                                        </apex:actionRegion>
+                                    </apex:outputPanel>
+                                </p>
+                            </apex:actionRegion>
+                            <div class="slds-box" align="center">
+                                <p class="slds-text-heading_small">All required fields must be completed prior to submission</p>
+                                <apex:commandButton styleClass="slds-button--neutral" value="Save Changes - Return to Opportunity" onclick="saveConfirmation()" action="{!saveChanges}" />
+                                <apex:outputPanel id="displayButton2">
+                                    <apex:actionRegion rendered="{!IF(validRecord &&(hasFSS || isDSM), 'true', 'false')}">
+                                        <apex:commandButton styleClass="slds-button--neutral" value="Send to FSS" rendered="{!IF(hasFSS || isDSM, 'true', 'false')}" action="{!emailFSS}" />
+                                    </apex:actionRegion>
+                                    <apex:actionRegion rendered="{!IF(validRecord && (!hasFSS && !isDSM), 'true', 'false')}">
+                                        <br/>
+                                        <apex:outputText ><font color = 'Red'>Note: No FSS/DSA email identified, please enter Paychex email address of FSS to receive submission.</font></apex:outputText><br/>
+                                        <apex:inputField style="width: 300px;" value="{!onboardingASO.Alternative_Email__c}">
+                                            <apex:actionSupport event="onchange" action="{!EmailValidation}" reRender="displayNoFSSButton2"/>
+                                        </apex:inputField>
+                                        <apex:outputPanel id="displayNoFSSButton2">
+                                            <apex:actionRegion rendered="{!If(onboardingASO.Alternative_Email__c==Null || InvalidEmail,false, true)}">
+                                                <apex:commandButton value="Email Manager" action="{!emailFSS}" />
+                                            </apex:actionRegion>
+                                            <apex:actionRegion rendered="{!If(onboardingASO.Alternative_Email__c!=Null && InvalidEmail,true, false)}">
+                                                <apex:outputText ><font color = 'Red'>Note: You have entered an invalid Paychex email address.</font></apex:outputText><br/>
+                                            </apex:actionRegion>
+                                        </apex:outputPanel>
+                                    </apex:actionRegion>
+                                </apex:outputPanel>
+                                <!--<apex:commandButton value="Clear Information" action="{!clearInfo}" />-->
+                            </div>
+                        </div>
+                    </div>
+                </apex:actionRegion>
+            </apex:outputPanel>
+        </apex:form>
+    </div>
+    
+</apex:component>

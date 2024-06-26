@@ -1,0 +1,2307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>AR_Rejected_Action_Needed</fullName>
+        <description>AR Rejected - Action Needed</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Requested_by_SFDC__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <recipients>
+            <field>Requested_by_User_Manager1__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>PAC_Email_Templates/AR_Rejected_Action_Needed</template>
+    </alerts>
+    <alerts>
+        <fullName>AR_Rejected_No_Action_Needed</fullName>
+        <description>AR Rejected - No Action Needed</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Requested_by_SFDC__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <recipients>
+            <field>Requested_by_User_Manager1__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>PAC_Email_Templates/AR_Rejected_No_Action_Needed</template>
+    </alerts>
+    <alerts>
+        <fullName>ORM_PAC_Amended_Returns_rejections_email_notification</fullName>
+        <description>ORM PAC Amended Returns rejections email notification</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>All_Templates/ORM_PAC_Amended_Returns_rejections_email_notification</template>
+    </alerts>
+    <alerts>
+        <fullName>PAC_Auto_Confirm_DUPLICATE_NOTICE_FIELD_main_contact</fullName>
+        <description>PAC (Auto Confirm - DUPLICATE NOTICE) FIELD main contact</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Field_Contact_Name__c</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderType>DefaultWorkflowUser</senderType>
+        <template>PAC_Email_Templates/PAC_Auto_Confirm_DUPLICATE_NOTICE_FIELD_main_contact</template>
+    </alerts>
+    <alerts>
+        <fullName>PAC_Closed_Submission_email_with_populated_Client_Contact</fullName>
+        <description>PAC Closed Submission email with populated Client Contact</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Field_Contact_Name__c</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>donotreply_operatingrisk@paychex.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>PAC_Email_Templates/PAC_Auto_Close_CLIENT_is_main_contact</template>
+    </alerts>
+    <alerts>
+        <fullName>PAC_Closed_Submission_email_without_populated_Client_Contact_info</fullName>
+        <description>PAC Closed Submission email without populated Client Contact info</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Field_Contact_Name__c</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>donotreply_operatingrisk@paychex.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>PAC_Email_Templates/PAC_Auto_Close_FIELD_is_main_contact</template>
+    </alerts>
+    <alerts>
+        <fullName>PAC_New_Submission_email_with_populated_Field_Contact</fullName>
+        <description>PAC New Submission email with populated Field Contact</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Field_Contact_Name__c</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>donotreply_operatingrisk@paychex.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>PAC_Email_Templates/PAC_Auto_Confirm_CLIENT_main_contact</template>
+    </alerts>
+    <alerts>
+        <fullName>PAC_New_Submission_email_without_populated_Client_Contact_info</fullName>
+        <description>PAC New Submission email without populated Client Contact info</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Field_Contact_Name__c</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>donotreply_operatingrisk@paychex.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>PAC_Email_Templates/PAC_Auto_Confirm_FIELD_main_contact</template>
+    </alerts>
+    <alerts>
+        <fullName>Reference_PAC_confirmation</fullName>
+        <description>Reference PAC confirmation</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Client_Contact_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>donotreply_operatingrisk@paychex.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>PAC_Email_Templates/PAC_Auto_Confirm_submission</template>
+    </alerts>
+    <alerts>
+        <fullName>Send_Stall_Email</fullName>
+        <description>Send Stall Email</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Client_Contact_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>pac_penaltynotice@paychex.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>PAC_Email_Templates/Stall_E_mail</template>
+    </alerts>
+    <alerts>
+        <fullName>X2_4_20</fullName>
+        <description>2-4-20</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Field_Contact_Name__c</field>
+            <type>contactLookup</type>
+        </recipients>
+        <recipients>
+            <field>Field_Contact_Supervisor__c</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>donotreply_operatingrisk@paychex.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>PAC_Email_Templates/X2_4_20_PXC_Field_Attachment_Request</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>Add_1_to_Number_of_Follow_Up_Date_Chang</fullName>
+        <field>Number_of_Follow_Up_Date_Changes__c</field>
+        <formula>(Number_of_Follow_Up_Date_Changes__c)+1</formula>
+        <name>Add 1 to &quot;Number of Follow Up Date Chang</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Assign_Any_Additionals_to_field_as_Ad</fullName>
+        <field>Assign_Any_Additionals_to__c</field>
+        <literalValue>Additional/Duplicate</literalValue>
+        <name>‘Assign Any Additionals to’ field as ‘Ad</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Assign_Any_Additionals_to_field_as_Cl</fullName>
+        <field>Assign_Any_Additionals_to__c</field>
+        <literalValue>Client Responsibility</literalValue>
+        <name>‘Assign Any Additionals to’ field as ‘Cl</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Assign_Any_Additionals_to_field_as_Mu</fullName>
+        <field>Assign_Any_Additionals_to__c</field>
+        <literalValue>Multi-Client</literalValue>
+        <name>Assign Any Additionals to’ field as ‘Mu</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Assign_Any_Additionals_to_field_as_Or</fullName>
+        <field>Assign_Any_Additionals_to__c</field>
+        <literalValue>Original ORR</literalValue>
+        <name>‘Assign Any Additionals to’ field as ‘Or</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Assign_Any_Additionals_to_field_as_P</fullName>
+        <field>Assign_Any_Additionals_to__c</field>
+        <literalValue>PSST Group</literalValue>
+        <name>‘Assign Any Additionals to’ field as ‘P</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>CPR_Group_New</fullName>
+        <field>CPR_Group_New__c</field>
+        <literalValue>Yes</literalValue>
+        <name>CPR Group New</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>CPR_Group_New_update</fullName>
+        <field>CPR_Group_New__c</field>
+        <literalValue>Yes</literalValue>
+        <name>CPR Group New update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>DSC_919_CLient_to_Yes</fullName>
+        <description>DSC/919 CLient? to Yes</description>
+        <field>DSC_Client__c</field>
+        <literalValue>Yes</literalValue>
+        <name>DSC/919 CLient? to Yes</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Field_Responsibility_to_Resolve_popula</fullName>
+        <field>Assign_Any_Additionals_to__c</field>
+        <literalValue>Field Responsibility</literalValue>
+        <name>Field Responsibility to Resolve’, popula</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Flag_1_date_time</fullName>
+        <field>Flag_1_date_time_stamp__c</field>
+        <formula>NOW()</formula>
+        <name>Flag 1 date time</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Flag_2_date_time</fullName>
+        <field>Flag_2_date_time_stamp__c</field>
+        <formula>NOW()</formula>
+        <name>Flag 2 date time</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Flag_3_date_time</fullName>
+        <field>Flag_3_date_time_stamp__c</field>
+        <formula>NOW()</formula>
+        <name>Flag 3 date time</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Follow_Up_Date_to_Null</fullName>
+        <field>Follow_Up_Date__c</field>
+        <name>Follow Up Date to Null</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Increment_Number_of_Additional_Notice</fullName>
+        <description>Increment the Number of Additional Notices Received fields by one</description>
+        <field>Number_of_Additional_Notices_Received__c</field>
+        <formula>Number_of_Additional_Notices_Received__c + 1</formula>
+        <name>Increment Number of Additional Notice</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Owner</fullName>
+        <field>OwnerId</field>
+        <lookupValue>PAC_Group_Locals</lookupValue>
+        <lookupValueType>Queue</lookupValueType>
+        <name>Owner</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Owner_to_PAC_MPSC_Regular_News</fullName>
+        <field>OwnerId</field>
+        <lookupValue>PAC_MPSC_Regular_News</lookupValue>
+        <lookupValueType>Queue</lookupValueType>
+        <name>Owner to &quot;PAC MPSC Regular News&quot;</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Paychex_PEO_Issue_1</fullName>
+        <field>Paychex_PEO_Issue__c</field>
+        <literalValue>Yes</literalValue>
+        <name>Paychex PEO Issue 1</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Paychex_PEO_Issue_2</fullName>
+        <field>Paychex_PEO_Issue__c</field>
+        <literalValue>Yes</literalValue>
+        <name>Paychex PEO Issue 2</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_Field_Update_Comment_1_Log_Upd</fullName>
+        <description>Contents of the Field Update Comments field are appended to the Field Update Comments Log field</description>
+        <field>Field_Update_Comments_Log__c</field>
+        <formula>UPPER( $User.FirstName ) &amp; &quot; &quot; &amp; UPPER( $User.LastName )&amp; &quot; (&quot; &amp; TEXT(MONTH(TODAY())) &amp; &quot;/&quot;&amp; TEXT(DAY(TODAY())) &amp; &quot;/&quot;&amp; TEXT(YEAR(TODAY()))&amp; &quot; &quot; &amp;TEXT(CASE(VALUE(MID(TEXT( NOW() ) , 12, 2)) , 0, 20, 1, 21, 2, 22,3, 23,4, 0,5, 1,6, 2,7, 3,8, 4,9, 5,10, 6,11, 7,12, 8,13, 9,14,10,15, 11,16, 12,17, 13,18, 14,19, 15,20, 16,21, 17,22, 18,23, 19, 24)) &amp; &quot;:&quot; &amp; MID(TEXT( NOW() ) , 15, 2) &amp; &quot;)&quot; &amp; BR() &amp; &quot;- &quot; &amp; Field_Update_Comments__c &amp; BR() &amp; BR() &amp; Field_Update_Comments_Log__c</formula>
+        <name>Ref PAC Field Update Comment - 1 Log Upd</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_Field_Update_Comment_2_Log_Cle</fullName>
+        <description>Clear the contents of the Field Update Comments field</description>
+        <field>Field_Update_Comments__c</field>
+        <name>Ref PAC Field Update Comment - 2 Log Cle</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_Field_Update_Comments_Clear</fullName>
+        <description>Clear the contents of the Field Update Comments field</description>
+        <field>Field_Update_Comments__c</field>
+        <name>Ref PAC Field Update Comments Clear</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_Field_Update_Comments_Log_Update</fullName>
+        <description>Contents of the Field Update Comments field are appended to the Field Update Comments Log field</description>
+        <field>Field_Update_Comments_Log__c</field>
+        <formula>UPPER( $User.FirstName ) &amp; &quot; &quot; &amp; UPPER( $User.LastName )&amp; &quot; (&quot; &amp; TEXT(MONTH(TODAY())) &amp; &quot;/&quot;&amp; TEXT(DAY(TODAY())) &amp; &quot;/&quot;&amp; TEXT(YEAR(TODAY()))&amp; &quot; &quot; &amp;TEXT(CASE(VALUE(MID(TEXT( NOW() ) , 12, 2)) , 0, 20, 1, 21, 2, 22,3, 23,4, 0,5, 1,6, 2,7, 3,8, 4,9, 5,10, 6,11, 7,12, 8,13, 9,14,10,15, 11,16, 12,17, 13,18, 14,19, 15,20, 16,21, 17,22, 18,23, 19, 24)) &amp; &quot;:&quot; &amp; MID(TEXT( NOW() ) , 15, 2) &amp; &quot;)&quot; &amp; BR() &amp; &quot;- &quot; &amp; Field_Update_Comments__c &amp; BR() &amp; BR() &amp; Field_Update_Comments_Log__c</formula>
+        <name>Ref PAC Field Update Comments Log Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_Follow_Up_Notes_1_Log_Update</fullName>
+        <description>Contents of the PAC Follow Up Notes field are appended to the PAC Follow Up Notes Log field</description>
+        <field>PAC_Follow_Up_Notes_Log__c</field>
+        <formula>UPPER( $User.FirstName ) &amp; &quot; &quot; &amp; UPPER( $User.LastName )&amp; &quot; (&quot; &amp; TEXT(MONTH(TODAY())) &amp; &quot;/&quot;&amp; TEXT(DAY(TODAY())) &amp; &quot;/&quot;&amp; TEXT(YEAR(TODAY()))&amp; &quot; &quot; &amp;TEXT(CASE(VALUE(MID(TEXT( NOW() ) , 12, 2)) , 0, 20, 
+
+1, 21, 2, 22,3, 23,4, 0,5, 1,6, 2,7, 3,8, 4,9, 5,10, 6,11, 7,12, 8,13, 9,14,10,15, 11,16, 12,17, 13,18, 14,19, 15,20, 16,21, 17,22, 18,23, 19, 24)) &amp; &quot;:&quot; &amp; MID(TEXT( NOW() ) , 15, 2) &amp; &quot; EDT)&quot; &amp; 
+
+BR() &amp; &quot;- &quot; &amp; PAC_Follow_Up_Notes__c &amp; BR() &amp; BR() &amp; PAC_Follow_Up_Notes_Log__c</formula>
+        <name>Ref PAC Follow Up Notes - 1 Log Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_Follow_Up_Notes_2_Log_Clear</fullName>
+        <description>Clear the contents of the PAC Follow Up Notes field</description>
+        <field>PAC_Follow_Up_Notes__c</field>
+        <name>Ref PAC Follow Up Notes - 2 Log Clear</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_Init_Research_Find_1_Log_Updat</fullName>
+        <description>Contents of the Initial Research Findings/Summary field are appended to the Initial Research Findings/Summary Log field</description>
+        <field>Initial_Research_Findings_Summary_Log__c</field>
+        <formula>UPPER( $User.FirstName ) &amp; &quot; &quot; &amp; UPPER( $User.LastName )&amp; &quot; (&quot; &amp; TEXT(MONTH(TODAY())) &amp; &quot;/&quot;&amp; TEXT(DAY(TODAY())) &amp; &quot;/&quot;&amp; TEXT(YEAR(TODAY()))&amp; &quot; &quot; &amp;TEXT(CASE(VALUE(MID(TEXT( NOW() ) , 12, 2)) , 0, 20, 
+
+1, 21, 2, 22,3, 23,4, 0,5, 1,6, 2,7, 3,8, 4,9, 5,10, 6,11, 7,12, 8,13, 9,14,10,15, 11,16, 12,17, 13,18, 14,19, 15,20, 16,21, 17,22, 18,23, 19, 24)) &amp; &quot;:&quot; &amp; MID(TEXT( NOW() ) , 15, 2) &amp; &quot; EDT)&quot; &amp; 
+
+BR() &amp; &quot;- &quot; &amp; Initial_Research_Findings_Summary__c &amp; BR() &amp; BR() &amp; Initial_Research_Findings_Summary_Log__c</formula>
+        <name>Ref PAC Init Research Find - 1 Log Updat</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_Init_Research_Find_2_Log_Clear</fullName>
+        <description>Clear the contents of the Initial Research Findings/Summary field</description>
+        <field>Initial_Research_Findings_Summary__c</field>
+        <name>Ref PAC Init Research Find - 2 Log Clear</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_Prim_Assign_Group_PAC_Group_A</fullName>
+        <description>Populate the Primary Assignment Group field with the PAC Group A queue name</description>
+        <field>Primary_Assignment_Group__c</field>
+        <literalValue>PAC – Group A</literalValue>
+        <name>Ref PAC Prim Assign Group - PAC Group A</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_Prim_Assign_Group_PAC_Group_B</fullName>
+        <description>Populate the Primary Assignment Group field with the PAC Group B queue name</description>
+        <field>Primary_Assignment_Group__c</field>
+        <literalValue>PAC – Group B</literalValue>
+        <name>Ref PAC Prim Assign Group - PAC Group B</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_Prim_Assign_Group_PAC_Group_C</fullName>
+        <description>Populate the Primary Assignment Group field with the PAC Group C queue name</description>
+        <field>Primary_Assignment_Group__c</field>
+        <literalValue>PAC – Group C</literalValue>
+        <name>Ref PAC Prim Assign Group - PAC Group C</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_Prim_Assign_Group_PAC_Group_D</fullName>
+        <description>Populate the Primary Assignment Group field with the PAC Group D queue name</description>
+        <field>Primary_Assignment_Group__c</field>
+        <literalValue>PAC – Group D</literalValue>
+        <name>Ref PAC Prim Assign Group - PAC Group D</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_Prim_Assign_Group_PAC_Group_Defa</fullName>
+        <description>Populate the Primary Assignment Group field with the PAC Group Default queue name</description>
+        <field>Primary_Assignment_Group__c</field>
+        <literalValue>PAC – Default</literalValue>
+        <name>Ref PAC Prim Assign Group - PAC Group De</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_Prim_Assign_Group_PAC_Group_E</fullName>
+        <description>Populate the Primary Assignment Group field with the PAC Group E queue name</description>
+        <field>Primary_Assignment_Group__c</field>
+        <literalValue>PAC – Group E</literalValue>
+        <name>Ref PAC Prim Assign Group - PAC Group E</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_Prim_Assign_Group_PAC_Group_HR</fullName>
+        <description>Populate the Primary Assignment Group field with the PAC Group - High Revenue queue name</description>
+        <field>Primary_Assignment_Group__c</field>
+        <literalValue>PAC – High Revenue</literalValue>
+        <name>Ref PAC Prim Assign Group - PAC Group HR</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_Prim_Assign_Group_PAC_Group_PSST</fullName>
+        <description>Populate the Primary Assignment Group field with the PAC Group PSST queue name</description>
+        <field>Primary_Assignment_Group__c</field>
+        <name>Ref PAC Prim Assign Group - PAC Group PS</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_set_Latest_Closed_Submission_Ema</fullName>
+        <description>Set the Reference PAC Latest Closed Submission Email Sent to the current date/time</description>
+        <field>Latest_Closed_Submission_Email_SentDT__c</field>
+        <formula>Now()</formula>
+        <name>Ref PAC set Latest Closed Submission Ema</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_set_Prompt_New_Submission_Email</fullName>
+        <description>Set the Reference PAC Prompt New Submission Email field to the current date/time</description>
+        <field>Prompt_New_Submission_Email__c</field>
+        <formula>Now()</formula>
+        <name>Ref PAC set Prompt New Submission Email</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>true</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_set_Sent_New_Submission_Email</fullName>
+        <description>Set the Reference PAC Sent New Submission Email field to the current date/time</description>
+        <field>Sent_New_Submission_Email__c</field>
+        <formula>Now()</formula>
+        <name>Ref PAC set Sent New Submission Email</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>true</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_set_StatusSummary_Closed</fullName>
+        <description>Set StatusSummary to Closed</description>
+        <field>StatusSummary__c</field>
+        <literalValue>Closed</literalValue>
+        <name>Ref PAC set StatusSummary - Closed</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_set_StatusSummary_Open</fullName>
+        <description>Set StatusSummary to Open</description>
+        <field>StatusSummary__c</field>
+        <literalValue>Open</literalValue>
+        <name>Ref PAC set StatusSummary - Open</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_set_StatusSummary_Pending</fullName>
+        <description>Set StatusSummary to Pending</description>
+        <field>StatusSummary__c</field>
+        <literalValue>Pending</literalValue>
+        <name>Ref PAC set StatusSummary - Pending</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Reference_PAC_Owner_PAC_Group_A</fullName>
+        <description>Assign the PAC Group A queue as the Reference PAC Owner</description>
+        <field>OwnerId</field>
+        <lookupValue>PAC_Group_A</lookupValue>
+        <lookupValueType>Queue</lookupValueType>
+        <name>Reference PAC Owner - PAC Group A</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Reference_PAC_Owner_PAC_Group_B</fullName>
+        <description>Assign the PAC Group B queue as the Reference PAC Owner</description>
+        <field>OwnerId</field>
+        <lookupValue>PAC_Group_B</lookupValue>
+        <lookupValueType>Queue</lookupValueType>
+        <name>Reference PAC Owner - PAC Group B</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Reference_PAC_Owner_PAC_Group_C</fullName>
+        <description>Assign the PAC Group C queue as the Reference PAC Owner</description>
+        <field>OwnerId</field>
+        <lookupValue>PAC_Group_C</lookupValue>
+        <lookupValueType>Queue</lookupValueType>
+        <name>Reference PAC Owner - PAC Group C</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Reference_PAC_Owner_PAC_Group_D</fullName>
+        <description>Assign the PAC Group D queue as the Reference PAC Owner</description>
+        <field>OwnerId</field>
+        <lookupValue>PAC_Group_D</lookupValue>
+        <lookupValueType>Queue</lookupValueType>
+        <name>Reference PAC Owner - PAC Group D</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Reference_PAC_Owner_PAC_Group_Default</fullName>
+        <description>Assign the PAC Group Default queue as the Reference PAC Owner</description>
+        <field>OwnerId</field>
+        <lookupValue>PAC_Group_Default</lookupValue>
+        <lookupValueType>Queue</lookupValueType>
+        <name>Reference PAC Owner - PAC Group Default</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Reference_PAC_Owner_PAC_Group_E</fullName>
+        <description>Assign the PAC Group E queue as the Reference PAC Owner</description>
+        <field>OwnerId</field>
+        <lookupValue>PAC_Group_E</lookupValue>
+        <lookupValueType>Queue</lookupValueType>
+        <name>Reference PAC Owner - PAC Group E</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Reference_PAC_Owner_PAC_Group_High_Rev</fullName>
+        <description>Assign the PAC Group - High Revenue queue as the Reference PAC Owner</description>
+        <field>OwnerId</field>
+        <lookupValue>PAC_Group_High_Revenue</lookupValue>
+        <lookupValueType>Queue</lookupValueType>
+        <name>Reference PAC Owner - PAC Group High Rev</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Reference_PAC_Owner_PAC_Group_PSST</fullName>
+        <description>Assign the PAC Group PSST queue as the Reference PAC Owner</description>
+        <field>OwnerId</field>
+        <lookupValue>PAC_Group_PSST</lookupValue>
+        <lookupValueType>Queue</lookupValueType>
+        <name>Reference PAC Owner - PAC Group PSST</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Reset_Closed_Date</fullName>
+        <description>Clear the Last Closed on Date field</description>
+        <field>Last_Closed_on_Date__c</field>
+        <name>Reset Closed Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Reset_Closure_Code</fullName>
+        <description>Clear the Closure Code field</description>
+        <field>Closure_Code__c</field>
+        <name>Reset Closure Code</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Reset_Send_Stall_Email</fullName>
+        <field>Send_Stall_Email__c</field>
+        <literalValue>0</literalValue>
+        <name>Reset Send Stall Email</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Set_Closed_Date_to_Current_Date</fullName>
+        <description>Set the Last Closed on Date to the current date</description>
+        <field>Last_Closed_on_Date__c</field>
+        <formula>Today()</formula>
+        <name>Set Closed Date to Current Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Set_Last_Date_of_Stall_Email</fullName>
+        <field>Date_of_Last_Client_Stall_Email__c</field>
+        <formula>TODAY()</formula>
+        <name>Set Last Date of Stall Email</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Set_Reopen_Date_to_Current_Date</fullName>
+        <description>Set the Reopen Date to the current date</description>
+        <field>Reopen_Date__c</field>
+        <formula>Today()</formula>
+        <name>Set Reopen Date to Current Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>TEMP_Additional_Contact_Notes</fullName>
+        <field>Additional_Contact_Notes__c</field>
+        <formula>&quot;The Reference PAC Owner Queue to User WFR fired&quot;</formula>
+        <name>TEMP Additional Contact Notes</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update</fullName>
+        <field>Last_Closed_for_True_Abatement_Letter_on__c</field>
+        <formula>TODAY()</formula>
+        <name>Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_ASO_Issue</fullName>
+        <field>ASO_Issue__c</field>
+        <literalValue>Yes</literalValue>
+        <name>Update ASO Issue</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Amendment_Status_to_NEW_REQUEST</fullName>
+        <field>Amendment_Status__c</field>
+        <literalValue>New Request</literalValue>
+        <name>Update Amendment Status to NEW REQUEST</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Latest_PSST_New_Assignment</fullName>
+        <field>Latest_PSST_New_Assignment__c</field>
+        <formula>TODAY()</formula>
+        <name>Update Latest PSST New Assignment</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Owner</fullName>
+        <field>OwnerId</field>
+        <lookupValue>PAC_Group_Locals</lookupValue>
+        <lookupValueType>Queue</lookupValueType>
+        <name>Update Owner</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Owner1</fullName>
+        <field>OwnerId</field>
+        <lookupValue>PAC_MPSC_D_E_News</lookupValue>
+        <lookupValueType>Queue</lookupValueType>
+        <name>Update Owner</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_PSST_New_SLA_due_date</fullName>
+        <field>PSST_New_SLA_due_date__c</field>
+        <formula>Follow_Up_Date__c - 14</formula>
+        <name>Update PSST New SLA due date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Status</fullName>
+        <field>Status__c</field>
+        <literalValue>Pending PAC Review - Transferring New to D/E</literalValue>
+        <name>Update Status</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_owner_to_Queue_PAC_Group_F</fullName>
+        <field>OwnerId</field>
+        <lookupValue>PAC_Group_F</lookupValue>
+        <lookupValueType>Queue</lookupValueType>
+        <name>Update owner to Queue PAC Group F</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_to_PAC_MPSC_HR_News</fullName>
+        <field>OwnerId</field>
+        <lookupValue>PAC_MPSC_HR_News</lookupValue>
+        <lookupValueType>Queue</lookupValueType>
+        <name>Update to PAC MPSC HR News</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>ASO Issue Update</fullName>
+        <actions>
+            <name>Update_ASO_Issue</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 OR 2 OR 3 OR 4 OR 5 OR 6 OR 7 OR 8 OR 9 OR 10 OR 11 OR 12 OR (13 AND 14) OR 15</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PAC__c.Revenue_Location__c</field>
+            <operation>equals</operation>
+            <value>808</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Revenue_Location__c</field>
+            <operation>equals</operation>
+            <value>848</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Revenue_Location__c</field>
+            <operation>equals</operation>
+            <value>833</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Revenue_Location__c</field>
+            <operation>equals</operation>
+            <value>852</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Revenue_Location__c</field>
+            <operation>equals</operation>
+            <value>952</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Revenue_Location__c</field>
+            <operation>equals</operation>
+            <value>827</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Revenue_Location__c</field>
+            <operation>equals</operation>
+            <value>821</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Revenue_Location__c</field>
+            <operation>equals</operation>
+            <value>903</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Revenue_Location__c</field>
+            <operation>equals</operation>
+            <value>953</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Revenue_Location__c</field>
+            <operation>equals</operation>
+            <value>954</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Revenue_Location__c</field>
+            <operation>equals</operation>
+            <value>887</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Revenue_Location__c</field>
+            <operation>equals</operation>
+            <value>872</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Revenue_Location__c</field>
+            <operation>greaterOrEqual</operation>
+            <value>800</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Revenue_Location__c</field>
+            <operation>lessOrEqual</operation>
+            <value>899</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Revenue_Location__c</field>
+            <operation>equals</operation>
+            <value>903,952,953,954</value>
+        </criteriaItems>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Assign Any Additionals to%E2%80%99 field as %E2%80%98Additional%2FDuplicate%E2%80%99</fullName>
+        <actions>
+            <name>Assign_Any_Additionals_to_field_as_Ad</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PAC__c.Closure_Code__c</field>
+            <operation>equals</operation>
+            <value>Withdrawn - Duplicate/Additional Notice</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Assign_Any_Additionals_to__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Closed in PAC - Communicated Findings to Client,Closed in PAC - Field to Relay Findings to Client,Closed in PAC - No Communication Necessary</value>
+        </criteriaItems>
+        <description>If Assign Any Additionals To field is blank, and ‘closure code’ = ‘Withdrawn – Duplicate/Additional’ populate ‘Assign Any Additionals to’ field as ‘Additional/Duplicate’</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Assign Any Additionals to%E2%80%99 field as %E2%80%98Client Responsibility%E2%80%99</fullName>
+        <actions>
+            <name>Assign_Any_Additionals_to_field_as_Cl</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PAC__c.Closure_Code__c</field>
+            <operation>equals</operation>
+            <value>Client Responsibility to Resolve</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Assign_Any_Additionals_to__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Closed in PAC - Communicated Findings to Client,Closed in PAC - Field to Relay Findings to Client,Closed in PAC - No Communication Necessary</value>
+        </criteriaItems>
+        <description>f Assign Any Additionals To field is blank and ‘closure code’ = ‘Client Responsibility to Resolve’, populate as ‘Client Responsibility’</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Assign Any Additionals to%E2%80%99 field as %E2%80%98Field Responsibility%E2%80%99</fullName>
+        <actions>
+            <name>Field_Responsibility_to_Resolve_popula</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PAC__c.Closure_Code__c</field>
+            <operation>equals</operation>
+            <value>Field Responsibility to Resolve</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Assign_Any_Additionals_to__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Closed in PAC - Communicated Findings to Client,Closed in PAC - Field to Relay Findings to Client,Closed in PAC - No Communication Necessary</value>
+        </criteriaItems>
+        <description>If Assign Any Additionals To field is blank, and ‘closure code’ = ‘Field Responsibility to Resolve’, populate as ‘Field Responsibility’</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Assign Any Additionals to%E2%80%99 field as %E2%80%98Multi-Client%E2%80%99</fullName>
+        <actions>
+            <name>Assign_Any_Additionals_to_field_as_Mu</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PAC__c.Closure_Code__c</field>
+            <operation>equals</operation>
+            <value>Withdrawn - Multi Client Issue</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Assign_Any_Additionals_to__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Closed in PAC - Communicated Findings to Client,Closed in PAC - Field to Relay Findings to Client,Closed in PAC - No Communication Necessary</value>
+        </criteriaItems>
+        <description>If Assign Any Additionals field is blank and ‘closure code’ = ‘Withdrawn – Multi Client Issue’, populate ‘Assign Any Additionals to’ field as ‘Multi-Client’</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Assign Any Additionals to%E2%80%99 field as %E2%80%98Original ORR%E2%80%99</fullName>
+        <actions>
+            <name>Assign_Any_Additionals_to_field_as_Or</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 3 AND (4 OR 5)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PAC__c.Closure_Code__c</field>
+            <operation>notEqual</operation>
+            <value>Client Responsibility to Resolve,Field Responsibility to Resolve,Withdrawn - Duplicate/Additional Notice,Withdrawn - Multi Client Issue</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Assign_Any_Additionals_to__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Closed in PAC - Communicated Findings to Client,Closed in PAC - Field to Relay Findings to Client,Closed in PAC - No Communication Necessary</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.PAC_High_Revenue_Client__c</field>
+            <operation>equals</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Paychex_PEO_Issue__c</field>
+            <operation>equals</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <description>If (Assign Any Additionals To field is blank, and ‘closure code’ &lt;&gt; ‘Withdrawn – Duplicate/Additional’, ‘Withdrawn – Multi Client Issue’, ‘Client Responsibility to Resolve’, ‘Field Responsibility to Resolve’) AND ((‘PAC High Revenue Client?&apos; = YES) OR (‘P</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Assign Any Additionals to%E2%80%99 field as %E2%80%98PSST Group%E2%80%99</fullName>
+        <actions>
+            <name>Assign_Any_Additionals_to_field_as_P</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <booleanFilter>1 AND 2 AND 3 AND (4 OR 5)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PAC__c.Closure_Code__c</field>
+            <operation>notEqual</operation>
+            <value>Client Responsibility to Resolve,Field Responsibility to Resolve,Withdrawn - Duplicate/Additional Notice,Withdrawn - Multi Client Issue</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Assign_Any_Additionals_to__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Closed in PAC - Communicated Findings to Client,Closed in PAC - Field to Relay Findings to Client,Closed in PAC - No Communication Necessary</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.PAC_High_Revenue_Client__c</field>
+            <operation>notEqual</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Paychex_PEO_Issue__c</field>
+            <operation>equals</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <description>If (&apos;Assign Any Additionals To&apos; field is blank, and ‘closure code’ &lt;&gt; ‘Withdrawn – Duplicate/Additional’, ‘Withdrawn – Multi Client Issue’, ‘Client Responsibility to Resolve’, ‘Field Responsibility to Resolve’) AND ((‘PAC High Revenue Client?’ &lt;&gt; YES) AND</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>CPR Group New update</fullName>
+        <actions>
+            <name>CPR_Group_New</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 4 AND( 3 OR 5  OR 6)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>startsWith</operation>
+            <value>Pending PAC Review</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.CPR_Group_New__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.OwnerId</field>
+            <operation>contains</operation>
+            <value>PAC MPSC</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Paychex_PEO_Issue__c</field>
+            <operation>notEqual</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Paychex_Location__c</field>
+            <operation>startsWith</operation>
+            <value>940 - Multi - Rochester,942 - Multi - Phoenix,943 - Multi - Indianapolis,944 - Multi - Nashville</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Branch_Nbr__c</field>
+            <operation>equals</operation>
+            <value>940,942,943,944</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Closed in PAC - No Communication Necessary</fullName>
+        <actions>
+            <name>PAC_Auto_Confirm_DUPLICATE_NOTICE_FIELD_main_contact</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PAC__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Reference PAC Record Type</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Closed in PAC - No Communication Necessary</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Additional_Duplicate_To__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Sent_New_Submission_Email__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Client_Contact_Email__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Flag 1 date time</fullName>
+        <actions>
+            <name>Flag_1_date_time</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>ISCHANGED(Training_Opportunity_1__c)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Flag 2 date time</fullName>
+        <actions>
+            <name>Flag_2_date_time</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>ISCHANGED( Training_Opportunity_2__c)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Flag 3 date time</fullName>
+        <actions>
+            <name>Flag_3_date_time</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>ISCHANGED( Training_Opportunity_3__c)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Follow Up Date to Null</fullName>
+        <actions>
+            <name>Follow_Up_Date_to_Null</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Closed in PAC - Communicated Findings to Client,Closed in PAC - Field to Relay Findings to Client,Closed in PAC - No Communication Necessary</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Increment Number of Additional Notices</fullName>
+        <actions>
+            <name>Increment_Number_of_Additional_Notice</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Increment the Number of Additional Notices Received field when the Status is changed to &quot;Pending PAC Review - Additional Notice Received&quot;</description>
+        <formula>And( ISCHANGED(Status__c), ISPICKVAL(Status__c , &apos;Pending PAC Review - Additional Notice Received&apos;) )</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Latest PSST New Assignment Update</fullName>
+        <actions>
+            <name>Update_Latest_PSST_New_Assignment</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Pending PAC Review - Additional Notice Received,Reviewed in PAC - PSST NEW Escalation,Reviewed in PAC - PSST Fast Lane</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>MPSC D%2FE News Owner Assignment</fullName>
+        <actions>
+            <name>Update_Owner1</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 3 AND 4 AND 5</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PAC__c.Prospect_Client_Number__c</field>
+            <operation>startsWith</operation>
+            <value>940,942,943,944</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Client_Contact_Name__c</field>
+            <operation>notContain</operation>
+            <value>mailcenter</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.OwnerId</field>
+            <operation>equals</operation>
+            <value>PAC Group D,PAC Group E</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Pending PAC Review - New Notice Received</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Paychex_PEO_Issue__c</field>
+            <operation>notEqual</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <description>The workflow should update the field named Owner to &quot;PAC MPSC D/E News</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>MPSC HR News Owner Assignment</fullName>
+        <actions>
+            <name>Update_to_PAC_MPSC_HR_News</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PAC__c.Client_Contact_Name__c</field>
+            <operation>notContain</operation>
+            <value>mailcenter</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.OwnerId</field>
+            <operation>equals</operation>
+            <value>PAC Group A,PAC Group B,PAC Group C,PAC Group D,PAC Group E,PAC Group Default,PAC Group - High Revenue,PAC Group - Locals</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Pending PAC Review - New Notice Received</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Paychex_PEO_Issue__c</field>
+            <operation>notEqual</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.PAC_High_Revenue_Client__c</field>
+            <operation>equals</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Prospect_Client_Number__c</field>
+            <operation>startsWith</operation>
+            <value>940,942,943,944</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>MPSC Regular News Workflow</fullName>
+        <actions>
+            <name>Owner_to_PAC_MPSC_Regular_News</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>(1 OR 7) AND 2 AND 3 AND 4 AND 5 AND 6</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PAC__c.Prospect_Client_Number__c</field>
+            <operation>startsWith</operation>
+            <value>940,942,943,944</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Client_Contact_Name__c</field>
+            <operation>notContain</operation>
+            <value>mailcenter</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.OwnerId</field>
+            <operation>equals</operation>
+            <value>PAC Group A,PAC Group B,PAC Group C,PAC Group Default</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Pending PAC Review - New Notice Received</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Paychex_PEO_Issue__c</field>
+            <operation>notEqual</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.PAC_High_Revenue_Client__c</field>
+            <operation>notEqual</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.ASO_Issue__c</field>
+            <operation>equals</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <description>The workflow should update the field named Owner to &quot;PAC MPSC Regular News&quot;</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Owner changes for Reference PAC</fullName>
+        <actions>
+            <name>Owner</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PAC__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Reference PAC Record Type</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Agency__c</field>
+            <operation>equals</operation>
+            <value>AL - ALABAMA,CO - COLORADO,DE - DELAWARE,KY - KENTUCKY,MI - MICHIGAN,MO - MISSOURI,OH - OHIO,PA - PENNSYLVANIA</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Type__c</field>
+            <operation>equals</operation>
+            <value>Local/Other</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>contains</operation>
+            <value>Pending PAC Review - New Notice Received,Pending PAC Review - Transferring New to D/E,Pending PAC Review - Reassign to New ORR</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Paychex_PEO_Issue__c</field>
+            <operation>notEqual</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.OwnerId</field>
+            <operation>equals</operation>
+            <value>PAC Group Default,PAC Group A,PAC Group B,PAC Group C</value>
+        </criteriaItems>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>PAC Group Locals Workflow</fullName>
+        <actions>
+            <name>Update_Owner</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6 AND 7</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PAC__c.OwnerId</field>
+            <operation>contains</operation>
+            <value>PAC Group - Default,PAC Group A,PAC Group B,PAC Group C,PAC Group F,PAC MPSC HR News,PAC MPSC Regular News,PAC Group Default</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Pending PAC Review - New Notice Received,Pending PAC Review - Reassign to New ORR,Pending PAC Review - Transferring New to D/E</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Agency__c</field>
+            <operation>equals</operation>
+            <value>AL - ALABAMA,CO - COLORADO,DE - DELAWARE,KY - KENTUCKY,MI - MICHIGAN,MO - MISSOURI,OH - OHIO,PA - PENNSYLVANIA</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Type__c</field>
+            <operation>equals</operation>
+            <value>Local/Other</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Paychex_PEO_Issue__c</field>
+            <operation>notEqual</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Local_Name__c</field>
+            <operation>notContain</operation>
+            <value>DETF,Family Leave</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.OwnerId</field>
+            <operation>notEqual</operation>
+            <value>PAC Group Additional/Duplicate</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>PSST New SLA due date Update</fullName>
+        <actions>
+            <name>Update_PSST_New_SLA_due_date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Pending PAC Review - Additional Notice Received,Reviewed in PAC - PSST NEW Escalation,Reviewed in PAC - PSST Fast Lane</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Paychex PEO Issue 2</fullName>
+        <actions>
+            <name>Paychex_PEO_Issue_2</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>AND(
+BEGINS(TEXT(Status__c),&quot;Pending PAC Review&quot;),
+NOT(ISPICKVAL(Paychex_PEO_Issue__c,&quot;Yes&quot;)) || NOT(ISPICKVAL(Paychex_PEO_Issue__c,&quot;No&quot;)),
+
+
+OR(
+CONTAINS(Field_Contact_Name__r.Title,&quot;PEO&quot;),
+BEGINS(Prospect_Client_Number__c,&quot;741&quot;),
+CONTAINS(Submission_Notes__c,&quot;PEO&quot;)))</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Populate Closed Date</fullName>
+        <actions>
+            <name>Set_Closed_Date_to_Current_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Populate the Last Closed on Date based on a populated Closure Code</description>
+        <formula>And( ISCHANGED(Closure_Code__c), (NOT(ISPICKVAL(Closure_Code__c,&apos;&apos;))) )</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Populate Reopen Date</fullName>
+        <actions>
+            <name>Reset_Closed_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Reset_Closure_Code</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Set_Reopen_Date_to_Current_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Populate the Reopen Date when a Status value of &quot;Closed&quot; is changed, and reset the Closure Code and Last Closed on Date fields.</description>
+        <formula>And( 
+ISCHANGED(Status__c), 
+NOT(ISPICKVAL(Status__c,&apos;&apos;)), 
+OR(
+TEXT(PRIORVALUE(Status__c)) = &apos;Closed in PAC - Communicated Findings to Client&apos;, TEXT(PRIORVALUE(Status__c)) = &apos;Closed in PAC - Field to Relay Findings to Client&apos;, TEXT(PRIORVALUE(Status__c)) = &apos;Closed in PAC - No Communication Necessary&apos;),
+NOT(BEGINS(TEXT(Status__c),&apos;Closed in PAC&apos;)))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Process Reference PAC - Init Research Findings</fullName>
+        <actions>
+            <name>Ref_PAC_Init_Research_Find_1_Log_Updat</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Ref_PAC_Init_Research_Find_2_Log_Clear</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Contents of the Initial Research Findings/Summary field are appended to the Initial Research Findings/Summary Log field, prior to the clearing out of the Initial Research 
+Findings/Summary field</description>
+        <formula>ISCHANGED(Initial_Research_Findings_Summary__c) || not(isblank(Initial_Research_Findings_Summary__c))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Process Reference PAC - PAC Follow Up Notes</fullName>
+        <actions>
+            <name>Ref_PAC_Follow_Up_Notes_1_Log_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Ref_PAC_Follow_Up_Notes_2_Log_Clear</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Contents of the PAC Follow Up Notes field are appended to the PAC Follow Up Notes Log field, prior to the clearing out of the PAC Follow Up Notes field</description>
+        <formula>ISCHANGED(PAC_Follow_Up_Notes__c) || not(isblank(PAC_Follow_Up_Notes__c))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Process Reference PAC Field Update Comment</fullName>
+        <actions>
+            <name>Ref_PAC_Field_Update_Comment_1_Log_Upd</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Ref_PAC_Field_Update_Comment_2_Log_Cle</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Contents of the Field Update Comments field are appended to the Field Update Comments Log field, prior to the clearing out of the Field Update Comments field</description>
+        <formula>ISCHANGED(Field_Update_Comments__c) || not(isblank(Field_Update_Comments__c))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ref PAC - Closed Submission email with populated Client Contact</fullName>
+        <actions>
+            <name>PAC_Closed_Submission_email_with_populated_Client_Contact</name>
+            <type>Alert</type>
+        </actions>
+        <actions>
+            <name>Ref_PAC_set_Latest_Closed_Submission_Ema</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Send closed submission email to Field Contact that does contain Client Contact info</description>
+        <formula>RecordTypeId = &apos;012700000001kI1&apos; &amp;&amp; 
+( ISPICKVAL(Status__c, &apos;Closed in PAC - Communicated Findings to Client&apos;)  ) &amp;&amp; 
+ NOT(ISPICKVAL(Closure_Code__c, &apos;Withdrawn - Duplicate/Additional Notice&apos;)) &amp;&amp;
+NOT(ISBLANK(Field_Contact_Name__c)) &amp;&amp; 
+NOT(ISBLANK(Client_Contact_Name__c)) &amp;&amp; 
+NOT(ISBLANK(Client_Contact_Email__c))</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ref PAC - Closed Submission email without populated Client Contact</fullName>
+        <actions>
+            <name>PAC_Closed_Submission_email_without_populated_Client_Contact_info</name>
+            <type>Alert</type>
+        </actions>
+        <actions>
+            <name>Ref_PAC_set_Latest_Closed_Submission_Ema</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Send closed submission email to Field Contact that does not contain Client Contact info</description>
+        <formula>RecordTypeId = &apos;012700000001kI1&apos; &amp;&amp; 
+( ISPICKVAL(Status__c, &apos;Closed in PAC - Field to Relay Findings to Client&apos;)  ) &amp;&amp; 
+NOT(ISBLANK(Field_Contact_Name__c))</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ref PAC - New Submission email with populated Field Contact</fullName>
+        <actions>
+            <name>PAC_New_Submission_email_with_populated_Field_Contact</name>
+            <type>Alert</type>
+        </actions>
+        <actions>
+            <name>Ref_PAC_set_Sent_New_Submission_Email</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Send new submission received email to Field Contact that does contain Client Contact info</description>
+        <formula>RecordTypeId = &apos;012700000001kI1&apos; &amp;&amp; 
+ISBLANK(Sent_New_Submission_Email__c) &amp;&amp; 
+NOT(ISBLANK(Prompt_New_Submission_Email__c)) &amp;&amp; 
+ISPICKVAL(Status__c, &apos;Pending PAC Review - New Notice Received&apos;) &amp;&amp; 
+NOT(ISBLANK(Field_Contact_Name__c)) &amp;&amp; 
+NOT(ISBLANK(Client_Contact_Name__c)) &amp;&amp; 
+NOT(ISBLANK(Client_Contact_Email__c)) &amp;&amp; 
+Client_Contact_Email__c  &lt;&gt; &quot;pacmailtest@paychex.com&quot;  &amp;&amp;  Client_Contact_Email__c  &lt;&gt; &quot;PACMailTest@paychex.onmicrosoft.com&quot;</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ref PAC - New Submission email without populated Client Contact</fullName>
+        <actions>
+            <name>PAC_New_Submission_email_without_populated_Client_Contact_info</name>
+            <type>Alert</type>
+        </actions>
+        <actions>
+            <name>Ref_PAC_set_Sent_New_Submission_Email</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Send new submission received email to Field Contact that does not contain Client Contact info</description>
+        <formula>RecordTypeId = &apos;012700000001kI1&apos; &amp;&amp; 
+ISBLANK(Sent_New_Submission_Email__c) &amp;&amp; 
+NOT(ISBLANK(Prompt_New_Submission_Email__c)) &amp;&amp; 
+ISPICKVAL(Status__c, &apos;Pending PAC Review - New Notice Received&apos;) &amp;&amp; 
+NOT(ISBLANK(Field_Contact_Name__c)) &amp;&amp; 
+(ISBLANK(Client_Contact_Email__c))</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Reference PAC update Owner - PAC Group A</fullName>
+        <actions>
+            <name>Ref_PAC_Prim_Assign_Group_PAC_Group_A</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Ref_PAC_set_Prompt_New_Submission_Email</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Reference_PAC_Owner_PAC_Group_A</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6 AND 7 AND (8 OR 9 OR 10 OR 11) AND 12</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PAC__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Reference PAC Record Type</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Federal_ID_Number__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Pending PAC Review - New Notice Received,Pending PAC Review - Additional Notice Received</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Ticket_Type__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Type__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Primary_Assignment_Group__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Date_1st_Notice_Received_in_PAC__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Agency__c</field>
+            <operation>equals</operation>
+            <value>AR - ARKANSAS,CO - COLORADO,CT - CONNECTICUT,IL - ILLINOIS,IA - IOWA</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Agency__c</field>
+            <operation>equals</operation>
+            <value>MO - MISSOURI,VT - VERMONT</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Agency__c</field>
+            <operation>equals</operation>
+            <value>NV - NEVADA,OK - OKLAHOMA,SD - SOUTH DAKOTA</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Agency__c</field>
+            <operation>equals</operation>
+            <value>TN - TENNESSEE,AK - ALASKA,GA - GEORGIA,MD - MARYLAND,NH - NEW HAMPSHIRE,WY - WYOMING</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.PAC_High_Revenue_Client__c</field>
+            <operation>notEqual</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <description>Based on Reference PAC field criteria, most notably the Tax Agency value, update Owner to the PAC Group A queue</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Reference PAC update Owner - PAC Group B</fullName>
+        <actions>
+            <name>Ref_PAC_Prim_Assign_Group_PAC_Group_B</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Ref_PAC_set_Prompt_New_Submission_Email</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Reference_PAC_Owner_PAC_Group_B</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6 AND 7 AND (8 OR 9 OR 10 OR 11 OR 12) AND 13</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PAC__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Reference PAC Record Type</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Federal_ID_Number__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Pending PAC Review - New Notice Received,Pending PAC Review - Additional Notice Received</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Ticket_Type__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Type__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Primary_Assignment_Group__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Date_1st_Notice_Received_in_PAC__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Agency__c</field>
+            <operation>equals</operation>
+            <value>AL - ALABAMA,DE - DELAWARE</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Agency__c</field>
+            <operation>equals</operation>
+            <value>ID - IDAHO,IN - INDIANA,KS - KANSAS,KY - KENTUCKY</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Agency__c</field>
+            <operation>equals</operation>
+            <value>LA - LOUISIANA,NC - NORTH CAROLINA</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Agency__c</field>
+            <operation>equals</operation>
+            <value>NM - NEW MEXICO,OH - OHIO,RI - RHODE ISLAND</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Agency__c</field>
+            <operation>equals</operation>
+            <value>MS - MISSISSIPPI,TX - TEXAS,WA - WASHINGTON</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.PAC_High_Revenue_Client__c</field>
+            <operation>notEqual</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <description>Based on Reference PAC field criteria, most notably the Tax Agency value, update Owner to the PAC Group B queue</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Reference PAC update Owner - PAC Group C</fullName>
+        <actions>
+            <name>Ref_PAC_Prim_Assign_Group_PAC_Group_C</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Ref_PAC_set_Prompt_New_Submission_Email</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Reference_PAC_Owner_PAC_Group_C</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6 AND 7 AND (8 OR 9 OR 10 OR 11) AND 12</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PAC__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Reference PAC Record Type</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Federal_ID_Number__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Pending PAC Review - New Notice Received,Pending PAC Review - Additional Notice Received</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Ticket_Type__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Type__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Primary_Assignment_Group__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Date_1st_Notice_Received_in_PAC__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Agency__c</field>
+            <operation>equals</operation>
+            <value>AZ - ARIZONA,HI - HAWAII,ME - MAINE</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Agency__c</field>
+            <operation>equals</operation>
+            <value>MN - MINNESOTA,MT - MONTANA,NE - NEBRASKA,OR - OREGON</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Agency__c</field>
+            <operation>equals</operation>
+            <value>PA - PENNSYLVANIA,SC - SOUTH CAROLINA,UT - UTAH</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Agency__c</field>
+            <operation>equals</operation>
+            <value>,VA - VIRGINIA,WV - WEST VIRGINIA,WI - WISCONSIN,ND - NORTH DAKOTA</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.PAC_High_Revenue_Client__c</field>
+            <operation>notEqual</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <description>Based on Reference PAC field criteria, most notably the Tax Agency value, update Owner to the PAC Group C queue</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Reference PAC update Owner - PAC Group D</fullName>
+        <actions>
+            <name>Ref_PAC_Prim_Assign_Group_PAC_Group_D</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Ref_PAC_set_Prompt_New_Submission_Email</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Reference_PAC_Owner_PAC_Group_D</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6 AND ((7 OR (8 AND 9)))</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PAC__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Reference PAC Record Type</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Federal_ID_Number__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Pending PAC Review - New Notice Received,Pending PAC Review - Additional Notice Received</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Ticket_Type__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Primary_Assignment_Group__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Date_1st_Notice_Received_in_PAC__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Type__c</field>
+            <operation>equals</operation>
+            <value>SSA - W2/941 DISCREPANCY,CIVIL PENALTY</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Ticket_Type__c</field>
+            <operation>equals</operation>
+            <value>Overpayment Issue</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Type__c</field>
+            <operation>equals</operation>
+            <value>941/944 - FED WITHHOLDING</value>
+        </criteriaItems>
+        <description>Based on Reference PAC field criteria, most notably the Tax Agency value, update Owner to the PAC Group D queue</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Reference PAC update Owner - PAC Group Default</fullName>
+        <actions>
+            <name>Ref_PAC_Prim_Assign_Group_PAC_Group_Defa</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Ref_PAC_set_Prompt_New_Submission_Email</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Reference_PAC_Owner_PAC_Group_Default</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6 AND 7 AND (((8 OR (9 AND 10 AND 11)) OR (12 AND 13 AND 14))) AND 15</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PAC__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Reference PAC Record Type</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Federal_ID_Number__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Pending PAC Review - New Notice Received,Pending PAC Review - Additional Notice Received</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Ticket_Type__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Primary_Assignment_Group__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Date_1st_Notice_Received_in_PAC__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Type__c</field>
+            <operation>notEqual</operation>
+            <value>940 - FED UNEMPLOYMENT,SSA - W2/941 DISCREPANCY,CIVIL PENALTY</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Agency__c</field>
+            <operation>equals</operation>
+            <value>CA - CALIFORNIA,DC - DC,FL - FLORIDA,MA - MASSACHUSETTS,MI - MICHIGAN,NJ - NEW JERSEY,NY - NEW YORK,PR - PUERTO RICO</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Agency__c</field>
+            <operation>equals</operation>
+            <value>IRS - INTERNAL REVENUE SERVICE</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Ticket_Type__c</field>
+            <operation>notEqual</operation>
+            <value>Overpayment Issue</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Type__c</field>
+            <operation>notEqual</operation>
+            <value>940 - FED UNEMPLOYMENT,SSA - W2/941 DISCREPANCY,CIVIL PENALTY</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Agency__c</field>
+            <operation>equals</operation>
+            <value>IRS - INTERNAL REVENUE SERVICE</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Ticket_Type__c</field>
+            <operation>equals</operation>
+            <value>Overpayment Issue</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Type__c</field>
+            <operation>notEqual</operation>
+            <value>941/944 - FED WITHHOLDING</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.PAC_High_Revenue_Client__c</field>
+            <operation>notEqual</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <description>Based on Reference PAC field criteria, most notably the Tax Agency value, update Owner to the PAC Group Default queue</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Reference PAC update Owner - PAC Group E</fullName>
+        <actions>
+            <name>Ref_PAC_Prim_Assign_Group_PAC_Group_E</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Ref_PAC_set_Prompt_New_Submission_Email</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Reference_PAC_Owner_PAC_Group_E</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6 AND 7 AND 8</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PAC__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Reference PAC Record Type</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Federal_ID_Number__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Pending PAC Review - New Notice Received,Pending PAC Review - Additional Notice Received</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Ticket_Type__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Type__c</field>
+            <operation>equals</operation>
+            <value>940 - FED UNEMPLOYMENT</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Primary_Assignment_Group__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Date_1st_Notice_Received_in_PAC__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Agency__c</field>
+            <operation>equals</operation>
+            <value>IRS - INTERNAL REVENUE SERVICE</value>
+        </criteriaItems>
+        <description>Based on Reference PAC field criteria, most notably the Tax Agency value, update Owner to the PAC Group E queue</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Reference PAC update Owner - PAC Group High Revenue</fullName>
+        <actions>
+            <name>Ref_PAC_Prim_Assign_Group_PAC_Group_HR</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Ref_PAC_set_Prompt_New_Submission_Email</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Reference_PAC_Owner_PAC_Group_High_Rev</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6 AND 7 AND 8</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PAC__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Reference PAC Record Type</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Federal_ID_Number__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Pending PAC Review - New Notice Received,Pending PAC Review - Additional Notice Received</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Ticket_Type__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Primary_Assignment_Group__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Date_1st_Notice_Received_in_PAC__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Tax_Type__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.PAC_High_Revenue_Client__c</field>
+            <operation>equals</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <description>Based on Reference PAC field criteria, most notably the PAC High Revenue Client value, update Owner to the PAC Group - High Revenue queue</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Reference PAC update StatusSummary - Closed</fullName>
+        <actions>
+            <name>Ref_PAC_set_StatusSummary_Closed</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>startsWith</operation>
+            <value>Closed in PAC</value>
+        </criteriaItems>
+        <description>Set the Reference PAC StatusSummary to Closed</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Reference PAC update StatusSummary - Open</fullName>
+        <actions>
+            <name>Ref_PAC_set_StatusSummary_Open</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>NOT(1 OR 2)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>startsWith</operation>
+            <value>Pending PAC Review</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>startsWith</operation>
+            <value>Closed in PAC</value>
+        </criteriaItems>
+        <description>Set the Reference PAC StatusSummary to Open</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Reference PAC update StatusSummary - Pending</fullName>
+        <actions>
+            <name>Ref_PAC_set_StatusSummary_Pending</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PAC__c.Status__c</field>
+            <operation>startsWith</operation>
+            <value>Pending PAC Review</value>
+        </criteriaItems>
+        <description>Set the Reference PAC StatusSummary to Pending</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Rejected - Action Needed</fullName>
+        <actions>
+            <name>AR_Rejected_Action_Needed</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PAC__c.Amendment_Status__c</field>
+            <operation>equals</operation>
+            <value>Rejected - Action Needed</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Rejected - No Action Needed</fullName>
+        <actions>
+            <name>AR_Rejected_No_Action_Needed</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PAC__c.Amendment_Status__c</field>
+            <operation>equals</operation>
+            <value>Rejected - No Action Needed</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Send Stall Email</fullName>
+        <actions>
+            <name>Send_Stall_Email</name>
+            <type>Alert</type>
+        </actions>
+        <actions>
+            <name>Reset_Send_Stall_Email</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Set_Last_Date_of_Stall_Email</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PAC__c.Send_Stall_Email__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PAC__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Reference PAC Record Type</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update Amendment Status to NEW REQUEST</fullName>
+        <actions>
+            <name>Update_Amendment_Status_to_NEW_REQUEST</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PAC__c.Amended_Return_s_needed__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <description>* When the ‘Amended Return(s) Needed’ field is set to true – populate the ‘Amendment Status’ field to “New Request”</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update Last Closed for True Abatement Letter on</fullName>
+        <actions>
+            <name>Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PAC__c.Abated_Reduced_How__c</field>
+            <operation>equals</operation>
+            <value>Resolved by official Abatement Request (no Appeal),Resolved by sending Letter of Explanation</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update Number of Follow Up Date Changes</fullName>
+        <actions>
+            <name>Add_1_to_Number_of_Follow_Up_Date_Chang</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>ISCHANGED(Follow_Up_Date__c)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update Status to Pending PAC review</fullName>
+        <actions>
+            <name>Update_Status</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>AND(ISPICKVAL(Status__c,&quot;Pending PAC Review - New Notice Received&quot;),
+ISCHANGED( OwnerId ),
+
+OR(
+OwnerId=&quot;00G700000044XLM&quot;,
+OwnerId=&quot;00G700000044XLO&quot;),
+
+OR(
+PRIORVALUE( OwnerId ) = &quot;00G700000044XLJ&quot;,
+PRIORVALUE( OwnerId ) = &quot;00G700000044XLK&quot;,
+PRIORVALUE( OwnerId ) = &quot;00G700000044XLL&quot;,
+PRIORVALUE( OwnerId ) = &quot;00G700000044XLN&quot;))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update the Owner Name field tp the Queue named PAC Group F</fullName>
+        <actions>
+            <name>DSC_919_CLient_to_Yes</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>AND(RecordTypeId = &quot;012700000001kI1&quot;,
+OR( OwnerId = &quot;00G700000044XLJ&quot;,OwnerId = &quot;00G700000044XLK&quot;, OwnerId =&quot;00G700000044XLL&quot;, OwnerId =&quot;00G700000044XLN&quot;, OwnerId = &quot;00G0g000003ukMb&quot;),
+TEXT(Status__c) = &quot;Pending PAC Review - New Notice Received&quot;,
+TEXT( Paychex_PEO_Issue__c) &lt;&gt; &quot;Yes&quot;,
+Revenue_Location__c = 919 || (Revenue_Location__c &gt; 3999  &amp;&amp;  Revenue_Location__c &lt; 4100))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

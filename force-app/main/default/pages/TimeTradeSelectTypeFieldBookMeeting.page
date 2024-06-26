@@ -1,0 +1,72 @@
+<!-- This vf pages lets user to select what type of event they are creating from TT, stored in the oppty and later updated to event in the evt trigger
+   
+  History
+  -------
+  01/14/2021 Pradeep Garlapaati       Created
+  
+ -->
+
+<apex:page standardcontroller="opportunity" extensions="TimeTradeSelectTypeFieldBookMeetingCtrl" action="{!getSEListAction}" lightningStylesheets="true">
+    <apex:pageMessages />
+    <apex:form >
+        <apex:pageblock >
+            <apex:pageBlockSection >
+                <apex:panelGrid columns="5">
+                    <apex:outputLabel >Please select what type meeting you want to create:</apex:outputLabel>
+                    <apex:inputField label="Please select what type meeting you want to create." value="{!opportunity.Type__c}"></apex:inputField>
+                    <apex:commandButton action="{!SaveOpportunity}" value="Save & Continue"/>
+                </apex:panelGrid><br/>
+                
+                
+                <apex:panelGrid columns="4" id="SE" >
+                    <apex:outputLabel >Sales Engineer:</apex:outputLabel>
+                    <apex:selectList styleclass="inputFieldToDisable" size="1" value="{!SalesEngineer}">
+                        <apex:selectOptions value="{!SalesEngineerList}"/>   
+                    </apex:selectList> 
+                    <apex:inputCheckbox title="No Specific SE select most available SE" value="{!IncludeGroup}" onchange="disableField(this)"/>No Specific SE select most available SE
+                </apex:panelGrid><br/><br/><br/>
+                <apex:panelGrid >
+                    <apex:outputLabel >Please upload the document here:</apex:outputLabel>
+                    <apex:inputFile value="{!attachment.body}"  filename="{!attachment.name}"/>
+                </apex:panelGrid><br/><br/>
+                <apex:panelGrid columns="4">                    
+                    <apex:outputLabel >Key Customer points and current challenges:</apex:outputLabel>
+                    <apex:inputField value="{!opportunity.Customer_Key_Points__c}"></apex:inputField>
+                    
+                    
+                    <apex:outputLabel /><apex:outputLabel />
+                     <apex:outputLabel >Customer Future State, Areas of focus:</apex:outputLabel>
+                    <apex:inputField value="{!opportunity.Customer_Success_Criteria__c}"></apex:inputField>
+                         
+                     <apex:outputLabel /><apex:outputLabel />
+                                      
+                    <b>Please reference our Sales Engineering Engagement Resource Center, to learn more about Sales Engineers,
+                    1:1 demo qualification, orchestrating successful engagements, and more!  (click on Libraries-> Sales Engineering Engagement folder to access)</b><br/>
+                    
+                     <apex:outputLabel /><apex:outputLabel /><apex:outputLabel />
+                    <b>Sales Engineering Engagement Resources :</b>
+                    <apex:outputlink value="{!$Label.Files_Section}" target="_blank">Find help here</apex:outputlink> 
+                                  
+                      
+                     <apex:outputLabel /><apex:outputLabel /><apex:outputLabel /><apex:outputLabel />
+                   
+                </apex:panelGrid>
+                
+                
+            </apex:pageBlockSection> 
+        </apex:pageblock>
+    </apex:form>
+
+
+<script>
+    function disableField(e) {
+        var fild = document.getElementsByClassName("inputFieldToDisable");
+         if(e.checked) {
+            fild[0].disabled = true;
+            fild[0].value = '';
+        } else {
+            fild[0].disabled = false;
+        }
+    }
+</script>
+</apex:page>

@@ -1,0 +1,26 @@
+<aura:component description="EventAttendeeList">
+    <aura:attribute name="selectedUsers" type="Contact[]" default="[]" />
+
+    <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Title</th>
+                <th>Phone</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            <aura:iteration var="selectedUser" items="{!v.selectedUsers}">
+                <tr>
+                    <td><lightning:buttonIcon iconName="utility:close" value="{!selectedUser}" variant="bare" onclick="{!c.removeAttendee}" class="red-icon" /></td>
+                    <td>{!selectedUser.Name}</td>
+                    <td>{!selectedUser.Title}</td>
+                    <td>{!selectedUser.Phone}</td>
+                    <td>{!selectedUser.Email}</td>
+                </tr>
+            </aura:iteration>
+        </tbody>
+    </table>
+</aura:component>

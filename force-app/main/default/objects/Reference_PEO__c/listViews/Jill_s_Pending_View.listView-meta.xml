@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Jill_s_Pending_View</fullName>
+    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6</booleanFilter>
+    <columns>NAME</columns>
+    <columns>Branch_Client_Number__c</columns>
+    <columns>Client_Name__c</columns>
+    <columns>Current_Onboarding_HRIS_Status__c</columns>
+    <columns>Onboarding_Open__c</columns>
+    <columns>Onboarding_Complete__c</columns>
+    <columns>Completed_Onboarding_Percentage__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Current_Onboarding_HRIS_Status__c</field>
+        <operation>equals</operation>
+        <value>Pending</value>
+    </filters>
+    <filters>
+        <field>Client_Processed__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_PEO__c.PEO_Hybrid_Based_Onboarding,Reference_PEO__c.PEO_Web_Based_Onboarding</value>
+    </filters>
+    <filters>
+        <field>No_Start_Client__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Branch_Client_Number__c</field>
+        <operation>notContain</operation>
+        <value>Rodie</value>
+    </filters>
+    <filters>
+        <field>Onboarding_Complete__c</field>
+        <operation>equals</operation>
+    </filters>
+    <label>Jill&apos;s Pending View</label>
+    <sharedTo>
+        <role>PEOServiceCenterManager</role>
+        <role>PEOServiceCenterRep1</role>
+    </sharedTo>
+</ListView>

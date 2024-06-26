@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>If_the_Integrations_Discussed_field_is_N</fullName>
+    <active>true</active>
+    <errorConditionFormula>ISPICKVAL(Integrations_Discussed__c, &apos;No&apos;) &amp;&amp; (  NOT(  ISNULL(Integrations_Requested__c)  )  ||  NOT(ISBLANK( Other_Integrations_Requested__c )) ||  NOT(ISPICKVAL(Integration_Need_Met__c, &apos;&apos;))  )</errorConditionFormula>
+    <errorMessage>You cannot enter Integrations Requested, Other Integrations Requested and  Integration Need Met fields  when Integrations Discussed is &quot;No&quot;</errorMessage>
+</ValidationRule>

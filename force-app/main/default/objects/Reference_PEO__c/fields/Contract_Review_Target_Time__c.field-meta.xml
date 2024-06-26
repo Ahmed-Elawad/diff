@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Contract_Review_Target_Time__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>Per Case #27860447, modified formula to [Contractual Specialist Time] field + 9 business hours (ET) which works out to be the same time but 1 Business Day later.
+This will need to be the [Contractual Specialist Time] field + 4 business hours (Eastern time) 
+Case # 25025561</description>
+    <formula>IF( 
+MOD(DATEVALUE(Contractual_Specialist_Time__c)- DATE(1900, 01, 01), 7) = 4
+,Contractual_Specialist_Time__c + 3,/* For Fri*/
+IF( 
+MOD(DATEVALUE(Contractual_Specialist_Time__c)- DATE(1900, 01, 01), 7) = 5
+,DATETIMEVALUE(TEXT(DATEVALUE(Contractual_Specialist_Time__c)) &amp; &quot; 21:00:00&quot;)+2,/* For Sat*/
+IF( 
+MOD(DATEVALUE(Contractual_Specialist_Time__c)- DATE(1900, 01, 01), 7) = 6 
+,DATETIMEVALUE(TEXT(DATEVALUE(Contractual_Specialist_Time__c)) &amp; &quot; 21:00:00&quot;)+1,/* For Sun*/
+IF( 
+MOD(DATEVALUE(Contractual_Specialist_Time__c)- DATE(1900, 01, 01), 7) &lt; 4
+,Contractual_Specialist_Time__c + 1  /* For Mon - Thur*/
+				,Contractual_Specialist_Time__c 
+))))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Contract Review Target Time</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>DateTime</type>
+</CustomField>

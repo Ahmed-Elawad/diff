@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sub_Product_cant_have_both_Phase_1_and_2</fullName>
+    <active>true</active>
+    <description>Sub Product field cannot have both Phase 1 and Phase 2 Case # 24988464</description>
+    <errorConditionFormula>$Profile.Name&lt;&gt;&apos;System Administrator&apos; &amp;&amp; RecordTypeId=&apos;012700000001kHe&apos; &amp;&amp;
+(
+		(IF(INCLUDES(Sub_Products__c, &quot;FSA - Phase 1&quot;), 1, 0) +   IF(INCLUDES(Sub_Products__c, &quot;FSA - Phase 2&quot;), 1, 0))  &gt;= 2
+	|| 
+	(IF(INCLUDES(Sub_Products__c, &quot;FSA - Phase 1&quot;), 1, 0)+   IF(INCLUDES(Sub_Products__c, &quot;FSA CONV - Phase 2&quot;), 1, 0))&gt;=2
+			||
+	(IF(INCLUDES(Sub_Products__c, &quot;HRA - Phase 1&quot;), 1, 0)+   IF(INCLUDES(Sub_Products__c, &quot;FSA - Phase 2&quot;), 1, 0))&gt;=2
+			||
+	(IF(INCLUDES(Sub_Products__c, &quot;HRA - Phase 1&quot;), 1, 0)+   IF(INCLUDES(Sub_Products__c, &quot;FSA CONV - Phase 2&quot;), 1, 0))&gt;=2
+			||
+	(IF(INCLUDES(Sub_Products__c, &quot;QSEHRA - Phase 1&quot;), 1, 0)+IF(INCLUDES(Sub_Products__c, &quot;FSA - Phase 2&quot;), 1, 0))&gt;=2
+			||
+	(IF(INCLUDES(Sub_Products__c, &quot;QSEHRA - Phase 1&quot;), 1, 0)+IF(INCLUDES(Sub_Products__c, &quot;FSA CONV - Phase 2&quot;), 1, 0))&gt;=2
+			||
+	(IF(INCLUDES(Sub_Products__c, &quot;HSA - Phase 1&quot;), 1, 0)+   IF(INCLUDES(Sub_Products__c, &quot;FSA - Phase 2&quot;), 1, 0))&gt;=2
+			||
+	(IF(INCLUDES(Sub_Products__c, &quot;HSA - Phase 1&quot;), 1, 0)+   IF(INCLUDES(Sub_Products__c, &quot;FSA CONV - Phase 2&quot;), 1, 0))&gt;=2
+)</errorConditionFormula>
+    <errorDisplayField>Sub_Products__c</errorDisplayField>
+    <errorMessage>Sub Products Cannot have both Phase 1 and Phase 2. Please verify and submit again.</errorMessage>
+</ValidationRule>

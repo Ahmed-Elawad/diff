@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Send_New_User_Notification_Email_FullSandbx</fullName>
+        <description>Send New User Notification Email - FullSandbx</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Email</field>
+            <type>email</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>Center_of_Excellence_Email_Templates/New_User_Notification_Email_FullSandbx</template>
+    </alerts>
+    <alerts>
+        <fullName>Send_New_User_Notification_Email_Production</fullName>
+        <description>Send New User Notification Email - Production</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Email</field>
+            <type>email</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>Center_of_Excellence_Email_Templates/New_User_Notification_Email_Production</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>Check_Send_Paychex_SSO_New_User_Email</fullName>
+        <field>Send_Paychex_SSO_New_User_Email__c</field>
+        <literalValue>1</literalValue>
+        <name>Check Send Paychex SSO New User Email</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>true</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Uncheck_Send_Paychex_SSO_Email_Field</fullName>
+        <field>Send_Paychex_SSO_New_User_Email__c</field>
+        <literalValue>0</literalValue>
+        <name>Uncheck Send Paychex SSO Email Field</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>New User Notification Email - Fullsandbx</fullName>
+        <actions>
+            <name>Send_New_User_Notification_Email_FullSandbx</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <formula>AND(OR(ISPICKVAL(User_Type__c,&apos;Standard&apos;),ISPICKVAL(User_Type__c,&apos;CsnOnly&apos;)),$Organization.Id !=&apos;00D300000006M6H&apos; ,NOT(ISBLANK(SSOEmailSent__c)) ,OR(ISNEW()    ,SSOEmailSent__c != PRIORVALUE(SSOEmailSent__c )))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>New User Notification Email - Production</fullName>
+        <actions>
+            <name>Send_New_User_Notification_Email_Production</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <description>sends a custom template for SSO users</description>
+        <formula>AND( $User.Username&lt;&gt;&apos;sfdc_automation@paychex.com&apos;, OR(ISPICKVAL(User_Type__c,&apos;Standard&apos;),ISPICKVAL(User_Type__c,&apos;CsnOnly&apos;)),$Organization.Id =&apos;00D300000006M6H&apos; ,NOT(ISBLANK(SSOEmailSent__c)) ,OR(ISNEW()    ,SSOEmailSent__c != PRIORVALUE(SSOEmailSent__c )))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

@@ -1,0 +1,26 @@
+<aura:component implements="lightning:isUrlAddressable,force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId"  access="global">
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="objectType" type="String" />
+    <aura:attribute name="openInsights" type="Object[]" />
+    <lightning:navigation aura:id="navigate"/>
+    <!--<div class="box" title="Marketing Insights">-->
+    <div class="box" title="Customer Intent Signals">
+        <div class="banner-header slds-align_absolute-center">
+            <h4 class="slds-item_label slds-text-color_weak slds-truncate slds-text-align_center">Customer Intent Signals</h4>
+        </div>
+        <div class="banner-body">
+            <aura:if isTrue="{!v.objectType != 'Account'}">
+                <div class="{!'slds-item_detail slds-truncate slds-align_absolute-center column style= height: 166px;width: 189px' + (not(empty(v.recordId)) ? ' clickable-banner-item' : '') }" onclick="{!c.navigate}" title="Customer Intent Signals">
+                    <img src="{!$Resource.BannerIcons + '/LightningIcons/Insights.png'}"/>
+                    <p style= "color: rgb(0, 112, 210)">Customer Intent Signals Available</p>
+                </div>
+            </aura:if>
+            <aura:if isTrue="{!v.objectType == 'Account'}">
+                <div class="{!'slds-item_detail slds-truncate slds-align_absolute-center column ' + (not(empty(v.recordId)) ? ' clickable-banner-item' : '') }" onclick="{!c.navigateToRelatedList}" title="Customer Intent Signals">
+                    <img src="{!$Resource.BannerIcons + '/LightningIcons/Insights.png'}"/>
+                    <p style= "color: rgb(0, 112, 210)">Customer Intent Signals Available</p>
+                </div> 
+            </aura:if>
+        </div>
+    </div>
+</aura:component>

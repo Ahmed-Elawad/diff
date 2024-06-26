@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Onboarding_Completed__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>if you change the Account Type when checking the PEO New Client Meeting date you also need to change the code in ReferenceHRGcontroller, method  checkOnboardingDates</description>
+    <formula>IF(ISPICKVAL(Account__r.Type,&quot;PEO Client&quot;), 
+
+IF(Onboarding_Start_Date__c &gt;= DATE(2018,10,15) , 
+( 
+IF( ISBLANK( CC_Meeting__c ),0,1)+ 
+IF( ISBLANK( X1st_Invoice_Review__c ),0,1)+ 
+IF( ISBLANK( HR_Assessment_Completed__c ),0,1)+ 
+IF( ISBLANK( Reference_Manual_Review__c ),0,1)+ 
+IF( ISBLANK( PEO_New_Client_Meeting__c ),0,1)+ 
+IF( ISBLANK( STO_Meeting__c),0,1)+ 
+IF( ISBLANK( PEO_Handbook__c),0,1)+ 
+IF( NOT(ISNULL( HR_Action_Plan_Meeting__c )),1,0) 
+) / 8, 
+( 
+IF( ISBLANK( CC_Meeting__c ),0,1)+ 
+IF( ISBLANK( X1st_Invoice_Review__c ),0,1)+ 
+IF( ISBLANK( HR_Assessment_Completed__c ),0,1)+ 
+IF( ISBLANK( Reference_Manual_Review__c ),0,1)+ 
+IF( ISBLANK( PEO_New_Client_Meeting__c ),0,1)+ 
+IF( ISBLANK( STO_Meeting__c),0,1)+ 
+IF( NOT(ISNULL( HR_Action_Plan_Meeting__c )),1,0) 
+) / 7 
+) 
+
+, 
+( 
+IF( ISBLANK( HR_Assessment_Completed__c ),0,1)+ 
+IF( NOT(ISNULL( HR_Action_Plan_Meeting__c )),1,0) 
+) /2 
+
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Onboarding % Completed</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Percent</type>
+</CustomField>

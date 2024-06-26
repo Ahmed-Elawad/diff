@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Profiled_Required_Fields</fullName>
+    <active>false</active>
+    <description>Opportunities to Refer - Last 12 Months, Pay Providers Referred - Last 12 Months, Top Recommended Payroll Provider and # of Clients You Process Payroll For must be filled in to Profile a CPA</description>
+    <errorConditionFormula>AND(
+NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+ISPICKVAL(Outcome__c,&apos;Profiled&apos;),
+OR(
+ISBLANK(Opportunities_to_Refer_Last_12_Months__c),
+ISBLANK(Pay_Providers_Referred_Last_12_Months__c),
+ISBLANK(TEXT(Preferred_Method__c)),
+ISBLANK(Number_of_Payroll_Clients__c)))</errorConditionFormula>
+    <errorMessage>Opportunities to Refer - Last 12 Months, Pay Providers Referred - Last 12 Months, Top Recommended Payroll Provider and # of Clients You Process Payroll For must be filled in to Profile a CPA</errorMessage>
+</ValidationRule>

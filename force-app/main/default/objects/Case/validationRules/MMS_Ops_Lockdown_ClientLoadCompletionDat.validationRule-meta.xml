@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MMS_Ops_Lockdown_ClientLoadCompletionDat</fullName>
+    <active>true</active>
+    <description>Prevents the Client Load Completion Date field from being updated multiple times.</description>
+    <errorConditionFormula>AND(
+( ISCHANGED(Client_Load_Completion_Date__c) ),  (PRIORVALUE(Client_Load_Completion_Date__c )) &gt; DATEVALUE(&quot;2000-01-01&quot;)
+)</errorConditionFormula>
+    <errorDisplayField>Client_Load_Completion_Date__c</errorDisplayField>
+    <errorMessage>The Client Load Completion Date field can only be modified one time.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRSVC_Marketing_Outside_20_49_ees</fullName>
+    <booleanFilter>1 AND 2 AND 3 AND 4 and 5 and 6</booleanFilter>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ACCOUNT.ACCOUNT_NUMBER</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>ACCOUNT.EMPLOYEES</columns>
+    <columns>First_Run_Date__c</columns>
+    <columns>SUI_Rate__c</columns>
+    <columns>ACCOUNT.PHONE1</columns>
+    <columns>ACCOUNT.ADDRESS1_ZIP</columns>
+    <columns>ACCOUNT.ADDRESS1_CITY</columns>
+    <filterScope>Team</filterScope>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>notContain</operation>
+        <value>Flex,Preview,Advantage,PEO,HR Solutions,HRS,Current,Decision</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.EMPLOYEES</field>
+        <operation>greaterOrEqual</operation>
+        <value>20</value>
+    </filters>
+    <filters>
+        <field>Out_of_Business__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.EMPLOYEES</field>
+        <operation>lessOrEqual</operation>
+        <value>49</value>
+    </filters>
+    <filters>
+        <field>Do_Not_Call__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Email_Opt_Out__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <label>HRSVC-Marketing-Outside 20-49 ees</label>
+    <sharedTo>
+        <group>HRSSales</group>
+    </sharedTo>
+</ListView>

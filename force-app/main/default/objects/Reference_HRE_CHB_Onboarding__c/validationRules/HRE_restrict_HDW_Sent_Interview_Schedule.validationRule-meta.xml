@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRE_restrict_HDW_Sent_Interview_Schedule</fullName>
+    <active>true</active>
+    <description>Prevent the HDW Sent and Interview Scheduled fields from being simultaneously checked.</description>
+    <errorConditionFormula>AND(
+( HDW_Sent__c = TRUE ), 
+( Interview_Scheduled__c = TRUE), 
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)))
+)</errorConditionFormula>
+    <errorMessage>You cannot have &apos;HDW Sent&apos; and &apos;Interview Scheduled&apos; checked at the same time.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Not_Both_Emp_Num_and_NonEmp</fullName>
+    <active>true</active>
+    <description>Users with Employee Numbers can not be Non-Paychex Employees</description>
+    <errorConditionFormula>LEN( EmployeeNumber ) &gt; 0 &amp;&amp; Non_Paychex_Employee__c &amp;&amp; NOT( ISPICKVAL( Non_Paychex_Employee_User_Type__c , &apos;Generic User&apos;))</errorConditionFormula>
+    <errorMessage>**** Users with Employee Numbers can not be Non-Paychex Employees ****</errorMessage>
+</ValidationRule>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>EligibleToEmail__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>Is contact eligible to be emailed. Make sure they have a valid email and they&apos;re a Sales Contact or a Mirror of a Referral Contact</description>
+    <formula>AND(ISNULL( EmailBouncedDate),
+(ISBLANK( Email_Verification__c) || NOT(CONTAINS(Email_Verification__c ,&quot;Threat&quot;))) ,
+NOT(HasOptedOutOfEmail),
+NOT(No_Longer_With_Company__c),
+OR(Sales_Contact__c, Mirror_Ref_Ctct__c != null),
+NOT( ISBLANK(Email )),
+Mirror_Ref_Ctct__c == null || NOT( ISBLANK(  Mirror_Ref_Ctct__r.Email__c ) ) )</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>Is contact eligible to be emailed</inlineHelpText>
+    <label>EligibleToEmail</label>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

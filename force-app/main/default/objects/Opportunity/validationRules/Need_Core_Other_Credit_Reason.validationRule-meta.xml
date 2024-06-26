@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Need_Core_Other_Credit_Reason</fullName>
+    <active>true</active>
+    <description>When Other Credit checkbox is flagged, then a reason must be input</description>
+    <errorConditionFormula>AND( 
+
+Other_Credit__c  , $Profile.Name  &lt;&gt; &quot;System Administrator&quot;, 
+LEN( Other_Credit_Reason__c )  = 0)</errorConditionFormula>
+    <errorDisplayField>Other_Credit_Reason__c</errorDisplayField>
+    <errorMessage>When Other Credit checkbox is flagged, then a reason for the credit must be input</errorMessage>
+</ValidationRule>

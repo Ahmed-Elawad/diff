@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_newWarrantyrecord_emptyMainCause</fullName>
+    <active>true</active>
+    <description>Prevent users from creating a record with the PAC Warranty Record Type when the parent Reference PAC record has a blank Main Cause value.</description>
+    <errorConditionFormula>AND(
+ ISNEW(),
+ $RecordType.Name = &quot;PAC Warranty Record Type&quot;,Reference_PAC__r.RecordType.Id &lt;&gt; &quot;012700000001kI0&quot;,
+ (ISPICKVAL(Reference_PAC__r.Main_Cause__c,&apos;&apos;)),
+ NOT(CONTAINS($Profile.Name,&apos;System Administrator&apos;)) 
+)</errorConditionFormula>
+    <errorMessage>You cannot create a Warranty record when the related Reference PAC record has a blank Main Cause field.</errorMessage>
+</ValidationRule>

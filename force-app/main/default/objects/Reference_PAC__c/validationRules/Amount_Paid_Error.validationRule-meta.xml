@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Amount_Paid_Error</fullName>
+    <active>true</active>
+    <description>IF ((Penalty_Interest_Paid__c - Penalty_Interest_Recovered__c) &gt; 0.00 ) THEN Closure Code MUST start with &quot;Paid&quot; or Reduced&quot;</description>
+    <errorConditionFormula>AND( 
+Penalty_Interest_Paid__c - Penalty_Interest_Recovered__c &gt;0, 
+NOT( 
+OR( 
+BEGINS(TEXT(Closure_Code__c) ,&quot;Paid&quot;), 
+BEGINS(TEXT(Closure_Code__c) ,&quot;Reduced&quot;), 
+ISPICKVAL(Closure_Code__c,&quot;&quot;))) 
+)</errorConditionFormula>
+    <errorMessage>Closure Code must be Paid or Reduced when Amount Paid &gt; 0</errorMessage>
+</ValidationRule>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Contribution_Type_is_Multiple</fullName>
+    <active>true</active>
+    <description>If &quot;Contribution Type&quot; = Multiple, require the &quot;Multiple Contribution Types&quot; and &quot;# of Allocations&quot; fields to be entered.</description>
+    <errorConditionFormula>AND( 
+ISPICKVAL( Contribution_Type__c, &quot;Multiple&quot;), 
+OR( 
+ISBLANK( Multiple_Contribution_Types__c), 
+ISBLANK( of_Allocations__c)))</errorConditionFormula>
+    <errorDisplayField>Contribution_Type__c</errorDisplayField>
+    <errorMessage>Multiple Contribution Types, # of Allocations cannot be blank for Contribution Type = Multiple.</errorMessage>
+</ValidationRule>

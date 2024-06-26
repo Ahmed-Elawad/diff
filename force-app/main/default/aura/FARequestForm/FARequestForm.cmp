@@ -1,0 +1,114 @@
+<aura:component controller="FARequestFormAuraController" implements="force:lightningQuickAction,lightning:isUrlAddressable,force:appHostable,flexipage:availableForAllPageTypes,lightning:utilityItem">
+    <aura:attribute name="loading" type="Boolean" default="false" />
+    <aura:attribute name="CaseId" type="Id" default="" />
+    <aura:attribute name="FinancialAdvisor" type="Boolean" default="false" />
+    <aura:attribute name="BrokerDealer" type="Boolean" default="false" />
+    <aura:attribute name="BrokerDealerBranch" type="Boolean" default="false" />
+    <lightning:utilityBarAPI aura:id="utilitybar" />
+	<lightning:spinner aura:id="mySpinner" alternativeText="Processing.." title="Processing.." variant="brand" size="large" class="slds-hide"/>
+	<lightning:spinner aura:id="spinner" variant="brand" />
+    <lightning:recordEditForm aura:id="faRequestForm"
+                              recordTypeId=""
+                              objectApiName="Financial_Advisor_Request_Form__c"
+                              onload="{!c.handleLoad}"
+                              onsubmit="{!c.handleSubmit}"
+                              onerror="{!c.handleOnError}"
+                              onsuccess="{!c.handleSuccess}">
+		
+        <div class="slds-p-top_medium">This form should be used to notify Sales Broker Reps that FA additions or changes are needed.</div>        
+        <div class="slds-form-element">
+            <div class="slds-p-top_medium slds-text-color_error"><b>Request Information</b></div> 
+            <div class="slds-p-top_medium slds-p-horizontal_medium">
+                <label for="faFirstName"><b>First Name</b></label>
+                <lightning:inputField fieldName="FA_First_Name__c" variant="label-hidden" aura:id="faFirstName"/>
+            </div>
+            <div class="slds-p-top_medium slds-p-horizontal_medium">
+                <label for="faLastName"><b>Last Name</b></label>
+                <lightning:inputField fieldName="FA_Last_Name__c" variant="label-hidden" aura:id="faLastName"/>
+            </div>
+            <div class="slds-p-top_medium slds-p-horizontal_medium">
+                <label for="faAddress"><b>Address</b></label>
+                <lightning:inputField fieldName="FA_Address__c" variant="label-hidden" aura:id="faAddress"/>
+            </div>
+            <div class="slds-grid">
+                <div class="slds-p-top_medium slds-p-horizontal_medium slds-col">
+                    <label for="faCity"><b>City</b></label>
+                    <lightning:inputField fieldName="FA_City__c" variant="label-hidden" aura:id="faCity"/>
+                </div>
+                <div class="slds-p-top_medium slds-p-horizontal_medium slds-col">
+                    <label for="faState"><b>State</b></label>
+                    <lightning:inputField fieldName="FA_State__c" variant="label-hidden" aura:id="faState"/>
+                </div>
+                <div class="slds-p-top_medium slds-p-horizontal_medium slds-col">
+                    <label for="faZipcode"><b>Zip code</b></label>
+                    <lightning:inputField fieldName="FA_Zipcode__c" variant="label-hidden" aura:id="faZipcode"/>
+                </div>
+            </div>
+            <div class="slds-grid">
+                <div class="slds-p-top_medium slds-p-horizontal_medium slds-col">
+                    <label for="faEmail"><b>Email</b></label>
+                    <lightning:inputField fieldName="FA_Email__c" variant="label-hidden" aura:id="faEmail"/>
+                </div>
+                <div class="slds-p-top_medium slds-p-horizontal_medium slds-col">
+                    <label for="faPhone"><b>Phone Number</b></label>
+                    <lightning:inputField fieldName="FA_Phone_Number__c" variant="label-hidden" aura:id="faPhone"/>
+                </div>
+            </div>
+            <div class="slds-p-top_medium slds-p-horizontal_medium">
+                <label for="crdNumber"><b>CRD Number</b></label>
+                <lightning:inputField fieldName="CRD_Number__c" variant="label-hidden" aura:id="crdNumber"/>
+            </div>
+            <div class="slds-p-top_medium slds-p-horizontal_medium">
+                <label for="advisorType"><b>Advisor Type</b></label>
+                <lightning:inputField fieldName="Advisor_Type__c" aura:id="advisorType" variant="label-hidden" onchange="{!c.onChangeAdvisorType}"/>
+            </div>
+            <aura:if isTrue="{!v.FinancialAdvisor}">
+                <div class="slds-p-top_medium slds-text-color_error"><b>Financial Advisor</b></div>
+                <div class="slds-p-top_medium slds-p-horizontal_medium">
+                    <label for="brokerRepId"><b>Broker Rep Id</b></label>
+                    <lightning:inputField fieldName="Broker_Rep_ID__c" aura:id="brokerRepId" variant="label-hidden"  required="true"/>
+                </div>
+                <div class="slds-p-top_medium slds-p-horizontal_medium">
+                    <label for="brokerBranchId"><b>Broker Branch Id</b></label>
+                    <lightning:inputField fieldName="Broker_Branch_ID__c" aura:id="brokerBranchId" variant="label-hidden" required="true"/>
+                </div>
+                <div class="slds-p-top_medium slds-p-horizontal_medium">
+                    <label for="compensationType"><b>Compensation Type</b></label>
+                    <lightning:inputField fieldName="Compensation_Type__c" aura:id="compensationType" variant="label-hidden" required="true"/>
+                </div>
+                <div class="slds-p-top_medium slds-p-horizontal_medium">
+                    <label for="brokerDealerFirmName"><b>Broker Dealer Firm Name</b></label>
+                    <lightning:inputField fieldName="Broker_Dealer_Firm_Name__c" aura:id="brokerDealerFirmName" variant="label-hidden" required="true"/>
+                </div>
+                <div class="slds-p-top_medium slds-p-horizontal_medium">
+                    <label for="brokerDealerCRD"><b>Broker Dealer CRD</b></label>
+                    <lightning:inputField fieldName="Broker_Dealer_CRD__c" variant="label-hidden" aura:id="brokerDealerCRD"/>
+                </div>                
+            </aura:if>
+            <aura:if isTrue="{!v.BrokerDealerBranch}">
+                <div class="slds-p-top_medium slds-p-horizontal_medium">
+                    <label for="parentBrokerDealerFirm"><b>Parent Broker Dealer Firm</b></label>
+                    <lightning:inputField fieldName="Parent_Broker_Dealer_Firm__c" variant="label-hidden" aura:id="parentBrokerDealerFirm"/>
+                </div>
+            </aura:if>
+            <aura:if isTrue="{!v.BrokerDealer}">
+                <div class="slds-p-top_medium slds-p-horizontal_medium">
+                    <label for="parentBrokerDealerFirm"><b>Parent Broker Dealer Firm</b></label>
+                    <lightning:inputField fieldName="Parent_Broker_Dealer_Firm__c" variant="label-hidden" aura:id="parentBrokerDealerFirm" required="true"/>
+                </div>
+            </aura:if>
+            <div class="slds-p-top_medium slds-p-horizontal_medium">
+                <label for="notes"><b>Notes</b></label>
+                <lightning:inputField fieldName="Notes__c" variant="label-hidden" aura:id="notes"/>
+            </div>
+            <!--<div class="">
+                <lightning:inputField fieldName="Case__c" aura:id="Case__c" class="slds-hidden" />
+            </div>-->
+            <div class="slds-align_absolute-center">
+                <lightning:button variant="brand" label="Submit" type="submit" />
+                <lightning:button variant="brand" label="Cancel" type="button" onclick="{!c.handleCancel}" />
+            </div>
+        </div>
+        
+    </lightning:recordEditForm>
+</aura:component>

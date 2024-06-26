@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>S2S_Email_Opt_Out</fullName>
+    <active>true</active>
+    <description>Records for requested Email Opt Out must have an email address</description>
+    <errorConditionFormula>AND( RecordType.Name =&apos;Sales Support Cases Record Type&apos;, ISPICKVAL(Type,&apos;Do Not Contact&apos;),ISPICKVAL(Sub_Type__c,&apos;Email Opt Out&apos;),
+NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+OR(AND(NOT(ISBLANK(ContactId)),ISBLANK(Contact.Email)),
+AND(NOT(ISBLANK(Lead__c)),ISBLANK(Lead__r.Email))))</errorConditionFormula>
+    <errorMessage>Records for requested Email Opt Out must have an email address</errorMessage>
+</ValidationRule>

@@ -1,0 +1,54 @@
+<aura:component controller="CommunityAccountEditFormController" implements="force:appHostable,force:lightningQuickAction" access="global">
+    <aura:handler name='init' value='{!this}' action='{!c.init}' />
+    
+    <aura:attribute name="allAccounts" type="Account[]" />
+	<aura:attribute name="parentRec" type="Account" />
+    <aura:attribute name='checklist' type='Object' />
+    <aura:attribute name='readOnly' type='Boolean' />
+    <aura:attribute name='readOnlyMsg' type='String' />
+    <aura:attribute name='medReadOnly' type='Boolean' />
+    <aura:attribute name='wcReadOnly' type='Boolean' />
+    <aura:attribute name='medQuestionnaire' type='PEO_Onboarding_Medical_Questionnaire__c' />
+    <aura:attribute name='medicalRequested' type='Boolean' />
+    <aura:attribute name="tabType" type="String"/>
+    <aura:attribute name="currentRunningUser" type="User"/>
+    <aura:attribute name="communityUser" type="Boolean"/>
+    <aura:attribute name='possibleTabs' type='String[]' />
+    <aura:attribute name='selectedAccountId' type='String'/>  
+    <aura:attribute name='indAttributesRefresh' type='Object' />
+    
+    <aura:attribute name='activeLabelParent' type='String'/>
+    
+    <div>
+        <div>
+            <h1 class="tabHeader_title" >{!v.activeLabelParent}</h1>
+            <h3 class='tabHeader_supportText'>Please add or update any of the information below.</h3>
+        </div>
+    </div>
+    
+     <lightning:tabset variant="{!v.scoped}"  selectedTabId="{!v.selectedAccountId}" >
+            
+            <aura:iteration items="{!v.allAccounts}" var="acc" indexVar="index">
+                <lightning:tab label="{!acc.Name}" id="{!acc.Id}">
+                    <c:CommunityAccountEditForm firstStep='{!index}'
+                                                readOnlyPermission='{!v.readOnly}'
+                                                medReadOnlyPermission='{!v.medReadOnly}'
+                                                wcReadOnlyPermission='{!v.wcReadOnly}'
+                                                readOnlyString='{!v.readOnlyMsg}'
+                                                allAccts='{!v.allAccounts}'
+                                                tabStyle='{!v.tabType}'
+                                                currentAccount='{!acc}' 
+                                                PEOChecklist='{!v.checklist}' 
+                                                parentAcc='{!v.parentRec}'
+                                                medicalQuestionnaire="{!v.medQuestionnaire}"
+                                                medicalWasRequested="{!v.medicalRequested}"
+                                                currentRunningUser="{!v.currentRunningUser}"
+                                                communityUser="{!v.communityUser}"
+                                                parentTabs='{!v.possibleTabs}'
+                                                ActiveParentTab='{!v.selectedAccountId}'
+                                                activeLabel='{!v.activeLabelParent}' 
+                                                indAttributesRefresh='{!v.indAttributesRefresh}' />
+                </lightning:tab>
+         </aura:iteration>
+    </lightning:tabset>
+</aura:component>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sales_Help_Dialsource_Manager_Marketing</fullName>
+    <active>true</active>
+    <description>Sales_Help_Dialsource_Marketing</description>
+    <errorConditionFormula>AND(
+$RecordType.Name = &apos;Sales Help Request Case&apos;,
+ISPICKVAL(Type,&apos;DialSource Request&apos;),
+NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+NOT($Profile.Name = &apos;Paychex Marketing Admin&apos;),
+ISNEW(),
+ISPICKVAL(Sub_Type__c,&apos;Marketing DS DID Setup/Edit&apos;))</errorConditionFormula>
+    <errorMessage>You do not have access to the Request Type/Sub-Type selected. Please reach out to your Sales Assistant or Super User if you have additional questions.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reason_Lost_Required_ERTC</fullName>
+    <active>true</active>
+    <description>Makes Reason Lost Required as ERTC when an ERTC opportunity is saved with &quot;Lost&quot;, &quot;No Decision&quot; or &quot;Disqualified&quot; then Reason Not Sold Details also required</description>
+    <errorConditionFormula>AND(
+NOT(BEGINS($Profile.Name, &quot;System Admin&quot;)),
+CONTAINS ( $User.Job_Name__c , &quot;Sales Representative&quot;),
+ISPICKVAL( OpportunityType__c, &quot;ERTC&quot;),
+ISCHANGED( StageName),
+OR(ISPICKVAL( StageName ,&quot;Lost&quot;),ISPICKVAL( StageName ,&quot;No Decision&quot;), ISPICKVAL( StageName ,&quot;Disqualified&quot;)),
+OR(NOT(ISPICKVAL( Reason_Not_Sold__c , &quot;ERTC&quot;)),
+ISPICKVAL( Reason_Not_Sold_Details__c , &quot;&quot;)
+)
+)</errorConditionFormula>
+    <errorMessage>Almost there! To close out an ERTC opportunity: choose ERTC from the Reason Lost field, then choose the appropriate option from the Reason Not Sold Details dropdown and click Save.</errorMessage>
+</ValidationRule>

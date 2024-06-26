@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>IsSameFEIN__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <formula>OR (AND( ParentAccount__c != null, ISPICKVAL( ChildType__c, &quot;Combo&quot;))
+,AND (ParentAccount__c != null, ParentAccount__r.Federal_ID_Number__c != null, AccountId__r.Federal_ID_Number__c != null , ParentAccount__r.Federal_ID_Number__c = AccountId__r.Federal_ID_Number__c ))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>Is the relationship with its parent a Same FEIN/Combo relationship?</inlineHelpText>
+    <label>Is Same FEIN?</label>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

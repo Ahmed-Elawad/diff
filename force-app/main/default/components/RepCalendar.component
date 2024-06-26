@@ -1,0 +1,135 @@
+<apex:component >
+
+   <apex:attribute name="calDay"
+      type="CalendarDay"
+      required="true"
+      description="The calendar day information" />
+      
+         
+         <table class="tableStyle" cellPadding="0" cellSpacing="1" >
+         <caption><h1>{!calDay.dayDesc}</h1></caption>
+         <tr class="tableRowHeader">
+             <th class="nameHeaderCell">Rep Name</th>
+             <th class="timeHeaderCell">8AM</th>
+             <th class="timeHeaderCell">9AM</th>
+             <th class="timeHeaderCell">10AM</th>
+             <th class="timeHeaderCell">11AM</th>
+             <th class="timeHeaderCell">12PM</th>
+             <th class="timeHeaderCell">1PM</th>
+             <th class="timeHeaderCell">2PM</th>
+             <th class="timeHeaderCell">3PM</th>
+             <th class="timeHeaderCell">4PM</th>
+             <th class="timeHeaderCell">5PM</th>
+             <th class="timeHeaderCell">6PM</th>
+         </tr>
+            <apex:repeat value="{!calDay.calendarOutput}" var="userInfo" >
+               <tr class="tableRow">
+               <td>{!userInfo.userName}</td>
+               <td class="{!IF(userInfo.isBusy08am,'busyCell','freeCell')}"><a onclick="setDateTime('{!calDay.dayDescShort}','08:00:00');" href="#dateTime">{!IF(userInfo.isBusy08am,'','Free 8am')}</a></td>
+               <td class="{!IF(userInfo.isBusy09am,'busyCell','freeCell')}"><a onclick="setDateTime('{!calDay.dayDescShort}','09:00:00');" href="#dateTime">{!IF(userInfo.isBusy09am,'','Free 9am')}</a></td>
+               <td class="{!IF(userInfo.isBusy10am,'busyCell','freeCell')}"><a onclick="setDateTime('{!calDay.dayDescShort}','10:00:00');" href="#dateTime">{!IF(userInfo.isBusy10am,'','Free 10am')}</a></td>
+               <td class="{!IF(userInfo.isBusy11am,'busyCell','freeCell')}"><a onclick="setDateTime('{!calDay.dayDescShort}','11:00:00');" href="#dateTime">{!IF(userInfo.isBusy11am,'','Free 11am')}</a></td>
+               <td class="{!IF(userInfo.isBusy12pm,'busyCell','freeCell')}"><a onclick="setDateTime('{!calDay.dayDescShort}','12:00:00');" href="#dateTime">{!IF(userInfo.isBusy12pm,'','Free 12pm')}</a></td>
+               <td class="{!IF(userInfo.isBusy01pm,'busyCell','freeCell')}"><a onclick="setDateTime('{!calDay.dayDescShort}','13:00:00');" href="#dateTime">{!IF(userInfo.isBusy01pm,'','Free 1pm')}</a></td>
+               <td class="{!IF(userInfo.isBusy02pm,'busyCell','freeCell')}"><a onclick="setDateTime('{!calDay.dayDescShort}','14:00:00');" href="#dateTime">{!IF(userInfo.isBusy02pm,'','Free 2pm')}</a></td>
+               <td class="{!IF(userInfo.isBusy03pm,'busyCell','freeCell')}"><a onclick="setDateTime('{!calDay.dayDescShort}','15:00:00');" href="#dateTime">{!IF(userInfo.isBusy03pm,'','Free 3pm')}</a></td>
+               <td class="{!IF(userInfo.isBusy04pm,'busyCell','freeCell')}"><a onclick="setDateTime('{!calDay.dayDescShort}','16:00:00');" href="#dateTime">{!IF(userInfo.isBusy04pm,'','Free 4pm')}</a></td>
+               <td class="{!IF(userInfo.isBusy05pm,'busyCell','freeCell')}"><a onclick="setDateTime('{!calDay.dayDescShort}','17:00:00');" href="#dateTime">{!IF(userInfo.isBusy05pm,'','Free 5pm')}</a></td>
+               <td class="{!IF(userInfo.isBusy06pm,'busyCell','freeCell')}"><a onclick="setDateTime('{!calDay.dayDescShort}','18:00:00');" href="#dateTime">{!IF(userInfo.isBusy06pm,'','Free 6pm')}</a></td>
+               </tr>
+            </apex:repeat>
+         </table>
+         
+  <!-- 
+
+               <td class="{!IF(userInfo.isBusy08am,'busyCell','freeCell')}">&nbsp;</td>
+               <td style="background-color:{!IF(userInfo.isBusy09am,'red','white')}">&nbsp;</td>
+               <td style="background-color:{!IF(userInfo.isBusy10am,'red','white')}">&nbsp;</td>
+               <td style="background-color:{!IF(userInfo.isBusy11am,'red','white')}">&nbsp;</td>
+               <td style="background-color:{!IF(userInfo.isBusy12pm,'red','white')}">&nbsp;</td>
+               <td style="background-color:{!IF(userInfo.isBusy01pm,'red','white')}">&nbsp;</td>
+               <td style="background-color:{!IF(userInfo.isBusy02pm,'red','white')}">&nbsp;</td>
+               <td style="background-color:{!IF(userInfo.isBusy03pm,'red','white')}">&nbsp;</td>
+               <td style="background-color:{!IF(userInfo.isBusy04pm,'red','white')}">&nbsp;</td>
+   -->
+
+<!-- 
+         <apex:dataTable value="{!dayInfo}" var="userInfo" styleClass="tableStyle{!compId}">
+           <apex:facet name="caption"><CENTER><h1>{!dayDesc}</h1></CENTER></apex:facet>
+            <apex:column styleClass="nameHeaderCell" headerValue="Rep Name">
+               <apex:outputText value="{!userInfo.userName}" />
+            </apex:column>
+            
+            <apex:column styleClass="timeHeaderCell" headerValue="8AM">
+               <apex:outputText rendered="{!userInfo.isBusy08am}" styleClass="busyCell" value="**BUSY**" />
+            </apex:column>
+
+            <apex:column styleClass="timeHeaderCell" headerValue="9AM">
+               <apex:outputText rendered="{!userInfo.isBusy09am}" styleClass="busyCell" value="**BUSY**" />
+            </apex:column>
+            <apex:column styleClass="timeHeaderCell" headerValue="10AM">
+               <apex:outputText rendered="{!userInfo.isBusy10am}" styleClass="busyCell" value="**BUSY**" />
+            </apex:column>
+            <apex:column styleClass="timeHeaderCell" headerValue="11AM">
+               <apex:outputText rendered="{!userInfo.isBusy11am}" styleClass="busyCell" value="**BUSY**" />
+            </apex:column>
+            <apex:column styleClass="timeHeaderCell" headerValue="12PM">
+               <apex:outputText rendered="{!userInfo.isBusy12pm}" styleClass="busyCell" value="**BUSY**" />
+            </apex:column>
+            <apex:column styleClass="timeHeaderCell" headerValue="1PM">
+               <apex:outputText rendered="{!userInfo.isBusy01pm}" styleClass="busyCell" value="**BUSY**" />
+            </apex:column>
+            <apex:column styleClass="timeHeaderCell" headerValue="2PM">
+               <apex:outputText rendered="{!userInfo.isBusy02pm}" styleClass="busyCell" value="**BUSY**" />
+            </apex:column>
+            <apex:column styleClass="timeHeaderCell" headerValue="3PM">
+               <apex:outputText rendered="{!userInfo.isBusy03pm}" styleClass="busyCell" value="**BUSY**" />
+            </apex:column>
+            <apex:column styleClass="timeHeaderCell" headerValue="4PM">
+               <apex:outputText rendered="{!userInfo.isBusy04pm}" styleClass="busyCell" value="**BUSY**" />
+            </apex:column>
+
+         </apex:dataTable>
+  -->
+ <!-- 
+         <apex:pageBlockTable value="{!dayInfo}" var="userInfo" styleClass="tableStyle">
+           <apex:facet name="caption"><CENTER><h1>{!dayDesc}</h1></CENTER></apex:facet>
+            <apex:column styleClass="nameHeaderCell" headerValue="Rep Name">
+               <apex:outputText value="{!userInfo.userName}" />
+            </apex:column>
+            
+            <apex:column styleClass="timeHeaderCell" headerValue="8AM">
+               <apex:outputText rendered="{!userInfo.isBusy08am}" styleClass="busyCell" value="**BUSY**" />
+            </apex:column>
+
+            <apex:column styleClass="timeHeaderCell" headerValue="9AM">
+               <apex:outputText rendered="{!userInfo.isBusy09am}" styleClass="busyCell" value="**BUSY**" />
+            </apex:column>
+            <apex:column styleClass="timeHeaderCell" headerValue="10AM">
+               <apex:outputText rendered="{!userInfo.isBusy10am}" styleClass="busyCell" value="**BUSY**" />
+            </apex:column>
+            <apex:column styleClass="timeHeaderCell" headerValue="11AM">
+               <apex:outputText rendered="{!userInfo.isBusy11am}" styleClass="busyCell" value="**BUSY**" />
+            </apex:column>
+            <apex:column styleClass="timeHeaderCell" headerValue="12PM">
+               <apex:outputText rendered="{!userInfo.isBusy12pm}" styleClass="busyCell" value="**BUSY**" />
+            </apex:column>
+            <apex:column styleClass="timeHeaderCell" headerValue="1PM">
+               <apex:outputText rendered="{!userInfo.isBusy01pm}" styleClass="busyCell" value="**BUSY**" />
+            </apex:column>
+            <apex:column styleClass="timeHeaderCell" headerValue="2PM">
+               <apex:outputText rendered="{!userInfo.isBusy02pm}" styleClass="busyCell" value="**BUSY**" />
+            </apex:column>
+            <apex:column styleClass="timeHeaderCell" headerValue="3PM">
+               <apex:outputText rendered="{!userInfo.isBusy03pm}" styleClass="busyCell" value="**BUSY**" />
+            </apex:column>
+            <apex:column styleClass="timeHeaderCell" headerValue="4PM">
+               <apex:outputText rendered="{!userInfo.isBusy04pm}" styleClass="busyCell" value="**BUSY**" />
+            </apex:column>
+
+         </apex:pageBlockTable>
+ -->
+
+
+
+</apex:component>

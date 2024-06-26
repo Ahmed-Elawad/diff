@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>My_Team_s_No_Sales</fullName>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>Contact_Name_TAA__c</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>OPPORTUNITY.LAST_ACTIVITY</columns>
+    <columns>OPPORTUNITY.LEAD_SOURCE</columns>
+    <columns>OPPORTUNITY.CLOSE_DATE</columns>
+    <columns>Employees_Paid_Per_Payroll__c</columns>
+    <columns>Active_Employees__c</columns>
+    <columns>W2__c</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>Reason_Not_Sold__c</columns>
+    <columns>Reason_Rescinded__c</columns>
+    <filterScope>Team</filterScope>
+    <filters>
+        <field>OPPORTUNITY.STAGE_NAME</field>
+        <operation>equals</operation>
+        <value>Not Sold</value>
+    </filters>
+    <filters>
+        <field>Reason_Not_Sold__c</field>
+        <operation>notEqual</operation>
+        <value>Already engaged with prospect,Duplicate Opportunity,Employee Inquiry,Fraud,SOAR Bad Lead</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.CLOSE_DATE</field>
+        <operation>greaterThan</operation>
+        <value>5/31/2019</value>
+    </filters>
+    <label>My Team&apos;s No Sales</label>
+</ListView>

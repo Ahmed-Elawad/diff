@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PreventionRevenueRequestRequired</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+OR(ISPICKVAL(Prevention_Revenue_Possibility__c, &apos;Yes&apos;),
+ISPICKVAL(Prevention_Revenue_Possibility__c, &apos;Maybe&apos;)),
+ISPICKVAL( Prevention_Revenue_Request__c ,&apos;&apos;))</errorConditionFormula>
+    <errorDisplayField>Prevention_Revenue_Request__c</errorDisplayField>
+    <errorMessage>If the field Prevention/Revenue Possibility equals &quot;Yes&quot; or &quot;Maybe&quot;, the field Prevention/Revenue Request? cannot be BLANK</errorMessage>
+</ValidationRule>

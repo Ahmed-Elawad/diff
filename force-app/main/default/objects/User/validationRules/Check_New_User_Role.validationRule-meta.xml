@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Check_New_User_Role</fullName>
+    <active>false</active>
+    <description>Check to make sure on the update of a record that the New User Role is not still set.</description>
+    <errorConditionFormula>((ISNEW() =FALSE) &amp;&amp; ( UserRole.Name = &apos;New User Role&apos;))</errorConditionFormula>
+    <errorDisplayField>UserRoleId</errorDisplayField>
+    <errorMessage>You must select a Role other than New User Role.</errorMessage>
+</ValidationRule>

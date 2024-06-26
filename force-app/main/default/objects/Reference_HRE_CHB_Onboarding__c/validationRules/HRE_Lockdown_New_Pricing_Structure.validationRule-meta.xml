@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRE_Lockdown_New_Pricing_Structure</fullName>
+    <active>true</active>
+    <description>Prevent the New Pricing Structure field from being updated multiple times.</description>
+    <errorConditionFormula>AND(
+ ISCHANGED(New_Pricing_Structure__c),
+ ( PRIORVALUE(New_Pricing_Structure__c) = True ),
+ ($UserRole.Name &lt;&gt; &quot;HRE Handbook Supervisor team 1&quot;), 
+ ($UserRole.Name &lt;&gt; &quot;HRE Handbook Supervisor team 2&quot;), 
+ ($UserRole.Name &lt;&gt; &quot;HRE Handbook Supervisor team 3&quot;), 
+ ($UserRole.Name &lt;&gt; &quot;HRE HR Services Supervisor team 1&quot;), 
+ ($UserRole.Name &lt;&gt; &quot;HRE HR Services Supervisor team 2&quot;), 
+ ($UserRole.Name &lt;&gt; &quot;System Administrator&quot;) 
+)</errorConditionFormula>
+    <errorDisplayField>New_Pricing_Structure__c</errorDisplayField>
+    <errorMessage>You cannot uncheck the &apos;New Pricing Structure&apos; field.</errorMessage>
+</ValidationRule>

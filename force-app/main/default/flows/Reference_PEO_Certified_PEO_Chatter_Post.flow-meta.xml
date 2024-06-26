@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <processMetadataValues>
+            <name>textJson</name>
+            <value>
+                <stringValue>{&quot;mentions&quot;:[{&quot;name&quot;:&quot;PEO+&quot;,&quot;id&quot;:&quot;0F90g0000004UtuCAE&quot;}],&quot;message&quot;:&quot;@[{![Reference_PEO__c].Implementation_Project_Manager__c}]  @[0F90g0000004UtuCAE],\n\n{![Reference_PEO__c].Account_Lookup__r.Name} {![Reference_PEO__c].Branch_Client_Number__c} has been identified as a Certified PEO (PEO+) client.&quot;}</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>myRule_1_A1</name>
+        <label>Post to IPM</label>
+        <locationX>100</locationX>
+        <locationY>200</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <stringValue>@[{!myVariable_current.Implementation_Project_Manager__c}]  @[0F90g0000004UtuCAE],
+
+{!myVariable_current.Account_Lookup__r.Name} {!myVariable_current.Branch_Client_Number__c} has been identified as a Certified PEO (PEO+) client.</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>type</name>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>myVariable_current.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <processMetadataValues>
+            <name>textJson</name>
+            <value>
+                <stringValue>{&quot;mentions&quot;:[{&quot;name&quot;:&quot;PEO+&quot;,&quot;id&quot;:&quot;0F90g0000004UtuCAE&quot;}],&quot;message&quot;:&quot;@[{![Reference_PEO__c].Implementation_Project_Manager__c}] @[0F970000000TibaCAC] @[0F90g0000004UtuCAE], \n\n{![Reference_PEO__c].Account_Lookup__r.Name} {![Reference_PEO__c].Branch_Client_Number__c} has been identified as a Certified PEO (PEO+) client.&quot;}</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>myRule_3_A1</name>
+        <label>Post to all IPM</label>
+        <locationX>300</locationX>
+        <locationY>200</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <stringValue>@[{!myVariable_current.Implementation_Project_Manager__c}] @[0F970000000TibaCAC] @[0F90g0000004UtuCAE], 
+
+{!myVariable_current.Account_Lookup__r.Name} {!myVariable_current.Branch_Client_Number__c} has been identified as a Certified PEO (PEO+) client.</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>type</name>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>myVariable_current.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>49.0</apiVersion>
+    <assignments>
+        <name>myVariable_waitStartTimeAssignment</name>
+        <label>myVariable_waitStartTimeAssignment</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>myVariable_waitStartTimeVariable</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.CurrentDateTime</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>myDecision</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <processMetadataValues>
+            <name>index</name>
+            <value>
+                <numberValue>0.0</numberValue>
+            </value>
+        </processMetadataValues>
+        <name>myDecision</name>
+        <label>myDecision</label>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>myDecision2</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>default</defaultConnectorLabel>
+        <rules>
+            <name>myRule_1</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>formula_myRule_1</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>myRule_1_A1</targetReference>
+            </connector>
+            <label>IPM - only</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <processMetadataValues>
+            <name>index</name>
+            <value>
+                <numberValue>1.0</numberValue>
+            </value>
+        </processMetadataValues>
+        <name>myDecision2</name>
+        <label>myDecision2</label>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>default</defaultConnectorLabel>
+        <rules>
+            <name>myRule_3</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>formula_myRule_3</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>myRule_3_A1</targetReference>
+            </connector>
+            <label>All IPM</label>
+        </rules>
+    </decisions>
+    <description>JC - chatter post to notify IPM or Certified PEO client</description>
+    <formulas>
+        <processMetadataValues>
+            <name>originalFormula</name>
+            <value>
+                <stringValue>ISPICKVAL([Reference_PEO__c].Certified_PEO_PEO_Client__c, &quot;Yes&quot;) &amp;&amp; 
+ISCHANGED ([Reference_PEO__c].Certified_PEO_PEO_Client__c) &amp;&amp;
+NOT(ISBLANK([Reference_PEO__c].Implementation_Project_Manager__c ) )&amp;&amp;
+[Reference_PEO__c].All_IPMs__c ==false &amp;&amp;
+
+(
+[Reference_PEO__c].RecordType.DeveloperName = &quot;PEO_Web_Based_Onboarding&quot; ||
+[Reference_PEO__c].RecordType.DeveloperName = &quot;PEO_Paper_Based_Onboarding&quot; 
+)</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>formula_myRule_1</name>
+        <dataType>Boolean</dataType>
+        <expression>ISPICKVAL({!myVariable_current.Certified_PEO_PEO_Client__c}, &quot;Yes&quot;) &amp;&amp; 
+ISCHANGED ({!myVariable_current.Certified_PEO_PEO_Client__c}) &amp;&amp;
+NOT(ISBLANK({!myVariable_current.Implementation_Project_Manager__c} ) )&amp;&amp;
+{!myVariable_current.All_IPMs__c} ==false &amp;&amp;
+
+(
+{!myVariable_current.RecordType.DeveloperName} = &quot;PEO_Web_Based_Onboarding&quot; ||
+{!myVariable_current.RecordType.DeveloperName} = &quot;PEO_Paper_Based_Onboarding&quot; 
+)</expression>
+    </formulas>
+    <formulas>
+        <processMetadataValues>
+            <name>originalFormula</name>
+            <value>
+                <stringValue>ISPICKVAL([Reference_PEO__c].Certified_PEO_PEO_Client__c, &quot;Yes&quot;) &amp;&amp; 
+ISCHANGED ([Reference_PEO__c].Certified_PEO_PEO_Client__c) &amp;&amp;
+NOT(ISBLANK([Reference_PEO__c].Implementation_Project_Manager__c ) )&amp;&amp;
+[Reference_PEO__c].All_IPMs__c ==true&amp;&amp;
+
+(
+[Reference_PEO__c].RecordType.DeveloperName = &quot;PEO_Web_Based_Onboarding&quot; ||
+[Reference_PEO__c].RecordType.DeveloperName = &quot;PEO_Paper_Based_Onboarding&quot; 
+)</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>formula_myRule_3</name>
+        <dataType>Boolean</dataType>
+        <expression>ISPICKVAL({!myVariable_current.Certified_PEO_PEO_Client__c}, &quot;Yes&quot;) &amp;&amp; 
+ISCHANGED ({!myVariable_current.Certified_PEO_PEO_Client__c}) &amp;&amp;
+NOT(ISBLANK({!myVariable_current.Implementation_Project_Manager__c} ) )&amp;&amp;
+{!myVariable_current.All_IPMs__c} ==true&amp;&amp;
+
+(
+{!myVariable_current.RecordType.DeveloperName} = &quot;PEO_Web_Based_Onboarding&quot; ||
+{!myVariable_current.RecordType.DeveloperName} = &quot;PEO_Paper_Based_Onboarding&quot; 
+)</expression>
+    </formulas>
+    <interviewLabel>Reference_PEO_Certified_PEO_Chatter_Post-2_InterviewLabel</interviewLabel>
+    <label>Reference PEO Certified PEO Chatter Post</label>
+    <processMetadataValues>
+        <name>ObjectType</name>
+        <value>
+            <stringValue>Reference_PEO__c</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>ObjectVariable</name>
+        <value>
+            <elementReference>myVariable_current</elementReference>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OldObjectVariable</name>
+        <value>
+            <elementReference>myVariable_old</elementReference>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>TriggerType</name>
+        <value>
+            <stringValue>onAllChanges</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Workflow</processType>
+    <startElementReference>myVariable_waitStartTimeAssignment</startElementReference>
+    <status>Active</status>
+    <variables>
+        <name>myVariable_current</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Reference_PEO__c</objectType>
+    </variables>
+    <variables>
+        <name>myVariable_old</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Reference_PEO__c</objectType>
+    </variables>
+    <variables>
+        <name>myVariable_waitStartTimeVariable</name>
+        <dataType>DateTime</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <elementReference>$Flow.CurrentDateTime</elementReference>
+        </value>
+    </variables>
+</Flow>

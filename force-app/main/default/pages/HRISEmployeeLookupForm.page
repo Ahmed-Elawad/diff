@@ -1,0 +1,128 @@
+<!--
+*	10/07/2019	Matt Fritschi		Created. 
+* 
+* 
+* 
+* 
+* 
+-->
+
+<apex:page docType="html-5.0" controller="HRISEmployeeLookupController" lightningStyleSheets="true" showHeader="true">
+    
+    <style>
+        .spinnerBg{
+        border-style: solid;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: auto;
+        margin-bottom: auto;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        background-color: #000;
+        opacity: 0.2;
+        z-index: 999999;
+        }
+        .spinner{
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        background-image: url("/img/loading32.gif");
+        background-size: 16px;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-position: center;
+        z-index: 9999999;
+        opacity: 1;
+        }
+    </style>
+    
+    
+    
+    <!-- ********** Apex Page Start ********** -->
+    
+    
+    <apex:actionStatus id="spinnerStatus">
+        <apex:facet name="start">
+            <div class="spinnerBg" />
+            <div class="spinner" />
+        </apex:facet>
+    </apex:actionStatus>
+    
+    <apex:outputPanel id="ResultsPanel">
+        <apex:pageMessages id="shwmsg"></apex:pageMessages>
+        <apex:form id="inputForm" rendered="{!isForm}">
+            <apex:pageBlock title="HRIS Employee Search Form">
+                <apex:pageBlockSection columns="2" showHeader="false" title="HRIS Employee Lookup Form">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Last 4 of SSN:" for="searchId"/>
+                        <apex:input type="text" id="searchId" value="{!searchId}" label="Search Id: "/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="First Name:" for="firstName"/>
+                        <apex:input type="text" id="firstName" value="{!firstName}" required="false"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Last Name:" for="lastName"/>
+                        <apex:input type="text" id="lastName" value="{!lastName}" required="false"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Branch:" for="branch"/>
+                        <apex:input type="text" id="branch" value="{!branch}" required="false"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="BIS Client ID:" for="BISClientId"/>
+                        <apex:input type="text" id="BISClientId" value="{!BISClientId}" required="false"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Client Number:" for="clientNumber"/>
+                        <apex:input type="text" id="clientNumber" value="{!clientNumber}" required="false"/>
+                    </apex:pageBlockSectionItem>
+                    <!-- <apex:pageBlockSectionItem >
+<apex:outputLabel value="IVR ID:" for="IVRId"/>
+<apex:input type="text" id="IVRId" value="{!IVRId}" required="false"/>
+</apex:pageBlockSectionItem>	-->
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Company Name:" for="companyName"/>
+                        <apex:input type="text" id="companyName" value="{!companyName}" required="false"/>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>           
+                <apex:pageBlockButtons location="bottom">
+                    <!-- Try to use Javascript functions instead maybe? -->
+                    <apex:commandButton value="Submit" action="{!submit}" status="spinnerStatus" reRender="ResultsPanel" >
+                    </apex:commandButton>
+                </apex:pageBlockButtons>
+            </apex:pageBlock>
+            
+        </apex:form>
+        <!-- ********** Results Table ********** -->
+        
+        <apex:form id="outputTable" rendered="{!NOT(isForm)}">
+            <apex:actionFunction action="{!doPutRequest}" name="doPutRequest"/>
+            <apex:pageBlock title="HRIS Employee Search Results">
+                <apex:pageBlockSection columns="1" showHeader="false">
+                    <apex:pageBlockTable value="{!employees}" var="emp">
+                        <apex:column style="vertical-align:middle">
+                            <apex:commandButton value="Select" action="{!selectRow}" reRender="dummyId" oncomplete="doPutRequest()">
+                                <apex:param name="rowNum" value="{!emp.rowID}" assignTo="{!selectedRowNum}"/>
+                            </apex:commandButton>
+                        </apex:column>
+                        <apex:column headerValue="Last Name" style="vertical-align:middle"><apex:outputText value="{!emp.lastName}" /></apex:column>
+                        <apex:column headerValue="First Name" style="vertical-align:middle"><apex:outputText value="{!emp.firstName}" /></apex:column>
+                        <apex:column headerValue="Last Four SSN" style="vertical-align:middle"><apex:outputText value="{!emp.ssn4}" /></apex:column>
+                        <apex:column headerValue="Br-Clt" style="vertical-align:middle"><apex:outputText value="{!emp.prospectClientNumber}" /></apex:column>
+                        <apex:column headerValue="Company Name" style="vertical-align:middle"><apex:outputText escape="false" value="{!emp.companyName}" /></apex:column>
+                        <apex:column headerValue="Status" style="vertical-align:middle"><apex:outputText value="{!emp.status}" /></apex:column>
+                        <apex:column headerValue="Address" style="vertical-align:middle"><apex:outputText value="{!emp.address}" /></apex:column>
+                        <apex:column headerValue="Date of Birth" style="vertical-align:middle"><apex:outputText value="{!emp.DOB}" /></apex:column>
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+                <apex:pageBlockButtons location="bottom">
+                    <apex:commandButton value="Cancel" action="{!cancel}"/>
+                </apex:pageBlockButtons>
+            </apex:pageBlock>
+        </apex:form>
+    </apex:outputPanel>
+    <!-- ********** Apex Page End ********** -->
+    
+</apex:page>

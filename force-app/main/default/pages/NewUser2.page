@@ -1,0 +1,82 @@
+<!-- A wizard to create new users in Salesforce by non-System Administrators
+
+   History
+   -------
+   10/20/2009 Dan Carmen   Created 
+   01/03/2024 Dan Carmen        Remove User License references
+
+ -->
+<apex:page standardController="User" extensions="NewUserExtension" 
+           showHeader="true"
+           id="thePage">
+           
+  <apex:pageMessages />
+
+
+  <apex:form >
+  
+  <!--  enter the additional information for a user -->
+  <apex:pageBlock id="enterAddlInfo" rendered="{!enterAddInfo}" >
+    <apex:PageBlockSection columns="2" title="Enter User Information">
+        
+        <apex:inputField value="{!newUser.FirstName}" />
+        <apex:outputText value="" />
+        
+        <apex:inputField value="{!newUser.LastName}" />
+        <apex:outputText value="" />
+        
+        <apex:outputField value="{!newUser.Alias}" />
+        <apex:outputText value="" />
+
+        <apex:inputField value="{!newUser.Email}" />
+        <apex:outputText value="" />
+
+        <apex:inputField value="{!newUser.Username}" />
+        <apex:outputText value="" />
+        
+        <apex:outputField value="{!newUser.CommunityNickname}" />
+        <apex:outputText value="" />
+
+        <apex:inputField value="{!newUser.ManagerId}" />
+        <apex:outputText value="" />
+
+        <apex:inputField value="{!newUser.Title}" />
+        <apex:inputField value="{!newUser.Street}" />
+
+        <apex:inputField value="{!newUser.Department}" />
+        <apex:inputField value="{!newUser.City}" />
+        
+        <apex:inputField value="{!newUser.EmployeeNumber}" />
+        <apex:inputField value="{!newUser.State}" />
+        
+        <apex:inputField value="{!newUser.Sales_Org__c}" />
+        <apex:inputField value="{!newUser.PostalCode}" />
+
+        <apex:outputText value="" />
+        <apex:inputField value="{!newUser.Phone}" />
+        
+      </apex:PageBlockSection>
+
+  </apex:pageBlock>
+
+ 
+  <apex:pageBlock rendered="{!enterAddInfo}" >
+       <apex:pageBlockSection id="salesInfo">
+        <apex:inputField value="{!newUser.Cost_Center__c}" id="costCenter" >
+           <apex:actionSupport event="onchange" action="{!checkOrganization}" rerender="salesInfo"/>
+        </apex:inputField>
+        <apex:outputField value="{!newUser.District__c}" />
+        <apex:outputField value="{!newUser.Areatxt__c}" />
+
+        <apex:outputField value="{!newUser.Zone__c}" />
+       </apex:pageBlockSection>
+       
+       <apex:outputPanel >
+          <apex:commandButton action="{!saveAndContinue}" value="Continue" styleClass="btn"/>
+          <apex:commandButton action="{!cancel}" value="Cancel" styleClass="btn"/>
+        </apex:outputPanel>
+       
+  </apex:pageBlock> 
+  </apex:form>
+  
+</apex:page>

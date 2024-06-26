@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>No_API_User_Assignment</fullName>
+    <active>true</active>
+    <description>Cannot assign cases to the generic API Users.  Had to use profile ID instead of name because of a hop limit.</description>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)), Owner:User.ProfileId = &apos;00e700000013g38&apos;, 
+ischanged( OwnerId )
+)</errorConditionFormula>
+    <errorMessage>You cannot assign cases to this user. If you believe this message was presented in error, please contact Enterprise Support.</errorMessage>
+</ValidationRule>

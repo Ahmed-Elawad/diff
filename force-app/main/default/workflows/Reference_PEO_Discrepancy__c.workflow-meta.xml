@@ -1,0 +1,2179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Check_Hold_Box_PEO_Disc</fullName>
+        <field>HoldPayrollWillNotRun__c</field>
+        <literalValue>1</literalValue>
+        <name>Check Hold Box PEO Disc.</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Check_Non_Hold_Box_PEO_Disc</fullName>
+        <field>NonHoldPayrollWillRun__c</field>
+        <literalValue>1</literalValue>
+        <name>Check Non-Hold Box PEO Disc.</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Check_Non_Hold_Will_Run</fullName>
+        <field>NonHoldPayrollWillRun__c</field>
+        <literalValue>1</literalValue>
+        <name>Check Non-Hold: Will Run</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Contractual_Holds_Checked</fullName>
+        <field>Contractual_Hold__c</field>
+        <literalValue>1</literalValue>
+        <name>Contractual Holds Checked</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>true</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Hold_Action_Req_Payroll_Will_Not_Run</fullName>
+        <field>HoldPayrollWillNotRun__c</field>
+        <literalValue>1</literalValue>
+        <name>Hold: Action Req - Payroll Will Not Run</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Medical_UW_Holds_Checked</fullName>
+        <field>Medical_UW_Hold__c</field>
+        <literalValue>1</literalValue>
+        <name>Medical UW Holds Checked</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>true</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>NB_Holds_Holds_Checked</fullName>
+        <field>NB_Hold__c</field>
+        <literalValue>1</literalValue>
+        <name>NB Holds Holds Checked</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Onboarding_Holds_Checked</fullName>
+        <field>Onboarding_Hold__c</field>
+        <literalValue>1</literalValue>
+        <name>Onboarding Holds Checked</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>PEO_Critical_Checkbox</fullName>
+        <description>This will check the &apos;Critical&apos; Check box on discrepancies</description>
+        <field>Critical__c</field>
+        <literalValue>1</literalValue>
+        <name>PEO Critical Checkbox</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>PEO_REF_Discepancy_Comments_Clear</fullName>
+        <field>Comments__c</field>
+        <name>PEO REF Discepancy Comments Clear</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>PEO_REF_Discrepancy_move</fullName>
+        <field>Comments_Log__c</field>
+        <formula>UPPER( $User.FirstName ) &amp; &quot; &quot; &amp; UPPER( $User.LastName )&amp; &quot; (&quot; &amp; TEXT(MONTH(TODAY())) &amp; &quot;/&quot;&amp; TEXT(DAY(TODAY())) &amp; &quot;/&quot;&amp; TEXT(YEAR(TODAY()))&amp; &quot; &quot; &amp;TEXT(CASE(VALUE(MID(TEXT( NOW() ) , 12, 2)) , 0, 20, 1, 21, 2, 22,3, 23,4, 0,5, 1,6, 2,7, 3,8, 4,9, 5,10, 6,11, 7,12, 8,13, 9,14,10,15, 11,16, 12,17, 13,18, 14,19, 15,20, 16,21, 17,22, 18,23, 19, 24))
+&amp; &quot;:&quot; &amp; MID(TEXT( NOW() ) , 15, 2) &amp; &quot;)&quot; &amp; BR() &amp; &quot;- &quot; &amp; Comments__c &amp; BR() &amp; BR() &amp; Comments_Log__c</formula>
+        <name>PEO REF Discrepancy move</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>PEO_Update_Discrepancy_Resolve_Date</fullName>
+        <field>Closed_Date__c</field>
+        <formula>now()</formula>
+        <name>PEO Update Discrepancy Resolve Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_Comment_log</fullName>
+        <description>Populate Comment log with last modified user and date</description>
+        <field>Comments_Log__c</field>
+        <formula>LastModifiedBy.FirstName + &quot; &quot; +  LastModifiedBy.LastName + &quot; &quot; +  DisplayDate__c</formula>
+        <name>Populate Comment log</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Set_Resolved_by</fullName>
+        <description>set resolved by to Other</description>
+        <field>Resolved_by__c</field>
+        <literalValue>Other</literalValue>
+        <name>Set Resolved by</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>System_Hold_1</fullName>
+        <field>System_Hold__c</field>
+        <literalValue>1</literalValue>
+        <name>System Hold 1</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Hold_Action_Req_Payroll</fullName>
+        <field>HoldPayrollWillNotRun__c</field>
+        <literalValue>1</literalValue>
+        <name>Update &quot;Hold: Action Req- Payroll</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Non_Hold_Action_Req_Payroll_W</fullName>
+        <field>NonHoldPayrollWillRun__c</field>
+        <literalValue>1</literalValue>
+        <name>Update Non-Hold: Action Req - Payroll W</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Payroll_Hold</fullName>
+        <field>HoldPayrollWillNotRun__c</field>
+        <literalValue>1</literalValue>
+        <name>Update Payroll Hold</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Payroll_Hold_Checkbox</fullName>
+        <field>HoldPayrollWillNotRun__c</field>
+        <literalValue>1</literalValue>
+        <name>Update Payroll Hold Checkbox</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_field</fullName>
+        <field>NonHoldPayrollWillRun__c</field>
+        <literalValue>1</literalValue>
+        <name>Update field</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>WC_Holds_Holds_Checked</fullName>
+        <field>WC_Hold__c</field>
+        <literalValue>1</literalValue>
+        <name>WC Holds Holds Checked</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Web_Open_Holds_Checked</fullName>
+        <field>Web_Open_Hold__c</field>
+        <literalValue>1</literalValue>
+        <name>Web Open Holds Checked</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>reset_quick_resolve</fullName>
+        <description>uncheck Quick Resolve Option</description>
+        <field>Quick_Resolve_option__c</field>
+        <literalValue>0</literalValue>
+        <name>reset quick resolve</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>set_Status_to_Resolved</fullName>
+        <description>Set Status to Resolved</description>
+        <field>Status__c</field>
+        <literalValue>Resolved</literalValue>
+        <name>set Status to Resolved</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Benefits Back-up Docs Non-Hold</fullName>
+        <actions>
+            <name>Check_Non_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 3</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Benefits</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Back-up Docs</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Out Of Area Dependent Form,Domestic Partner affidavit and/or documentation</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Benefits Benefits Enrollment</fullName>
+        <actions>
+            <name>Check_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Benefits</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Benefits Enrollment</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Annual salary needed for requested Life Ins. enrollment</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Benefits Benefits Enrollment Hold</fullName>
+        <actions>
+            <name>Check_Non_Hold_Will_Run</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 3</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Benefits</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Benefits Enrollment</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Coverage level not selected (H&amp;B)</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Benefits Benefits Enrollment Non Hold</fullName>
+        <actions>
+            <name>Check_Non_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND (3 OR 4 OR 5)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Benefits</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Benefits Enrollment</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Coverage level not selected,Annual salary needed for requested Life Ins. enrollment,Domestic Partner children cannot be entered if DP is not enrolled,Missing dependents,Missing dependent date of birth,Missing Signature</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Subplan code and description do not match,Missing VLI or Life Insurance amount not indicated,P/T status unable to enroll employee</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Subplan code missing/not matching,Missing subplan code or description</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Benefits Benefits Worksheet Non Hold</fullName>
+        <actions>
+            <name>Check_Non_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND (3 OR 4)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Benefits</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Benefits Worksheets</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Class Name Incorrect (Common/Controlled need to be the same within the groups),Incorrect class structure,Not meeting participation/contribution requirements (minimum ER contribution is 50% of the lowest EE only rate),Incorrect band rates,Missing Signature</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Incorrect sub plan codes,Sub plan codes missing/incorrect,Post Tax class required for Owners,Signature missing</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Benefits Benefits Worksheets</fullName>
+        <actions>
+            <name>Check_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND (3 OR 4)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Benefits</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Benefits Worksheets</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Must Mirror Parent</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Incorrect band rates</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Benefits Missing ESR Import Spreadsheet</fullName>
+        <actions>
+            <name>Check_Non_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Benefits</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing ESR Import Spreadsheet</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Benefits Waivers and PEO111 Hold</fullName>
+        <actions>
+            <name>Check_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>(1 AND 2 AND 3) OR (1 AND 4 AND 5)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Benefits</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Waivers</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>&quot;Waiver incomplete - reason, carrier/policy number if needed&quot;</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>PEO111</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>EEs submitted not equal census originally submitted for banding,Not meeting participation/contribution requirements (minimum ER contribution is 50% of the lowest EE only rate)</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Billing Schedule Contractual Non-Hold</fullName>
+        <actions>
+            <name>Check_Non_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND (3 OR 4 OR 5)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Billing Schedule</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Delivery Fees missing/incorrect</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing Client Assigned State Rate notice for client level reporting state,POA/ROA is incorrect/missing</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>SUI rate on billing schedule does not match Client Assigned State Rate,State SUI Rates Missing or Incorrect,SUI rate incorrect/missing,WC rates need to be 0 – self-retaining WC,SUI rates do not match other control/common groups</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Contractual Benefits Worksheets</fullName>
+        <actions>
+            <name>Check_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Benefits Worksheets</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing current year worksheets,Missing future year worksheets,Signature missing</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Contractual Billing Schedule Hold</fullName>
+        <actions>
+            <name>Check_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND (3 OR 4 OR 5 OR 6 OR 7)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Billing Schedule</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing Client’s Initials,Illegible,Bank Account/Routing number error</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Pricing: Setup fee not meeting minimum requirements. Need approval.,Missing,Pricing: Admin fee not meeting minimum requirements. Need approval.,Pricing: SUI rate not meeting minimum requirements. Need approval.</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>SUI rate not meeting miniumum requirements. Need Approval</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Admin fee doesn&apos;t match other common/controlled groups/parent</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing Client Assigned State Rate notice for client level reporting state,POA/ROA is incorrect/missing,SUI ID Missing,WC rates need to be 0 – self-retaining WC</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Contractual CSA%2FPEO081 Hold</fullName>
+        <actions>
+            <name>Check_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND (3 OR 4 OR 5 OR 6 OR 7 OR 8)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>CSA/PEO081</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing,Need verification of legal name,Information has been altered without client&apos;s initial,Missing Terms and Conditions pages of the CSA,Not initialed to self retain workers’ comp,Missing client signature,Fed ID incorrect</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Signed in “PBS Authorized Officer” section,Union Addendum missing/incorrect,PEO Effective Date prior to contracts being received</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Docusign stamp is covering wording on terms and conditions page</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing all Contractual Paperwork</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing PEO093-CSA signed after effective date</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Must be signed by name listed on CSA</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Contractual Compliance Hold</fullName>
+        <actions>
+            <name>Check_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND (3 OR 4)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Compliance Page,Compliance</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Compliance page missing/incomplete,Need verification of structure and/or owners</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing %</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Contractual EE Paperwork Hold</fullName>
+        <actions>
+            <name>Check_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 3</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>EE Paperwork</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Entire NEP,Missing Spreadsheet,Missing NEP’s,Missing/incomplete tracking form (PEO111),Missing EE enrollment forms,Missing PA Act 32</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Contractual EE Paperwork or Setup Kit or Onboarding Check List Non Hold</fullName>
+        <actions>
+            <name>Check_Non_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Setup Kit,EE Paperwork,Onboarding Check List</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing/incomplete,Missing HRG name,Missing PBS058 FSA debit card addendum,Employees not split out for multiple frequencies,Skylight ONE Card missing/incomplete</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Contractual Financial Hold</fullName>
+        <actions>
+            <name>Check_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 3</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Financial</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Deposit check missing/incomplete,Missing setup fee check,Missing financial approval,Voided check/bank letter unacceptable,Missing voided check,Setup fee check missing</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Contractual Form 8973 Hold</fullName>
+        <actions>
+            <name>Check_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Form 8973</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Invalid Formatting,Missing,Missing client signature</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Contractual Holds EE Data File</fullName>
+        <actions>
+            <name>Contractual_Holds_Checked</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>(1 AND 2 AND 3) OR ( 4 AND 5 AND 6) OR ( 7 AND 8)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>CSA/PEO081</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Must be signed by name listed on CSA,Other,Signed in “PBS Authorized Officer” section</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Medical</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Other</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing PEO0365</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Contractual Medical Hold</fullName>
+        <actions>
+            <name>Check_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND (3 OR 4 OR 5 OR 6)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Medical</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>COBRA Conversion missing/incomplete,Benefit Worksheets missing/incomplete</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Flex Benefits AA incomplete/incorrect/missing,Missing medical approval</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>EEs submitted not equal census originally submitted for banding,Missing approval for COBRA participant(s),Need renewal rates,Not meeting participation/contribution requirements (minimum ER contribution is 50% of the lowest EE only rate)</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Grandfathering: Yes or No,Grandfathering Medical: Yes or No</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Contractual Medical Non-Hold</fullName>
+        <actions>
+            <name>Check_Non_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Medical</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Date of Birth (H&amp;B),Hire Date (H&amp;B),Other,Status: FT/PT (H&amp;B),Grandfathering: Yes or No,Missing PEO069</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Contractual Setup Kit Hold</fullName>
+        <actions>
+            <name>Check_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 3</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Setup Kit</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing,Missing 1st check date/PEO effective date,Pay Period Incorrect,ESR,Missing PBS058 FSA debit card addendum,1st check date outside of submission guidelines,Missing CA SUI ID</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Contractual Spreadsheet Hold</fullName>
+        <actions>
+            <name>Check_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 3</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Spreadsheet</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>EE not split out for multiple codes,Incomplete PEO111,Missing Critical Information on PEO111,Missing PEO111,PEO111 Missing Employees</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Contractual Workers Comp Hold</fullName>
+        <actions>
+            <name>Check_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 3</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>WC</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>COI missing/incorrect/incomplete,Missing WC approval,Policy effective date on COI after PEO effective date,Description of Duties (WC),Job Title (WC),Workers Comp Class (WC)</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Contractual Workers Comp Non-Hold</fullName>
+        <actions>
+            <name>Check_Non_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>WC</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Other</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Contractual Worksheets Hold</fullName>
+        <actions>
+            <name>Check_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Worksheets</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Cannot offer FSA without medical plan,Missing current year worksheets,Missing ER contributions for HSA setup,Missing future year worksheets,Signature missing</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Hold%3A Action Req - Payroll Will Not Run</fullName>
+        <actions>
+            <name>Hold_Action_Req_Payroll_Will_Not_Run</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 3</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Workers Comp</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>COI missing/incorrect/incomplete</value>
+        </criteriaItems>
+        <description>Hold: Action Req - Payroll Will Not Run to be checked</description>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Medical UW Holds EE Data File</fullName>
+        <actions>
+            <name>Medical_UW_Holds_Checked</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>(1 AND 2 AND 3) OR ( 4 AND 5 AND (6 OR 7 OR 8 OR 9 OR 10 OR 11 OR 12 OR 13 OR 14 OR 15 OR 16))</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Medical</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>COBRA Conversion missing/incomplete</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Medical Underwriting</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Final Enrollment</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Approval Expired- New MFF Needed</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Band Change Needed</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>COBRA enrollment over 10%</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>EE&apos;s Submitted Not Equal to Quote Census</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Grandfathering Medical: Yes or No</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Incomplete Benefit Enrollment/Waiver</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing Benefit Enrollment/Waiver</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing Renewal Rates</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Need Verification of COBRA Eligible or Enrolled</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Not Meeting Participation</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Rates on Benefit Worksheets Incorrect</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Medical Underwriting FE Hold</fullName>
+        <actions>
+            <name>Check_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND (3 OR 4)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Medical Underwriting</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Final Enrollment</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Band Change Needed,COBRA enrollment over 10%,EE&apos;s Submitted Not Equal to Quote Census,Grandfathering Medical: Yes or No,Incomplete Benefit Enrollment/Waiver,Missing Benefit Enrollment/Waiver,Missing FT/PT Status or Status Unclear</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing Renewal Rates,Need Verification of COBRA Eligible or Enrolled,Not Meeting Participation,Old version submitted—must resubmit current version,Rates on Benefit Worksheets Incorrect,Waiting Period Issue</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Medical Underwriting IQ Hold</fullName>
+        <actions>
+            <name>Check_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Medical Underwriting</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Initial Quote</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Other</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Missing SUI ID System Hold</fullName>
+        <actions>
+            <name>System_Hold_1</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Billing Schedule</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>SUI ID Missing</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>NB Holds EE Data File</fullName>
+        <actions>
+            <name>NB_Holds_Holds_Checked</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>(1 AND 2 AND 3 ) OR ( 4 AND 5 AND 6 ) OR ( 7 AND 8 AND 9 ) OR (  10 AND 11 AND 12 ) OR ( 13 AND 14) OR ( 15 AND 16 AND 17)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Benefits</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Benefits Enrollment</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Domestic Partner affidavit and/or documentation,P/T status unable to enroll employee,SSN is required,Subplan code missing/not matching</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>EE Paperwork</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Entire NEP,Other,Missing EE enrollment forms</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Payroll</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Deductions</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Court order ppwk for Garnishments,Finfit application missing,Other,Missing Client Retained Deductions</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Payroll</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Direct Deposit</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>DP0002 Missing Client Name/Number Direct Deposits will not be added,DP0027 missing/incomplete,EE&apos;s signature on DD Auth Form,Other,Outdated DD form,Skylight ONE Card</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Payroll</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>EE Information,PEO068-_Prior_Wages_Form</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Payroll</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Tax Info</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Incomplete/Incorrect W4,Missing 501(C)3 Paperwork,Other,State w/h Form-will default to state&apos;s requirement</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>NB Holds EE Data File 2</fullName>
+        <actions>
+            <name>NB_Holds_Holds_Checked</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>(1 AND 2 AND (3 OR 7) ) OR (4 AND 5 AND 6) OR (8 AND 9 AND 10)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Benefits</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Benefits Enrollment</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>,Coverage level not selected,Domestic Partner children cannot be entered if DP is not enrolled,Missing dependent date of birth,Missing dependents,Missing future year EF,Missing Signature,Missing subplan code or description</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Payroll</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Direct Deposit</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>ER signature missing on DD Auth Form</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing VLI or Life Insurance amount not indicated</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Payroll</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Tax Info</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing PA Act 32</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Onboarding Holds EE Data File</fullName>
+        <actions>
+            <name>Onboarding_Holds_Checked</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>(1 AND 2 AND 3) OR (4 AND 5 AND 6)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Setup Kit</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Info missing on the Flex Summary report,Missing HSA setup paperwork</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Worksheets</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Cannot offer FSA without medical plan</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Onboarding Holds EE Data File 2</fullName>
+        <actions>
+            <name>Onboarding_Holds_Checked</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Payroll</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>PEO068-_Prior_Wages_Form</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Incomplete/Missing Client Information</value>
+        </criteriaItems>
+        <description>for this part only: Reference PEO Discrepancy Area = Payroll AND
+Discrepancy Type = PEO068- Prior Wages Form AND
+Discrepancy Sub-Type = Incomplete/Missing Client Information</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>PEO Comment Tool</fullName>
+        <actions>
+            <name>PEO_REF_Discepancy_Comments_Clear</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>PEO_REF_Discrepancy_move</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>This will move added comments to an un-editable field</description>
+        <formula>ISCHANGED(Comments__c ) || not(isblank(Comments__c ))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>PEO Ref Update Discrepancy Close date</fullName>
+        <actions>
+            <name>PEO_Update_Discrepancy_Resolve_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>PEO Discrepancy Record Type</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Resolved</value>
+        </criteriaItems>
+        <description>This will fill in the date/time of when the discrepancy is set to resolved</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>PEO0365 System Hold</fullName>
+        <actions>
+            <name>System_Hold_1</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing PEO0365</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Pay Frequency Incorrect%2FMissing System Hold</fullName>
+        <actions>
+            <name>System_Hold_1</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>(1 AND 2 AND 3) OR (1 AND 4 AND 5) OR (1 AND 6 AND 7)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Billing Schedule</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Pay Frequency Incorrect/Missing</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Financial</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing Acceptable Bank Documentation</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>CSA/PEO081</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>CSA Submitted with Discrepancies</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Payroll Deductions Non-Hold</fullName>
+        <actions>
+            <name>Check_Non_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Payroll</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Deductions</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Other,Court order ppwk for Garnishments,Missing Client Retained Deductions,Missing client signature</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Payroll Direct Deposit Non-Hold</fullName>
+        <actions>
+            <name>Check_Non_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND (3 OR 4 OR 5 OR 6)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Payroll</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Direct Deposit</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Bank letter for Savings account,Cannot set up pre-paid card as it is not an &quot;in/out&quot; account,Account and/or Routing Numbers are cut off,Accountholder&apos;s signature-cannot set up w/o signature or bank letter stating ee is on the acct.</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Chase Pay Card Application-cannot apply without,Cannot use Deposit Slip w/o ACH/RT verbiage-must submit voided check or bank letter,Check Copy - Blurry / Illegible</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>ER signature missing on DD Auth Form,DD Report missing EEs,DD Authorization Form-cannot set up DD w/o this form,Missing Bank Rep&apos;s signature,EE&apos;s signature on DD Auth Form</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Other,Outdated DD form,Mother&apos;s maiden name on Chase Pay Card Application-cannot set up w/o this info,Voided check,Skylight ONE Card,DP0027 missing/incomplete</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Payroll NEP Hold</fullName>
+        <actions>
+            <name>Check_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 3</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Payroll</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>NEP</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Description of Duties (WC),Date of Birth (H&amp;B),Job Title (WC),Spreadsheet Missing,EE Name,Status: FT/PT (H&amp;B),Hire Date (H&amp;B),Job Title (H&amp;B),Workers Comp Class (WC),EE Signature (EE will not be loaded),Entire NEP (EE will not be loaded)</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Payroll NEP Non-Hold</fullName>
+        <actions>
+            <name>Check_Non_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND (3 OR 4 OR 5 OR 6)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Payroll</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>NEP</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>EEOC Page - Missing/Incomplete,Address Illegible,EE Signature (EE will not be loaded),Gender,Date of Birth,Benefits Insurance Class Code,Department #,Confirm Worksite location,ER signature in Section 3</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing AL EE Addendum (PEO086),Job Category,Missing MT EE Addendum (PEO080),Date of Hire,Job Title,Missing PEO066 CA Wage Theft Prevention Act New Hire Notice</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing UT EE Addendum (PEO079),Spreadsheet Authorization - Section A,Missing PEO067 Supplement to CA Wage Theft Prevention New Hire Notice,Other,Status: FT/PT,Worker&apos;s Comp Class,Rate of Pay,DP0027 missing/incomplete</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Hire Date,Missing Spreadsheet,Employee&apos;s SSN,Missing SC EE Addendum (PEO092),ER Signature Missing - Section B1,Entire NEP (EE will not be loaded)</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Payroll PEO068 Holds</fullName>
+        <actions>
+            <name>Check_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Payroll</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>PEO068-_Prior_Wages_Form</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Incomplete/Missing Acceptance/Refusal Selection,Incomplete/Missing Client Information,Incomplete/Missing Client Signature,Incomplete/Missing Current Payroll Final Check Date,Incomplete/Missing Current Payroll Final Run Date</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Payroll Paychex Transfer Hold</fullName>
+        <actions>
+            <name>Check_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Payroll</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Paychex Transfer</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Number Of Ees on Core report does not equal number of employees submitted (missing Ees will not be loaded)</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Payroll Paychex Transfer Non-Hold</fullName>
+        <actions>
+            <name>Check_Non_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Payroll</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Paychex Transfer</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Number Of Ees on Core report does not equal number of employees submitted (missing Ees will not be loaded),Other,Branch Client Number/Payroll Specialist Name</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Payroll Spreadsheet Hold</fullName>
+        <actions>
+            <name>Check_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Payroll</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Spreadsheet</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>WC Class Code (WC),Hire Date (H&amp;B),Status: FT/PT (H&amp;B)</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Payroll Spreadsheet Non-Hold</fullName>
+        <actions>
+            <name>Check_Non_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND (3 OR 4)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Payroll</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Spreadsheet</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>EE #,Hire Date,EE Worksite,EE Job Title,Gender,EE Name,Benefits Insurance Class Code,Dept Name or #,EE Job Category</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Other,Status: FT/PT,Hourly or Salary,Rate of Pay,Last 4 Digits of EE SSN,WC Class Code</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Payroll Tax Info Holds</fullName>
+        <actions>
+            <name>Check_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Payroll</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Tax Info</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing allowance—will default to 0,Missing PA Act 32,Missing 501(C)3 Paperwork</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Payroll Tax Info Non-Hold</fullName>
+        <actions>
+            <name>Check_Non_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND (3 OR 4 OR 5)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Payroll</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Tax Info</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Entire Form W4-will default to Single-0,W4 Signature missing,Other,State w/h Form-will default to state&apos;s requirement,Marital Status-will default to Single,Cannot do flat $ or % amount,Missing PA Act 32</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>(Marital Status) &amp; (Exemptions) listed in addition to &quot;Exempt&quot; will default to S-0 unless new W4 received</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>W4 Signature-will default to Single-0</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Quick Resolve %3D true</fullName>
+        <actions>
+            <name>Populate_Comment_log</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Set_Resolved_by</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>reset_quick_resolve</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>set_Status_to_Resolved</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Quick_Resolve_option__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <description>When quick resolve = true, update fields</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Reference PEO Discrepancy</fullName>
+        <actions>
+            <name>Update_field</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Benefits</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Benefits Enrollment</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>SSN is required</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update %3A %22Hold%3A Action Req- Payroll will not Run%22</fullName>
+        <actions>
+            <name>Update_Hold_Action_Req_Payroll</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>PEO068</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update Non-Hold%3A Action Req - Payroll Will Run</fullName>
+        <actions>
+            <name>Update_Non_Hold_Action_Req_Payroll_W</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Medical Underwriting</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Initial Quote</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Other</value>
+        </criteriaItems>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update Non-Hold%3A Action Req - Payroll Will Run V 1%2E0</fullName>
+        <actions>
+            <name>Update_Non_Hold_Action_Req_Payroll_W</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND (3 OR 4 OR 5)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Medical Underwriting</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Final Enrollment</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing Benefit Enrollment/Waiver,Incomplete Benefit Enrollment/Waiver,EE&apos;s Submitted Not Equal to Quote Census</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Grandfathering Medical: Yes or No,Missing Renewal Rates,Not Meeting Participation,Missing FT/PT Status or Status Unclear</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Other,Waiting Period Issue,Need Verification of COBRA Eligible or Enrolled,COBRA enrollment over 10%,Rates on Benefit Worksheets Incorrect,Band Change Needed</value>
+        </criteriaItems>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update Payroll Hold Checkbox</fullName>
+        <actions>
+            <name>Update_Payroll_Hold_Checkbox</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>COI Missing/Incorrect/Incomplete,Missing WC approval,PEO111 Ques did not work,Policy effective date on COI after PEO effective date</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Workers Comp</value>
+        </criteriaItems>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>WC Holds EE Data File</fullName>
+        <actions>
+            <name>WC_Holds_Holds_Checked</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>(1 AND 2 AND 3) OR (4 AND 5 AND 6) OR (7 AND 8 AND 9) OR (10 AND 11)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Workers Comp</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Final Underwriting</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Description of Duties (WC),Job Title (WC),Workers Comp Class (WC)</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Billing Schedule</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing Client Assigned State Rate notice for client level reporting state,Missing clients SUI rate notice</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Contractual</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Setup Kit</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing CA SUI ID</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Workers Comp</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>COI Missing/Incorrect/Incomplete</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Web Open Holds EE Data File1</fullName>
+        <actions>
+            <name>Web_Open_Holds_Checked</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>OR(
+AND(
+ISPICKVAL( Discrepancy_Area__c , &apos;Benefits&apos;),
+ISPICKVAL( Discrepancy_Type__c , &apos;Benefits Enrollment&apos;),
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Annual salary needed for requested Life Ins. enrollment&apos;)
+),
+AND(
+ISPICKVAL( Discrepancy_Area__c , &apos;Benefits&apos;),
+ISPICKVAL( Discrepancy_Type__c , &apos;Benefits Worksheets&apos;),
+OR(
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Bank Account/Routing number error&apos;),
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Missing network subplan&apos;),
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Must mirror parent&apos;)
+)
+),
+AND(
+ISPICKVAL( Discrepancy_Area__c , &apos;Contractual&apos;),
+ISPICKVAL( Discrepancy_Type__c , &apos;Billing Schedule&apos;),
+OR(
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Missing client operating state(s)&apos;),
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Bank Account/Routing number error&apos;),
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Illegible&apos;),
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Pay Frequency Incorrect/Missing&apos;),
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;WC rates need to be 0 – self-retaining WC&apos;)
+)
+),
+AND(
+ISPICKVAL( Discrepancy_Area__c , &apos;Contractual&apos;),
+ISPICKVAL( Discrepancy_Type__c , &apos;Compliance&apos;),
+OR(
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Compliance page missing/incomplete&apos;),
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Need verification of structure and/or owners&apos;)
+)
+),
+AND(
+ISPICKVAL( Discrepancy_Area__c , &apos;Contractual&apos;),
+ISPICKVAL( Discrepancy_Type__c , &apos;CSA/PEO081&apos;),
+OR(
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Missing Terms and Conditions pages of the CSA&apos;),
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Need verification of legal name&apos;),
+ISPICKVAL( Discrepancy_Sub_Type__c , &quot;Not initialed to self retain workers’ comp&quot;),
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;CSA Submitted with Discrepancies&apos;)
+)
+),
+AND(
+ISPICKVAL( Discrepancy_Area__c , &apos;Contractual&apos;),
+ISPICKVAL( Discrepancy_Type__c , &apos;Financial&apos;),
+OR(
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Missing Acceptable Bank Documentation&apos;),
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Missing financial approval&apos;)
+)
+)
+)</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Web Open Holds EE Data File2</fullName>
+        <actions>
+            <name>Web_Open_Holds_Checked</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>OR(
+AND(
+ISPICKVAL( Discrepancy_Area__c , &apos;Contractual&apos;),
+ISPICKVAL( Discrepancy_Type__c , &apos;Medical&apos;),
+OR(
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Flex benefits AA incomplete/incorrect/missing&apos;),
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Missing medical approval&apos;)
+)
+),
+AND(
+ISPICKVAL( Discrepancy_Area__c , &apos;Contractual&apos;),
+ISPICKVAL( Discrepancy_Type__c , &apos;Setup Kit&apos;),
+OR(
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;1st check date outside of submission guidelines&apos;),
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Missing 1st check date/PEO Effective date&apos;),
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Pay period incorrect&apos;)
+)
+),
+AND(
+ISPICKVAL( Discrepancy_Area__c , &apos;Contractual&apos;),
+ISPICKVAL( Discrepancy_Type__c , &apos;Spreadsheet&apos;),
+OR(
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Missing Critical Information on PEO111&apos;),
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Missing PEO111&apos;),
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;PEO111 Missing Employees&apos;)
+)
+),
+AND(
+ISPICKVAL( Discrepancy_Area__c , &apos;Contractual&apos;),
+ISPICKVAL( Discrepancy_Type__c , &apos;Worksheets&apos;),
+OR(
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Missing current year worksheets&apos;),
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Missing ER contributions for HSA setup&apos;),
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Missing future year worksheets&apos;),
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Signature missing&apos;)
+)
+),
+AND(
+ISPICKVAL( Discrepancy_Area__c , &apos;Medical Underwriting&apos;),
+ISPICKVAL( Discrepancy_Type__c , &apos;Final Enrollment&apos;),
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Missing FT/PT Status or Status unclear&apos;)
+),
+AND(
+ISPICKVAL( Discrepancy_Area__c , &apos;Workers Comp&apos;),
+ISPICKVAL( Discrepancy_Type__c , &apos;Final Underwriting&apos;),
+ISPICKVAL( Discrepancy_Sub_Type__c , &apos;Policy effective date on COI after PEO Effective Date&apos;)
+)
+)</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Workers Comp Final UW Hold</fullName>
+        <actions>
+            <name>Check_Hold_Box_PEO_Disc</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+            <operation>equals</operation>
+            <value>Workers Comp</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Type__c</field>
+            <operation>equals</operation>
+            <value>Final Underwriting</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_Discrepancy__c.Discrepancy_Sub_Type__c</field>
+            <operation>equals</operation>
+            <value>Missing WC approval,PEO111 Ques did not work,Policy effective date on COI after PEO effective date</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

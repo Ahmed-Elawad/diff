@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_VendorZipPostalCode_5digits</fullName>
+    <active>true</active>
+    <description>Force users to enter 5 numeric values in this text field, allowing for a leading zero.</description>
+    <errorConditionFormula>AND(
+ NOT(LEN(Vendor_Zip_Postal_Code__c) = 5),
+ NOT(ISBLANK(Vendor_Zip_Postal_Code__c)),
+($Profile.Name &lt;&gt;&quot;System Administrator&quot;) 
+)</errorConditionFormula>
+    <errorDisplayField>Vendor_Zip_Postal_Code__c</errorDisplayField>
+    <errorMessage>You must enter five numbers into the Vendor Zip/Postal Code field.</errorMessage>
+</ValidationRule>

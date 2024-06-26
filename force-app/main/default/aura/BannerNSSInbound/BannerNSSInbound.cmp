@@ -1,0 +1,21 @@
+<aura:component description="BannerNSSInbound">
+    <aura:attribute name="opportunity" type="Object" />
+
+    <div class="box" title="NSS Inbound">
+        <div class="banner-header slds-align_absolute-center">
+            <h4 class="slds-item_label slds-text-color_weak slds-truncate slds-text-align_center">NSS/SDR</h4>
+        </div>
+        <div class="banner-body column">
+            <aura:if isTrue="{!v.opportunity.NSS_Source__c == 'Inbound'}">
+                <img src="{!$Resource.flameGif}" />
+            </aura:if>
+            <aura:if isTrue="{!v.opportunity.NSS_Source__c == 'Inbound-Oasis'}">
+                <img src="{!$Resource.flameGif}" />
+            </aura:if>
+            <aura:if isTrue="{!v.opportunity.NSS_Source__c == 'Outbound'}">
+                <img src="{!$Resource.BannerIcons + '/LightningIcons/outbound.png'}" />
+            </aura:if>
+            <span>{!v.opportunity.NSS_Source__c}</span>
+        </div>
+    </div>
+</aura:component>

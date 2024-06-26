@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Crossover_Approval_Check</fullName>
+    <active>true</active>
+    <description>The crossover can not be approved by the creator of the Request.</description>
+    <errorConditionFormula>AND(   Auto_Approved__c = false, ISCHANGED(Status__c) , ISPICKVAL( Status__c , &quot;Approved&quot;) , $User.Id =  CreatedById) &amp;&amp; NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))</errorConditionFormula>
+    <errorDisplayField>Status__c</errorDisplayField>
+    <errorMessage>The crossover can not be approved by the creator of the Request.</errorMessage>
+</ValidationRule>

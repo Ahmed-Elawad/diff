@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Tax_Type_is_Invalid_for_this_Tax_Agency</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND
+(
+ISPICKVAL( Tax_Agency__c, &quot;FL - FLORIDA&quot;) ||
+ISPICKVAL( Tax_Agency__c, &quot;NV - NEVADA&quot;)||
+ISPICKVAL( Tax_Agency__c, &quot;TN - TENNESSEE&quot;)||
+ISPICKVAL( Tax_Agency__c, &quot;TX - TEXAS&quot;)||
+ISPICKVAL( Tax_Agency__c, &quot;WA - WASHINGTON&quot;) ||
+ISPICKVAL( Tax_Agency__c, &quot;NH - NEW HAMPSHIRE&quot;)||
+ISPICKVAL( Tax_Agency__c, &quot;SD - SOUTH DAKOTA&quot;)||
+ISPICKVAL( Tax_Agency__c, &quot;AK - ALASKA&quot;)||
+ISPICKVAL( Tax_Agency__c, &quot;WY - WYOMING&quot;),
+ISPICKVAL( Tax_Type__c, &quot;State-Withholding&quot;),
+NOT (ISPICKVAL( Status__c ,&quot;Pending PAC Review - New Notice Received&quot;))
+
+
+
+
+)</errorConditionFormula>
+    <errorDisplayField>Tax_Type__c</errorDisplayField>
+    <errorMessage>Tax Type is Invalid for this Tax Agency</errorMessage>
+</ValidationRule>

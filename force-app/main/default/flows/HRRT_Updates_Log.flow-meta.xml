@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>59.0</apiVersion>
+    <decisions>
+        <name>First_update</name>
+        <label>First update</label>
+        <locationX>182</locationX>
+        <locationY>323</locationY>
+        <defaultConnector>
+            <targetReference>SubsequentUpdates</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>First_Log</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.HRRT_Notes_Log__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Notes</targetReference>
+            </connector>
+            <label>First Log</label>
+        </rules>
+    </decisions>
+    <description>v4</description>
+    <environments>Default</environments>
+    <interviewLabel>HRRT Updates Log {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>HRRT Updates Log</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>SubsequentUpdates</name>
+        <label>SubsequentUpdates</label>
+        <locationX>314</locationX>
+        <locationY>431</locationY>
+        <inputAssignments>
+            <field>HRRT_Notes_Log__c</field>
+            <value>
+                <elementReference>SubsequentLog</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>HRRT_Notes__c</field>
+            <value>
+                <stringValue></stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Notes</name>
+        <label>Update Notes</label>
+        <locationX>50</locationX>
+        <locationY>431</locationY>
+        <inputAssignments>
+            <field>HRRT_Notes_Log__c</field>
+            <value>
+                <elementReference>FirstLog</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>HRRT_Notes__c</field>
+            <value>
+                <stringValue></stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>First_update</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>HRRT_Notes__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <object>General_Inquiry_HRRT_Tracker__c</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <name>FirstLog</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>{!$User.FirstName} {!$User.LastName} {!$Flow.CurrentDateTime}
+{!$Record.HRRT_Notes__c}</text>
+    </textTemplates>
+    <textTemplates>
+        <name>SubsequentLog</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>{!$User.FirstName} {!$User.LastName} {!$Flow.CurrentDateTime}
+{!$Record.HRRT_Notes__c}
+
+{!$Record.HRRT_Notes_Log__c}</text>
+    </textTemplates>
+</Flow>

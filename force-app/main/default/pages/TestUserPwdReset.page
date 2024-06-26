@@ -1,0 +1,21 @@
+<apex:page standardController="User" extensions="UserPwdExtension">
+    <apex:pageBlock >
+        <apex:pageMessages />
+        <p>{!WhoandWhere}</p>
+        <p/><p/>    
+        <apex:form >
+        <p> Who needs their passwords reset?</p>
+        <apex:selectRadio value="{!uzers}"> 
+            <apex:selectOptions value="{!items}"/>
+        </apex:selectRadio><p/>
+                      
+        <p><apex:commandButton action="{!cancel}" value="Cancel!"/></p>
+
+        <p><apex:commandButton action="{! resetPwd1}" value="Reset first batch of Passwords"/></p>
+        <p><apex:commandButton action="{! resetPwd2}" value="Reset second batch of Passwords"/></p>
+        <p><apex:commandButton action="{! resetPwd3}" value="Reset last batch Passwords"/></p>
+        </apex:form>
+        
+    </apex:pageBlock>
+
+</apex:page>

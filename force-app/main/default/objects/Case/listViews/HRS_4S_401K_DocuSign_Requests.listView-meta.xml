@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRS_4S_401K_DocuSign_Requests</fullName>
+    <booleanFilter>1 AND (2 OR 4) AND 3 AND 5</booleanFilter>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>NAME</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>X401_k_PEP__c</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>Reassign_Category_2__c</columns>
+    <columns>CASES.PRIORITY</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <filterScope>Queue</filterScope>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Solved</value>
+    </filters>
+    <filters>
+        <field>Reassign_Category_2__c</field>
+        <operation>equals</operation>
+        <value>401k Term Paperwork</value>
+    </filters>
+    <filters>
+        <field>X401_k_PEP__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Reassign_Category_1__c</field>
+        <operation>equals</operation>
+        <value>Term Docusign - Out of Business</value>
+    </filters>
+    <filters>
+        <field>OWNER_NAME</field>
+        <operation>equals</operation>
+        <value>HRS 4S DocuSign</value>
+    </filters>
+    <label>HRS 4S DocuSign Requests 401K Terms</label>
+    <queue>HRS_4S_Docusign</queue>
+    <sharedTo>
+        <role>HRS4SClientRetentionRepresentative</role>
+        <role>HRS4SDirector</role>
+        <role>HRS_4S_Client_Retention_Supervisor</role>
+        <role>HRS_4S_Client_Support_Rep</role>
+        <role>HRS_4S_LDPS_Representative_II</role>
+    </sharedTo>
+</ListView>

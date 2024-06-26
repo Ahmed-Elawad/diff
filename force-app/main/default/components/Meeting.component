@@ -1,0 +1,136 @@
+<!-- A component to setup meeting information.
+
+   History
+   -------
+   02/22/2011 Dan Carmen        Created.
+   04/15/2011 Dan Carmen        Expanded visible size of Subject field. 
+   04/06/2016 Justin Stouffer   Added in logic to display differently in Salesforce1.
+   02/17/2017 Jacob Hinds       Adding in extra Ids for rerendering.
+ -->
+<apex:component id="meetingCMPId" controller="MeetingController">
+   <apex:attribute name="pageController" 
+      type="PageControllerBase" 
+      assignTo="{!pageController}" 
+      required="true" 
+      description="The controller for the page." />
+   <apex:attribute name="meetingEvent"
+      type="Event"
+      assignTo="{!evnt}"
+      required="true"
+      description="The Meeting Event." />
+   <apex:attribute name="isSF1" 
+      description="Is this SalesForce 1"
+      type="Boolean" 
+      required="false" 
+      default="false" />
+
+   <apex:outputPanel rendered="{!NOT(isSF1)}" id="meetingOutputPanel">
+   <apex:actionRegion id="meetingActionRegion">
+      <apex:pageBlockSection id="StartEndDateComponent" title="New Meeting" columns="3">
+         <apex:inputField value="{!evnt.Type}" />
+         <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Meeting Date" for="meet_date" />
+            <apex:inputField value="{!evnt.ActivityDate}" id="meet_date" >
+               <apex:actionSupport event="onchange" action="{!changeDateTime}" rerender="StartEndDateComponent" />
+            </apex:inputField>
+         </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem />
+
+         <apex:pageBlockSectionItem id="subjectPageBlockSectionItem">
+            <apex:outputLabel value="Subject" />
+            <apex:inputText id="event_subject" value="{!evnt.Subject}" size="50" />
+         </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Meeting Time" for="meet_time" />
+            <apex:selectList value="{!timeSelection}" id="meet_time" title="Meeting Time" size="1">
+               <apex:selectOptions value="{!timeOptions}"/>
+               <apex:actionSupport event="onchange" action="{!changeDateTime}" rerender="StartEndDateComponent" />
+            </apex:selectList>
+         </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Meeting Duration" for="meet_duration" />
+            <apex:selectList value="{!durationSelection}" id="meet_duration" title="Meeting Duration" size="1">
+               <apex:selectOptions value="{!durationOptions}"/>
+               <apex:actionSupport event="onchange" action="{!changeDateTime}" rerender="StartEndDateComponent" />
+            </apex:selectList>
+         </apex:pageBlockSectionItem>
+
+         <apex:pageBlockSectionItem />
+         <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Meeting Start" for="meet_start" />
+            <apex:outputField value="{!evnt.ActivityDateTime}"  id="meet_start" />
+         </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Meeting End" for="meet_end" />
+            <apex:outputText value="{!formattedEndDateTime}" id="meet_end" />
+         </apex:pageBlockSectionItem>
+
+      </apex:pageBlockSection>
+      <apex:pageBlockSection columns="1" id="descPageBlockSection">
+         <apex:pageBlockSectionItem id="descPageBlockSectionItem">
+            <apex:outputLabel value="Description" for="event_description" />
+            <apex:inputTextArea value="{!evnt.Description}" rows="6" cols="30" id="event_description"/>
+         </apex:pageBlockSectionItem>
+      </apex:pageBlockSection>
+   </apex:actionRegion>
+   </apex:outputPanel>
+     <apex:outputPanel rendered="{!isSF1}">
+       <apex:actionRegion >
+        <section class="section">
+                    <h2 class="section-head">
+                        New Meeting 
+                    </h2>
+           <apex:outputPanel id="StartEndDateComponent2" >
+           <div class="form-group">
+               <label class="control-label" for="evntType2" >Type</label> 
+                    <apex:inputField styleClass="form-control" value="{!evnt.Type}" id="evntType2" />
+            </div>
+            <div class="form-group">
+               <label class="control-label" for="meet_date2" >Meeting Date</label>             
+                    <apex:inputField styleClass="form-control" value="{!evnt.ActivityDate}" id="meet_date2" >
+                        <apex:actionSupport event="onchange" action="{!changeDateTime}" rerender="StartEndDateComponent2" />
+                    </apex:inputField>
+            </div>
+            <div class="form-group" id="subjectDivSF1">
+               <label class="control-label" for="Sbj2" >Subject</label> 
+                    <apex:inputText styleClass="form-control" value="{!evnt.Subject}" size="30" id="Sbj2"/>
+            </div>
+            <div class="form-group">
+               <label class="control-label" for="meet_time2" >Meeting Time</label> 
+                <apex:selectList styleClass="form-control" value="{!timeSelection}" id="meet_time2" title="Meeting Time" size="1">
+                   <apex:selectOptions value="{!timeOptions}"/>
+                   <apex:actionSupport event="onchange" action="{!changeDateTime}" rerender="StartEndDateComponent2" />
+                </apex:selectList>
+            </div>
+            <div class="form-group">
+               <label class="control-label" for="meet_duration2" >Meeting Duration</label>
+                    <apex:selectList styleClass="form-control" value="{!durationSelection}" id="meet_duration2" title="Meeting Duration" size="1">
+                       <apex:selectOptions value="{!durationOptions}"/>
+                       <apex:actionSupport event="onchange" action="{!changeDateTime}" rerender="StartEndDateComponent2" />
+                    </apex:selectList>
+            </div>
+            <table class="table table-hover well table-bordered">
+                <tbody>
+                    <tr class="success">
+                        <td>Meeting Start</td>
+                        <td>
+                            <apex:outputField value="{!evnt.ActivityDateTime}"  id="meet_start2" />
+                        </td>
+                    </tr>
+                    <tr class="success">
+                        <td>Meeting End</td>
+                        <td>
+                            <apex:outputText value="{!formattedEndDateTime}" id="meet_end2" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="form-group">
+               <label class="control-label" for="event_description2" >Description </label>
+                <apex:inputTextArea styleClass="form-control" value="{!evnt.Description}" rows="6" cols="30" id="event_description2"/>         
+            </div>
+            </apex:outputPanel>
+        </section>
+      </apex:actionRegion>
+   </apex:outputPanel>
+</apex:component>

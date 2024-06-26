@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Client_Load_Complete_Indicator</fullName>
+    <active>true</active>
+    <description>Client load Complete checkbox has to be checked when Client Load Complete date is not null</description>
+    <errorConditionFormula>NOT( Client_Load_Complete__c ) &amp;&amp; NOT( ISNULL( Date_Client_Load_Complete__c ) ) &amp;&amp; (NOT( BEGINS($Profile.Name,&quot;System Administrator&quot;)))</errorConditionFormula>
+    <errorDisplayField>Client_Load_Complete__c</errorDisplayField>
+    <errorMessage>***** Please Check Client Load Complete Checkbox ****</errorMessage>
+</ValidationRule>

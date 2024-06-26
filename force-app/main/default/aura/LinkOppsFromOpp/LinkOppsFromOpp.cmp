@@ -1,0 +1,58 @@
+<aura:component controller="IntegratedSellingController">
+	<!--passed in from IntegratedSelling.cmp-->
+    <aura:attribute name="opportunityId" type="Id" required="true" />
+    
+    <aura:attribute name="Opp" type="Opportunity" /><!--current Opportunity-->
+	<aura:attribute name="Opportunities" type="Opportunity" /><!--Opp list related to same Account-->
+	<aura:attribute name="Columns" type="List" />
+    <aura:attribute name="selectedRowsCount" type="Integer" default="0"/>
+    <aura:attribute name="maxRowSelection" type="Integer" default="2"/>
+    <aura:attribute name="selectedRowsVariable" type="List" /><!--used to preselect-->
+    <aura:attribute name="selectedRowsList" type="List" /><!--a placeholder for controller processing-->
+    <aura:attribute name="loaded" type="Boolean" default="true" />
+    <aura:attribute name="error" type="Boolean" default="false" />
+    <aura:attribute name="errorMessage" type="String"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.setUpForOpp}" />
+    
+    <!--can only be used to pull data for THIS object-->
+    <force:recordData aura:id="opportunityRecord"
+                          recordId="{!v.opportunityId}" 
+                          fields="Name, AccountId"
+                  		  targetFields="{!v.Opp}"
+                  	      layoutType="FULL"/>
+    
+    <aura:if isTrue="{!v.error }">
+        <div class="slds-notify slds-notify--toast slds-theme--error">
+        	<span class="slds-assistive-text">Error</span>
+            <div>
+            	<lightning:icon iconName="utility:error" alternativeText="error" variant="bare"/>
+            </div>
+            <div class="slds-col slds-align-middle" style="padding-left: .75rem">
+            	<h2 class="slds-text-heading_small">{!v.errorMessage}</h2>
+            </div>
+        </div>
+    </aura:if>
+    
+	<aura:if isTrue="{! v.loaded }">
+        <lightning:card iconName="standard:opportunity" title="{! 'Opportunities related to ' + v.Opp.Name}">
+            <lightning:datatable aura:id="oppTable"
+                                 data="{!v.Opportunities}"
+                                 columns="{!v.Columns}"
+                                 keyField="Id" 
+                                 maxRowSelection="{!v.maxRowSelection}"
+                                 hideCheckboxColumn="false"
+                                 onrowselection="{!c.updateSelected}"
+            						selectedRows="{!v.selectedRowsVariable}"/>
+                                                 
+        	<lightning:button disabled="{!v.error}" label="Link" variant="brand" onclick="{!c.handleSelected}"/>
+        </lightning:card>
+        
+        <aura:set attribute="else">
+            <div class="spinnerHolder">
+            	<lightning:spinner alternativeText="Loading" />
+            </div>
+        </aura:set>
+    </aura:if>
+   
+</aura:component>

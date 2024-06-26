@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Log_flow_Error</name>
+        <label>Log flow Error</label>
+        <locationX>958</locationX>
+        <locationY>848</locationY>
+        <actionName>FlowInvokableActions</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>errorTextTemplate</name>
+            <value>
+                <elementReference>FlowFailureTextTemplate</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>FlowInvokableActions</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>53.0</apiVersion>
+    <assignments>
+        <name>Add_failed_record_update_to_error_logs</name>
+        <label>Add failed record update to error logs</label>
+        <locationX>453</locationX>
+        <locationY>1206</locationY>
+        <assignmentItems>
+            <assignToReference>FailedActions</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <stringValue>Failed to update records</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Log_flow_Error</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_Failed_Checklist_Id_to_failed_actions</name>
+        <label>Assign Failed Checklist Id to failed actions</label>
+        <locationX>484</locationX>
+        <locationY>428</locationY>
+        <assignmentItems>
+            <assignToReference>FailedActions</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <stringValue>Checklist ID not provided for flow to run</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Log_flow_Error</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_Failed_medical_Id_to_failed_actions</name>
+        <label>Assign Failed medical Id to failed actions</label>
+        <locationX>470</locationX>
+        <locationY>698</locationY>
+        <assignmentItems>
+            <assignToReference>FailedActions</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <stringValue>Failed to query medical record</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Log_flow_Error</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_no_medical_form_returned_to_failed_actions</name>
+        <label>Assign no medical form returned to failed actions</label>
+        <locationX>454</locationX>
+        <locationY>926</locationY>
+        <assignmentItems>
+            <assignToReference>FailedActions</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <stringValue>Did not get a matching medical form for checklsit</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Log_flow_Error</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <description>Checklist to verify that a checklist ID was assigned at the start of the flow and is still available at runtime. If one isn&apos;t provided we should terminate the flow with an error logged.</description>
+        <name>Determine_if_checklist_ID_was_assigned</name>
+        <label>Determine if checklist ID was assigned</label>
+        <locationX>170</locationX>
+        <locationY>423</locationY>
+        <defaultConnector>
+            <targetReference>Get_Medical_Questionnaire_for_this_checklist</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Query Medical Form</defaultConnectorLabel>
+        <rules>
+            <name>If_no_checklist_ID_is_provided_for_runtime</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>StoredChecklistId</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Failed_Checklist_Id_to_failed_actions</targetReference>
+            </connector>
+            <label>If no checklist ID is provided for runtime</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>If_no_medical_form_is_returned_from_the_query</name>
+        <label>If no medical form is returned from the query</label>
+        <locationX>174</locationX>
+        <locationY>940</locationY>
+        <defaultConnector>
+            <targetReference>Clear_Medical_Questionnaire_Values</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Update Medical Questionnaire Fields</defaultConnectorLabel>
+        <rules>
+            <name>If_no_medical_form_is_returned</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>MedicalQUestionnaire</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_no_medical_form_returned_to_failed_actions</targetReference>
+            </connector>
+            <label>If no medical form is returned</label>
+        </rules>
+    </decisions>
+    <description>After a PEO UW Checklist CS CM Medical Accept Date &amp; CS CM Medical Status date are updated this flow will set a time-based action to trigger 90 days after the checklist is successfully saved. The actions of the flow will clear the medical AKN fields on the related medical questionnaire if it exists and log an error to Error_Log__c in the event of any error.</description>
+    <interviewLabel>PEO Edge Medical Akn Clear 90 Days After Checklist Approval {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>PEO Edge Medical Akn Clear 90 Days After Checklist Approval</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>FREE_FORM_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>Retrieves the medical questionnaire for the provided checklist ID and stores it in the Medical_Questionnaire variable. Gets:
+- Acknowledged_By__c
+- Acknowledgement_Agreed_Stamp__c
+- PEO_Onboarding_Checklist__c
+Values saved as null on medical_Questionnaire if the fields are empty</description>
+        <name>Get_Medical_Questionnaire_for_this_checklist</name>
+        <label>Get Medical Questionnaire for this checklist</label>
+        <locationX>180</locationX>
+        <locationY>703</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>If_no_medical_form_is_returned_from_the_query</targetReference>
+        </connector>
+        <faultConnector>
+            <targetReference>Assign_Failed_medical_Id_to_failed_actions</targetReference>
+        </faultConnector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>PEO_Onboarding_Checklist__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>StoredChecklistId</elementReference>
+            </value>
+        </filters>
+        <object>PEO_Onboarding_Medical_Questionnaire__c</object>
+        <outputReference>MedicalQUestionnaire</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Acknowledged_By__c</queriedFields>
+        <queriedFields>Acknowledgement_Agreed_Stamp__c</queriedFields>
+        <queriedFields>PEO_Onboarding_Checklist__c</queriedFields>
+    </recordLookups>
+    <recordUpdates>
+        <name>Clear_Medical_Questionnaire_Values</name>
+        <label>Clear Medical Questionnaire Values</label>
+        <locationX>193</locationX>
+        <locationY>1194</locationY>
+        <faultConnector>
+            <targetReference>Add_failed_record_update_to_error_logs</targetReference>
+        </faultConnector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>MedicalQUestionnaire.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Acknowledgement_Agreed_Stamp__c</field>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Client_Id_user_agreement_acknowledgment__c</field>
+        </inputAssignments>
+        <object>PEO_Onboarding_Medical_Questionnaire__c</object>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>50</locationY>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>CS_CM_Med_UW_Accept_Date__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>CS_CM_Medical_UW_Status__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Medical_Benefits_Underwriting_Requested__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Yes</stringValue>
+            </value>
+        </filters>
+        <object>PEO_Onboarding_Checklist__c</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <scheduledPaths>
+            <name>After_90_Days</name>
+            <connector>
+                <targetReference>Determine_if_checklist_ID_was_assigned</targetReference>
+            </connector>
+            <label>After 90 Days</label>
+            <offsetNumber>90</offsetNumber>
+            <offsetUnit>Days</offsetUnit>
+            <timeSource>RecordTriggerEvent</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <description>Stores the text template to be provided to the error logger in the event of failure</description>
+        <name>FlowFailureTextTemplate</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;Flow Name: PEO Edge Med Akn Clear 90 Days After Medical Approval&lt;/p&gt;&lt;p&gt;Failed Actions(s): {!FailedActions}&lt;/p&gt;&lt;p&gt;Err Msg: {!$Flow.FaultMessage}&lt;/p&gt;&lt;p&gt;User: &lt;span style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;{!$User.Full_Name__c}﻿&lt;/span&gt;&lt;/p&gt;</text>
+    </textTemplates>
+    <variables>
+        <name>FailedActions</name>
+        <dataType>String</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>MedicalQUestionnaire</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>PEO_Onboarding_Medical_Questionnaire__c</objectType>
+    </variables>
+    <variables>
+        <description>Stores the id of the checklist this process was triggered from.</description>
+        <name>StoredChecklistId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <elementReference>$Record__Prior.Id</elementReference>
+        </value>
+    </variables>
+</Flow>

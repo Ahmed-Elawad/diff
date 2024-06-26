@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Referral_Source_Business_Type__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>Populate Ref Contact Source Business Type with this value for Drupal Forms</description>
+    <externalId>false</externalId>
+    <formula>IF(ISPICKVAL( Target_Audience__c, &apos;Payroll Acquisition&apos;) , 
+&apos;Payroll Company&apos;, 
+IF(ISPICKVAL( Target_Audience__c, &apos;CPA&apos;) , 
+&apos;Accounting Firm&apos;,
+IF(ISPICKVAL( Target_Audience__c, &apos;Insurance Broker&apos;) , 
+&apos;Insurance Broker&apos;,  
+&apos;&apos;
+)
+)
+)</formula>
+    <label>Referral Source Business Type</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

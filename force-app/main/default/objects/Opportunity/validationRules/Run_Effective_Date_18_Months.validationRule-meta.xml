@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Run_Effective_Date_18_Months</fullName>
+    <active>true</active>
+    <description>Case - 33073073 - Run Effective date can not be more than 18 months from the current system date on all Opportunity Record Types.</description>
+    <errorConditionFormula>AND( 
+ISCHANGED(CloseDate), 
+CloseDate &gt;= ADDMONTHS(TODAY(),18), 
+$RecordType.Name != &apos;Icon Opportunity Record Type&apos;, 
+$RecordType.Name != &apos;MSP Opportunity Record Type&apos;, 
+$RecordType.Name != &apos;Referral Partner Opportunity Record Type&apos;, 
+$RecordType.Name != &apos;STM Opportunity Record Type&apos;, 
+NOT(BEGINS($Profile.Name, &apos;System Administrator&apos;)) 
+)</errorConditionFormula>
+    <errorMessage>Run Effective date can not be more than 18 months from the current system date.</errorMessage>
+</ValidationRule>

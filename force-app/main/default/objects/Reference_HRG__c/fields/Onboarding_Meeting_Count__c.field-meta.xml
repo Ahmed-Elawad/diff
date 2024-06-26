@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Onboarding_Meeting_Count__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>IF((ISPICKVAL( Account__r.Type,&quot;Premier PBS Client&quot;)), 
+IF(NOT(ISNULL( STO_Meeting__c )) ,1,0)+ 
+IF(NOT(ISNULL( CC_Meeting__c )) ,1,0)+ 
+IF(NOT(ISNULL( X1st_Invoice_Review__c )) ,1,0) + 
+IF(NOT(ISNULL( HR_Assessment_Completed__c )) ,1,0)+ 
+IF(NOT(ISNULL( Reference_Manual_Review__c )) ,1,0)+ 
+IF(NOT(ISNULL( PEO_New_Client_Meeting__c )),1,0)+
+IF(OR(NOT(ISNULL( HR_Action_Plan_Meeting__c )),NOT(ISNULL( COS_Meeting__c ))),1,0)  
+, 
+IF(NOT(ISNULL( STO_Meeting__c )) ,1,0)+ 
+IF(NOT(ISNULL( CC_Meeting__c )) ,1,0)+ 
+IF(NOT(ISNULL( X1st_Invoice_Review__c )) ,1,0) + 
+IF(NOT(ISNULL( HR_Assessment_Completed__c )) ,1,0)+ 
+IF(NOT(ISNULL( Reference_Manual_Review__c )) ,1,0))+
+IF(OR(NOT(ISNULL( HR_Action_Plan_Meeting__c )),NOT(ISNULL( COS_Meeting__c ))),1,0)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Onboarding Meeting Count</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

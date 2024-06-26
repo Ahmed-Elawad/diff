@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Open_Onboarding_Issues__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>IF( ISPICKVAL( Cancel_Request_Result__c, &quot;&quot;) &amp;&amp; NOT(ISBLANK( Cancel_Request_Received__c)) , &quot;Pending Cancellation&quot;&amp;BR(), &quot;&quot;)&amp;
+
+IF(NOT(Total_Open_Discrepancies__c = 0), &quot;Open Discrepancy&quot;&amp;BR(), &quot;&quot;)&amp;
+IF( ISPICKVAL( Sales_Alert__c, &quot;Yes&quot;) &amp;&amp; ISPICKVAL( Sales_Alert_Result__c, &quot;&quot;) , &quot;Open Sales Alert&quot;&amp;BR(), &quot;&quot;)&amp;
+IF(NOT(ISBLANK(Split_Delete_Start_Date__c)) &amp;&amp; ISBLANK(Split_Delete_End_Date__c) , &quot;Pending Split Delete&quot;&amp;BR(), &quot;&quot;)&amp;
+IF(NOT(ISBLANK(Pending_MMS_Validation_Sent__c)) &amp;&amp; ISBLANK(Pending_MMS_Validation_Received__c) , &quot;Pending MMS Valdiation&quot;&amp;BR() , &quot;&quot;)&amp;
+IF(NTP__c == true &amp;&amp; ISBLANK(Classification_Coding_Census_Updates__c), &quot;Pending NTP Employees&quot;&amp;BR(), &quot;&quot;) &amp;
+IF(NOT(ISBLANK(Payroll_Issue__c)) &amp;&amp; ISBLANK(Payroll_Verified__c), &quot;Open Payroll Issue&quot;&amp;BR(), &quot;&quot;)&amp;
+IF(NOT(ISBLANK( Setup_Delay_Start__c )) &amp;&amp; ISBLANK( Setup_Delay_End__c ) , &quot;Setup is currently delayed&quot;&amp;BR(), &quot;&quot;)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Open Onboarding Issues</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

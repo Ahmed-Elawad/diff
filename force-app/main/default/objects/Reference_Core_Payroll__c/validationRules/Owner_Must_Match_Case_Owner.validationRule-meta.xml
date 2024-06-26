@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Owner_Must_Match_Case_Owner</fullName>
+    <active>true</active>
+    <description>Owner Must Match Case Owner</description>
+    <errorConditionFormula>NOT( BEGINS($Profile.Name,&quot;System Administrator&quot;)) &amp;&amp; OwnerId &lt;&gt; Case_Lookup__r.OwnerId</errorConditionFormula>
+    <errorDisplayField>OwnerId</errorDisplayField>
+    <errorMessage>**** The owner of the Reference Core Payroll does not match the owner of the Case, these must match.  Ownership changes must to be done on the Case. Go to the Case record to change the owner. ****</errorMessage>
+</ValidationRule>

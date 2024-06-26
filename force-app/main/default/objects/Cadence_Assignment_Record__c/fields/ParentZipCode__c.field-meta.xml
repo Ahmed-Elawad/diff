@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ParentZipCode__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>IF (NOT(ISBLANK(LeadId__c))
+      , LEFT(LeadId__r.PostalCode,5)
+      , IF (NOT(ISBLANK(AccountId__c)), AccountId__r.Owner_Zip_Code__c, 
+           IF (NOT(ISBLANK(ReferralAccount__c)), LEFT(ReferralAccount__r.Zip_Postal_Code__c,5),null)))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>The Zip Code from the parent object.</inlineHelpText>
+    <label>Zip Code</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

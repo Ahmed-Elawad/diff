@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>LRGMKT_My_New_Payroll_Clients_90_Days</fullName>
+    <columns>HRS_Account_Owner__c</columns>
+    <columns>First_Run_Date__c</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ACCOUNT.ACCOUNT_NUMBER</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>ACCOUNT.EMPLOYEES</columns>
+    <columns>ACCOUNT.PHONE1</columns>
+    <columns>ACCOUNT.ADDRESS2_CITY</columns>
+    <columns>ACCOUNT.ADDRESS2_ZIP</columns>
+    <columns>ACCOUNT.ADDRESS1_ZIP</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Bis_ID__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>notContain</operation>
+        <value>Lost Client,Out of Business</value>
+    </filters>
+    <filters>
+        <field>Client_Start_Date__c</field>
+        <operation>equals</operation>
+        <value>LAST_90_DAYS</value>
+    </filters>
+    <label>LRGMKT My New Payroll Clients (90 Days)</label>
+    <sharedTo>
+        <role>HRS_DISTRICT_61</role>
+        <role>HRS_DISTRICT_62</role>
+        <role>HRS_DISTRICT_63</role>
+        <role>HRS_DISTRICT_67</role>
+        <role>HRS_DISTRICT_84</role>
+        <role>HRS_SALES_REP_DISTRICT_95</role>
+        <role>HRS_WHOLESALERS</role>
+    </sharedTo>
+</ListView>

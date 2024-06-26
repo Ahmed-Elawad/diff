@@ -1,0 +1,785 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>54.0</apiVersion>
+    <decisions>
+        <name>Check_ASO_to_PEO_Transfer</name>
+        <label>Check ASO to PEO Transfer</label>
+        <locationX>182</locationX>
+        <locationY>1187</locationY>
+        <defaultConnector>
+            <targetReference>Check_PEO_Leasing</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_ASO_to_PEO_Transfer_True</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.ASO_to_PEO_Transfer__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Date_ASO_to_PEO_Updated</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Is ASO to PEO Transfer True?</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_FEIN</name>
+        <label>Check FEIN</label>
+        <locationX>182</locationX>
+        <locationY>3887</locationY>
+        <defaultConnector>
+            <targetReference>Check_If_Transferred</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>FEIN_Is_APPLIED</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Federal_ID_Number__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>APPLIED</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Clear_FEIN_Value</targetReference>
+            </connector>
+            <label>FEIN Is APPLIED</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_If_Transferred</name>
+        <label>Check If Transferred</label>
+        <locationX>182</locationX>
+        <locationY>4187</locationY>
+        <defaultConnector>
+            <targetReference>Update_Restricted_Industry</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Transferred_To_Service</name>
+            <conditionLogic>(1 OR 2 OR 3) AND 4</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>MMS Account Record Type</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Core Account Record Type</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>NSS Account Record Type</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Last_Activity__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Transferred to Service</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Clear_MMS_CSR</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Transferred To Service</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_If_Update_Service_Type</name>
+        <label>Check If Update Service Type</label>
+        <locationX>182</locationX>
+        <locationY>2687</locationY>
+        <defaultConnector>
+            <targetReference>TAA_Health_Status_Change</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Check_Onsite_Criteria</name>
+            <conditionLogic>(1 OR 2 OR 3 OR 4) AND (5 OR 6)</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Type</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>HR Solutions FLEX Client</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Type</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>HR Solutions Preview Client</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Type</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>HR Solutions Advantage Client</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Type</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>PEO Client</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>MMS Account Record Type</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Core Account Record Type</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Service_Type_to_Onsite</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Check Onsite Criteria</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_PEO_Leasing</name>
+        <label>Check PEO Leasing</label>
+        <locationX>182</locationX>
+        <locationY>1487</locationY>
+        <defaultConnector>
+            <targetReference>Do_We_Uncheck_PEO_Leasing</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Does_it_need_to_be_checked</name>
+            <conditionLogic>1 AND (2 OR 3 OR 4)</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.PEOLeasing__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Current_Prior_Method__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>PEO</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Type</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>PEO</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Type</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>PBS</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Check_PEO_Leasing_Field</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Does it need to be checked?</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_Reason_Lost</name>
+        <label>Check Reason Lost</label>
+        <locationX>182</locationX>
+        <locationY>887</locationY>
+        <defaultConnector>
+            <targetReference>Check_ASO_to_PEO_Transfer</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Out_of_Business</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Reason_Lost__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>I Out of Business</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Out_of_Business</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Out of Business</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Dialed_Last_Used_Changed</name>
+        <label>Dialed Last Used Changed</label>
+        <locationX>182</locationX>
+        <locationY>2387</locationY>
+        <defaultConnector>
+            <targetReference>Check_If_Update_Service_Type</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Did_Dialed_Last_Used_Change</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.DialedLastUsed__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Call_Counter</targetReference>
+            </connector>
+            <label>Did Dialed Last Used Change?</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Do_We_Uncheck_PEO_Leasing</name>
+        <label>Do We Uncheck PEO Leasing</label>
+        <locationX>182</locationX>
+        <locationY>1787</locationY>
+        <defaultConnector>
+            <targetReference>Prospect_Client_Number_has_leading_zeroes</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Check_PEO_Criteria</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.PEOLeasing__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Current_Prior_Method__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Current_Prior_Method__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>CurrentPriorMethodNotPEO</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Uncheck_PEO_Leasing</targetReference>
+            </connector>
+            <label>Check PEO Criteria</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>HR_Solution_Health_Updated</name>
+        <label>HR Solution Health Updated</label>
+        <locationX>182</locationX>
+        <locationY>3287</locationY>
+        <defaultConnector>
+            <targetReference>Risk_Secured_Funding_Changed</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_Premier_Health_Changed</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Premier_Account_Health__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_HR_Solutions_Account_Health</targetReference>
+            </connector>
+            <label>Is Premier Health Changed</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Is_Data_Review_Completed</name>
+        <label>Is Data Review Completed?</label>
+        <locationX>182</locationX>
+        <locationY>587</locationY>
+        <defaultConnector>
+            <targetReference>Check_Reason_Lost</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Check_Date_Review</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Data_Review__c</leftValueReference>
+                <operator>StartsWith</operator>
+                <rightValue>
+                    <stringValue>Completed</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Data_Review_Completed__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Data_Review_Completed</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Check Date Review</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Is_Number_of_Employees_Changed</name>
+        <label>Is Number of Employees Changed?</label>
+        <locationX>182</locationX>
+        <locationY>287</locationY>
+        <defaultConnector>
+            <targetReference>Is_Data_Review_Completed</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Check_Number_of_Employees</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.NumberOfEmployees</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_For_Employee_Change</targetReference>
+            </connector>
+            <label>Check Number of Employees</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Prospect_Client_Number_has_leading_zeroes</name>
+        <label>Prospect Client Number has leading zeroes</label>
+        <locationX>182</locationX>
+        <locationY>2087</locationY>
+        <defaultConnector>
+            <targetReference>Dialed_Last_Used_Changed</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Starts_with_0</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.AccountNumber</leftValueReference>
+                <operator>StartsWith</operator>
+                <rightValue>
+                    <stringValue>0</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.AccountNumber</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>-</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_AccountNumber</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Starts with 0?</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Risk_Secured_Funding_Changed</name>
+        <label>Risk Secured Funding Changed</label>
+        <locationX>182</locationX>
+        <locationY>3587</locationY>
+        <defaultConnector>
+            <targetReference>Check_FEIN</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Check_Secured_Funding</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Secured_Funding__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Review_By_Credit_Risk_Date</targetReference>
+            </connector>
+            <label>Check Secured Funding</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>TAA_Health_Status_Change</name>
+        <label>TAA Health Status Change</label>
+        <locationX>182</locationX>
+        <locationY>2987</locationY>
+        <defaultConnector>
+            <targetReference>HR_Solution_Health_Updated</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>TAA_is_Green</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.TAA_Account_Health__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Stable</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Clear_TAA_Date</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>TAA is Green</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <formulas>
+        <name>CallCounterIncrement</name>
+        <dataType>Number</dataType>
+        <expression>IF(NOT(ISBLANK({!$Record.Call_Counter__c})),{!$Record.Call_Counter__c} + 1,1)</expression>
+        <scale>2</scale>
+    </formulas>
+    <formulas>
+        <name>ClearLeadingZeroes</name>
+        <dataType>String</dataType>
+        <expression>TEXT(VALUE(LEFT({!$Record.AccountNumber},FIND(&quot;-&quot;,{!$Record.AccountNumber})-1)))&amp;&quot;-&quot;&amp; RIGHT({!$Record.AccountNumber}, LEN({!$Record.AccountNumber})-FIND(&quot;-&quot;,{!$Record.AccountNumber}))</expression>
+    </formulas>
+    <formulas>
+        <name>CurrentPriorMethodNotPEO</name>
+        <dataType>Boolean</dataType>
+        <expression>NOT(CONTAINS(TEXT({!$Record.Current_Prior_Method__c}),&apos;PEO&apos;))</expression>
+    </formulas>
+    <interviewLabel>Account Before Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Account Before Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Check_PEO_Leasing_Field</name>
+        <label>Check PEO Leasing Field</label>
+        <locationX>50</locationX>
+        <locationY>1595</locationY>
+        <connector>
+            <targetReference>Do_We_Uncheck_PEO_Leasing</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>PEOLeasing__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Clear_FEIN_Value</name>
+        <label>Clear FEIN Value</label>
+        <locationX>50</locationX>
+        <locationY>3995</locationY>
+        <connector>
+            <targetReference>Check_If_Transferred</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Federal_ID_Number__c</field>
+            <value>
+                <stringValue></stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Clear_MMS_CSR</name>
+        <label>Clear MMS CSR</label>
+        <locationX>50</locationX>
+        <locationY>4295</locationY>
+        <connector>
+            <targetReference>Update_Restricted_Industry</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>MMS_CSR_Name__c</field>
+            <value>
+                <stringValue></stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Clear_TAA_Date</name>
+        <label>Clear TAA Date</label>
+        <locationX>50</locationX>
+        <locationY>3095</locationY>
+        <connector>
+            <targetReference>HR_Solution_Health_Updated</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Client_Health_Date_TAA__c</field>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Service_Type_to_Onsite</name>
+        <label>Service Type to Onsite</label>
+        <locationX>50</locationX>
+        <locationY>2795</locationY>
+        <connector>
+            <targetReference>TAA_Health_Status_Change</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Service_Type__c</field>
+            <value>
+                <stringValue>Onsite</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Uncheck_PEO_Leasing</name>
+        <label>Uncheck PEO Leasing</label>
+        <locationX>50</locationX>
+        <locationY>1895</locationY>
+        <connector>
+            <targetReference>Prospect_Client_Number_has_leading_zeroes</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>PEOLeasing__c</field>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_AccountNumber</name>
+        <label>Update AccountNumber</label>
+        <locationX>50</locationX>
+        <locationY>2195</locationY>
+        <connector>
+            <targetReference>Dialed_Last_Used_Changed</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>AccountNumber</field>
+            <value>
+                <elementReference>ClearLeadingZeroes</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Call_Counter</name>
+        <label>Update Call Counter</label>
+        <locationX>50</locationX>
+        <locationY>2495</locationY>
+        <connector>
+            <targetReference>Check_If_Update_Service_Type</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Call_Counter_Reset_WF_Set__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Call_Counter__c</field>
+            <value>
+                <elementReference>CallCounterIncrement</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Data_Review_Completed</name>
+        <label>Update Data Review Completed</label>
+        <locationX>50</locationX>
+        <locationY>695</locationY>
+        <connector>
+            <targetReference>Check_Reason_Lost</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Data_Review_Completed__c</field>
+            <value>
+                <elementReference>$Flow.CurrentDateTime</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Date_ASO_to_PEO_Updated</name>
+        <label>Update Date ASO to PEO Updated</label>
+        <locationX>50</locationX>
+        <locationY>1295</locationY>
+        <connector>
+            <targetReference>Check_PEO_Leasing</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Date_ASO_to_PEO_Updated__c</field>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_For_Employee_Change</name>
+        <label>Update For Employee Change</label>
+        <locationX>50</locationX>
+        <locationY>395</locationY>
+        <connector>
+            <targetReference>Is_Data_Review_Completed</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Employee_Count_Changed_Date__c</field>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Employee_Count_Changed__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_HR_Solutions_Account_Health</name>
+        <label>Update HR Solutions Account Health</label>
+        <locationX>50</locationX>
+        <locationY>3395</locationY>
+        <connector>
+            <targetReference>Risk_Secured_Funding_Changed</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>HR_Solutions_Account_Health_Updated__c</field>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Out_of_Business</name>
+        <label>Update Out of Business</label>
+        <locationX>50</locationX>
+        <locationY>995</locationY>
+        <connector>
+            <targetReference>Check_ASO_to_PEO_Transfer</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Out_of_Business__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Restricted_Industry</name>
+        <label>Update Restricted Industry</label>
+        <locationX>182</locationX>
+        <locationY>4487</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Industry</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>672249</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Restricted_Industry__c</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <stringValue>CRB</stringValue>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Restricted_Industry__c</field>
+            <value>
+                <stringValue>CRB</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Review_By_Credit_Risk_Date</name>
+        <label>Update Review By Credit Risk Date</label>
+        <locationX>50</locationX>
+        <locationY>3695</locationY>
+        <connector>
+            <targetReference>Check_FEIN</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Reviewed_by_Credit_Risk_Date__c</field>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Is_Number_of_Employees_Changed</targetReference>
+        </connector>
+        <object>Account</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Draft</status>
+    <triggerOrder>20</triggerOrder>
+</Flow>

@@ -1,0 +1,2105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>57.0</apiVersion>
+    <decisions>
+        <name>Broker_Email_Check</name>
+        <label>Broker Email Check</label>
+        <locationX>2030</locationX>
+        <locationY>287</locationY>
+        <defaultConnector>
+            <targetReference>Ref_Incoming_Funds_Entered_into_HRIS_update_Entered_By</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>If_Broker_Email_Null</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Broker_Email__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Case_Lookup__r.Account.Broker_Name_Ref__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_RFI_Broker_Email_and_Name</targetReference>
+            </connector>
+            <label>If Broker Email Null</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Pending_ACH_Collection</name>
+        <label>Pending ACH Collection</label>
+        <locationX>1876</locationX>
+        <locationY>2795</locationY>
+        <defaultConnector>
+            <targetReference>Ref_Incoming_Funds_ORM_Approved</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Pending_ACH_Collections</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Transmission_Method__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>ACH 401K</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Ready_for_Trade__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Tentative_Trade_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Bank_Return_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_Pending_Task_as_Pending_ACH_Collection</targetReference>
+            </connector>
+            <label>Pending ACH Collection</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Record_Type_as_401k_Incoming_Checks_and_ACHs</name>
+        <label>Record Type as 401k Incoming Checks and ACHs?</label>
+        <locationX>2030</locationX>
+        <locationY>1487</locationY>
+        <defaultConnector>
+            <targetReference>Ref_Incoming_Funds_ORM_Approved</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>X401k_Incoming_Checks_RT_Check</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>401k Incoming Checks and ACHs</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Ref_Incoming_Funds_Incoming_RC1_Updated</targetReference>
+            </connector>
+            <label>401k Incoming Checks RT Check</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Ref_Incoming_Funds_CRW_Approved_By</name>
+        <label>Ref Incoming Funds CRW Approved By</label>
+        <locationX>2030</locationX>
+        <locationY>887</locationY>
+        <defaultConnector>
+            <targetReference>Ref_Incoming_Funds_Incoming_CRW_Updated</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_CRW_Posted_Changed_and_prior_value_blank</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record__Prior.CRW_Posted__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.CRW_Posted__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_CRW_Approved_By</targetReference>
+            </connector>
+            <label>Is CRW Posted Changed and prior value blank</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Ref_Incoming_Funds_Entered_into_HRIS_update_Entered_By</name>
+        <label>Ref Incoming Funds Entered into HRIS update Entered By</label>
+        <locationX>2030</locationX>
+        <locationY>587</locationY>
+        <defaultConnector>
+            <targetReference>Ref_Incoming_Funds_CRW_Approved_By</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_Entered_into_HRIS_Changed</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Entered_into_HRIS__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_Entered_By</targetReference>
+            </connector>
+            <label>Is Entered into HRIS Changed?</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Ref_Incoming_Funds_Incoming_CRW_Updated</name>
+        <label>Ref Incoming Funds Incoming CRW Updated</label>
+        <locationX>2030</locationX>
+        <locationY>1187</locationY>
+        <defaultConnector>
+            <targetReference>Record_Type_as_401k_Incoming_Checks_and_ACHs</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_401k_Incoming_Wires_as_Record_Type</name>
+            <conditionLogic>1 AND( 2 OR 3 OR 4)</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>401k Incoming Wires</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Pending_Task__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Trade Pending ORM Approval</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Pending_Task__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Pending Trade Verification</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Pending_Task__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Adjustment Pending Approval</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_CRW_Needed</targetReference>
+            </connector>
+            <label>Is 401k Incoming Wires as Record Type?</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Ref_Incoming_Funds_Incoming_RC1_Updated</name>
+        <label>Ref Incoming Funds Incoming RC1 Updated</label>
+        <locationX>1876</locationX>
+        <locationY>1595</locationY>
+        <defaultConnector>
+            <targetReference>Ref_Incoming_Funds_Incoming_RCK_Updated</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>RCK_Needed_Null</name>
+            <conditionLogic>(1 OR 2 OR 3 OR 4 OR 5) AND 6 AND 7</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Pending_Task__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Pending Trade Verification</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Pending_Task__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Miscellaneous Check Requested</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Pending_Task__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Return – Pending Adjustment Approval</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Pending_Task__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Adjustment Pending Approval</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Pending_Task__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>LDPS Processing</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RC1_Needed__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RCK_Needed__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <elementReference>$Record.Amount__c</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_RC1_Needed</targetReference>
+            </connector>
+            <label>RCK Needed Null?</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Ref_Incoming_Funds_Incoming_RCK_Updated</name>
+        <label>Ref Incoming Funds Incoming RCK Updated</label>
+        <locationX>1876</locationX>
+        <locationY>1895</locationY>
+        <defaultConnector>
+            <targetReference>Reference_Incoming_Funds_Pending_Task_and_Close_Case</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Pending_Task_as_Trade_Pending_ORM_Approval</name>
+            <conditionLogic>1 AND 2</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Pending_Task__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Trade Pending ORM Approval</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RC1_Needed__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <elementReference>$Record.Amount__c</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_RCK_Needed</targetReference>
+            </connector>
+            <label>Pending Task as Trade Pending ORM Approval</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Ref_Incoming_Funds_ORM_Approved</name>
+        <label>Ref Incoming Funds ORM Approved</label>
+        <locationX>2030</locationX>
+        <locationY>3179</locationY>
+        <defaultConnector>
+            <targetReference>Ref_Incoming_Funds_RC1_Posted_By_Update</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_ORM_Approved_Changed</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.ORM_Approved__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.ORM_Approved__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_ORM_Approved_By_and_Date</targetReference>
+            </connector>
+            <label>Is ORM Approved Changed</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Ref_Incoming_Funds_RC1_Posted_By_Update</name>
+        <label>Ref Incoming Funds RC1 Posted By Update</label>
+        <locationX>2030</locationX>
+        <locationY>3479</locationY>
+        <defaultConnector>
+            <targetReference>Ref_Incoming_Funds_Update_Amount</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_RC1_Posted_Changed</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RC1_Posted__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.RC1_Posted__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_RC1_Posted_By</targetReference>
+            </connector>
+            <label>Is RC1 Posted Changed</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Ref_Incoming_Funds_Update_Amount</name>
+        <label>Ref Incoming Funds Update Amount</label>
+        <locationX>2030</locationX>
+        <locationY>3779</locationY>
+        <defaultConnector>
+            <targetReference>X100k_Approval_Name_and_100k_Approval_Date</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Manual_Collection_Record_Type_Check</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Manual Collection</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_Amount_field</targetReference>
+            </connector>
+            <label>Manual Collection Record Type Check</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Reference_Incoming_Funds_Pending_Task_and_Close_Case</name>
+        <label>Reference Incoming Funds Pending Task and Close Case</label>
+        <locationX>1876</locationX>
+        <locationY>2195</locationY>
+        <defaultConnector>
+            <targetReference>Reference_Incoming_Funds_Pending_Task_and_Close_Case_2</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Client_Support_Researching</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Ready_for_Trade__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Returned_No_Trade__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Check_Type__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Bank_Return_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_Pending_Task_as_Client_Support_Researching</targetReference>
+            </connector>
+            <label>Client Support Researching</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Reference_Incoming_Funds_Pending_Task_and_Close_Case_2</name>
+        <label>Reference Incoming Funds Pending Task and Close Case</label>
+        <locationX>1876</locationX>
+        <locationY>2495</locationY>
+        <defaultConnector>
+            <targetReference>Pending_ACH_Collection</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Pending_CAM_Trade</name>
+            <conditionLogic>(1 AND (2 OR 3) AND (4 AND 5 AND 9)) OR (6 AND 7 AND(8 OR 5) AND (10 OR 11 OR 12 OR 13 OR 14 OR 15 OR 16 OR 17 OR 18 OR 19 OR 20 OR 21 OR 22 OR 23 OR 24))</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>401k Incoming Checks and ACHs</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Transmission_Method__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Chase 401k</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Transmission_Method__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Misc 401K</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Ready_for_Trade__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Tentative_Trade_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Transmission_Method__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Wire 401K</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Entry_Type__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RC1_Posted__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Contribution_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Branch Funding</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Contribution_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Conversion</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Contribution_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Defaulted Loan Payoff</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Contribution_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>ER Match</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Contribution_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Full Loan Payment</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Contribution_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Money Purchase Plan</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Contribution_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Multiple</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Contribution_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Other (Add Comment)</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Contribution_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Partial Loan Payment</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Contribution_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Profit Sharing</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Contribution_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>QNEC</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Contribution_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Safe Harbor (NEC)</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Contribution_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Sole Prop/Partnership</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Contribution_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Top Heavy</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Contribution_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Wrong Account</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_Pending_Task_as_Pending_CAM_Trade</targetReference>
+            </connector>
+            <label>Pending CAM Trade</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Reference_Incoming_Funds_Pending_Task_and_Close_Case_4</name>
+        <label>Reference Incoming Funds Pending Task and Close Case</label>
+        <locationX>2030</locationX>
+        <locationY>6371</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Trade_Pending_ORM_Approval</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Entry_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Entered in HRIS</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Tentative_Trade_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.ORM_Approved__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.ACH_Type__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_Pending_Task_as_Trade_Pending_ORM_Approval</targetReference>
+            </connector>
+            <label>Trade Pending ORM Approval</label>
+        </rules>
+        <rules>
+            <name>Pending_Trade_Verification</name>
+            <conditionLogic>(1 AND 2 AND 3) OR (4 AND 3 AND 2 AND (5 OR 6))</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Entry_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Direct to Sungard</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Tentative_Trade_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Date_Trade_Verified__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Entry_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Entered in HRIS</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.ORM_Approved__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.ACH_Approved_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_Pending_Trade_as_Pending_Trade_Verification</targetReference>
+            </connector>
+            <label>Pending Trade Verification</label>
+        </rules>
+        <rules>
+            <name>Trade_Complete</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Date_Trade_Verified__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_PT_as_Trade_Complete_and_Current_Step_as_Complete</targetReference>
+            </connector>
+            <label>Trade Complete</label>
+        </rules>
+        <rules>
+            <name>ACH_Pending_Approval</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>401k Incoming Checks and ACHs</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Transmission_Method__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>ACH 401K</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.ACH_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Need CAT Approval</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Tentative_Trade_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.ACH_Approved_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Rejected_Reason__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_Pending_Task_as_ACH_Pending_Approval</targetReference>
+            </connector>
+            <label>ACH Pending Approval</label>
+        </rules>
+        <rules>
+            <name>Miscellaneous_Check_Requested</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>401k Incoming Checks and ACHs</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Check_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Misc Check</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Entered_into_HRIS__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RC1_Posted__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_Pending_Task_as_Miscellaneous_Check_Requested</targetReference>
+            </connector>
+            <label>Miscellaneous Check Requested</label>
+        </rules>
+        <rules>
+            <name>Miscellaneous_Check_Entered</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>401k Incoming Checks and ACHs</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Check_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Misc Check</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Entered_into_HRIS__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RC1_Posted__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.ORM_Approved__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_Pending_Task_as_Miscellaneous_Check_Entered</targetReference>
+            </connector>
+            <label>Miscellaneous Check Entered</label>
+        </rules>
+        <rules>
+            <name>Miscellaneous_Check_Sent</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>401k Incoming Checks and ACHs</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Check_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Misc Check</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Entered_into_HRIS__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.ORM_Approved__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_PT_as_Miscellaneous_Check_Sent_and_Current_Step_as_Complete</targetReference>
+            </connector>
+            <label>Miscellaneous Check Sent</label>
+        </rules>
+        <rules>
+            <name>Closed_No_Trade</name>
+            <conditionLogic>(1 AND (2 AND (3 OR (7 AND 8))) OR ((4 OR 5) AND 6 AND 7)) OR (9 AND 10 AND 6) OR (1 AND 3 AND 4 AND 11)</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>401k Incoming Checks and ACHs</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Transmission_Method__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>ACH 401K</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Returned_No_Trade__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Transmission_Method__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Chase 401k</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Transmission_Method__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Misc 401K</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Entry_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Post to Bank Detail</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RC1_Posted__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Bank_Return_Reason__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>401k Incoming Wires</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.CRW_Posted__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Contribution_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Wrong Account</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_PT_as_Closed_No_Trade_and_Current_Step_as_Complete</targetReference>
+            </connector>
+            <label>Closed – No Trade</label>
+        </rules>
+        <rules>
+            <name>Closed_Bank_Return</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>401k Incoming Checks and ACHs</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Bank_Return_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Bank_Return_Reason__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RC1_Posted__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_Pending_Task_as_Closed_Bank_Return</targetReference>
+            </connector>
+            <label>Closed – Bank Return</label>
+        </rules>
+        <rules>
+            <name>Closed_See_Additional_Salesforce_Case</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>401k Incoming Checks and ACHs</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Check_Process_Started__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.SF_Case__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_Pending_Task_as_Closed_See_Additional_Salesforce_Case</targetReference>
+            </connector>
+            <label>Closed – See Additional Salesforce Case</label>
+        </rules>
+        <rules>
+            <name>LDPS_Processing</name>
+            <conditionLogic>1 AND (2 OR 3 OR 4) AND 5 AND 6</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>401k Incoming Checks and ACHs</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Check_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>ROE</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Check_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>V&amp;R</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Check_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Other</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.SF_Case__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RC1_Posted__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_LDPS_Processing</targetReference>
+            </connector>
+            <label>LDPS Processing</label>
+        </rules>
+        <rules>
+            <name>Return_Pending_Adjustment_Approval</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>401k Incoming Checks and ACHs</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Bank_Return_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RC1_Posted__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_Pending_Task_as_Return_Pending_Adjustment_Approval</targetReference>
+            </connector>
+            <label>Return – Pending Adjustment Approval</label>
+        </rules>
+        <rules>
+            <name>Adjustment_Pending_Approval</name>
+            <conditionLogic>2 AND (1 OR 3)</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RC1_Posted__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Entry_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Post to Bank Detail</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.CRW_Posted__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_Pending_Task_as_Adjustment_Pending_Approval</targetReference>
+            </connector>
+            <label>Adjustment Pending Approval</label>
+        </rules>
+        <rules>
+            <name>Further_Research_Needed</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>401k Incoming Checks and ACHs</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Transmission_Method__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue> ACH 401K</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.ACH_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue> Need CAT Approval</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Tentative_Trade_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Rejected_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.ACH_Approved_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_Pending_Task_as_Further_Research_Needed</targetReference>
+            </connector>
+            <label>Further Research Needed</label>
+        </rules>
+        <rules>
+            <name>Misc_Check_Check_to_be_Approved</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>401k Miscellaneous Checks</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Entered_into_HRIS__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.ORM_Approved_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Rejected_Not_Processed__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_Pending_Task_as_Check_to_Be_Approved</targetReference>
+            </connector>
+            <label>Misc. Check - Check to be Approved</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Reference_Incoming_Funds_Specialist_Updates</name>
+        <label>Reference Incoming Funds Specialist Updates</label>
+        <locationX>2030</locationX>
+        <locationY>5471</locationY>
+        <defaultConnector>
+            <targetReference>Reference_Incoming_Funds_Specialist_Updates_2</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Contribution_Type_Changed_from_Null</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Contribution_Type__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.Contribution_Type__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_Client_Support_Specialist</targetReference>
+            </connector>
+            <label>Contribution Type Changed from Null</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Reference_Incoming_Funds_Specialist_Updates_2</name>
+        <label>Reference Incoming Funds Specialist Updates</label>
+        <locationX>2030</locationX>
+        <locationY>5771</locationY>
+        <defaultConnector>
+            <targetReference>Reference_Incoming_Funds_Specialist_Updates_3</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Tentative_Trade_Date_is_Changed_from_Null</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Tentative_Trade_Date__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.Tentative_Trade_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_CAM_Specialist</targetReference>
+            </connector>
+            <label>Tentative Trade Date is Changed from Null</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Reference_Incoming_Funds_Specialist_Updates_3</name>
+        <label>Reference Incoming Funds Specialist Updates</label>
+        <locationX>2030</locationX>
+        <locationY>6071</locationY>
+        <defaultConnector>
+            <targetReference>Reference_Incoming_Funds_Pending_Task_and_Close_Case_4</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>ACH_Approved_Date_or_Rejected_Date_is_Changed_from_Null</name>
+            <conditionLogic>(1 AND 2 ) OR (3 AND 4)</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.ACH_Approved_Date__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.ACH_Approved_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Rejected_Date__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.Rejected_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_CAT_Specialist</targetReference>
+            </connector>
+            <label>ACH Approved Date or Rejected Date is Changed from Null</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Tentative_Trade_Date_Entered_by_CAM_Check</name>
+        <label>Tentative Trade Date Entered by CAM Check</label>
+        <locationX>2030</locationX>
+        <locationY>4379</locationY>
+        <defaultConnector>
+            <targetReference>Update_Field_Rejected_By</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>check_Tentative_Trade_Entered_by_CAM</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>401k Incoming Checks and ACHs</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>401k Incoming Wires</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Manual Collection</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>401k Miscellaneous Checks</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Tentative_Trade_Date_Entered_by_CAM_Update</targetReference>
+            </connector>
+            <label>check Tentative Trade Entered by CAM</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Tentative_Trade_Date_Entered_by_CAM_Cleared</name>
+        <label>Tentative Trade Date Entered by CAM Cleared</label>
+        <locationX>1876</locationX>
+        <locationY>4787</locationY>
+        <defaultConnector>
+            <targetReference>Update_Field_Rejected_By</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Tentative_Trade_Date_is_Null</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Tentative_Trade_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>cleared_Tentative_Trade_Date_Entered_by_CAM</targetReference>
+            </connector>
+            <label>Tentative Trade Date is Null</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Tentative_Trade_Date_Entered_by_CAM_Update</name>
+        <label>Tentative Trade Date Entered by CAM Update</label>
+        <locationX>1876</locationX>
+        <locationY>4487</locationY>
+        <defaultConnector>
+            <targetReference>Tentative_Trade_Date_Entered_by_CAM_Cleared</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_Tentative_Trade_Date_Changed</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Tentative_Trade_Date__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_Tentative_Trade_Date_Entered_by_CAM</targetReference>
+            </connector>
+            <label>Is Tentative Trade Date Changed?</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Update_Field_Rejected_By</name>
+        <label>Update Field &quot;Rejected By&quot;</label>
+        <locationX>2030</locationX>
+        <locationY>5171</locationY>
+        <defaultConnector>
+            <targetReference>Reference_Incoming_Funds_Specialist_Updates</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Rejected_Not_Processed_is_not_Null</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Rejected_Not_Processed__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_Rejected_By</targetReference>
+            </connector>
+            <label>Rejected Not Processed is not Null</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>X100k_Approval_Name_and_100k_Approval_Date</name>
+        <label>$100k Approval Name and $100k Approval Date</label>
+        <locationX>2030</locationX>
+        <locationY>4079</locationY>
+        <defaultConnector>
+            <targetReference>Tentative_Trade_Date_Entered_by_CAM_Check</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>X100k_Approval_check</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.X100k_Approval__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>Approvalformula</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_100k_Approval_Name_and_Date_Time</targetReference>
+            </connector>
+            <label>X100k Approval check</label>
+        </rules>
+    </decisions>
+    <description>Updated as part of APR0160476</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>Approvalformula</name>
+        <dataType>Boolean</dataType>
+        <expression>AND (
+OR(
+ISNEW(),
+ISCHANGED( {!$Record.X100k_Approval__c} )
+),
+{!$Record.X100k_Approval__c}  = TRUE
+)</expression>
+    </formulas>
+    <formulas>
+        <name>UpdateAmountField</name>
+        <dataType>Currency</dataType>
+        <expression>BLANKVALUE({!$Record.Pretax_Dollars__c},0) + BLANKVALUE({!$Record.Match_Dollars__c},0) + BLANKVALUE({!$Record.Loan_Dollars__c},0) + 
+BLANKVALUE({!$Record.After_Tax__c},0) + BLANKVALUE({!$Record.Employee_Catch_Up__c},0) + BLANKVALUE({!$Record.ER_Match_Catch_Up__c},0) + 
+BLANKVALUE( + {!$Record.Roth_401k__c},0) + BLANKVALUE({!$Record.Roth_Catch_Up__c},0) + 
+BLANKVALUE({!$Record.Per_Pay_Profit_Sharing__c},0) + BLANKVALUE({!$Record.Per_Pay_NEC__c},0)</expression>
+        <scale>2</scale>
+    </formulas>
+    <interviewLabel>RIF Before Flows {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>RIF Before Flows</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>cleared_Tentative_Trade_Date_Entered_by_CAM</name>
+        <label>cleared Tentative Trade Date Entered by CAM</label>
+        <locationX>1744</locationX>
+        <locationY>4895</locationY>
+        <connector>
+            <targetReference>Update_Field_Rejected_By</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Tentative_Trade_Date_Entered_by_CAM__c</field>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_100k_Approval_Name_and_Date_Time</name>
+        <label>update $100k Approval Name and Date Time</label>
+        <locationX>1898</locationX>
+        <locationY>4187</locationY>
+        <connector>
+            <targetReference>Tentative_Trade_Date_Entered_by_CAM_Check</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>X100k_Approval_Date__c</field>
+            <value>
+                <elementReference>$Record.LastModifiedDate</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>X100k_Approval_Name__c</field>
+            <value>
+                <stringValue>{!$User.FirstName} {!$User.LastName}</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_Amount_field</name>
+        <label>update Amount field</label>
+        <locationX>1898</locationX>
+        <locationY>3887</locationY>
+        <connector>
+            <targetReference>X100k_Approval_Name_and_100k_Approval_Date</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Amount__c</field>
+            <value>
+                <elementReference>UpdateAmountField</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_CAM_Specialist</name>
+        <label>update CAM Specialist</label>
+        <locationX>1898</locationX>
+        <locationY>5879</locationY>
+        <connector>
+            <targetReference>Reference_Incoming_Funds_Specialist_Updates_3</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>CAM_Specialist__c</field>
+            <value>
+                <elementReference>$User.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_CAT_Specialist</name>
+        <label>update CAT Specialist</label>
+        <locationX>1898</locationX>
+        <locationY>6179</locationY>
+        <connector>
+            <targetReference>Reference_Incoming_Funds_Pending_Task_and_Close_Case_4</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>CAT_Specialist__c</field>
+            <value>
+                <elementReference>$User.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_Client_Support_Specialist</name>
+        <label>update Client Support Specialist</label>
+        <locationX>1898</locationX>
+        <locationY>5579</locationY>
+        <connector>
+            <targetReference>Reference_Incoming_Funds_Specialist_Updates_2</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Client_Support_Specialist__c</field>
+            <value>
+                <elementReference>$User.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_CRW_Approved_By</name>
+        <label>update CRW Approved By</label>
+        <locationX>1898</locationX>
+        <locationY>995</locationY>
+        <connector>
+            <targetReference>Ref_Incoming_Funds_Incoming_CRW_Updated</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>CRW_Approved_By__c</field>
+            <value>
+                <elementReference>$User.Full_Name__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_CRW_Needed</name>
+        <label>update CRW Needed</label>
+        <locationX>1898</locationX>
+        <locationY>1295</locationY>
+        <connector>
+            <targetReference>Record_Type_as_401k_Incoming_Checks_and_ACHs</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>CRW_Needed__c</field>
+            <value>
+                <elementReference>$Record.Amount__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_Entered_By</name>
+        <label>update Entered By</label>
+        <locationX>1898</locationX>
+        <locationY>695</locationY>
+        <connector>
+            <targetReference>Ref_Incoming_Funds_CRW_Approved_By</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Entered_By__c</field>
+            <value>
+                <elementReference>$User.Full_Name__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_LDPS_Processing</name>
+        <label>update  LDPS Processing</label>
+        <locationX>2690</locationX>
+        <locationY>6479</locationY>
+        <inputAssignments>
+            <field>Pending_Task__c</field>
+            <value>
+                <stringValue> LDPS Processing</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_ORM_Approved_By_and_Date</name>
+        <label>update ORM Approved By and Date</label>
+        <locationX>1898</locationX>
+        <locationY>3287</locationY>
+        <connector>
+            <targetReference>Ref_Incoming_Funds_RC1_Posted_By_Update</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>ORM_Approved_By__c</field>
+            <value>
+                <elementReference>$User.Full_Name__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ORM_Approved_Date__c</field>
+            <value>
+                <elementReference>currentDate</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_Pending_Task_as_ACH_Pending_Approval</name>
+        <label>update Pending Task as ACH Pending Approval</label>
+        <locationX>842</locationX>
+        <locationY>6479</locationY>
+        <inputAssignments>
+            <field>Pending_Task__c</field>
+            <value>
+                <stringValue> ACH Pending Approval</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_Pending_Task_as_Adjustment_Pending_Approval</name>
+        <label>update Pending Task as Adjustment Pending Approval</label>
+        <locationX>3218</locationX>
+        <locationY>6479</locationY>
+        <inputAssignments>
+            <field>Pending_Task__c</field>
+            <value>
+                <stringValue> Adjustment Pending Approval</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_Pending_Task_as_Check_to_Be_Approved</name>
+        <label>update Pending Task as  Check to Be Approved</label>
+        <locationX>3746</locationX>
+        <locationY>6479</locationY>
+        <inputAssignments>
+            <field>Pending_Task__c</field>
+            <value>
+                <stringValue> Check to Be Approved</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_Pending_Task_as_Client_Support_Researching</name>
+        <label>update Pending Task as Client Support Researching</label>
+        <locationX>1744</locationX>
+        <locationY>2303</locationY>
+        <connector>
+            <targetReference>Reference_Incoming_Funds_Pending_Task_and_Close_Case_2</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Pending_Task__c</field>
+            <value>
+                <stringValue>Client Support Researching</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_Pending_Task_as_Closed_Bank_Return</name>
+        <label>update Pending Task as   Closed – Bank Return</label>
+        <locationX>2162</locationX>
+        <locationY>6479</locationY>
+        <inputAssignments>
+            <field>Current_Step__c</field>
+            <value>
+                <stringValue>Complete</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Pending_Task__c</field>
+            <value>
+                <stringValue> Closed – Bank Return</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_Pending_Task_as_Closed_See_Additional_Salesforce_Case</name>
+        <label>update Pending Task as  Closed – See Additional Salesforce Case</label>
+        <locationX>2426</locationX>
+        <locationY>6479</locationY>
+        <inputAssignments>
+            <field>Current_Step__c</field>
+            <value>
+                <stringValue>Complete</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Pending_Task__c</field>
+            <value>
+                <stringValue> Closed – See Additional Salesforce Case</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_Pending_Task_as_Further_Research_Needed</name>
+        <label>update Pending Task as  Further Research Needed</label>
+        <locationX>3482</locationX>
+        <locationY>6479</locationY>
+        <inputAssignments>
+            <field>Pending_Task__c</field>
+            <value>
+                <stringValue> Further Research Needed</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_Pending_Task_as_Miscellaneous_Check_Entered</name>
+        <label>update Pending Task as Miscellaneous Check Entered</label>
+        <locationX>1370</locationX>
+        <locationY>6479</locationY>
+        <inputAssignments>
+            <field>Pending_Task__c</field>
+            <value>
+                <stringValue> Miscellaneous Check Entered</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_Pending_Task_as_Miscellaneous_Check_Requested</name>
+        <label>update Pending Task as Miscellaneous Check Requested</label>
+        <locationX>1106</locationX>
+        <locationY>6479</locationY>
+        <inputAssignments>
+            <field>Pending_Task__c</field>
+            <value>
+                <stringValue>Miscellaneous Check Requested</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_Pending_Task_as_Pending_ACH_Collection</name>
+        <label>update Pending Task as Pending ACH Collection</label>
+        <locationX>1744</locationX>
+        <locationY>2903</locationY>
+        <connector>
+            <targetReference>Ref_Incoming_Funds_ORM_Approved</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Pending_Task__c</field>
+            <value>
+                <stringValue>Pending ACH Collection</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_Pending_Task_as_Pending_CAM_Trade</name>
+        <label>update Pending Task as Pending CAM Trade</label>
+        <locationX>1744</locationX>
+        <locationY>2603</locationY>
+        <connector>
+            <targetReference>Pending_ACH_Collection</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Pending_Task__c</field>
+            <value>
+                <stringValue>Pending CAM Trade</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_Pending_Task_as_Return_Pending_Adjustment_Approval</name>
+        <label>update Pending Task as  Return – Pending Adjustment Approval</label>
+        <locationX>2954</locationX>
+        <locationY>6479</locationY>
+        <inputAssignments>
+            <field>Pending_Task__c</field>
+            <value>
+                <stringValue> Return – Pending Adjustment Approval</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_Pending_Task_as_Trade_Pending_ORM_Approval</name>
+        <label>update Pending Task as Trade Pending ORM Approval</label>
+        <locationX>50</locationX>
+        <locationY>6479</locationY>
+        <inputAssignments>
+            <field>Pending_Task__c</field>
+            <value>
+                <stringValue> Trade Pending ORM Approval</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_Pending_Trade_as_Pending_Trade_Verification</name>
+        <label>update Pending Trade as Pending Trade Verification</label>
+        <locationX>314</locationX>
+        <locationY>6479</locationY>
+        <inputAssignments>
+            <field>Pending_Task__c</field>
+            <value>
+                <stringValue>Pending Trade Verification</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_PT_as_Closed_No_Trade_and_Current_Step_as_Complete</name>
+        <label>update PT as Closed- No Trade and Current Step as Complete</label>
+        <locationX>1898</locationX>
+        <locationY>6479</locationY>
+        <inputAssignments>
+            <field>Current_Step__c</field>
+            <value>
+                <stringValue>Complete</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Pending_Task__c</field>
+            <value>
+                <stringValue> Closed – No Trade</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_PT_as_Miscellaneous_Check_Sent_and_Current_Step_as_Complete</name>
+        <label>update PT as  Miscellaneous Check Sent and Current Step as Complete</label>
+        <locationX>1634</locationX>
+        <locationY>6479</locationY>
+        <inputAssignments>
+            <field>Current_Step__c</field>
+            <value>
+                <stringValue>Complete</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Pending_Task__c</field>
+            <value>
+                <stringValue> Miscellaneous Check Sent</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_PT_as_Trade_Complete_and_Current_Step_as_Complete</name>
+        <label>update PT as Trade Complete and Current Step as Complete</label>
+        <locationX>578</locationX>
+        <locationY>6479</locationY>
+        <inputAssignments>
+            <field>Current_Step__c</field>
+            <value>
+                <stringValue>Complete</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Pending_Task__c</field>
+            <value>
+                <stringValue> Trade Complete</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_RC1_Needed</name>
+        <label>update RC1 Needed</label>
+        <locationX>1744</locationX>
+        <locationY>1703</locationY>
+        <connector>
+            <targetReference>Ref_Incoming_Funds_Incoming_RCK_Updated</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>RC1_Needed__c</field>
+            <value>
+                <elementReference>$Record.Amount__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_RC1_Posted_By</name>
+        <label>update RC1 Posted By</label>
+        <locationX>1898</locationX>
+        <locationY>3587</locationY>
+        <connector>
+            <targetReference>Ref_Incoming_Funds_Update_Amount</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>RC1_Posted_By__c</field>
+            <value>
+                <elementReference>$User.Full_Name__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_RCK_Needed</name>
+        <label>update RCK Needed</label>
+        <locationX>1744</locationX>
+        <locationY>2003</locationY>
+        <connector>
+            <targetReference>Reference_Incoming_Funds_Pending_Task_and_Close_Case</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>RCK_Needed__c</field>
+            <value>
+                <elementReference>$Record.Amount__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_Rejected_By</name>
+        <label>update Rejected By</label>
+        <locationX>1898</locationX>
+        <locationY>5279</locationY>
+        <connector>
+            <targetReference>Reference_Incoming_Funds_Specialist_Updates</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Rejected_By__c</field>
+            <value>
+                <elementReference>$Record.LastModifiedBy.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <description>pull Broker email down from Account to Ref Incoming Funds, case #22090355
+pulled from Account.Broker, case #22090355</description>
+        <name>update_RFI_Broker_Email_and_Name</name>
+        <label>update RFI Broker Email and Name</label>
+        <locationX>1898</locationX>
+        <locationY>395</locationY>
+        <connector>
+            <targetReference>Ref_Incoming_Funds_Entered_into_HRIS_update_Entered_By</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Broker_Email__c</field>
+            <value>
+                <elementReference>$Record.Case_Lookup__r.Account.Broker_Name_Ref__r.Email__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Broker_Name__c</field>
+            <value>
+                <elementReference>$Record.Case_Lookup__r.Account.Broker_Name_Ref__r.Name</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>update_Tentative_Trade_Date_Entered_by_CAM</name>
+        <label>update Tentative Trade Date Entered by CAM</label>
+        <locationX>1744</locationX>
+        <locationY>4595</locationY>
+        <connector>
+            <targetReference>Tentative_Trade_Date_Entered_by_CAM_Cleared</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Tentative_Trade_Date_Entered_by_CAM__c</field>
+            <value>
+                <elementReference>currentDate</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>1904</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Broker_Email_Check</targetReference>
+        </connector>
+        <object>Reference_Incoming_Funds__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+    <variables>
+        <description>To Store Current Date/Today()</description>
+        <name>currentDate</name>
+        <dataType>Date</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <elementReference>$Flow.CurrentDate</elementReference>
+        </value>
+    </variables>
+</Flow>

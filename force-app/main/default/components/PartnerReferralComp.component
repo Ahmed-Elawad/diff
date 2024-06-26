@@ -1,0 +1,1028 @@
+<!-- A component for Partner Referral information.
+
+   History
+   -------
+   03/29/2016 Dan Carmen        Created.
+   08/31/2017 Jermaine Stukes   Added updates for CPA Dashboard form
+   06/20/2019 Matt Fritschi     Changed product dropdown to multiselect picklist
+   04/13/2022 Pujitha Madamanchi   Added validation for Phone/Zip
+   06/14/2022 Pujitha Madamanchi   New styling and change products to checkboxes
+   06/27/2022 Pujitha Madamanchi   Added new section for sf1
+ -->
+ <apex:component controller="PartnerReferralController" allowDML="true">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       <apex:includeScript value="{!$Resource.jQueryJs}" />
+       <apex:includeScript value="{!$Resource.buttonsEnabledJs}" />
+       <apex:includeScript value="{!$Resource.PhoneValidationJS}" />
+       
+       <script type="text/javascript" >   
+            function validateZip(zipId){
+                var zip = document.getElementById(zipId); 
+                
+                var zReg = /^[0-9]{5}$/; 
+                if(zip.value.match(zReg)){ 
+                    console.log(zip.value);
+                    return true; 
+                } else { 
+                    console.log(zip.value+'not valid');
+                    alert('Please enter a valid 5 digit Zip Code');
+                    zip.value = ''; 
+                    //document.getElementById(zipId).innerHTML = 'phone not valid';
+                    return false; 
+                } 
+            }    
+       </script>
+       <!-- Google tag (gtag.js) -->
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-VEVH5DKJJL"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    
+    gtag('config', 'G-VEVH5DKJJL');
+    </script>
+        
+        <style type="text/css">
+            <!--CPA Dashboard CSS-->
+            .banner {
+            background-color: #0469b1;
+            height : 60px;
+            padding: 0px 0px 0px 24px;
+            }        
+            .buttonColor 
+            {
+            color:white !important;
+            background:#1b4585 !important;
+            -webkit-transition-duration: 0.4s; /* Safari */
+            transition-duration: 0.4s;
+            }
+            .buttonColor:hover
+            {
+            color:white !important;
+            background:#0369b1 !important;
+    
+            }
+            .bannerheader1 {font-size:22px;
+            text-align: left;
+            padding: 0px 0px 10px 24px;
+            color: #404040;
+            font-family: Helvetica, sans-serif;
+            margin: 12px 0 0px;
+            font-weight: normal;
+            font-style: normal;
+            border-bottom-style: solid; 
+            border-bottom-width: 1px;
+            border-bottom-color: #d8d8d8;
+            }
+            .header1 {font-size:22px;
+            text-align: left;
+            color: #404040;
+            font-family: Helvetica, sans-serif;
+            margin: 12px 0 6px;
+            font-weight: normal;
+            font-style: normal;
+            }
+            
+            .label3 {font-size:14px;
+            text-align: left;
+            color: #9b9b9b;
+            font-family: Helvetica, sans-serif;
+            }
+            
+            .header2 {font-size:16px;
+            text-align: left;
+            color: #404040;
+            font-family: Helvetica, sans-serif;
+            font-weight: bold;
+            font-style: normal;
+            }
+            
+            .label1 {
+            text-align: left;
+            color: #9b9b9b;
+            font-family: Helvetica, sans-serif;
+            font-size: 12px;
+            }
+            .required{
+            color: #ff0000;
+            font-size: 14px;
+            }
+            .text1 {
+            text-align: left;
+            color: #404040;
+            font-family: Helvetica, sans-serif;
+            font-weight: normal;
+            font-style: normal;
+            font-size: 16px;
+            }
+            @media (min-device-width: 641px)
+            {
+            .label2 {font-size:16px;
+            text-align: left;
+            color: #9b9b9b;
+            font-family: Helvetica, sans-serif;
+            font-style: normal
+            }
+            .header2 {font-size:22px;
+            text-align: left;
+            color: #404040;
+            font-family: Helvetica, sans-serif;
+            font-weight: bold;
+            font-style: normal;
+            }   
+            .formWidth{width : 50%;}
+            }
+            @media (max-device-width: 640px)
+            {
+            .label2 {font-size:12px;
+            text-align: left;
+            color: #9b9b9b;
+            font-family: Helvetica, sans-serif;
+            font-style: normal;
+            }  
+            .header2 {font-size:16px;
+            text-align: left;
+            color: #404040;
+            font-family: Helvetica, sans-serif;
+            font-weight: bold;
+            font-style: normal;
+            }
+            .formWidth{width : 100%;}
+            }
+            
+            <!--End CPA Dashboard CSS-->
+            
+            <!--NON CPA Dashboard-->
+            @font-face{
+                font-family: 'PublicoBanner';
+                src: url("{!URLFOR($Resource.PaychexFont, '/Font_Graphik-Publico-Web/PublicoBanner-Bold-Web.woff')}") format('woff'); ;
+            }
+            @font-face{
+                font-family: 'GraphikLight';
+                src: url("{!URLFOR($Resource.PaychexFont, '/Font_Graphik-Publico-Web/Graphik-Light-Web.woff')}") format('woff'); ;
+            }
+            @font-face{
+                font-family: 'GraphikRegular';
+                src: url("{!URLFOR($Resource.PaychexFont, '/Font_Graphik-Publico-Web/Graphik-Regular-Web.woff')}") format('woff'); ;
+            }
+            @font-face{
+                font-family: 'PublicoHeadline';
+                src: url("{!URLFOR($Resource.PaychexFont, '/Font_Graphik-Publico-Web/PublicoHeadline-Bold-Web.woff')}") format('woff'); ;
+            }
+            
+            .outline{
+                display: flex;
+                flex-direction: column;
+                flex-wrap: wrap;
+                align-content: space-around;
+                justify-content: space-around;
+                align-items: center;
+                background-color: #f2e9db !important;
+                text-align: center;
+                padding-left: 20%;
+                padding-right: 20%;    
+            }  
+            .headerImage{
+                width:1300px; 
+                height: 500px;
+            }
+            h1 {
+                font-family: PublicoBanner !important;
+                color: #000;
+                font-size: 2.5em;
+                line-height: 1.25em;
+                max-width: 768px;
+                float: left;  
+            }
+            .desc {
+                font-family: GraphikLight !important;
+                color: #000;
+                font-size: 14px;
+                line-height: 20px;
+                font-weight: normal;
+                float: left;
+                text-align: justify;
+            } 
+            .container {
+                display: flex;
+                background-color: #FFFFFF !important;
+                width: 1300px;    
+                height: auto !important;
+            }  
+            .child {
+                margin: 20px;
+            } 
+            .child {
+                float: left;
+                padding: 20px;
+                padding-left: 40px !important;
+                align-content: center;
+                line-height: 1.55;
+            }
+            .child1_1 {
+                display: block;
+                margin-block-start: 1em;
+                margin-block-end: 1em;
+                margin-inline-start: 0px;
+                margin-inline-end: 0px;
+                color: #000;
+                box-sizing: inherit;
+                font-weight: 700;
+                font-size: 22px;
+                font-family: PublicoHeadline !important;   
+            }
+            .child1_2 {
+                display: block;
+                margin-block-start: 1em;
+                margin-block-end: 1em;
+                margin-inline-start: 0px;
+                margin-inline-end: 0px;
+                color: #000;
+                box-sizing: inherit;
+                font-weight: 500;
+                font-size: 20px;
+                float: left;
+                text-align: justify;
+                font-family: GraphikLight !important;
+            }
+            .child2 {
+                background-color: #f2e9db !important;
+                position: left;
+                margin-top: -15%;
+                width: 400px;
+                padding: 20px;
+            }
+            td.data2Col {
+                border-width: 0 !important;
+            }
+            th.labelCol {
+                border-width: 0 !important;
+            }
+            .sectionHead1 {
+                font-family: GraphikRegular !important;
+                color: #000;
+                font-weight: normal;
+                font-style: normal;
+                float: left;
+                font-size: 20px;
+            }
+            .label {
+                font-family: GraphikLight !important;
+                color: #000;
+                font-size: 14px;
+                line-height: 20px;
+                font-weight: normal;
+                float: left;
+                width: 150px;
+                text-align: right;
+            } 
+            .buttonfinal{
+                background-color: #0e4a8a !important;
+                background-image: none !important;
+                background-position: 100% !important;
+                background-repeat: no-repeat !important;
+                border: none!important;
+                box-shadow: none!important;
+                color: #fff!important;
+                font-family: GraphikRegular !important;
+                font-size: 1em!important;
+                height: 40px;
+                margin: 15px 0 0;
+                padding: 14px!important;
+                text-align: center;
+                text-shadow: 0 1px 1px rgb(0 0 0 / 50%);
+                transition-duration: .5s;
+                transition-property: background-color;
+                transition-timing-function: ease-out;
+                width: inherit;
+                cursor: pointer;
+            } 
+            .comments{
+                margin: 0px; 
+                width: 180px; 
+                height: 60px;
+                resize: vertical;
+            }
+            <!--End of Non CPA Dashboard-->
+        </style> 
+        
+    
+      <!-- **************** Display for Desktop version **************** -->
+        <div class="outline" id="m">
+            <apex:outputPanel id="panelId" rendered="{!AND(NOT(cpaDashboardDisplay),$User.UITheme <> 'Theme4t')}" >
+                <apex:pageBlock id="refSubmittedBlock" rendered="{!showSubmitMsg}" >
+                    <apex:form >
+                            <apex:image id="TierIIImage" value="{!$Resource.TierIIImage}" styleclass="headerImage"/>
+                        <center><h1>Your Request Was Successfully Submitted!</h1></center>
+                        <br/>
+                        <apex:commandButton action="{!submitAnother}" immediate="true" value="Submit Another Request" styleClass="btn"/>
+                    </apex:form>
+                </apex:pageBlock>
+                
+                <apex:pageBlock id="referralBlock" rendered="{!NOT(showSubmitMsg)}" mode="maindetail">
+                    <apex:form id="formId">
+                        <apex:image id="TierIIImage" value="{!$Resource.TierIIImage}" styleclass="headerImage"/>
+                        
+                        <apex:outputPanel rendered="{!isGuestUser}">    
+                            <!--a href="http://www.paychex.com">
+                                <apex:image url="{!$Resource.PayxWebLogo}"  alt="Paychex Inc"/>
+                            </a-->
+                            <apex:outputPanel rendered="{!hasPartnerLogo}">
+                                <apex:image url="{!partnerLogoURL}" alt="{!partner.Name}" />
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                    
+                        <!-- Start whole div-->
+                        <div class="container" id="containerId">
+                            <div class="child">
+                                <div class="child1">
+                                    <p class="child1_1">
+                                         {!$Label.Child1_1}
+                                    </p>
+                                    <p class="child1_2">
+                                        {!$Label.Child1_2}
+                                    </p>
+                                </div>
+                            </div>
+        
+                            <div class="child" id="childId">
+                                <div class="child2" id="child2Id">
+                                    <apex:pageBlockSection rendered="{!NOT(isGuestUser)}" id="inlineTitleSection" columns="1">
+                                        <br/>    
+                                        <center><h1>{!pageTitle}</h1></center>
+                                        <br/>
+                                    </apex:pageBlockSection>
+                                    
+                                    <apex:pageBlockSection rendered="{!isGuestUser}" id="partnerIdSection" columns="1">
+                                        <br/>    
+                                        <center><h1>{!pageTitle}</h1></center>
+                                        <br/>
+                                        <apex:pageMessages />
+                                        <apex:outputText styleClass="desc" value="{!bankDescription}" />
+                                        <apex:outputText styleClass="desc" value="All fields with a red bar are required."/>
+
+                                        <apex:pageBlockSectionItem rendered="{!NOT(formEntryOkay)}" >   
+                                            <apex:outputLabel styleClass="label" value="Enter your Partner/Vendor Id to start"/>
+                                            <apex:inputField required="true" value="{!partnerRef.PartnerId__c}" styleClass="inp1">
+                                                <apex:actionSupport event="onchange" action="{!checkPartnerId}" rerender="referralBlock" status="findIdStatus"/>
+                                            </apex:inputField>
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <!--       
+                                        <apex:outputField rendered="{!formEntryOkay}" value="{!partnerRef.PartnerId__c}"/>
+                                        -->     
+                                    </apex:pageBlockSection>
+                    
+                                    <apex:pageBlockSection id="referralInfoSection" rendered="{!AND(formEntryOkay,partnerIdEntry,NOT(customerForm))}" columns="1" >
+                                        <apex:outputText styleClass="sectionHead1" value="Referring Partner and/or Employee Information" />
+                                        <apex:pageBlockSectionItem id="ris1">
+                                             <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.EmpFirstName__c.Label}"/>
+                                            <apex:outputPanel >
+                                                <apex:inputField rendered="{!partnerIdEntry}" required="true" value="{!partnerRef.EmpFirstName__c}" />
+                                                <apex:outputField rendered="{!refContactEntry}" value="{!partnerRef.EmpFirstName__c}" />
+                                            </apex:outputPanel>
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <apex:pageBlockSectionItem id="ris2">
+                                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.EmpLastName__c.Label}"/>
+                                            <apex:outputPanel >
+                                                <apex:inputField rendered="{!partnerIdEntry}" required="true" value="{!partnerRef.EmpLastName__c}" />
+                                                <apex:outputField rendered="{!refContactEntry}" value="{!partnerRef.EmpLastName__c}" />
+                                            </apex:outputPanel>
+                                        </apex:pageBlockSectionItem>
+                                        
+                        
+                                        <apex:pageBlockSectionItem id="ris3">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.EmpPhone__c.Label}"/>
+                                            <apex:inputField required="true" value="{!partnerRef.EmpPhone__c}" id="pId1" onkeypress="return numbersonly(event)" onchange="validatePhone('{!$Component.j_id0.j_id1.referralBlock.formId.referralInfoSection.ris3.pId1}');"/>
+                                        </apex:pageBlockSectionItem>
+                                        <apex:pageBlockSectionItem id="ris4">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.EmpEmail__c.Label}"/>
+                                            <apex:inputField required="true" value="{!partnerRef.EmpEmail__c}"/>
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <!-- APR0112274 : Do not render below sections when TierI -->
+                                        <apex:pageBlockSectionItem rendered="{!AND(NOT(tierI),hasMultipleBranches)}" id="ris5">
+                                            <apex:outputLabel styleClass="label" value="{!partnerLocationLabel} Name" />
+                                            <apex:selectList value="{!selectedBranch}" title="{!partnerLocationLabel} Name" size="1">
+                                                <apex:selectOptions value="{!branchOptions}"/>
+                                            </apex:selectList>
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <apex:pageBlockSectionItem rendered="{!NOT(tierI)}" id="ris6">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.EmployeeId__c.Label}"/>
+                                            <apex:inputField required="false" value="{!partnerRef.EmployeeId__c}" />
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <apex:pageBlockSectionItem rendered="{!NOT(tierI)}" id="ris7">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.PromoCode__c.Label}"/>
+                                            <apex:inputField required="false" value="{!partnerRef.PromoCode__c}" />
+                                        </apex:pageBlockSectionItem>
+                                        <br/>
+                                    </apex:pageBlockSection>
+
+                                    <!-- Start APR0112274 : Referee Information section 2 for TierI forms -->
+                                    <apex:pageBlockSection id="referralInfoSection2" rendered="{!AND(formEntryOkay,partnerIdEntry,tierI,NOT(customerForm))}" columns="1" >
+                                        <apex:outputText styleClass="sectionHead1" value="Referring partner and/or Employee Info 2" /> 
+                                        
+                                        <apex:pageBlockSectionItem >
+                                            <apex:outputLabel styleClass="label" value="First Name"/>
+                                            <apex:inputField rendered="{!partnerIdEntry}" value="{!partnerRef.AdditionalReferringFirstName__c}" />
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <apex:pageBlockSectionItem >
+                                            <apex:outputLabel styleClass="label" value="Last Name"/>
+                                            <apex:inputField rendered="{!partnerIdEntry}" value="{!partnerRef.AdditionalReferringLastName__c}" />
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <apex:pageBlockSectionItem >
+                                            <apex:outputLabel styleClass="label" value="Email"/>
+                                            <apex:inputField value="{!partnerRef.AdditionalReferringEmail__c}" />
+                                        </apex:pageBlockSectionItem>
+
+                                        <br/>
+                                    </apex:pageBlockSection>
+                                    <!-- End APR0112274 : Referee Information section 2 for TierI forms -->
+
+                                    <!-- Start APR0112274 : Prospect Information section for TierI forms -->
+                                    <apex:pageBlockSection id="tierIProspectInfoSection" rendered="{!AND(formEntryOkay,partnerIdEntry,tierI)}" columns="1" >
+                                        <apex:outputText styleClass="sectionHead1" value="{!prospectInfoTitle}" />
+
+                                        <apex:pageBlockSectionItem id="tpis1">
+                                            <apex:outputLabel styleClass="label" value="Company"/>
+                                            <apex:inputField required="true" value="{!partnerRef.Company__c}" />
+                                        </apex:pageBlockSectionItem>
+
+                                        <apex:pageBlockSectionItem id="tpis2">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.FirstName__c.Label}"/>
+                                            <apex:inputField required="true" value="{!partnerRef.FirstName__c}" />
+                                        </apex:pageBlockSectionItem>
+
+                                        <apex:pageBlockSectionItem id="tpis3">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.LastName__c.Label}"/>
+                                            <apex:inputField required="true" value="{!partnerRef.LastName__c}" />
+                                        </apex:pageBlockSectionItem>
+
+                                        <apex:pageBlockSectionItem id="tpis4">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.Phone__c.Label}"/>
+                                            <apex:inputField required="true" value="{!partnerRef.Phone__c}" id="pId2" onkeypress="return numbersonly(event)" onchange="validatePhone('{!$Component.j_id0.j_id1.referralBlock.formId.tierIProspectInfoSection.tpis4.pId2}');"/>
+                                        </apex:pageBlockSectionItem>
+
+                                        <apex:pageBlockSectionItem id="tpis5">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.Email__c.Label}"/>
+                                            <apex:inputField required="false" value="{!partnerRef.Email__c}" />
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <apex:pageBlockSectionItem id="tpis6">
+                                            <apex:outputLabel styleClass="label" value="Company Street Address"/>
+                                            <apex:inputField required="true" value="{!partnerRef.StreetAddress__c}" />
+                                        </apex:pageBlockSectionItem>
+
+                                        <apex:pageBlockSectionItem id="tpis7">
+                                            <apex:outputLabel styleClass="label" value="Company Zip"/>
+                                            <apex:inputField required="true" value="{!partnerRef.ZipPostalCode__c}" id="zId1" onkeypress="return numbersonly(event)" onchange="validateZip('{!$Component.j_id0.j_id1.referralBlock.formId.tierIProspectInfoSection.tpis7.zId1}');"/>
+                                        </apex:pageBlockSectionItem>
+
+                                        <apex:pageBlockSectionItem rendered="{!AND(hasMultipleBranches,NOT(customerForm))}" id="tpis8">
+                                            <apex:outputLabel styleClass="label" value="{!partnerLocationLabel} Name" />
+                                            <apex:selectList value="{!selectedBranch}" title="{!partnerLocationLabel} Name" size="1">
+                                                <apex:selectOptions value="{!branchOptions}"/>
+                                            </apex:selectList>
+                                        </apex:pageBlockSectionItem>
+
+                                        <apex:pageBlockSectionItem rendered="{!showAvailProdOptions}" id="tpis9">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.Products__c.Label}"/>
+                                            <apex:selectcheckboxes value="{!selectedProducts}" title="Products of Interest" layout="pageDirection">                   
+                                                <apex:selectoptions value="{!getProductsPicklist}"/>      
+                                            </apex:selectcheckboxes>
+                                        </apex:pageBlockSectionItem>
+                                    </apex:pageBlockSection>
+
+                                    <apex:pageBlockSection id="obtainedConsent" rendered="{!AND(formEntryOkay,partnerIdEntry,tierI)}" columns="1" >
+                                        <input type="checkbox" value="{!partnerRef.Obtained_Consent__c}" />
+                                        Customer has given approval for referral and acknowledges they have the authority to provide the contact information and has consented to being contacted by Paychex.  
+                                        <br/>
+                                        </apex:pageBlockSection>
+                                    
+                                    
+                                    <!-- End APR0112274 : Prospect Information section for TierI forms -->
+                                    
+                                    <apex:pageBlockSection id="prospectInfoSection" rendered="{!AND(formEntryOkay,NOT(tierI))}" columns="1" >
+                                        <apex:outputText styleClass="sectionHead1" value="{!prospectInfoTitle}" />
+
+                                        <apex:pageBlockSectionItem id="pis1">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.FirstName__c.Label}"/>
+                                            <apex:inputField required="true" value="{!partnerRef.FirstName__c}" />
+                                        </apex:pageBlockSectionItem>
+
+                                        <apex:pageBlockSectionItem id="pis2">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.LastName__c.Label}"/>
+                                            <apex:inputField required="true" value="{!partnerRef.LastName__c}" />
+                                        </apex:pageBlockSectionItem>
+
+                                        <apex:pageBlockSectionItem id="pis3">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.Title__c.Label}"/>
+                                            <apex:inputField required="false" value="{!partnerRef.Title__c}" />
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <apex:pageBlockSectionItem id="pis4">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.Phone__c.Label}"/>
+                                            <apex:inputField required="true" value="{!partnerRef.Phone__c}" id="pId3" onkeypress="return numbersonly(event)" onchange="validatePhone('{!$Component.j_id0.j_id1.referralBlock.formId.prospectInfoSection.pis4.pId3}');"/>
+                                        </apex:pageBlockSectionItem>
+
+                                        <apex:pageBlockSectionItem id="pis5">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.Email__c.Label}"/>
+                                            <apex:inputField required="false" value="{!partnerRef.Email__c}" />
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <apex:pageBlockSectionItem id="pis6">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.Company__c.Label}"/>
+                                            <apex:inputField required="true" value="{!partnerRef.Company__c}" />
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <apex:pageBlockSectionItem id="pis7">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.StreetAddress__c.Label}"/>
+                                            <apex:inputField required="true" value="{!partnerRef.StreetAddress__c}" />
+                                        </apex:pageBlockSectionItem>
+                                        
+                                       
+                                        <apex:pageBlockSectionItem id="pis8">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.ZipPostalCode__c.Label}"/>
+                                            <apex:inputField required="true" value="{!partnerRef.ZipPostalCode__c}" id="zId2" onkeypress="return numbersonly(event)" onchange="validateZip('{!$Component.j_id0.j_id1.referralBlock.formId.prospectInfoSection.pis8.zId2}');"/>
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <apex:pageBlockSectionItem id="pis9">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.NumberOfEmployees__c.Label}"/>
+                                            <apex:inputField required="false" value="{!partnerRef.NumberOfEmployees__c}" />
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <apex:pageBlockSectionItem rendered="{!showAvailProdOptions}" id="pis10">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.Products__c.Label}"/>
+                                            <apex:selectList value="{!partnerRef.Products__c}" title="Products of Interest" size="{!availProdOptions.size}" id="multiselect" multiselect="true">
+                                                <apex:selectOptions value="{!availProdOptions}"/>
+                                            </apex:selectList>
+                                        </apex:pageBlockSectionItem>
+                                        <br/>
+                                    </apex:pageBlockSection>
+    
+                                    <apex:pageBlockSection id="commentsSection" rendered="{!AND(formEntryOkay,NOT(tierI))}" columns="1">
+                                        <apex:outputText styleClass="sectionHead1" value="Additional Information" />
+                                        <apex:pageBlockSectionItem >
+                                            <apex:outputLabel styleClass="label" value="Comments"/>
+                                            <apex:inputTextarea rows="4" value="{!partnerRef.Comments__c}" styleClass="comments"/>
+                                        </apex:pageBlockSectionItem>
+                                        <br/>
+                                    </apex:pageBlockSection>
+                                
+                                    <apex:outputPanel >
+                                        <apex:actionFunction action="{!submitReferral}" name="jsSubmitReferral" />
+                                        <apex:commandButton styleClass="buttonfinal" rendered="{!NOT(formEntryOkay)}" action="{!checkPartnerId}" value="Find Id" status="findIdStatus" />
+                                        <apex:commandButton styleClass="buttonfinal" rendered="{!formEntryOkay}" value="Submit" onclick="buttonsEnabled(false);return jsSubmitReferral();" />
+                                        <apex:commandButton styleClass="buttonfinal" action="{!clearForm}" immediate="true" value="Cancel" />
+                                        <apex:actionStatus startText="Searching for Id..." id="findIdStatus"/>        
+                                    </apex:outputPanel>
+    
+                                </div>
+                            </div>
+                            <!-- column 2-->
+                        </div>
+                        <!-- End whole div-->
+                    </apex:form>
+                </apex:pageBlock>
+            </apex:outputPanel>
+        </div>
+
+
+        <!-- **************** Display for SF1 version **************** -->
+        <div id="sf1">
+            <apex:outputPanel id="panelIdsf1" rendered="{!AND(NOT(cpaDashboardDisplay),$User.UITheme == 'Theme4t')}" >
+                <apex:pageBlock id="refSubmittedBlocksf1" rendered="{!showSubmitMsg}" >
+                    <apex:form >
+                        <center><h1>Your Request Was Successfully Submitted!</h1></center>
+                        <br/>
+                        <apex:commandButton action="{!submitAnother}" immediate="true" value="Submit Another Request" styleClass="btn"/>
+                    </apex:form>
+                </apex:pageBlock>
+                
+                <apex:pageBlock id="referralBlocksf1" rendered="{!NOT(showSubmitMsg)}" mode="maindetail">
+                    <apex:form id="formIdsf1">                    
+                        <!-- Start whole div-->
+                        <div class="container" id="containerIdsf1">        
+                            <div class="child" id="childIdsf1">
+                                <div class="child2" id="child2Idsf1">
+                                    <apex:pageBlockSection rendered="{!NOT(isGuestUser)}" id="inlineTitleSectionsf1" columns="1">
+                                        <br/>    
+                                        <center><h1>{!pageTitle}</h1></center>
+                                        <br/>
+                                    </apex:pageBlockSection>
+                                    
+                                    <apex:pageBlockSection rendered="{!isGuestUser}" id="partnerIdSectionsf1" columns="1">
+                                        <br/>    
+                                        <center><h1>{!pageTitle}</h1></center>
+                                        <br/>
+                                        <apex:pageMessages />
+                                        <apex:outputText styleClass="desc" value="{!bankDescription}" />
+                                        <apex:outputText styleClass="desc" value="All fields with a red bar are required."/>
+                                    </apex:pageBlockSection>
+                    
+                                    <apex:pageBlockSection id="referralInfoSectionsf1" rendered="{!AND(formEntryOkay,partnerIdEntry,NOT(customerForm))}" columns="1" >
+                                        <apex:outputText styleClass="sectionHead1" value="Referring Partner and/or Employee Information" />
+                                        <apex:pageBlockSectionItem id="ris1sf1">
+                                             <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.EmpFirstName__c.Label}"/>
+                                            <apex:outputPanel >
+                                                <apex:inputField rendered="{!partnerIdEntry}" required="true" value="{!partnerRef.EmpFirstName__c}" />
+                                                <apex:outputField rendered="{!refContactEntry}" value="{!partnerRef.EmpFirstName__c}" />
+                                            </apex:outputPanel>
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <apex:pageBlockSectionItem id="ris2sf1">
+                                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.EmpLastName__c.Label}"/>
+                                            <apex:outputPanel >
+                                                <apex:inputField rendered="{!partnerIdEntry}" required="true" value="{!partnerRef.EmpLastName__c}" />
+                                                <apex:outputField rendered="{!refContactEntry}" value="{!partnerRef.EmpLastName__c}" />
+                                            </apex:outputPanel>
+                                        </apex:pageBlockSectionItem>
+                                        
+                        
+                                        <apex:pageBlockSectionItem id="ris3sf1">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.EmpPhone__c.Label}"/>
+                                            <apex:inputField required="true" value="{!partnerRef.EmpPhone__c}" id="pId1" onkeypress="return numbersonly(event)" onchange="validatePhone('{!$Component.j_id0.j_id1.referralBlock.formId.referralInfoSection.ris3.pId1}');"/>
+                                        </apex:pageBlockSectionItem>
+                                        <apex:pageBlockSectionItem id="ris4sf1">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.EmpEmail__c.Label}"/>
+                                            <apex:inputField required="true" value="{!partnerRef.EmpEmail__c}"/>
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <!-- APR0112274 : Do not render below sections when TierI -->
+                                        <apex:pageBlockSectionItem rendered="{!AND(NOT(tierI),hasMultipleBranches)}" id="ris5sf1">
+                                            <apex:outputLabel styleClass="label" value="{!partnerLocationLabel} Name" />
+                                            <apex:selectList value="{!selectedBranch}" title="{!partnerLocationLabel} Name" size="1">
+                                                <apex:selectOptions value="{!branchOptions}"/>
+                                            </apex:selectList>
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <apex:pageBlockSectionItem rendered="{!NOT(tierI)}" id="ris6sf1">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.EmployeeId__c.Label}"/>
+                                            <apex:inputField required="false" value="{!partnerRef.EmployeeId__c}" />
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <apex:pageBlockSectionItem rendered="{!NOT(tierI)}" id="ris7sf1">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.PromoCode__c.Label}"/>
+                                            <apex:inputField required="false" value="{!partnerRef.PromoCode__c}" />
+                                        </apex:pageBlockSectionItem>
+                                        <br/>
+                                    </apex:pageBlockSection>
+
+                                    <!-- Start APR0112274 : Referee Information section 2 for TierI forms -->
+                                    <apex:pageBlockSection id="referralInfoSection2sf1" rendered="{!AND(formEntryOkay,partnerIdEntry,tierI,NOT(customerForm))}" columns="1" >
+                                        <apex:outputText styleClass="sectionHead1" value="Referring partner and/or Employee Info 2" /> 
+                                        
+                                        <apex:pageBlockSectionItem >
+                                            <apex:outputLabel styleClass="label" value="First Name"/>
+                                            <apex:inputField rendered="{!partnerIdEntry}" value="{!partnerRef.AdditionalReferringFirstName__c}" />
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <apex:pageBlockSectionItem >
+                                            <apex:outputLabel styleClass="label" value="Last Name"/>
+                                            <apex:inputField rendered="{!partnerIdEntry}" value="{!partnerRef.AdditionalReferringLastName__c}" />
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <apex:pageBlockSectionItem >
+                                            <apex:outputLabel styleClass="label" value="Email"/>
+                                            <apex:inputField value="{!partnerRef.AdditionalReferringEmail__c}" />
+                                        </apex:pageBlockSectionItem>
+
+                                        <br/>
+                                    </apex:pageBlockSection>
+                                    <!-- End APR0112274 : Referee Information section 2 for TierI forms -->
+
+                                    <!-- Start APR0112274 : Prospect Information section for TierI forms -->
+                                    <apex:pageBlockSection id="tierIProspectInfoSectionsf1" rendered="{!AND(formEntryOkay,partnerIdEntry,tierI)}" columns="1" >
+                                        <apex:outputText styleClass="sectionHead1" value="{!prospectInfoTitle}" />
+
+                                        <apex:pageBlockSectionItem id="tpis1sf1">
+                                            <apex:outputLabel styleClass="label" value="Company"/>
+                                            <apex:inputField required="true" value="{!partnerRef.Company__c}" />
+                                        </apex:pageBlockSectionItem>
+
+                                        <apex:pageBlockSectionItem id="tpis2sf1">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.FirstName__c.Label}"/>
+                                            <apex:inputField required="true" value="{!partnerRef.FirstName__c}" />
+                                        </apex:pageBlockSectionItem>
+
+                                        <apex:pageBlockSectionItem id="tpis3sf1">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.LastName__c.Label}"/>
+                                            <apex:inputField required="true" value="{!partnerRef.LastName__c}" />
+                                        </apex:pageBlockSectionItem>
+
+                                        <apex:pageBlockSectionItem id="tpis4sf1">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.Phone__c.Label}"/>
+                                            <apex:inputField required="true" value="{!partnerRef.Phone__c}" id="pId2" onkeypress="return numbersonly(event)" onchange="validatePhone('{!$Component.j_id0.j_id1.referralBlock.formId.tierIProspectInfoSection.tpis4.pId2}');"/>
+                                        </apex:pageBlockSectionItem>
+
+                                        <apex:pageBlockSectionItem id="tpis5sf1">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.Email__c.Label}"/>
+                                            <apex:inputField required="false" value="{!partnerRef.Email__c}" />
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <apex:pageBlockSectionItem id="tpis6sf1">
+                                            <apex:outputLabel styleClass="label" value="Company Street Address"/>
+                                            <apex:inputField required="true" value="{!partnerRef.StreetAddress__c}" />
+                                        </apex:pageBlockSectionItem>
+
+                                        <apex:pageBlockSectionItem id="tpis7sf1">
+                                            <apex:outputLabel styleClass="label" value="Company Zip"/>
+                                            <apex:inputField required="true" value="{!partnerRef.ZipPostalCode__c}" id="zId1sf1" onkeypress="return numbersonly(event)" onchange="validateZip('{!$Component.j_id0.j_id1.referralBlock.formId.tierIProspectInfoSection.tpis7sf1.zId1}');"/>
+                                        </apex:pageBlockSectionItem>
+
+                                        <apex:pageBlockSectionItem rendered="{!AND(hasMultipleBranches,NOT(customerForm))}" id="tpis8sf1">
+                                            <apex:outputLabel styleClass="label" value="{!partnerLocationLabel} Name" />
+                                            <apex:selectList value="{!selectedBranch}" title="{!partnerLocationLabel} Name" size="1">
+                                                <apex:selectOptions value="{!branchOptions}"/>
+                                            </apex:selectList>
+                                        </apex:pageBlockSectionItem>
+
+                                        <apex:pageBlockSectionItem rendered="{!showAvailProdOptions}" id="tpis9sf1">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.Products__c.Label}"/>
+                                            <apex:selectcheckboxes value="{!selectedProducts}" title="Products of Interest" layout="pageDirection">                   
+                                                <apex:selectoptions value="{!getProductsPicklist}"/>      
+                                            </apex:selectcheckboxes>
+                                        </apex:pageBlockSectionItem>
+                                    </apex:pageBlockSection>
+
+                                    <apex:pageBlockSection id="obtainedConsentsf1" rendered="{!AND(formEntryOkay,partnerIdEntry,tierI)}" columns="1" >
+                                        <input type="checkbox" value="{!partnerRef.Obtained_Consent__c}" />
+                                        Customer has given approval for referral and acknowledges they have the authority to provide the contact information and has consented to being contacted by Paychex.  
+                                        <br/>
+                                        </apex:pageBlockSection>
+                                    
+                                    
+                                    <!-- End APR0112274 : Prospect Information section for TierI forms -->
+                                    
+                                    <apex:pageBlockSection id="prospectInfoSectionsf1" rendered="{!AND(formEntryOkay,NOT(tierI))}" columns="1" >
+                                        <apex:outputText styleClass="sectionHead1" value="{!prospectInfoTitle}" />
+
+                                        <apex:pageBlockSectionItem id="pis1sf1">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.FirstName__c.Label}"/>
+                                            <apex:inputField required="true" value="{!partnerRef.FirstName__c}" />
+                                        </apex:pageBlockSectionItem>
+
+                                        <apex:pageBlockSectionItem id="pis2sf1">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.LastName__c.Label}"/>
+                                            <apex:inputField required="true" value="{!partnerRef.LastName__c}" />
+                                        </apex:pageBlockSectionItem>
+
+                                        <apex:pageBlockSectionItem id="pis3sf1">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.Title__c.Label}"/>
+                                            <apex:inputField required="false" value="{!partnerRef.Title__c}" />
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <apex:pageBlockSectionItem id="pis4sf1">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.Phone__c.Label}"/>
+                                            <apex:inputField required="true" value="{!partnerRef.Phone__c}" id="pId3" onkeypress="return numbersonly(event)" onchange="validatePhone('{!$Component.j_id0.j_id1.referralBlock.formId.prospectInfoSection.pis4.pId3}');"/>
+                                        </apex:pageBlockSectionItem>
+
+                                        <apex:pageBlockSectionItem id="pis5sf1">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.Email__c.Label}"/>
+                                            <apex:inputField required="false" value="{!partnerRef.Email__c}" />
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <apex:pageBlockSectionItem id="pis6sf1">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.Company__c.Label}"/>
+                                            <apex:inputField required="true" value="{!partnerRef.Company__c}" />
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <apex:pageBlockSectionItem id="pis7sf1">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.StreetAddress__c.Label}"/>
+                                            <apex:inputField required="true" value="{!partnerRef.StreetAddress__c}" />
+                                        </apex:pageBlockSectionItem>
+                                        
+                                       
+                                        <apex:pageBlockSectionItem id="pis8sf1">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.ZipPostalCode__c.Label}"/>
+                                            <apex:inputField required="true" value="{!partnerRef.ZipPostalCode__c}" id="zId2" onkeypress="return numbersonly(event)" onchange="validateZip('{!$Component.j_id0.j_id1.referralBlock.formId.prospectInfoSection.pis8sf1.zId2}');"/>
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <apex:pageBlockSectionItem id="pis9sf1">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.NumberOfEmployees__c.Label}"/>
+                                            <apex:inputField required="false" value="{!partnerRef.NumberOfEmployees__c}" />
+                                        </apex:pageBlockSectionItem>
+                                        
+                                        <apex:pageBlockSectionItem rendered="{!showAvailProdOptions}" id="pis10sf1">
+                                            <apex:outputLabel styleClass="label" value="{!$ObjectType.PartnerReferral__c.Fields.Products__c.Label}"/>
+                                            <apex:selectList value="{!partnerRef.Products__c}" title="Products of Interest" size="{!availProdOptions.size}" id="multiselect" multiselect="true">
+                                                <apex:selectOptions value="{!availProdOptions}"/>
+                                            </apex:selectList>
+                                        </apex:pageBlockSectionItem>
+                                        <br/>
+                                    </apex:pageBlockSection>
+    
+                                    <apex:pageBlockSection id="commentsSectionsf1" rendered="{!AND(formEntryOkay,NOT(tierI))}" columns="1">
+                                        <apex:outputText styleClass="sectionHead1" value="Additional Information" />
+                                        <apex:pageBlockSectionItem >
+                                            <apex:outputLabel styleClass="label" value="Comments"/>
+                                            <apex:inputTextarea rows="4" value="{!partnerRef.Comments__c}" styleClass="comments"/>
+                                        </apex:pageBlockSectionItem>
+                                        <br/>
+                                    </apex:pageBlockSection>
+                                
+                                    <apex:outputPanel >
+                                        <apex:actionFunction action="{!submitReferral}" name="jsSubmitReferral" />
+                                        <apex:commandButton styleClass="buttonfinal" rendered="{!NOT(formEntryOkay)}" action="{!checkPartnerId}" value="Find Id" status="findIdStatus" />
+                                        <apex:commandButton styleClass="buttonfinal" rendered="{!formEntryOkay}" value="Submit" onclick="buttonsEnabled(false);return jsSubmitReferral();" />
+                                        <apex:commandButton styleClass="buttonfinal" action="{!clearForm}" immediate="true" value="Cancel" />
+                                        <apex:actionStatus startText="Searching for Id..." id="findIdStatussf1"/>        
+                                    </apex:outputPanel>
+    
+                                </div>
+                            </div>
+                            <!-- column 2-->
+                        </div>
+                        <!-- End whole div-->
+                    </apex:form>
+                </apex:pageBlock>
+            </apex:outputPanel>
+        </div>
+    <!---------------------------------------------------------------------------CPA DASHBOARD--------------------------------------------------------------------------------------->
+        
+        <apex:outputPanel rendered="{!cpaDashboardDisplay}">
+            <apex:slds /> 
+            <div class="slds-scope " xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                
+                
+            <!--Header-->
+            <div class="banner slds-grid slds-grid_vertical-align-center">        
+                <apex:image url="{!$Resource.paychex_logo}"  alt="Paychex Inc"/>
+            </div>
+            <div class="bannerheader1">
+                Referral Form
+            </div>    
+    
+                <!--Confirmation Message-->
+                <apex:outputPanel id="refSubmittedBlock_cpa" rendered="{!showSubmitMsg}">
+                    <div class="slds-p-around_large" style="background: #f3f7fa;">
+                        <div style="min-height: 1024px;">
+                            <apex:form >
+                                <div class="slds-grid slds-grid_align-center ">
+                                    <div>
+                                        <a href="http://www.paychex.com">
+                                            <apex:image url="{!$Resource.referral_sent}"  alt="Paychex Inc"/>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="slds-grid slds-grid_align-center slds-m-top_large ">
+                                    <p class="header2">Referral sent.</p>
+                                </div>
+                                <div class="slds-grid slds-grid_align-center slds-m-top_small ">
+                                    <p class="label2">Thank you for putting your trust in Paychex.</p>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-grid_align-center">
+                                    <apex:commandButton styleClass="slds-button slds-p-vertical_xx-small slds-p-horizontal_small  buttonColor" action="{!submitAnother}" immediate="true" value="Submit Another Referral"/>
+                                </div>
+                            </apex:form>
+                        </div>
+                    </div>
+                </apex:outputPanel>
+                    <!--Referral Form-->
+                <apex:outputPanel id="referralBlock_cpa" rendered="{!NOT(showSubmitMsg)}">
+                    <div class="slds-p-around_large" style="background: #f3f7fa;">
+                        <div class="slds-box" style="max-width: 800px; background: white;" >
+                            <apex:form >
+                                    <div class="slds-grid">
+                                    <div class="slds-media">
+                                        <div class="slds-media__figure">
+                                            <span class="slds-avatar slds-avatar_large">
+                                                <apex:image url="{!$Resource.referral_paychex}"  alt="Paychex Inc"/>
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <div class="header2">Refer Paychex with Confidence.</div>
+                                            <div class="label2">A dedicated rep will connect with your client, who will receive the same great
+                                                service you've come to expect from Paychex.</div> 
+                                        </div> 
+                                    </div>
+                                    
+                                </div><hr />
+                                    <div class="slds-grid slds-wrap">
+                                        <div class="formWidth">
+                                            <div class="text1">
+                                                Client Information
+                                            </div>
+                                            <div class="label1 slds-p-top_large">
+                                                {!$ObjectType.PartnerReferral__c.Fields.FirstName__c.Label}<abbr class="required">*</abbr>
+                                            </div> 
+                                            <div class="text1 slds-border_bottom">
+                                                <apex:inputField styleClass="slds-input_bare" required="true"  value="{!partnerRef.FirstName__c}" /> 
+                                            </div>
+                                            <div class="label1 slds-p-top_large">
+                                                {!$ObjectType.PartnerReferral__c.Fields.LastName__c.Label}<abbr class="required">*</abbr>
+                                            </div> 
+                                            <div class="text1 slds-border_bottom">
+                                                <apex:inputField styleClass="slds-input_bare" required="true" value="{!partnerRef.LastName__c}" />
+                                            </div>
+                                            <div class="label1 slds-p-top_large">
+                                                {!$ObjectType.PartnerReferral__c.Fields.Title__c.Label}
+                                            </div> 
+                                            <div class="text1 slds-border_bottom">
+                                                <apex:inputField styleClass="slds-input_bare" value="{!partnerRef.Title__c}" />
+                                            </div>
+                                            <div class="label1 slds-p-top_large">
+                                                {!$ObjectType.PartnerReferral__c.Fields.Phone__c.Label}<abbr class="required">*</abbr>
+                                            </div> 
+                                            <div class="text1 slds-border_bottom">
+                                                <apex:inputField styleClass="slds-input_bare" required="true" value="{!partnerRef.Phone__c}" />
+                                            </div>
+                                            <div class="label1 slds-p-top_large">
+                                                {!$ObjectType.PartnerReferral__c.Fields.Email__c.Label}
+                                            </div> 
+                                            <div class="text1 slds-border_bottom">
+                                                <apex:inputField styleClass="slds-input_bare" value="{!partnerRef.Email__c}" />
+                                            </div>
+                                            <div class="label1 slds-p-top_large">
+                                                {!$ObjectType.PartnerReferral__c.Fields.Company__c.Label}<abbr class="required">*</abbr>
+                                            </div> 
+                                            <div class="text1 slds-border_bottom">
+                                                <apex:inputField styleClass="slds-input_bare" required="true" value="{!partnerRef.Company__c}" />
+                                            </div>
+                                            <div class="label1 slds-p-top_large">
+                                                {!$ObjectType.PartnerReferral__c.Fields.StreetAddress__c.Label}<abbr class="required">*</abbr>
+                                            </div> 
+                                            <div class="text1 slds-border_bottom">
+                                                <apex:inputField styleClass="slds-input_bare" required="true" value="{!partnerRef.StreetAddress__c}" />
+                                            </div>
+                                            <div class="label1 slds-p-top_large">
+                                                {!$ObjectType.PartnerReferral__c.Fields.ZipPostalCode__c.Label}<abbr class="required">*</abbr>
+                                            </div> 
+                                            <div class="text1 slds-border_bottom">
+                                                <apex:inputField styleClass="slds-input_bare" required="true" value="{!partnerRef.ZipPostalCode__c}" />
+                                            </div>
+                                            <div class="label1 slds-p-top_large">
+                                                {!$ObjectType.PartnerReferral__c.Fields.NumberOfEmployees__c.Label}
+                                            </div> 
+                                            <div class="text1 slds-border_bottom">
+                                                <apex:inputField styleClass="slds-input_bare" value="{!partnerRef.NumberOfEmployees__c}" />
+                                            </div>
+                                            <apex:outputPanel rendered="{!showAvailProdOptions}">
+                                                <div class="label1 slds-p-top_large">
+                                                    {!$ObjectType.PartnerReferral__c.Fields.Products__c.Label}
+                                                </div> 
+                                                <div class="text1">
+                                                    <apex:selectList value="{!partnerRef.Products__c}" title="Products of Interest" size="1">
+                                                        <apex:selectOptions value="{!availProdOptions}"/>
+                                                    </apex:selectList>
+                                                </div>
+                                            </apex:outputPanel>
+                                        </div>
+                                </div>
+                                <div><hr />
+                                    <div class="text1">
+                                        Your Information
+                                    </div>
+                                    <div class="label3 slds-p-top_large">
+                                    {!$ObjectType.Referral_Contact__c.Fields.Name.Label}
+                                    <apex:outputPanel >
+                                        <apex:outputText value=": {!refCtct.Name}" />
+                                    </apex:outputPanel>
+                                </div>
+                                <div class="label3 slds-p-top_large">
+                                    {!$ObjectType.Referral_Contact__c.Fields.Phone__c.Label}
+                                    <apex:outputPanel >
+                                        <apex:outputText value=": {!refCtct.Phone__c}" />
+                                    </apex:outputPanel>
+                                </div>
+                                <div class="label3 slds-p-top_large">
+                                    {!$ObjectType.Referral_Contact__c.Fields.Email__c.Label}
+                                    <apex:outputPanel >
+                                        <apex:outputText value=": {!refCtct.Email__c}" />
+                                    </apex:outputPanel>
+                                </div>
+                                    
+                                </div><hr />
+                                <div class="slds-grid slds-wrap">
+                                    <div class="slds-container_fluid text1">
+                                        Anything else we should know?
+                                    </div>
+                                    <div class="slds-container_fluid text1  slds-p-top_large">
+                                        <apex:inputTextarea rows="4" style="width: 100%" value="{!partnerRef.Comments__c}"/>
+                                    </div>
+                                </div>
+                                <br />
+                                <apex:outputPanel >
+                                    <div  class="slds-grid slds-grid_align-end">
+                                        <apex:actionFunction action="{!submitReferral}" name="jsSubmitReferral" />
+                                        <apex:commandButton styleClass="slds-button buttonColor" rendered="{!NOT(formEntryOkay)}" action="{!checkPartnerId}" value="Find Id" status="findIdStatus"/>
+                                        <apex:commandButton styleClass="slds-button slds-p-vertical_xx-small slds-p-horizontal_small buttonColor" rendered="{!formEntryOkay}" value="Submit to Paychex" onclick="buttonsEnabled(false);return jsSubmitReferral();" />
+                                        <apex:commandButton styleClass="slds-button slds-p-vertical_xx-small slds-p-horizontal_small buttonColor" action="{!clearForm}" immediate="true" value="Reset Form"/>
+                                        <apex:actionStatus startText="Searching for Id..." id="findIdStatus"/> 
+                                    </div>
+                                </apex:outputPanel>
+                            </apex:form>
+                        </div>
+                    </div>
+                </apex:outputPanel>
+            </div>
+        </apex:outputPanel>
+        <site:googleAnalyticsTracking />
+
+    </apex:component>

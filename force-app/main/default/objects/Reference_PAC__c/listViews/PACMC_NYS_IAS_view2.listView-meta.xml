@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PACMC_NYS_IAS_view2</fullName>
+    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6 AND 7</booleanFilter>
+    <columns>NAME</columns>
+    <columns>OWNER.ALIAS</columns>
+    <columns>Account_Lookup__c</columns>
+    <columns>Date_Notice_Issued__c</columns>
+    <columns>Date_1st_Notice_Received_in_PAC__c</columns>
+    <columns>First_Period_Listed__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Tax_Agency__c</field>
+        <operation>equals</operation>
+        <value>NY - NEW YORK</value>
+    </filters>
+    <filters>
+        <field>Tax_Type__c</field>
+        <operation>notEqual</operation>
+        <value>State-Withholding</value>
+    </filters>
+    <filters>
+        <field>Date_1st_Notice_Received_in_PAC__c</field>
+        <operation>greaterThan</operation>
+        <value>6/14/2024</value>
+    </filters>
+    <filters>
+        <field>Ticket_Type__c</field>
+        <operation>notEqual</operation>
+        <value>Zero-Due/Non-Filing/Other</value>
+    </filters>
+    <filters>
+        <field>Status__c</field>
+        <operation>notContain</operation>
+        <value>Closed in PAC</value>
+    </filters>
+    <filters>
+        <field>PAC_Use_Only_Data_Scrub_Notes__c</field>
+        <operation>notContain</operation>
+        <value>NOTIAS24</value>
+    </filters>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_PAC__c.Reference_PAC_Record_Type</value>
+    </filters>
+    <label>PACMC - NYS IAS 2024</label>
+</ListView>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>S2S_Flex_Ben_Error</fullName>
+    <active>true</active>
+    <description>Error: Flex Ben Admin is a MPSC product, this is not an MPSC client. Case cannot be submitted. Please escalate through alternate path.</description>
+    <errorConditionFormula>AND( NOT(BEGINS($Profile.Name,&apos;System Administrator&apos;)), RecordType.Name =&quot;Sales2Service Case&quot;, 
+ISPICKVAL(Product__c, &quot;Flex Ben Admin&quot;), 
+(NOT(BEGINS(Branch_Client_ID__c, &quot;940&quot;) || BEGINS(Branch_Client_ID__c, &quot;942&quot;) || BEGINS(Branch_Client_ID__c, &quot;943&quot;) || 
+BEGINS(Branch_Client_ID__c, &quot;1240&quot;) || 
+BEGINS(Branch_Client_ID__c, &quot;1242&quot;) || 
+BEGINS(Branch_Client_ID__c, &quot;1243&quot;) || 
+BEGINS(Branch_Client_ID__c, &quot;1244&quot;) || 
+BEGINS(Branch_Client_ID__c, &quot;944&quot;))))</errorConditionFormula>
+    <errorMessage>Error: Flex Ben Admin is a MPSC product, this is not an MPSC client. Case cannot be submitted. Please escalate through alternate path.</errorMessage>
+</ValidationRule>

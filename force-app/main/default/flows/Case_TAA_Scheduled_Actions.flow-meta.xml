@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Send_TAA_Open_Cancel_Care_Reminder</name>
+        <label>Send TAA Open Cancel Care Reminder</label>
+        <locationX>50</locationX>
+        <locationY>408</locationY>
+        <actionName>Case.TAA_Open_Cancel_Case_Reminder</actionName>
+        <actionType>emailAlert</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>Case.TAA_Open_Cancel_Case_Reminder</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Send_TAA_Open_Cancel_Care_Reminder_0</name>
+        <label>Send TAA Open Cancel Care Reminder</label>
+        <locationX>578</locationX>
+        <locationY>408</locationY>
+        <actionName>Case.TAA_Open_Cancel_Case_Reminder</actionName>
+        <actionType>emailAlert</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>Case.TAA_Open_Cancel_Case_Reminder</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>54.0</apiVersion>
+    <decisions>
+        <name>Case_Open_Reminder_20_days</name>
+        <label>Case Open Reminder 20 Days</label>
+        <locationX>710</locationX>
+        <locationY>288</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_TAA_Case_Waiting_0</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Support TAA Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Waiting on Termination Paperwork</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_TAA_Open_Cancel_Care_Reminder_0</targetReference>
+            </connector>
+            <label>Is TAA Case Waiting?</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Case_Open_Reminder_30_days</name>
+        <label>Case Open Reminder 30 Days</label>
+        <locationX>182</locationX>
+        <locationY>288</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_TAA_Case_Waiting</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Support TAA Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Waiting on Termination Paperwork</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_TAA_Open_Cancel_Care_Reminder</targetReference>
+            </connector>
+            <label>Is TAA Case Waiting?</label>
+        </rules>
+    </decisions>
+    <interviewLabel>Case TAA Scheduled Actions {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Case TAA Scheduled Actions</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>122</locationX>
+        <locationY>0</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>RecordTypeId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>012700000001U32AAE</stringValue>
+            </value>
+        </filters>
+        <object>Case</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <name>X30_Days_After_Case_Opened</name>
+            <connector>
+                <targetReference>Case_Open_Reminder_30_days</targetReference>
+            </connector>
+            <label>30 Days After Case Opened</label>
+            <offsetNumber>30</offsetNumber>
+            <offsetUnit>Days</offsetUnit>
+            <recordField>CreatedDate</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <scheduledPaths>
+            <name>X20_Days_After_Case_Opened</name>
+            <connector>
+                <targetReference>Case_Open_Reminder_20_days</targetReference>
+            </connector>
+            <label>20 Days After Case Opened</label>
+            <offsetNumber>20</offsetNumber>
+            <offsetUnit>Days</offsetUnit>
+            <recordField>CreatedDate</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <name>EscalationChatter</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>@[0F90g000000fzkd], @[0F90g000000fzki], @[00570000001N5gy], @[00570000001C969]  This Do Not Contact Request has been Escalated.  Reason for Escalation: {!$Record.Reason_for_escalation__c}</text>
+    </textTemplates>
+    <textTemplates>
+        <name>FiveDayOverdueChatter</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>@[{!$Record.OwnerId}] , your case is 5 days overdue. Please update the follow up date or Solve the case. 
+cc: @[{!$Record.User_Level_1_Supervisor__c}]</text>
+    </textTemplates>
+    <textTemplates>
+        <name>FiveDaysBeforeChatter</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>@[{!$Record.OwnerId}]  Your DNC Status has been set to ‘Waiting for Documentation’ and there is less than 5 days before the due date. Please submit necessary documentation by {!$Record.Due_Date__c} to complete the request. {!$Record.Comments_and_follow_up__c}</text>
+    </textTemplates>
+    <textTemplates>
+        <name>OneDayBeforeChatter</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>@[{!$Record.CreatedById}], Your DNC Status has been set to {!$Record.Status} and the due date is tomorrow. Please submit the necessary documentation as soon as possible or your request will be rejected. {!$Record.Comments_and_follow_up__c}</text>
+    </textTemplates>
+    <textTemplates>
+        <name>RejectedChatter</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>@[{!$Record.OwnerId}],  Your DNC request has been rejected. Reason: {!$Record.Rejection_Reason__c} {!$Record.Comments_and_follow_up__c}</text>
+    </textTemplates>
+    <textTemplates>
+        <name>WaitingForDocChatter</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>@[{!$Record.OwnerId}]  Your DNC Request Status has been set to ‘Waiting for Documentation’ because written documentation of the DNC request is needed. Please attach the written documentation to the Case before {!$Record.Due_Date__c} or this request will be rejected. {!$Record.Comments_and_follow_up__c}</text>
+    </textTemplates>
+    <triggerOrder>50</triggerOrder>
+</Flow>

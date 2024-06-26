@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PEO_News_ERRORS_inc_Add_Dup</fullName>
+    <columns>NAME</columns>
+    <columns>Date_1st_Notice_Received_in_PAC__c</columns>
+    <columns>Prospect_Client_Number__c</columns>
+    <columns>Paychex_PEO_Issue__c</columns>
+    <columns>PAC_High_Revenue_Client__c</columns>
+    <columns>Tax_Agency__c</columns>
+    <columns>Tax_Type__c</columns>
+    <columns>First_Period_Listed__c</columns>
+    <columns>Status__c</columns>
+    <columns>Primary_Assignment_Group__c</columns>
+    <columns>OWNER.ALIAS</columns>
+    <columns>Ticket_Type__c</columns>
+    <columns>Total_Balance_Due_for_Notice__c</columns>
+    <columns>Penalty_Interest_Assessed__c</columns>
+    <columns>UPDATEDBY_USER.ALIAS</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Status__c</field>
+        <operation>contains</operation>
+        <value>Pending PAC Review</value>
+    </filters>
+    <filters>
+        <field>Paychex_PEO_Issue__c</field>
+        <operation>equals</operation>
+        <value>Yes</value>
+    </filters>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_PAC__c.Reference_PAC_Record_Type</value>
+    </filters>
+    <filters>
+        <field>OWNER.ALIAS</field>
+        <operation>notContain</operation>
+        <value>missing,additional,match,PEO</value>
+    </filters>
+    <filters>
+        <field>OWNER.ALIAS</field>
+        <operation>contains</operation>
+        <value>PAC Group</value>
+    </filters>
+    <label>PEO - News ERRORS (inc. Add/Dup)</label>
+    <sharedTo>
+        <roleAndSubordinates>Operating_Risk_and_Risk_Review_Manager</roleAndSubordinates>
+    </sharedTo>
+</ListView>

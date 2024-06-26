@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ESR_Contacts_Name_Change</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name ,&quot;System Administrator&quot;)),OR(ISCHANGED(FirstName),ISCHANGED(LastName)), PRIORVALUE(FirstName) = &quot;ESR&quot;,OR(PRIORVALUE(LastName) = &quot;Inquiry&quot;,PRIORVALUE(LastName) = &quot;Annual Conversion&quot;,PRIORVALUE(LastName) = &quot;Campaigns&quot;))</errorConditionFormula>
+    <errorDisplayField>LastName</errorDisplayField>
+    <errorMessage>You cannot change the name of ESR System Contacts.</errorMessage>
+</ValidationRule>

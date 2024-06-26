@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRG_Matter_Cases_AM_View1</fullName>
+    <columns>OWNER_NAME</columns>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>Follow_Up_Note__c</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>Category__c</columns>
+    <columns>Sub_Product__c</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>CASES.CREATED_DATE_DATE_ONLY</columns>
+    <columns>CASES.CLOSED_DATE</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>Prospect_Client_Number__c</columns>
+    <columns>Follow_Up_Date__c</columns>
+    <columns>Follow_up_Activity1__c</columns>
+    <columns>Due_Date__c</columns>
+    <columns>Comment_Log__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.HRS_HRBP_Case_Record_Type</value>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Closed - Duplicate,Solved</value>
+    </filters>
+    <filters>
+        <field>CASES.CREATED_DATE</field>
+        <operation>equals</operation>
+        <value>THIS_MONTH</value>
+    </filters>
+    <filters>
+        <field>Area_Manager__c</field>
+        <operation>equals</operation>
+        <value>Philippa Haley</value>
+    </filters>
+    <label>HRG Matter Cases AM View</label>
+    <sharedTo>
+        <roleAndSubordinates>PHRSDirector</roleAndSubordinates>
+    </sharedTo>
+</ListView>

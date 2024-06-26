@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NEPs_in_WC_UW_Timeframe__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>Number of days excluding weekends between NEP Pass to WC Underwriting and NEP Received from WC Underwriting. If either field is blank, this field will be null</description>
+    <externalId>false</externalId>
+    <formula>If (OR(ISNULL( NEP_Pass_to_WC_Underwriting__c ),ISNULL( NEP_Received_from_WC_Underwriting__c )) , NULL ,(NEP_Received_from_WC_Underwriting__c - NEP_Pass_to_WC_Underwriting__c) - 2*( floor((NEP_Received_from_WC_Underwriting__c - DATE(1985, 6, 24))/7) - floor((NEP_Pass_to_WC_Underwriting__c - DATE(1985, 6, 24))/7)))</formula>
+    <label>NEPs in WC UW Timeframe</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

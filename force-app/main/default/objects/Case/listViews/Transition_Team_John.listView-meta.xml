@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Transition_Team_John</fullName>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>Branch_Client_ID__c</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>NAME</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>Transfer_Steps__c</columns>
+    <columns>Loss_Steps__c</columns>
+    <columns>Code_Lost_Date__c</columns>
+    <columns>First_Run_Date_on_New_Platform__c</columns>
+    <columns>CASES.LAST_UPDATE</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.Service_Premier_Record_Type</value>
+    </filters>
+    <filters>
+        <field>CORE.USERS.ALIAS</field>
+        <operation>equals</operation>
+        <value>jchit</value>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Solved,Closed,Closed - Duplicate</value>
+    </filters>
+    <label>Transition Team John</label>
+    <sharedTo>
+        <role>PEOBenefitsNCS</role>
+        <role>PEONewBusinessContractualRep</role>
+        <role>PEONewBusinessContractualSupervisor</role>
+        <role>PEONewBusinessManager</role>
+        <role>PEOPayrollNCS</role>
+    </sharedTo>
+</ListView>

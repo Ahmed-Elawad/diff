@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Agency_nonTransfer_Force_Required_Fields</fullName>
+    <active>true</active>
+    <description>If an Agency Case with an Agency Category 1 field that&apos;s not equal to Transfer, enforce required fields.</description>
+    <errorConditionFormula>($RecordType.Name = &quot;Service Support Agency Case&quot; )
+ &amp;&amp; 
+(NOT( BEGINS( TEXT(Origin) ,&apos;Email-to-Case&apos;))) 
+ &amp;&amp;
+(NOT(ISPICKVAL(  Agency_Category_1__c  , &quot;Transfer&quot;) ) )
+ &amp;&amp; (  ( ISBLANK( Subject ) ) || ( ISBLANK( Contact.Id) ) || ( ISBLANK( AccountId ) )  )</errorConditionFormula>
+    <errorMessage>If the Agency Category 1 is not equal to &quot;Transfer&quot;, you must update the Contact Name, Prospect-Client Name and Subject fields.</errorMessage>
+</ValidationRule>

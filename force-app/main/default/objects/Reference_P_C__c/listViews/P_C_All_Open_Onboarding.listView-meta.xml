@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>P_C_All_Open_Onboarding</fullName>
+    <columns>Acord_Effective_Date__c</columns>
+    <columns>Case_Lookup__c</columns>
+    <columns>NAME</columns>
+    <columns>Carrier_Name__c</columns>
+    <columns>OWNER.ALIAS</columns>
+    <columns>Front_End_Rep_Assigned__c</columns>
+    <columns>Back_End_Rep_Assigned__c</columns>
+    <columns>Current_Step__c</columns>
+    <columns>Product__c</columns>
+    <columns>Days_in_Current_Step__c</columns>
+    <columns>Comments__c</columns>
+    <columns>P_C_Case_Aging_Excluding_Weekends__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_P_C__c.P_C_Onboarding</value>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>notEqual</operation>
+        <value>Completed,Cancelled</value>
+    </filters>
+    <filters>
+        <field>Opportunity_Probability__c</field>
+        <operation>greaterOrEqual</operation>
+        <value>90</value>
+    </filters>
+    <filters>
+        <field>CREATED_DATE</field>
+        <operation>greaterThan</operation>
+        <value>8/2/2018 12:00 AM</value>
+    </filters>
+    <filters>
+        <field>Product__c</field>
+        <operation>notEqual</operation>
+        <value>BND (ERISA BOND),Disability</value>
+    </filters>
+    <label>P&amp;C: All Open Onboarding</label>
+</ListView>

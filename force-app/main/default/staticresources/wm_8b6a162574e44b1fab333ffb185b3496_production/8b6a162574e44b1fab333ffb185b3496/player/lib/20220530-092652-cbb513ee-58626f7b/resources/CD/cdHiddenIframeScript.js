@@ -1,0 +1,1 @@
+try{window.send=function(o,w){"object"==typeof window.targetWindow.postMessage?setTimeout(function(){window.targetWindow.postMessage(o,w)},0):window.targetWindow.postMessage(o,w)},window.parent._walkmeInternals.hiddenIframeCallback()}catch(o){}

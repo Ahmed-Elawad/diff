@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRS_4S_Cancellations</fullName>
+    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6</booleanFilter>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>CASES.PRIORITY</columns>
+    <columns>CASES.LAST_UPDATE</columns>
+    <filterScope>Queue</filterScope>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notContain</operation>
+        <value>Solved</value>
+    </filters>
+    <filters>
+        <field>Termination_Transfer_Type__c</field>
+        <operation>notEqual</operation>
+        <value>Transfer</value>
+    </filters>
+    <filters>
+        <field>Termination_Transfer_Type__c</field>
+        <operation>notEqual</operation>
+        <value>NSF</value>
+    </filters>
+    <filters>
+        <field>Termination_Transfer_Type__c</field>
+        <operation>notEqual</operation>
+        <value>Termination</value>
+    </filters>
+    <filters>
+        <field>Termination_Transfer_Type__c</field>
+        <operation>notEqual</operation>
+        <value>POP Termination</value>
+    </filters>
+    <filters>
+        <field>Termination_Transfer_Type__c</field>
+        <operation>notEqual</operation>
+        <value>FSA Termination</value>
+    </filters>
+    <label>HRS 4S Cancellations</label>
+    <queue>HRS4SCancellations</queue>
+    <sharedTo>
+        <group>HRS4SConversionsExceptionRequests</group>
+        <role>HRS4SCPRRepresentative</role>
+        <role>HRS4SCPRSupervisor</role>
+        <role>HRS4SClientChangesRepresentativeI</role>
+        <role>HRS4SClientChangesSupervisorI</role>
+        <role>HRS_4S_Client_Support_Supervisor</role>
+        <role>HRS_4S_SEBS_Representative_I</role>
+        <roleAndSubordinates>HRS4SClientRetentionRepresentative</roleAndSubordinates>
+        <roleAndSubordinates>HRS_4S_Client_Retention_Supervisor</roleAndSubordinates>
+        <roleAndSubordinatesInternal>HRS4SS125CSCRepresentativeI</roleAndSubordinatesInternal>
+    </sharedTo>
+</ListView>

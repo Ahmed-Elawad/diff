@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Do_Not_Call_Phone_Required</fullName>
+    <active>true</active>
+    <description>If the Do Not Call checkbox is selected a Phone number must be populated.</description>
+    <errorConditionFormula>AND( OR(ISNEW(),
+ISCHANGED( Do_Not_Call__c )), 
+Do_Not_Call__c = True, 
+Phone = &quot;&quot;, 
+NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)),
+NOT(BEGINS($Profile.Name,&quot;NSS&quot;)) )</errorConditionFormula>
+    <errorDisplayField>Phone</errorDisplayField>
+    <errorMessage>If the Do Not Call checkbox is selected a Phone number must be populated.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SLA_Time_in_UW__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>ROUND(9 *((5*FLOOR((DATEVALUE(Approval_Date__c)-DATE(1900,1,8))/7) 
++ 
+MIN(5, 
+MOD(DATEVALUE(Approval_Date__c)-DATE(1900,1,8),7)+ 
+MIN(1,24/9*(MOD(Approval_Date__c-DATETIMEVALUE(&apos;1900-01-08 12:00:00&apos;), 1))) 
+)) 
+
+- 
+
+(5*FLOOR((DATEVALUE(Deal_100_Complete__c + MAX(DATETIMEVALUE(TEXT(DATEVALUE(Deal_100_Complete__c))&amp;&quot; 12:00:00&quot;)-Deal_100_Complete__c,0))-DATE(1900,1,8))/7)+ 
+MIN(5, 
+MOD(DATEVALUE(Deal_100_Complete__c+MAX(DATETIMEVALUE(TEXT(DATEVALUE(Deal_100_Complete__c))&amp;&quot; 12:00:00&quot;)-Deal_100_Complete__c,0))-DATE(1900,1,8),7)+ 
+MIN(1,24/9*(MOD(Deal_100_Complete__c + MAX(DATETIMEVALUE(TEXT(DATEVALUE(Deal_100_Complete__c))&amp;&quot; 12:00:00&quot;)-Deal_100_Complete__c,0)-DATETIMEVALUE(&apos;1900-01-08 12:00:00&apos;), 1))))) 
+),0)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>SLA Time in UW</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Disable_Stable_Value_Funds</fullName>
+    <active>true</active>
+    <description>Disables the Stable Value Funds field after it&apos;s set.</description>
+    <errorConditionFormula>OR(
+   AND(NOT(ISBLANK(TEXT(Stable_Value_Funds__c))), ISCHANGED( 
+   Stable_Value_Funds__c ),  
+   NOT(ISBLANK(TEXT(PRIORVALUE(Stable_Value_Funds__c))))),
+
+   AND(ISCHANGED(Stable_Value_Funds__c), ISBLANK( 
+   Stable_Value_Funds_Rep_Lookup__c ))
+)</errorConditionFormula>
+    <errorDisplayField>Stable_Value_Funds__c</errorDisplayField>
+    <errorMessage>You cannot change this value after it&apos;s set, and need to fill in the Stable Value Funds Rep Lookup field.</errorMessage>
+</ValidationRule>

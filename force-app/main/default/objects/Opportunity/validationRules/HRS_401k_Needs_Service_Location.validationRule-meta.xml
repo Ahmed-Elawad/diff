@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRS_401k_Needs_Service_Location</fullName>
+    <active>true</active>
+    <description>Service Location is required for 401k and Advisor Select when status changed to Sold</description>
+    <errorConditionFormula>ISPICKVAL( StageName , &quot;Sold&quot;) &amp;&amp; (or(ISCHANGED(StageName), ISNEW())) &amp;&amp; ISBLANK(TEXT( Service_Location__c )) &amp;&amp; NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)) &amp;&amp; 
+NOT(BEGINS($Profile.Name,&quot;Salesforce Support&quot;)) &amp;&amp;
+NOT(BEGINS($Profile.Name,&quot;Sales Data Steward&quot;)) &amp;&amp;
+NOT($User.Sales_Division__c = &quot;CSSR&quot;) &amp;&amp;
+($RecordType.Id =&quot;012500000000nsL&quot; || $RecordType.Id =&quot;012500000000n4Q&quot;)</errorConditionFormula>
+    <errorDisplayField>Service_Location__c</errorDisplayField>
+    <errorMessage>If you are updating the record to Sold, you must select the Service Location you are submitting it to</errorMessage>
+</ValidationRule>

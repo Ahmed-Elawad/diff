@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MS_Do_Not_Change_PP_DSA_Record_Type</fullName>
+    <active>false</active>
+    <description>Merchant Services Reps shouldn&apos;t be able to change the record type once it&apos;s a DSA Record Type
+case #22921475 allows Turturro users to edit record</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;Payment Processing (DSA) Opportunity&quot; ), 
+(ISCHANGED(RecordTypeId)), 
+(NOT(BEGINS($UserRole.Name,&quot;VIRTUAL SALES ZONE 30 ANCILLARY&quot;))), 
+(NOT(BEGINS($UserRole.Name,&quot;VIRTUAL SALES DISTRICT 217 - TURTURRO&quot;))), 
+(NOT(BEGINS($UserRole.Name,&quot;VIRTUAL SALES AND NSS&quot;))), 
+(NOT(BEGINS($UserRole.Name,&quot;NSS Director&quot;))), 
+(NOT(BEGINS($UserRole.Name,&quot;System Administrator&quot;))) )</errorConditionFormula>
+    <errorMessage>You cannot change the Payment Processing Opportunity record type once it&apos;s a DSA Record Type</errorMessage>
+</ValidationRule>

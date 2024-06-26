@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Days_to_Site_Turned_Over_To_Client__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>modified to put -1 if Site Turned Over to Client is blank; case 22868335</description>
+    <externalId>false</externalId>
+    <formula>IF(ISBLANK(Site_turned_over_to_Client__c),-1, (Site_turned_over_to_Client__c - Date_IS_Assigned__c ) - 2*(floor((Site_turned_over_to_Client__c  - DATE(1985, 6, 24))/7)-floor(( Date_IS_Assigned__c - DATE(1985, 6, 24))/7)))</formula>
+    <label>Days to Site Turned Over To Client</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

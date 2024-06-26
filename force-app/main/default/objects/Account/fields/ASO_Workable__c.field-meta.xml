@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ASO_Workable__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <formula>AND(Do_Not_Call__c = false 
+	, Email_Opt_Out__c = false 
+	, NOT(ISPICKVAL(Type,&apos;HROi Client&apos;))
+	, NOT(ISPICKVAL(Type,&apos;Oasis Client&apos;))
+	, NOT(ISPICKVAL(Type,&apos;PEO Client&apos;))
+	, NOT(ISPICKVAL(Permanent_Hold_Out_Description__c,&apos;Ecommerce&apos;))
+	, Out_of_Business__c = false 
+        , Benetrac_Indicator__c = false
+	, (RecordType.DeveloperName =&quot;CoreAccountRecordType&quot; || RecordType.DeveloperName = &quot;MMSAccountRecordType&quot;) 
+	, PEOLeasing__c = false
+	, NOT(AdvancedPartnerClients__c)
+	,(ISBLANK( Insurance_Broker_Name_Ref__c) || Insurance_Broker_Name_Ref__r.Sensitivity_BenAdmin__c = false)
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>If this box is checked, this prospect is workable for the ASO rep.
+non HROi client
+Do Not Call = False
+Email Opt Out = False
+Out of Business = False
+PEO/Leasing = False</inlineHelpText>
+    <label>ASO Workable</label>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

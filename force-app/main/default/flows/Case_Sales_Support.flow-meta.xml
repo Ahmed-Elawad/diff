@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Escalation_Chatter</name>
+        <label>Escalation Chatter</label>
+        <locationX>314</locationX>
+        <locationY>528</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <elementReference>EscalationChatter</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>One_Day_Before_Chatter</name>
+        <label>One Day Before Chatter</label>
+        <locationX>2954</locationX>
+        <locationY>408</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <elementReference>OneDayBeforeChatter</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Queue_Chatter_Sales_Help_Case</name>
+        <label>Queue Chatter Sales Help Case</label>
+        <locationX>1898</locationX>
+        <locationY>408</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <stringValue>@[{!$Record.TempOwnerId__c}],  This case has not been assigned and the status on this case has not progressed for 2 days.  Please review the submission ASAP, and update the status appropriately.</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Rejected_Chatter</name>
+        <label>Rejected Chatter</label>
+        <locationX>578</locationX>
+        <locationY>528</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <elementReference>RejectedChatter</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Sales_Help_Case_for_PRN</name>
+        <label>Sales Help Case for PRN</label>
+        <locationX>50</locationX>
+        <locationY>408</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <stringValue>@[0F90g000000kEYj],  A new case has been submitted, please review.</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>User_Case_Not_Progressed</name>
+        <label>User Case Not Progressed</label>
+        <locationX>1634</locationX>
+        <locationY>408</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <stringValue>@[{!$Record.OwnerId}],  The status on this case has not progressed for 2 days.  Please review the submission ASAP, and update the status appropriately.</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Wait_Doc_5_Day_Before_Chatter</name>
+        <label>Wait Doc 5 Day Before Chatter</label>
+        <locationX>2426</locationX>
+        <locationY>408</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <elementReference>FiveDaysBeforeChatter</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Waiting_For_Doc_Chatter</name>
+        <label>Waiting For Doc Chatter</label>
+        <locationX>842</locationX>
+        <locationY>528</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <elementReference>WaitingForDocChatter</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>54.0</apiVersion>
+    <decisions>
+        <name>Do_We_Chatter_1_Day_Before</name>
+        <label>Do We Chatter 1 Day Before</label>
+        <locationX>3086</locationX>
+        <locationY>288</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Waiting_on_Doc_1_Day_Before_Check_0</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Sales Support Cases Record Type</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Waiting on Documentation</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>One_Day_Before_Chatter</targetReference>
+            </connector>
+            <label>Waiting on Doc 1 Day Before Check</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Do_We_Chatter_5_Days_Before</name>
+        <label>Do We Chatter 5 Days Before</label>
+        <locationX>2558</locationX>
+        <locationY>288</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Waiting_On_Doc_5_Day_Before_Check</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Sales Support Cases Record Type</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Waiting on Documentation</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Wait_Doc_5_Day_Before_Chatter</targetReference>
+            </connector>
+            <label>Waiting On Doc 5 Day Before Check</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Do_we_send_a_chatter_message</name>
+        <label>Do we send a chatter message?</label>
+        <locationX>1898</locationX>
+        <locationY>288</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Owned_By_a_user</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Sales Help Request Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>New</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.OwnerId</leftValueReference>
+                <operator>StartsWith</operator>
+                <rightValue>
+                    <stringValue>005</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Due_Date__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <elementReference>$Record.CreatedDate</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>User_Case_Not_Progressed</targetReference>
+            </connector>
+            <label>Owned By a user</label>
+        </rules>
+        <rules>
+            <name>Owned_By_a_Queue</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Sales Help Request Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>New</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.OwnerId</leftValueReference>
+                <operator>StartsWith</operator>
+                <rightValue>
+                    <stringValue>00G</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.TempOwnerId__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Due_Date__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <elementReference>$Record.CreatedDate</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Queue_Chatter_Sales_Help_Case</targetReference>
+            </connector>
+            <label>Owned By a Queue</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Sales_Support_Cases_Chatters</name>
+        <label>Sales Support Cases Chatters</label>
+        <locationX>710</locationX>
+        <locationY>408</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Sales_Support_Escalated</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.IsEscalated</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Escalation_Chatter</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Sales Support Escalated</label>
+        </rules>
+        <rules>
+            <name>Sales_Support_Rejected</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Closed - Rejected</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Rejected_Chatter</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Sales Support Rejected</label>
+        </rules>
+        <rules>
+            <name>Waiting_on_Document</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Waiting on Documentation</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Waiting_For_Doc_Chatter</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Waiting on Document</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>What_Record_Type_for_Immediate_Action</name>
+        <label>What Record Type for Immediate Action?</label>
+        <locationX>710</locationX>
+        <locationY>288</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Sales_Help_Request_Case</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Sales Help Request Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Origin</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Email-to-case PRN Service Request</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Sales_Help_Case_for_PRN</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Sales Help Request Case</label>
+        </rules>
+        <rules>
+            <name>Sales_Support_Cases_Record_Type</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Sales Support Cases Record Type</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Sales_Support_Cases_Chatters</targetReference>
+            </connector>
+            <label>Sales Support Cases Record Type</label>
+        </rules>
+    </decisions>
+    <interviewLabel>Case Sales Support {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Case Sales Support</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>1772</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>What_Record_Type_for_Immediate_Action</targetReference>
+        </connector>
+        <filterLogic>or</filterLogic>
+        <filters>
+            <field>RecordTypeId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>0120g000000grrpAAA</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>RecordTypeId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>012700000001TZ0AAM</stringValue>
+            </value>
+        </filters>
+        <object>Case</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <name>Run_2_Days_After_Created</name>
+            <connector>
+                <targetReference>Do_we_send_a_chatter_message</targetReference>
+            </connector>
+            <label>Run 2 Days After Created</label>
+            <offsetNumber>2</offsetNumber>
+            <offsetUnit>Days</offsetUnit>
+            <recordField>CreatedDate</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <scheduledPaths>
+            <name>X5_Days_Before_Due_Date</name>
+            <connector>
+                <targetReference>Do_We_Chatter_5_Days_Before</targetReference>
+            </connector>
+            <label>5 Days Before Due Date</label>
+            <offsetNumber>-5</offsetNumber>
+            <offsetUnit>Days</offsetUnit>
+            <recordField>Due_Date__c</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <scheduledPaths>
+            <name>X1_Day_Before_Due_Date</name>
+            <connector>
+                <targetReference>Do_We_Chatter_1_Day_Before</targetReference>
+            </connector>
+            <label>1 Day Before Due Date</label>
+            <offsetNumber>-1</offsetNumber>
+            <offsetUnit>Days</offsetUnit>
+            <recordField>Due_Date__c</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <name>EscalationChatter</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>@[0F90g000000fzkd], @[0F90g000000fzki], @[00570000001N5gy], @[00570000001C969]  This Do Not Contact Request has been Escalated.  Reason for Escalation: {!$Record.Reason_for_escalation__c}</text>
+    </textTemplates>
+    <textTemplates>
+        <name>FiveDayOverdueChatter</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>@[{!$Record.OwnerId}] , your case is 5 days overdue. Please update the follow up date or Solve the case. 
+cc: @[{!$Record.User_Level_1_Supervisor__c}]</text>
+    </textTemplates>
+    <textTemplates>
+        <name>FiveDaysBeforeChatter</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>@[{!$Record.OwnerId}]  Your DNC Status has been set to ‘Waiting for Documentation’ and there is less than 5 days before the due date. Please submit necessary documentation by {!$Record.Due_Date__c} to complete the request. {!$Record.Comments_and_follow_up__c}</text>
+    </textTemplates>
+    <textTemplates>
+        <name>OneDayBeforeChatter</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>@[{!$Record.CreatedById}], Your DNC Status has been set to {!$Record.Status} and the due date is tomorrow. Please submit the necessary documentation as soon as possible or your request will be rejected. {!$Record.Comments_and_follow_up__c}</text>
+    </textTemplates>
+    <textTemplates>
+        <name>RejectedChatter</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>@[{!$Record.OwnerId}],  Your DNC request has been rejected. Reason: {!$Record.Rejection_Reason__c} {!$Record.Comments_and_follow_up__c}</text>
+    </textTemplates>
+    <textTemplates>
+        <name>WaitingForDocChatter</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>@[{!$Record.OwnerId}]  Your DNC Request Status has been set to ‘Waiting for Documentation’ because written documentation of the DNC request is needed. Please attach the written documentation to the Case before {!$Record.Due_Date__c} or this request will be rejected. {!$Record.Comments_and_follow_up__c}</text>
+    </textTemplates>
+    <triggerOrder>40</triggerOrder>
+</Flow>

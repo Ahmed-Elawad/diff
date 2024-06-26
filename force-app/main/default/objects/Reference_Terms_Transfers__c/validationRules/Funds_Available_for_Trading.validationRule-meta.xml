@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Funds_Available_for_Trading</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name, &quot;System Admin&quot;)),
+OR($Profile.Name = &quot;2008-09 HRS 4S Operations&quot;,$Profile.Name = &quot;2008-09 HRS 4S Operations B&quot;,$Profile.Name =&quot;2008-09 HRS 4S Service Manager&quot;),
+
+RecordType.Name = &quot;HRS 4S Manual Trade&quot;) &amp;&amp;
+
+if(
+OR(ISPICKVAL(Type_of_Request__c,&apos;Distribution Reinvest&apos;), ISPICKVAL(Type_of_Request__c,&apos;Trade Loan Payment&apos;)) &amp;&amp; ISNULL( Funds_Available_for_Trading__c), true, false
+)</errorConditionFormula>
+    <errorMessage>For distribution reinvests or loan payments, please fill in the Funds Available for Trading.</errorMessage>
+</ValidationRule>

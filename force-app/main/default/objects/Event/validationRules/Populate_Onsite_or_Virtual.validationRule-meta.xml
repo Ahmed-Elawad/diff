@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Populate_Onsite_or_Virtual</fullName>
+    <active>true</active>
+    <description>Sales Representatives must populate the Onsite or Virtual field</description>
+    <errorConditionFormula>AND(
+$User.Job_Name__c = &quot;Sales Representative&quot;,
+ISPICKVAL(Onsite_or_Virtual__c, &quot;&quot;),
+OR( ISNULL(TimeTrade_SF1__Invitation__c) ,ISNULL( TimeTrade_SF1__Meeting__c ))  
+)</errorConditionFormula>
+    <errorDisplayField>Onsite_or_Virtual__c</errorDisplayField>
+    <errorMessage>The &apos;Onsite or Virtual&apos; field on the Event record must be populated.</errorMessage>
+</ValidationRule>

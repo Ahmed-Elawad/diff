@@ -1,0 +1,26 @@
+<!-- Upload a file for zip codes
+
+   History
+   -------
+   03/13/2015 Dan Carmen   Created
+
+ -->
+<apex:page controller="ManageZipAssignController"
+           tabStyle="ManageZipAssignments__tab"
+           showHeader="true">
+
+   <apex:form >
+       <apex:pagemessages />
+        <apex:pageBlock >
+           <apex:pageBlockButtons >
+              <apex:commandButton value="Return to Manage Form" action="{!returnToManageZipForm}" />
+           </apex:pageBlockButtons>
+           
+            <apex:pageBlockSection columns="4"> 
+                  <apex:inputFile value="{!csvFileBody}"  filename="{!csvAsString}"/>
+                  <apex:commandButton value="Import Zip Codes" action="{!importCSVFile}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+
+   </apex:form>
+</apex:page>

@@ -1,0 +1,68 @@
+<template>
+    <!-- <template if:true={temp}>
+        <lightning-datatable key-field="Id" data={activitiesList} columns={columns}>
+
+        </lightning-datatable>
+    </template> -->
+    
+    <div >
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+            <thead>
+                <tr class="slds-line-height_reset">
+                  <th class="" scope="col">
+                    <div class="slds-truncate" title="Subject">Subject</div>
+                  </th>
+                  <th class="" scope="col">
+                    <div class="slds-truncate" title="Activity Date">Activity Date</div>
+                  </th>
+                  <th class="" scope="col">
+                    <div class="slds-truncate" title="Related To">Related To</div>
+                  </th>
+                  <th class="" scope="col">
+                    <div class="slds-truncate" title="Activity Type">Activity Type</div>
+                  </th>      
+                  <th class="" scope="col">
+                    <div class="slds-truncate" title="Owner">Owner</div>
+                  </th>
+                  
+                </tr>
+              </thead>
+              <tbody>
+              <template for:each={activitiesList} for:item="act">
+                <tr key={act.id} class="slds-hint-parent">
+                    <th data-label="Subject" scope="row">
+                        <div class="slds-truncate" title={act.Subject}>
+                          <!-- <c-custom-u-r-l-test recid={act.Id} buttonlabel={act.Subject}></c-custom-u-r-l-test> -->
+                          <lightning-formatted-url 
+                                value={act.Link}
+                                label={act.Subject} 
+                                target="_self" ></lightning-formatted-url>
+                          <!-- <a href={act.Link} target ="_parent" tabindex="-1">{act.Subject}</a> -->
+                        </div>
+                      </th>
+                    <!-- <td data-label="Subject">
+                        <div class="slds-truncate" title={act.Subject}>{act.Subject}</div>
+                      </td> -->
+                      <td data-label="Activity Date">
+                        <div class="slds-truncate" title={act.ActivityDate}>
+                            <lightning-formatted-date-time year="2-digit"
+                            month="2-digit"
+                            day="numeric" value={act.ActivityDate} time-zone="UTC"></lightning-formatted-date-time>
+                        </div>
+                      </td>
+                    <td data-label="Related To">
+                      <div class="slds-truncate" title="Related To">{act.ContactName}</div>
+                    </td>
+                    <td data-label="Activity Type">
+                      <div class="slds-truncate" title={act.ActivityType}>{act.ActivityType}</div>
+                    </td>
+                    <td data-label="Owner">
+                        <div class="slds-truncate" title={act.OwnerName}>{act.OwnerName}</div>
+                      </td>
+                  </tr>
+                  </template>
+                  </tbody>
+            </table>  
+    </div>
+    
+</template>

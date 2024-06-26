@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Location_Details</fullName>
+    <active>true</active>
+    <errorConditionFormula>(ISPICKVAL( Locations__c , &quot;Yellow: 1000 - 1999&quot;) ||
+ISPICKVAL(Locations__c , &quot;Red: 2000 +&quot;))&amp;&amp;
+
+OR(
+ISBLANK( Location_Details__c ))</errorConditionFormula>
+    <errorDisplayField>Location_Details__c</errorDisplayField>
+    <errorMessage>Location Details is a required when Locations is selected as Red and Yellow</errorMessage>
+</ValidationRule>

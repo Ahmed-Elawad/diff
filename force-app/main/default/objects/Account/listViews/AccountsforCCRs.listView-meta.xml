@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AccountsforCCRs</fullName>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>ACCOUNT.ADDRESS1_ZIP</columns>
+    <columns>ACCOUNT.EMPLOYEES</columns>
+    <columns>Current_Prior_Method__c</columns>
+    <columns>Frequency__c</columns>
+    <columns>ACCOUNT.PHONE1</columns>
+    <columns>Profiled__c</columns>
+    <columns>Number_of_ID_s__c</columns>
+    <columns>Payroll_Type__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CORE.USERS.ALIAS</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>ACCOUNT.EMPLOYEES</field>
+        <operation>lessThan</operation>
+        <value>60</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.EMPLOYEES</field>
+        <operation>greaterThan</operation>
+        <value>50</value>
+    </filters>
+    <filters>
+        <field>Current_Prior_Method__c</field>
+        <operation>equals</operation>
+        <value>1 ADP</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Account.MMSAccountRecordType</value>
+    </filters>
+    <label>Accounts for CCR&apos;s</label>
+    <sharedTo>
+        <roleAndSubordinates>MMSDISTRICTCLEVELAND</roleAndSubordinates>
+    </sharedTo>
+</ListView>

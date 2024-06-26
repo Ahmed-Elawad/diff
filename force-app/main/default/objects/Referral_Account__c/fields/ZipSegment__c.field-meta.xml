@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ZipSegment__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>CASE(TEXT( Referral_Source_Business_Type__c)
+      ,&quot;Accounting Firm&quot;, &quot;PAY-CPA&quot; 
+      ,&quot;Broker&quot;, &quot;HRS-Financial Advisor&quot;
+      ,&quot;Broker Dealer&quot;, &quot;HRS-Financial Advisor&quot;
+      ,&quot;Broker Dealer Branch&quot;, &quot;HRS-Financial Advisor&quot;
+      ,&quot;Financial Services&quot;, IF ( ISPICKVAL( Referral_Type__c , &quot;Other&quot;), &quot;PAY-Other&quot;, &quot;PAY-Bank&quot;) 
+      ,&quot;Health Ins Broker&quot;, IF ( ISPICKVAL( Referral_Type__c , &quot;Trusted Advisor&quot;), &quot;PEO-Trusted Advisor&quot;, &quot;PAY-Insurance&quot;) 
+      ,&quot;Insurance Broker&quot;, &quot;PAY-Insurance&quot;
+      ,&quot;Insurance Carrier&quot;, &quot;PAY-Insurance&quot;
+      ,&quot;Law Firm&quot;, &quot;PAY-Other&quot;
+      ,&quot;National Account&quot;, &quot;PAY-Other&quot;
+      ,&quot;Other&quot;, IF ( ISPICKVAL( Referral_Type__c , &quot;MSP Partner&quot;), &quot;MSP-MSP Partner&quot;, &quot;PAY-Other&quot;) 
+      ,&quot;P&amp;C Broker&quot;, IF ( ISPICKVAL( Referral_Type__c , &quot;Trusted Advisor&quot;), &quot;PEO-Trusted Advisor&quot;, &quot;PAY-Insurance&quot;) 
+      ,&quot;PEO Broker&quot;, &quot;PEO-Trusted Advisor&quot;
+      ,&quot;PAY-Other&quot;)</formula>
+    <inlineHelpText>Which Zip Segment Does this match to?</inlineHelpText>
+    <label>Zip Segment Key</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

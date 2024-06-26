@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CANCELS_S125_FSA_Terminations3</fullName>
+    <booleanFilter>1 AND 2 AND 3 AND 4 AND (5 OR 6 OR 7)</booleanFilter>
+    <columns>Assigned_Cancels_Rep__c</columns>
+    <columns>NAME</columns>
+    <columns>BIS_ID__c</columns>
+    <columns>Effective_Date_of_FSA_Termination__c</columns>
+    <columns>Effective_Date_of_HRA_Termination__c</columns>
+    <columns>Effective_Date_of_HSA_Termination__c</columns>
+    <columns>Pending_FSA_Tasks__c</columns>
+    <columns>Current_Step__c</columns>
+    <columns>Is_Client_Terminating_All_Active_PBA_Pro__c</columns>
+    <columns>Termination_Milestone_Notes__c</columns>
+    <columns>Child_Company__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_Terms_Transfers__c.S125_FSA_Termination</value>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>notEqual</operation>
+        <value>S125 FSA Termination Complete,Closed – Paperwork Discrepancy Never Resolved</value>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>notEqual</operation>
+        <value>Term/Transfer Stopped,Paperwork Discrepancy</value>
+    </filters>
+    <filters>
+        <field>FSA_Bill_End_date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Effective_Date_of_FSA_Termination__c</field>
+        <operation>lessThan</operation>
+        <value>TODAY</value>
+    </filters>
+    <filters>
+        <field>Effective_Date_of_HRA_Termination__c</field>
+        <operation>lessThan</operation>
+        <value>TODAY</value>
+    </filters>
+    <filters>
+        <field>Effective_Date_of_HSA_Termination__c</field>
+        <operation>lessThan</operation>
+        <value>TODAY</value>
+    </filters>
+    <label>*CANCELS: S125 FSA/HRA/HSA LCD&apos;s</label>
+    <sharedTo>
+        <role>HRS4SCPRRepresentative</role>
+        <role>HRS4SCPRSupervisor</role>
+        <role>HRS4SClientChangesRepresentativeI</role>
+        <role>HRS4SClientChangesSupervisorI</role>
+        <role>HRS4SClientRetentionRepresentative</role>
+        <role>HRS_4S_Client_Retention_Supervisor</role>
+    </sharedTo>
+</ListView>

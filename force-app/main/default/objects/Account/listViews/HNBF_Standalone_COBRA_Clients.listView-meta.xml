@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HNBF_Standalone_COBRA_Clients</fullName>
+    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 and 6 and 7</booleanFilter>
+    <columns>ACCOUNT.ACCOUNT_NUMBER</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>Hit_List__c</columns>
+    <columns>HNBF_Workable__c</columns>
+    <columns>H_B_Prospect_Notes__c</columns>
+    <columns>Cobra__c</columns>
+    <columns>Medical__c</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>ACCOUNT.PHONE1</columns>
+    <columns>Frequency__c</columns>
+    <columns>ACCOUNT.EMPLOYEES</columns>
+    <columns>First_Run_Date__c</columns>
+    <columns>ACCOUNT.ADDRESS1_ZIP</columns>
+    <columns>ACCOUNT.ADDRESS2_ZIP</columns>
+    <filterScope>Team</filterScope>
+    <filters>
+        <field>Bis_ID__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>contains</operation>
+        <value>Client</value>
+    </filters>
+    <filters>
+        <field>Cobra__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <filters>
+        <field>Out_of_Business__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Medical__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.EMPLOYEES</field>
+        <operation>greaterOrEqual</operation>
+        <value>15</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>notEqual</operation>
+        <value>Lost Client,HRS Client (Only)</value>
+    </filters>
+    <label>HNBF - Standalone COBRA Clients</label>
+    <sharedTo>
+        <group>Sales_Strategy_Team</group>
+        <roleAndSubordinates>HNBFDIRECTOR</roleAndSubordinates>
+    </sharedTo>
+</ListView>

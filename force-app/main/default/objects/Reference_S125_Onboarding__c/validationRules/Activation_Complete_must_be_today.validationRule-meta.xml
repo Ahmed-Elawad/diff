@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Activation_Complete_must_be_today</fullName>
+    <active>true</active>
+    <description>You must enter today&apos;s date in the Activation Complete field. Once a date has been entered, it cannot be changed.</description>
+    <errorConditionFormula>AND($Profile.Name &lt;&gt;&quot;2008-09 Operations Administration&quot;,ISCHANGED( Activation_Complete__c ), IF( NOT(ISBLANK(PRIORVALUE( Activation_Complete__c ))), true, IF(NOT( Activation_Complete__c = TODAY()), true, false) ))</errorConditionFormula>
+    <errorMessage>You must enter today&apos;s date in the Activation Complete field.
+Once a date has been entered, it cannot be changed.</errorMessage>
+</ValidationRule>

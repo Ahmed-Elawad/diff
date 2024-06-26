@@ -1,0 +1,160 @@
+<!-- SF1 inline visualforce to display the Onboarding Overview on the Account page. 
+History
+-------
+03/31/2017 Justin Stouffer             Created  
+-->
+<apex:page standardController="Account" extensions="OnboardingOverviewController,ClientOverviewController" tabStyle="Account"
+           rendered="True">
+    <apex:outputPanel rendered="{!Not(isIE)}">
+        <c:OnboardingOverview />
+        <br/>
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!(isIE)}">
+        <c:OnboardingOverviewIE />
+        <br/>
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!(isMobile)}">
+        <apex:form > 
+        <apex:slds />
+        <div class="slds-scope slds-p-around--x-small">
+            <fieldset class="slds-form--compound">
+                <legend class="slds-form-element__label slds-text-title--caps ">Key Client Information</legend>
+                <div class="slds-form-element__group slds-box">
+                    <div class="slds-form-element__row">
+                        <div class="slds-form-element slds-size--1-of-2">
+                            <span class="slds-form-element__label">Flagship Client</span>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!account.Level_1__c}" />
+                            </div>
+                        </div>                        
+                        <div class="slds-form-element slds-size--2-of-2">
+                            <span class="slds-form-element__label">Client of Key Partner</span>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!account.KP_Client__c}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-form-element__row">
+                        <div class="slds-form-element slds-size--1-of-2">
+                            <span class="slds-form-element__label">BU Primary Client</span>
+                            <div class="slds-form-element__control">
+                                <apex:outputText style="white-space: pre;" value="{!BUPrimaryClient}" />
+                            </div>
+                        </div> 
+                        <div class="slds-form-element slds-size--2-of-2">
+                            <span class="slds-form-element__label">{!IF(DNCEIndicator == NULL,'','Do Not Call/Email Indicator')}</span>
+                            <div class="slds-form-element__control">
+                                <apex:outputText style="white-space:pre;Color:Red" value="{!DNCEIndicator}" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-form-element__row">
+                        <div class="slds-form-element slds-size--1-of-2">
+                            <span class="slds-form-element__label">At Risk</span>
+                            <div class="slds-form-element__control">
+                                <apex:outputText style="white-space: pre;Color:Red" value="{!atRisk}" />
+                            </div>
+                        </div>                        
+                        <div class="slds-form-element slds-size--2-of-2">
+                            <span class="slds-form-element__label">Potential Risk</span>
+                            <div class="slds-form-element__control">
+                                <apex:outputtext style="white-space: pre;Color:Orange" value="{!potentialRisk}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-form-element__row">
+                        <div class="slds-form-element slds-size--1-of-1">
+                            <span class="slds-form-element__label">Urgent Client Action Required</span>
+                            <div class="slds-form-element__control" >
+                                <apex:repeat value="{!clientActionNeeded}" var="items">
+                                    <a class=".slds-text-link" style="white-space: pre" href="{!URLFOR($Action.Case.View, items.id)}" >{!items.CaseNumber}</a><br/>
+                                </apex:repeat>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-form-element__row">
+                        <div class="slds-form-element slds-size--1-of-1">
+                            <span class="slds-form-element__label">Critical Client Notes</span>
+                            <div class="slds-form-element__control">
+                                <div Class="slds-form-element__static slds-text-longform">
+                                    <p>{!account.Critical_Client_Notes__c}</p>    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </apex:form>
+    </apex:outputPanel>
+
+
+
+    <apex:outputPanel rendered="{!Not(isMobile)}">
+    <script>
+    function doRedirect(){
+        if({!$User.UIThemeDisplayed == 'Theme3'}){ 
+            window.top.location='/{!Account.id}';   
+        }else{
+            document.location.reload(true); 
+        }
+    }
+    </script>
+    <apex:form > 
+        <apex:pageBlock id="ClientOverview" title="Key Client Information" >
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!SaveButton}" id="saveButton" value="Save" onComplete="doRedirect()" style="display:none;"/>
+                <apex:commandButton onclick="resetInlineEdit()" id="cancelButton" value="Cancel" style="display:none;"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection collapsible="TRUE" columns="4"  >
+                <apex:pageBlockSectionItem helpText="If checked, this client is in the top 1% of Paychex clients based on annualized revenue.">
+                    <apex:outputLabel style="white-space:nowrap;{!IF(account.Level_1__c,'color:BLUE','')};" value="Flagship Client" />
+                    <apex:outputField value="{!account.Level_1__c}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="If checked, this is a client of a key Paychex partner.">
+                    <apex:outputLabel style="white-space:nowrap;{!IF(account.KP_Client__c,'color:BLUE','')};" value="Client of Key Partner" />
+                    <apex:outputField value="{!account.KP_Client__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="{!IF(DNCEIndicator == NULL,'','Notification of any restrictions regarding contacting a client.')}">
+                    <apex:outputLabel style="white-space:nowrap;" value="{!IF(DNCEIndicator == NULL,'','Do Not Call/Email Indicator')}" />
+                    <apex:outputText style="white-space:pre;Color:Red" value="{!DNCEIndicator}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="A list of Paychex Business Units that consider this a Primary Client.">
+                    <apex:outputLabel style="white-space:nowrap;" value="BU Primary Client"/>
+                    <apex:outputText style="white-space: pre;" value="{!BUPrimaryClient}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="A list of Business Units that consider this client at risk." >
+                    <apex:outputLabel style="white-space:nowrap;" value="At Risk" />
+                    <apex:outputText style="white-space: pre;Color:Red" value="{!atRisk}" />
+                </apex:pageBlockSectionItem>                        
+                <apex:pageBlockSectionItem helpText="A list of Business Units that consider this client as a potential risk." >
+                    <apex:outputLabel style="white-space:nowrap;" value="Potential Risk" />
+                    <apex:outputtext style="white-space: pre;Color:Orange" value="{!potentialRisk}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <br/>
+            <apex:pageBlockSection collapsible="TRUE" columns="2">          
+                <apex:pageBlockSectionItem helpText="If there are any critical cases that require urgent action from the client, they will be displayed here.">
+                    <apex:outputLabel style="white-space:nowrap;" value="Urgent Client Action Required" />
+                    <apex:outputPanel >
+                        <apex:repeat value="{!clientActionNeeded}" var="items">
+                            <a style="white-space: pre" target="_parent" href="/{!items.id}" >{!items.CaseNumber}</a><br/> 
+                        </apex:repeat>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem helpText="Enter any critical notes regarding this client here, in the format: Comment, Product/Business Unit, Date. 
+                                                     Pre-existing notes should remain until they are no longer necessary." >
+                    <apex:outputLabel style="white-space:nowrap;" value="Critical Client Notes" />
+                    <apex:outputField label="Critical Client Notes" value="{!account.Critical_Client_Notes__c}">
+                        <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                                                hideOnEdit="editButton" event="ondblclick" 
+                                                changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputField>             
+                </apex:pageBlockSectionItem>           
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+    </apex:outputPanel>
+
+</apex:page>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Requested_Ship_Date_required_fields</fullName>
+    <active>true</active>
+    <description>when Requested Ship Date is filled in , be sure other fields are populated</description>
+    <errorConditionFormula>AND( NOT(BEGINS($Profile.Name,&quot;System Admin&quot;)), 
+RecordType.Name =&apos;Service STM Onboarding Record Type&apos;, 
+NOT(ISBLANK(Requested_Ship_Date__c )), 
+OR( ISBLANK( Terminal_ID__c ), 
+ISBLANK( Site_Alias__c ), 
+ISBLANK( Idle_Prompt__c ), 
+ISBLANK( Address_to_Ship_Clock__c ) 
+) 
+)</errorConditionFormula>
+    <errorMessage>** You must also fill in Terminal ID, Site Alias, Idle Prompt and Address to Ship Clock if you are filling in the Requested Ship Date **</errorMessage>
+</ValidationRule>

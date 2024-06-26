@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Action_Required_by_Service_Provider</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+ISPICKVAL(Action_Required_Payroll_Service_Provider__c ,&apos;Yes&apos;),
+ISBLANK( Action_Required_Detail__c )
+)</errorConditionFormula>
+    <errorMessage>Please detail specific instructions that are required for the Payroll Service Provider</errorMessage>
+</ValidationRule>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PAC_CPR_Group_D_News</fullName>
+    <booleanFilter>(1 AND 2 AND 3 AND 4 AND 5) OR  (2 AND 3 AND 4 AND 6 and 8) or ((7 or 9) AND 2 AND 3 AND 4 AND 5)</booleanFilter>
+    <columns>NAME</columns>
+    <columns>PAC_High_Revenue_Client__c</columns>
+    <columns>Date_1st_Notice_Received_in_PAC__c</columns>
+    <columns>OWNER.ALIAS</columns>
+    <columns>Status__c</columns>
+    <columns>Tax_Type__c</columns>
+    <columns>Tax_Agency__c</columns>
+    <columns>RECORDTYPE</columns>
+    <columns>ASO_Issue__c</columns>
+    <columns>Paychex_Location__c</columns>
+    <columns>UPDATEDBY_USER.ALIAS</columns>
+    <columns>Last_New_Reassign_Transfer_Date__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Prospect_Client_Number__c</field>
+        <operation>contains</operation>
+        <value>940-,942-,943-,944-</value>
+    </filters>
+    <filters>
+        <field>Status__c</field>
+        <operation>contains</operation>
+        <value>New Notice Received,Transferring New to D/E,Reassign to New ORR</value>
+    </filters>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_PAC__c.Reference_PAC_Record_Type</value>
+    </filters>
+    <filters>
+        <field>Paychex_PEO_Issue__c</field>
+        <operation>notEqual</operation>
+        <value>Yes</value>
+    </filters>
+    <filters>
+        <field>OWNER.ALIAS</field>
+        <operation>equals</operation>
+        <value>PAC Group D</value>
+    </filters>
+    <filters>
+        <field>OWNER.ALIAS</field>
+        <operation>equals</operation>
+        <value>PAC MPSC D/E News</value>
+    </filters>
+    <filters>
+        <field>CPR_Group_New__c</field>
+        <operation>equals</operation>
+        <value>Yes</value>
+    </filters>
+    <filters>
+        <field>Tax_Type__c</field>
+        <operation>notContain</operation>
+        <value>local,SUI-,State-,940</value>
+    </filters>
+    <filters>
+        <field>ASO_Issue__c</field>
+        <operation>equals</operation>
+        <value>Yes</value>
+    </filters>
+    <label>PAC - CPR Group D News</label>
+    <sharedTo>
+        <roleAndSubordinates>Operating_Risk_and_Risk_Review_Manager</roleAndSubordinates>
+    </sharedTo>
+</ListView>

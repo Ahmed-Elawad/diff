@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reassign_Category_3</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND 
+( 
+ RecordType.Id=&quot;012700000001U2z&quot;,
+ISPICKVAL(Reassign_Category_1__c, &quot;Manual Trade&quot;), 
+ISPICKVAL(Reassign_Category_2__c, &quot;Client Level Account&quot;) || 
+ISPICKVAL(Reassign_Category_2__c, &quot;Trading Errors&quot;), 
+ISPICKVAL(Reassign_Category_3__c, &quot;&quot;) 
+
+
+)</errorConditionFormula>
+    <errorMessage>Reassign-Category 3 is required when Reassign-Category 1 is Manual Trade and Reassign-Category 2 is Client Level Account or Trading Errors</errorMessage>
+</ValidationRule>

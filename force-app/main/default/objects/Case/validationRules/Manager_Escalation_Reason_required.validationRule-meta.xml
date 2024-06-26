@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Manager_Escalation_Reason_required</fullName>
+    <active>true</active>
+    <description>Manager Escalation Reason is required to escalate case to Service Now manager</description>
+    <errorConditionFormula>NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)) &amp;&amp; Manager_Escalation_Needed__c &amp;&amp;
+ISBLANK(TEXT(Manager_Escalation_Reason__c))</errorConditionFormula>
+    <errorDisplayField>Manager_Escalation_Reason__c</errorDisplayField>
+    <errorMessage>Manager Escalation Reason is required to Escalate this Service Now case to a Manager</errorMessage>
+</ValidationRule>

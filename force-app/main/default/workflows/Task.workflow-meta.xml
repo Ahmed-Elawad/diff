@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Clear_Task_Reminder_Time</fullName>
+        <field>ReminderDateTime</field>
+        <name>Clear Task Reminder Time</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>TAASetProduct</fullName>
+        <description>Used by Time and attendance to set the Product field to TLO is the task subject begins with TAA</description>
+        <field>Product__c</field>
+        <literalValue>TLO</literalValue>
+        <name>TAA: Set Product</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Turn_off_Task_Reminder</fullName>
+        <field>IsReminderSet</field>
+        <literalValue>0</literalValue>
+        <name>Turn off Task Reminder</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>UpdateTypeConfirmApptforQuestion</fullName>
+        <description>Updates the Task for TLO Onboarding Tasks</description>
+        <field>Type</field>
+        <literalValue>Confirm Appt For Questionnaire Review</literalValue>
+        <name>Update Type = Confirm Appt for Question</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>UpdateTypeMeetGreet</fullName>
+        <field>Type</field>
+        <literalValue>Meet &amp; Greet</literalValue>
+        <name>Update Type=Meet &amp; Greet</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_task_status_to_Completed</fullName>
+        <field>Status</field>
+        <literalValue>Completed</literalValue>
+        <name>Update task status to Completed</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>HRS 4S 2nd Level Support Tracking-Solved</fullName>
+        <actions>
+            <name>Update_task_status_to_Completed</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Task.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>HRS 4S 2nd Level Support Tracking</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Task.Status</field>
+            <operation>equals</operation>
+            <value>Solved</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>HRS 4S Help Queue Tracker</fullName>
+        <actions>
+            <name>Clear_Task_Reminder_Time</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Turn_off_Task_Reminder</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Task.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>HRS 4S Help Queue Tracker</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Task.IsReminderSet</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <description>Set the reminder to false if it&apos;s true on the task</description>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>TAA%3A Set Product</fullName>
+        <actions>
+            <name>TAASetProduct</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Task.Subject</field>
+            <operation>startsWith</operation>
+            <value>TAA</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Task.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>2008-09 Time Attendance Onboarding Task Record Type</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Task.Product__c</field>
+            <operation>notEqual</operation>
+            <value>TLO</value>
+        </criteriaItems>
+        <description>Used by Time and Attendance to set the product on its tasks.</description>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <tasks>
+        <fullName>TAABuildSite</fullName>
+        <assignedToType>owner</assignedToType>
+        <description>The client site will need to be completed by the end of business on the Due Date.</description>
+        <dueDateOffset>2</dueDateOffset>
+        <notifyAssignee>false</notifyAssignee>
+        <priority>Normal</priority>
+        <protected>false</protected>
+        <status>Not Started</status>
+        <subject>TAA: Build Site</subject>
+    </tasks>
+</Workflow>

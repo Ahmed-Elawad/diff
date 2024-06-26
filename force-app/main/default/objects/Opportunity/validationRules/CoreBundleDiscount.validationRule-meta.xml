@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CoreBundleDiscount</fullName>
+    <active>false</active>
+    <description>New Essential, Enhanced and Entrepreneur bundles can only be Global Discounts, no WIN or National Account</description>
+    <errorConditionFormula>AND(
+OR( Enhanced_Package__c , Entrepreneur_Package__c ,  Essentials_Package__c ),
+OR(
+ ISPICKVAL(WIN_Check__c, &apos;WIN&apos;),
+ ISPICKVAL(WIN_Check__c, &apos;National Account&apos;),
+ ISPICKVAL( Discount2_Type__c , &apos;WIN&apos;),
+ ISPICKVAL( Discount2_Type__c , &apos;National Account&apos;)))</errorConditionFormula>
+    <errorMessage>*** ONLY GLOBAL DISCOUNT ALLOWED ON THIS PACKAGE ***</errorMessage>
+</ValidationRule>

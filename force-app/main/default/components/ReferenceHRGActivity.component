@@ -1,0 +1,88 @@
+<!-- A component to setup meeting information.
+
+   History
+   -------
+   03/12/2013 Dan Carmen        Created.
+   04/25/2017 Lynn Michels		Make Activity Date read only when Reference HRG Activity is not new
+ -->
+<apex:component >
+   <apex:attribute name="activityList" 
+      type="ReferenceHRGActivityWrapper[]" 
+      required="true" 
+      description="The activity List to print" />
+      
+   <apex:attribute name="sectionTitle" 
+      type="String" 
+      required="true" 
+      description="The title of the section" />
+            
+   <apex:attribute name="readOnly" 
+      type="Boolean" 
+      required="false" 
+      description="Is this read only?" />
+
+   <apex:attribute name="showCompletedDate" 
+      type="Boolean" 
+      required="false" 
+      description="Do we need to show the completed date column?" />
+
+      <apex:pageBlockSection title="{!sectionTitle}" columns="1">
+      
+        <apex:pageBlockTable id="hrgActivityTable" value="{!activityList}" var="rec" cellPadding="2" border="1">
+        
+            <apex:column >
+               <apex:facet name="header">{!IF(NOT(rec.isNew),"Type","Log Activity?")} </apex:facet>
+               <apex:inputField rendered="{!AND(NOT(rec.activity.Closed__c),NOT(readOnly))}" value="{!rec.activity.Type__c}" />
+               <apex:outputField rendered="{!OR(rec.activity.Closed__c,readOnly)}" value="{!rec.activity.Type__c}" />
+            </apex:column>
+
+            <apex:column >
+               <apex:facet name="header">Activity Name</apex:facet>
+               
+               <apex:inputField rendered="{!AND(NOT(rec.isOnboarding),rec.isNew,NOT(readOnly))}" value="{!rec.activity.Activity_Type__c}" />
+               <apex:inputField rendered="{!AND(NOT(rec.isOnboarding),rec.isNew,NOT(readOnly))}" value="{!rec.activity.Activity__c}" />
+               
+               <apex:outputText rendered="{!OR(rec.isOnboarding,NOT(rec.isNew),readOnly)}" style="white-space:nowrap;" value="{!rec.label}" />
+            </apex:column>
+            
+            <!-- apex:column >
+               <apex:facet name="header">Activity Date</apex:facet>
+               <apex:inputField rendered="{!AND(NOT(rec.isOnboarding),rec.isNew,NOT(readOnly))}" value="{!rec.activity.Activity_Date__c}" />
+               <apex:outputField rendered="{!OR(rec.isOnboarding,NOT(rec.isNew),readOnly)}" value="{!rec.activity.Activity_Date__c}" /> 
+            </apex:column-->
+            <!--LM make Activity Date read only if existing HRG Activity-->
+               <!--apex:column >
+               <apex:facet name="header">Activity Date</apex:facet>
+               <apex:inputField rendered="{!AND(NOT(rec.activity.Closed__c),NOT(readOnly), NOT(rec.isOpenHRG))}" value="{!rec.activity.Activity_Date__c}" />
+               
+               <apex:outputField rendered="{!AND(OR(rec.activity.Closed__c,readOnly),NOT(rec.isOpenHRG))}" value="{!rec.activity.Activity_Date__c}" />
+               <apex:outputField rendered="{!rec.isOpenHRG}" value="{!rec.activity.Activity_Date__c}">
+            </apex:column-->
+            
+            <apex:column >
+               <apex:facet name="header">Activity Date</apex:facet>
+               <apex:inputField rendered="{!AND(NOT(rec.activity.Closed__c),NOT(readOnly),NOT(rec.isOpenHRG))}" value="{!rec.activity.Activity_Date__c}" />
+               <apex:outputField rendered="{!OR(rec.activity.Closed__c,readOnly,rec.isOpenHRG)}" value="{!rec.activity.Activity_Date__c}" />
+            </apex:column>
+            
+
+            <apex:column rendered="{!showCompletedDate}">
+               <apex:facet name="header">Completed Date</apex:facet>
+                <apex:outputField value="{!rec.activity.Complete_Date__c}" />
+            </apex:column>
+            
+            <apex:column >
+               <apex:facet name="header">Notes</apex:facet>
+               <apex:inputTextarea rendered="{!AND(NOT(rec.activity.Closed__c),NOT(readOnly))}" value="{!rec.activity.Notes__c}" rows="1" cols="50"/>
+               <apex:outputField rendered="{!OR(readOnly,rec.activity.Closed__c)}" value="{!rec.activity.Notes__c}" />
+            </apex:column>
+            
+            <apex:column >
+               <apex:facet name="header">Onsite Meeting Attendees</apex:facet>
+               <apex:inputTextarea rendered="{!AND(NOT(rec.activity.Closed__c),NOT(readOnly))}" value="{!rec.activity.Onsite_Meeting_Attendees__c}" rows="1" cols="50"/>
+               <apex:outputField rendered="{!OR(readOnly,rec.activity.Closed__c)}" value="{!rec.activity.Onsite_Meeting_Attendees__c}" />
+            </apex:column>
+
+        </apex:pageBlockTable>
+     </apex:pageBlockSection>
+</apex:component>

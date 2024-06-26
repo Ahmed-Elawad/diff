@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_Vendor_fields_PaymentMethod_Check</fullName>
+    <active>true</active>
+    <description>Force users to enter values in the Vendor address fields, when either the &apos;Check - Mail to Vendor&apos; or &apos;Check - Return to PAC&apos; value is chosen for the Payment Method field.</description>
+    <errorConditionFormula>AND( 
+( (ISPICKVAL(Payment_Method__c, &apos;Check - Mail to Vendor&apos;)) || (ISPICKVAL(Payment_Method__c, &apos;Check - Return to PAC&apos;)) ), 
+( (ISBLANK(Vendor_City__c) ) || (ISPICKVAL(Vendor_State_Province__c, &apos;&apos;) ) || (ISBLANK(Vendor_Street_Address1__c) ) || (ISBLANK(Vendor_Zip_Postal_Code__c) )  ),
+($Profile.Name &lt;&gt;&quot;System Administrator&quot;)
+)</errorConditionFormula>
+    <errorDisplayField>Payment_Method__c</errorDisplayField>
+    <errorMessage>You must populate the Vendor address fields when selecting Payment Method = &apos;Check - Mail to Vendor&apos; or &apos;Check - Return to PAC&apos;.</errorMessage>
+</ValidationRule>

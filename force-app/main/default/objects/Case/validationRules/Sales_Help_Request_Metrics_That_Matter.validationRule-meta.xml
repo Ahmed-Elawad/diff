@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sales_Help_Request_Metrics_That_Matter</fullName>
+    <active>true</active>
+    <description>Certain reps can&apos;t submit certain case types</description>
+    <errorConditionFormula>AND(RecordType.Name = &apos;Sales Help Request Case&apos;,
+ISPICKVAL(Type,&apos;Metrics That Matter&apos;),
+NOT(CONTAINS($Profile.Name, &apos;Manager&apos;)),
+NOT(CONTAINS($Profile.Name, &apos;Admin&apos;)),
+NOT(BEGINS($Profile.Name, &apos;System Admin&apos;)),
+ISNEW())</errorConditionFormula>
+    <errorMessage>Please see your manager to submit a request.</errorMessage>
+</ValidationRule>

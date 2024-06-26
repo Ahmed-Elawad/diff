@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>History_Activation_Records</fullName>
+    <active>true</active>
+    <errorConditionFormula>(ISPICKVAL( History_Activation_Records__c , &quot;Red: 20000 +&quot;) ||
+ISPICKVAL(History_Activation_Records__c , &quot;Yellow: 10000 - 19999&quot;))&amp;&amp;
+
+OR(
+ISBLANK(History_Activation_Records_Detail__c ))</errorConditionFormula>
+    <errorDisplayField>History_Activation_Records_Detail__c</errorDisplayField>
+    <errorMessage>History Activation Records Detail is required when History Activation Records is selected with Red or Yellow as a value</errorMessage>
+</ValidationRule>

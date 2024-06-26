@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>58.0</apiVersion>
+    <environments>Default</environments>
+    <formulas>
+        <name>NameFormula</name>
+        <dataType>String</dataType>
+        <expression>LEFT(({!$Record.ZipSegmentCriteria__r.Name}+&quot; &quot; + IF(ISPICKVAL({!$Record.ZipSegmentJoinType__c},&quot;&quot;),&quot;AND&quot;,TEXT({!$Record.ZipSegmentJoinType__c})) +&quot; &quot; + IF(ISPICKVAL({!$Record.ZipLinkJoinType__c},&quot;&quot;),&quot;AND&quot;,TEXT({!$Record.ZipLinkJoinType__c}))),80)</expression>
+    </formulas>
+    <interviewLabel>ZipSegmentCriteriaLink Before {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>ZipSegmentCriteriaLink Before</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Set_Name_Field</name>
+        <label>Set Name Field</label>
+        <locationX>176</locationX>
+        <locationY>287</locationY>
+        <inputAssignments>
+            <field>Name</field>
+            <value>
+                <elementReference>NameFormula</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Set_Name_Field</targetReference>
+        </connector>
+        <object>ZipSegmentCriteriaLink__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

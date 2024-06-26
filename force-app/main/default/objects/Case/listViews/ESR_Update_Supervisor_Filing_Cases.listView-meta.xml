@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ESR_Update_Supervisor_Filing_Cases</fullName>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <columns>User_Level_1_Supervisor__c</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>CASES.PRIORITY</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.Service_Support_ESR_Dedicated_Service_Case</value>
+    </filters>
+    <filters>
+        <field>CASES.SUBJECT</field>
+        <operation>contains</operation>
+        <value>2017</value>
+    </filters>
+    <filters>
+        <field>CORE.USERS.LAST_NAME</field>
+        <operation>equals</operation>
+        <value>Christalin</value>
+    </filters>
+    <filters>
+        <field>User_Level_1_Supervisor__c</field>
+        <operation>notContain</operation>
+        <value>Deal</value>
+    </filters>
+    <label>ESR Update Supervisor Filing Cases</label>
+    <sharedTo>
+        <role>DirectorHBOperations</role>
+    </sharedTo>
+</ListView>

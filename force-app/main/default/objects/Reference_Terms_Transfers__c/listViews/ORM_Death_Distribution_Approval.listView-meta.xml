@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ORM_Death_Distribution_Approval</fullName>
+    <booleanFilter>(1 AND 2 AND 3 AND 4) OR (1 AND 3 AND 5 AND 6 AND 7)</booleanFilter>
+    <columns>NAME</columns>
+    <columns>Branch_Client_Number__c</columns>
+    <columns>Beneficiary_Name_s__c</columns>
+    <columns>Distribution_Entered__c</columns>
+    <columns>Distribution_Entered_by__c</columns>
+    <columns>Other_Notes__c</columns>
+    <columns>ORM_Notes__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_Terms_Transfers__c.Death_Distribution</value>
+    </filters>
+    <filters>
+        <field>Distribution_Entered__c</field>
+        <operation>lessThan</operation>
+        <value>YESTERDAY</value>
+    </filters>
+    <filters>
+        <field>ORM_Approved_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>equals</operation>
+        <value>Distribution Entered for Approval</value>
+    </filters>
+    <filters>
+        <field>Assets_Traded__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>equals</operation>
+        <value>Assets Traded – Waiting on LDPS</value>
+    </filters>
+    <filters>
+        <field>Distribution_Entered__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <label>ORM: Death Distribution Approval</label>
+    <sharedTo>
+        <role>CreditRepresentative</role>
+        <role>HRS_4S_LDPS_Representative_I</role>
+        <role>HRS_4S_LDPS_Representative_II</role>
+        <role>HRS_4S_LDPS_Supervisor_I</role>
+        <role>HRS_4S_LDPS_Supervisor_II</role>
+        <role>ORM_Returns</role>
+        <role>Operating_Risk_Rep_Assistance</role>
+        <role>Operating_Risk_Rep_ORS_Specialist</role>
+    </sharedTo>
+</ListView>

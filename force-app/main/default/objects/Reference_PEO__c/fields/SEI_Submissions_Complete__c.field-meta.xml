@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SEI_Submissions_Complete__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>The total number of entries in the Reference PEO Candidates that are of Type: SEI, have SEI Form Complete checked and have either Benefits Complete (SEI) checked OR have Eligible for Benefits not checked.</description>
+    <label>SEI Submissions Complete</label>
+    <securityClassification>Internal</securityClassification>
+    <summaryFilterItems>
+        <field>Reference_PEO_Candidates__c.Candidate_Type__c</field>
+        <operation>equals</operation>
+        <value>SEI - Paper, SEI - Electronic</value>
+    </summaryFilterItems>
+    <summaryFilterItems>
+        <field>Reference_PEO_Candidates__c.Complete__c</field>
+        <operation>equals</operation>
+        <value>True</value>
+    </summaryFilterItems>
+    <summaryFilterItems>
+        <field>Reference_PEO_Candidates__c.Status_Description__c</field>
+        <operation>notEqual</operation>
+        <value>Terminated</value>
+    </summaryFilterItems>
+    <summaryForeignKey>Reference_PEO_Candidates__c.Reference_PEO__c</summaryForeignKey>
+    <summaryOperation>count</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Summary</type>
+</CustomField>

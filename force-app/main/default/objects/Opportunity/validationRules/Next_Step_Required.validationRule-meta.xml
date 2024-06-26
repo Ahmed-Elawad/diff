@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Next_Step_Required</fullName>
+    <active>false</active>
+    <description>Case 33073073 - Next Step field is required when Probability is 40%-80%.
+CPQ project - removed ASO and PEO record types from rule</description>
+    <errorConditionFormula>AND( 
+ISCHANGED(StageName), 
+AND(Probability &gt;= 0.40, Probability &lt;= 0.80), 
+OR($RecordType.Name = &apos;HRS 401(k) Opportunity FSS Record Type&apos; 
+,$RecordType.Name = &apos;HRS 401(k) Opportunity Record Type&apos; 
+,$RecordType.Name = &apos;MMS Opportunity (DSA) Record Type&apos; 
+,$RecordType.Name = &apos;MMS Opportunity Record Type&apos;  
+,$RecordType.Name = &apos;Prism PEO Opportunity FSS Record Type&apos; 
+,$RecordType.Name = &apos;Prism PEO Opportunity Record Type&apos; 
+,$RecordType.Name = &apos;HNBF Opportunity DSA Record Type&apos; 
+,$RecordType.Name = &apos;HNBF Opportunity Record Type&apos;) 
+,(ISBLANK(NextStep)), 
+OR ($User.Job_Name__c = &apos;Sales Representative&apos; 
+,$User.Job_Name__c = &apos;District Sales Manager&apos; 
+,$User.Job_Name__c = &apos;District Sales Assistant&apos; 
+,$User.Job_Name__c = &apos;Area Manager&apos; 
+,$User.Job_Name__c = &apos;Area Assistant&apos; 
+,$User.Job_Name__c = &apos;Zone Manager&apos; 
+,$User.Job_Name__c = &apos;Zone Assistant&apos;
+,$Profile.Name =&quot;MMS SDR&quot;), 
+NOT(BEGINS($Profile.Name, &apos;System Administrator&apos;)), 
+DATEVALUE(CreatedDate) &gt;= DATE(2019,08,06) 
+)</errorConditionFormula>
+    <errorMessage>Next Step field is required when Probability is between 40%-80%</errorMessage>
+</ValidationRule>

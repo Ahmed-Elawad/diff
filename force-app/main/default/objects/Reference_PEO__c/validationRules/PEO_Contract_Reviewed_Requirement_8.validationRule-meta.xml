@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PEO_Contract_Reviewed_Requirement_8</fullName>
+    <active>true</active>
+    <description>Benefits option must have a value before Contract Reviewed is checked.</description>
+    <errorConditionFormula>AND
+(
+Contract_Reviewed__c = TRUE,
+ISPICKVAL ( Medical_Option__c,&quot;&quot;)
+
+)</errorConditionFormula>
+    <errorDisplayField>Medical_Option__c</errorDisplayField>
+    <errorMessage>Benefits option must have a value before Contract Reviewed is checked.</errorMessage>
+</ValidationRule>

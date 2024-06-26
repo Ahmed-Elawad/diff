@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Check_Date_Required_for_DocuSign_SAs</fullName>
+    <active>true</active>
+    <description>Check Date is required for Core Sales Reps to populate on DocuSign RAA Document.</description>
+    <errorConditionFormula>AND( $RecordType.DeveloperName =&apos;Core Opportunity Record Type&apos;,RecordType.DeveloperName =&apos;Core Opportunity DSA Record Type&apos;, $User.ProfileId =&apos;00e7000000144NI&apos;, ISNULL( Check_Date__c ), NOT(ISPICKVAL(Primary_Competition__c, &quot;Ancillary&quot;)), NOT(RIGHT(Name,9)=&quot;Ancillary&quot;))</errorConditionFormula>
+    <errorMessage>Check Date is required for Core Sales Reps to populate on DocuSign RAA document.</errorMessage>
+</ValidationRule>

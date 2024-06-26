@@ -1,0 +1,248 @@
+<aura:component controller="CommunityCovidQuestionnaireController" implements="force:appHostable" access="global">
+    
+    <!--<aura:attribute name="readOnlyPermission" type="Boolean" default="true" />-->
+    <aura:registerEvent name="discrepancyEvt" type="c:markPeoUwFormDiscrepancy"/>
+    <aura:attribute name='formName' type='String' default='Covid Questionnaire' />
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    
+    <!-- auto save attributes-->
+    <aura:registerEvent name='autoSave' type='c:CommunityFormsAutoSave' />
+    <aura:attribute name='autoSaveRecords' type='map' />
+    <aura:attribute name='saveAction' type='Object' />
+    
+     <!-- reference to save functionality -->
+    <aura:attribute name='saveFunc' type='Object' />
+    
+    <!-- form nav -->
+    <aura:attribute name='parentTabs' type='String[]' />
+    <aura:attribute name='activeTab' type='String' />
+    
+    <aura:attribute name='tablistArr' type='String[]' default='exposure,prevention' /> 
+    <aura:attribute name="parentRecId" type="Id"/>
+    <aura:attribute name="PEOChecklist" type="Object"/>
+    <aura:attribute name="answersChanged" type="Boolean" default="false"/>
+    <aura:attribute name="readOnly" type="Boolean" default="true" />
+    <aura:attribute name="readOnlyString" type="String" default="" />
+    <aura:attribute name='radioGroupOptions' type='List' default="[{'label': 'Yes', 'value':'Yes'},{'label':'No','value':'No'}]" />
+    <aura:attribute name='tabName' type='string' default="exposure" />
+    <aura:attribute name="actionName" type="string" default="Next" />
+    <aura:attribute name='user' type='User' />
+    <aura:attribute name='allowDiscLog' type='Boolean' />
+    <aura:attribute name='formSubmitted' type='boolean' default='false' />
+    <aura:attribute name='buttonLabel' type='String' />
+    <aura:attribute name='account' type='Account' />
+    <aura:attribute name='errMsg' type='String' />
+    <aura:attribute name='relatedFieldList' type='String[]' />
+    
+    <!-- <aura:html tag="style">
+        .cuf-content {
+        padding: 0 0rem !important;
+        }
+        .slds-p-around-medium {
+        padding: 0rem !important;
+        }       
+        .slds-modal__content{
+        overflow-y:hidden !important;
+        height:unset !important;
+        max-height:unset !important;
+        }
+    </aura:html> -->
+    
+    <!-- <aura:if isTrue="{!greaterthan(v.readOnlyString.length, 1)}">
+        <div style="width:100%">
+            <ui:message title="Evaluation Status" severity="info" closable="false" >
+                {!v.readOnlyString}
+            </ui:message>
+        </div>
+    </aura:if>
+    <div style="height: 10px"></div>
+    <div class="c-container" style="width: inherit">
+        <lightning:tabset variant="scoped" selectedTabId="{!v.tabName}" > -->
+            
+            <!-- General information questions --> 
+            <!-- <lightning:tab label="COVID Exposure" id="exposure">
+                <div class="question" >Have any employees tested positive for COVID-19?</div><br/>
+                <lightning:radioGroup disabled='{!v.readOnly}' 
+                                      variant="label-hidden"
+                                      name='Have_employees_tested_pos_for_COVID_19__c'
+                                      label="Have any employees tested positive for COVID-19?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange="{!c.clearFields}" 
+                                      value="{!v.PEOChecklist.Have_employees_tested_pos_for_COVID_19__c}"/>
+                <aura:if isTrue="{!v.PEOChecklist.Have_employees_tested_pos_for_COVID_19__c == 'Yes'}">
+                    <lightning:input disabled='{!v.readOnly}' 
+                                     name='When_did_the_employee_come_back_to_work__c' 
+                                     label="When did the employee come back to work?" 
+                                     value="{!v.PEOChecklist.When_did_the_employee_come_back_to_work__c}" 
+                                     onchange="{!c.handleChange}" 
+                                     type="Date" />
+                     <lightning:input disabled='{!v.readOnly}' 
+                                         name='process_for_employees_return_to_work__c'
+                                         label="What was the process for the employee(s) to come back to work?" 
+                                         value="{!v.PEOChecklist.process_for_employees_return_to_work__c}" 
+                                         onchange="{!c.handleChange}" 
+                                         placeholder="Click or tap here to enter text." />
+                    <lightning:input disabled='{!v.readOnly}' name='How_many_employees_had_positive_tests__c' label="How many employee(s) have tested positive?" value="{!v.PEOChecklist.How_many_employees_had_positive_tests__c}" onchange="{!c.handleChange}" type="number" fieldLevelHelp='Please Enter a number' placeholder="Click or tap here to enter text."></lightning:input>
+                    <lightning:input disabled='{!v.readOnly}' 
+                                     name='When_did_the_employes_test_positive__c' 
+                                     label="When did the employee(s) test positive?" 
+                                     value="{!v.PEOChecklist.When_did_the_employes_test_positive__c}" 
+                                     onchange="{!c.handleChange}" 
+                                     type="text" />
+                    <div style="height: 15px"></div>
+                    <lightning:radioGroup disabled='{!v.readOnly}'
+                                          name='any_employee_deaths_as_a_result_of_covid__c'
+                                          label="Were there any employee deaths as a result of COVID-19?"
+                                          options="{!v.radioGroupOptions}"
+                                          onchange="{!c.clearFields}" 
+                                          value="{!v.PEOChecklist.any_employee_deaths_as_a_result_of_covid__c}"/>
+                    <lightning:input disabled='{!v.readOnly}' 
+                                     name='space_clean_sani_protocol_for_pos_covid__c'
+                                     label="What protocols were followed for cleaning/sanitizing the work space after the employee(s) tested positive?" 
+                                     value="{!v.PEOChecklist.space_clean_sani_protocol_for_pos_covid__c}" 
+                                     onchange="{!c.handleChange}" placeholder="Click or tap here to enter text." />
+                    <div style="height: 15px"></div>
+                </aura:if>
+                <lightning:radioGroup disabled='{!v.readOnly}'
+                                      name='Has_Covid_Related_WC_Claim__c'
+                                      label="Have any employees filed a Workers’ Compensation claim for covid related injuries, treatments, etc.?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange="{!c.handleChange}" 
+                                      value="{!v.PEOChecklist.Has_Covid_Related_WC_Claim__c}"/>
+                <aura:if isTrue="{! v.PEOChecklist.Has_Covid_Related_WC_Claim__c == 'Yes'}">
+                    <lightning:input disabled='{!v.readOnly}' 
+                                     name='Number_of_COVID_related_WC_Claims__c'
+                                     label="How many claims were filed?"
+                                     value="{!v.PEOChecklist.Number_of_COVID_related_WC_Claims__c}" 
+                                     onchange="{!c.handleChange}" 
+                                     type='number' />
+                </aura:if> -->
+               <!-- <lightning:radioGroup disabled='{!v.readOnly}'
+                                      name='Requires_emps_to_be_screened_for_Covid19__c	'
+                                      label="Do you require employees to be screened for COVID-19?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange="{!c.handleChange}" 
+                                      value="{!v.PEOChecklist.Requires_emps_to_be_screened_for_Covid19__c}"/>-->
+                <!-- <lightning:radioGroup disabled='{!v.readOnly}' 
+                                      name='Requires_emps_to_be_screened_for_Covid19__c'
+                                      label="Do you require employees to be screened for COVID-19?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange="{!c.clearFields}" 
+                                      value="{!v.PEOChecklist.Requires_emps_to_be_screened_for_Covid19__c}"/>
+                <aura:if isTrue="{! v.PEOChecklist.Requires_emps_to_be_screened_for_Covid19__c	 == 'Yes'}">
+                    <lightning:input disabled='{!v.readOnly}' 
+                                     name='Frequency_of_Covid_Testing__c'
+                                     label="How frequently?"
+                                     value="{!v.PEOChecklist.Frequency_of_Covid_Testing__c}" 
+                                     onchange="{!c.handleChange}" />
+                </aura:if> -->
+                <!-- <lightning:input disabled='{!v.readOnly}' 
+                                         name='process_for_employees_return_to_work__c'
+                                         label="What was the process for the employee(s) to come back to work?" 
+                                         value="{!v.PEOChecklist.process_for_employees_return_to_work__c}" 
+                                         onchange="{!c.handleChange}" 
+                                         placeholder="Click or tap here to enter text." /> -->
+                <!-- <lightning:radioGroup disabled='{!v.readOnly}'
+                                      name='employees_enter_hospitals_for_work__c'
+                                      label="Do any employees go into any hospitals to provide their service?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange="{!c.clearFields}" 
+                                      value="{!v.PEOChecklist.employees_enter_hospitals_for_work__c}"/>
+                <aura:if isTrue="{!v.PEOChecklist.employees_enter_hospitals_for_work__c == 'Yes'}">
+                    <lightning:input disabled='{!v.readOnly}' 
+                                     label="How often?" 
+                                     name='occurance_of_employee_entering_hospitals__c'
+                                     value="{!v.PEOChecklist.occurance_of_employee_entering_hospitals__c}" 
+                                     onchange="{!c.handleChange}" 
+                                     placeholder="Click or tap here to enter text." />
+                    <lightning:input disabled='{!v.readOnly}' 
+                                     name='emp_additional_precautions_in_hosp__c'
+                                     label="What additional precautions do they take?" 
+                                     value="{!v.PEOChecklist.emp_additional_precautions_in_hosp__c}" 
+                                     onchange="{!c.handleChange}" 
+                                     placeholder="Click or tap here to enter text." />
+                    <div style="height: 15px"></div>
+                </aura:if>
+            </lightning:tab>
+            <lightning:tab label="COVID Prevention" id="prevention">
+                <div class="question">Has a formal COVID-19 mitigation plan been put in place that complies with guidance/specific requirements set forth by the CDC, OSHA, and/or local governments?</div><br/>
+                <div style="height: 10px"></div>
+                <lightning:radioGroup disabled='{!v.readOnly}'
+                                      variant="label-hidden"
+                                      name='complience_to_org_cov_midigation_guids__c'
+                                      label="Has a formal COVID-19 mitigation plan been put in place that complies with guidance/specific requirements set forth by the CDC, OSHA, and/or local governments?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange="{!c.clearFields}" 
+                                      value="{!v.PEOChecklist.complience_to_org_cov_midigation_guids__c}"/>
+                
+                <aura:if isTrue="{!v.PEOChecklist.complience_to_org_cov_midigation_guids__c == 'Yes'}">
+                    <lightning:input disabled='{!v.readOnly}' 
+                                     name='Provide_the_PPE_being_used__c'
+                                     label="Provide the PPE being used." 
+                                     value="{!v.PEOChecklist.Provide_the_PPE_being_used__c}" 
+                                     onchange="{!c.handleChange}" 
+                                     placeholder="Click or tap here to enter text." />
+                    <lightning:input disabled='{!v.readOnly}' 
+                                     name='engineering_controls_to_min_emp_contact__c'
+                                     label="What new/enhanced engineering controls (e.g. physical changes to the work environment to allow greater social distancing) have been put in place to minimize employee contact?" 
+                                     placeholder="Click or tap here to enter text." 
+                                     value="{!v.PEOChecklist.engineering_controls_to_min_emp_contact__c}"
+                                     onchange="{!c.handleChange}" />
+                    <lightning:input disabled='{!v.readOnly}' 
+                                     name='clean_and_disinfect_procedures_in_place__c'
+                                     label="What cleaning and disinfecting procedures are now in place?" 
+                                     value="{!v.PEOChecklist.clean_and_disinfect_procedures_in_place__c}" 
+                                     onchange="{!c.handleChange}"
+                                     placeholder="Click or tap here to enter text." />
+                    <div style="height: 15px"></div>
+                </aura:if>
+                <div class="question">Has the COVID-19 vaccine been made available to the staff?</div><br/>
+                <lightning:radioGroup disabled='{!v.readOnly}'
+                                      variant="label-hidden"
+                                      name='is_vacciine_available_for_staff__c'
+                                      label="Has the COVID-19 vaccine been made available to the staff?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange="{!c.clearFields}" 
+                                      value="{!v.PEOChecklist.is_vacciine_available_for_staff__c}"/>
+                <div style="height: 15px"></div>
+                <aura:if isTrue="{!v.PEOChecklist.is_vacciine_available_for_staff__c == 'Yes'}">
+                    <div class="question">Has any of the staff received the vaccine?</div><br/>
+                    <lightning:radioGroup disabled='{!v.readOnly}'
+                                          variant="label-hidden"
+                                          name='Has_any_of_the_staff_received_vaccine__c'
+                                          label="Has any of the staff received the vaccine?"
+                                          options="{!v.radioGroupOptions}"
+                                          onchange="{!c.clearFields}" 
+                                          value="{!v.PEOChecklist.Has_any_of_the_staff_received_vaccine__c}"/>
+                    <div style="height: 15px"></div>
+                </aura:if>
+                
+                
+                
+                <div style="height: 15px"></div>
+                
+                
+                
+                
+                
+            </lightning:tab>
+        </lightning:tabset>
+        <div>  -->
+            <!--divclass="modal-footer slds-modal__footer slds-size_1-of-1">
+            <aura:if isTrue='{! and(!v.communityUser, v.allowDiscLog) }'>
+                <lightning:button class="slds-m-top_small" variant="brand" type="button" name="newDiscrepancy" label="Add New Discrepancy" onclick="{!c.openTab}" ></lightning:button>
+            </aura:if-->
+            <!-- <c:communityFormNavButtons tabNameList='{!v.tablistArr}' 
+                                       currentPos='{!v.tabName}' 
+                                       parentTabsetUsesIteration='true'
+                                       allPossibleParents='{!v.parentTabs}'
+                                       activeParent='{!v.activeTab}'
+                                       saveFunc='{!v.saveFunc}'
+                                       skipSaveEvt='{! if(equals(v.tabName,exposure), true, false)}' /> -->
+            <!--lightning:button class="slds-m-top_small" variant="brand" type="button" name="saveProgress" label="Save and Submit" onclick="{!c.saveProgress}" ></lightning:button>
+            <lightning:button class="slds-m-top_small" variant="brand" type="button" name="saveLater" label="Save and Finish Later" onclick="{!c.saveProgress}" ></lightning:button>
+            <lightning:button class="slds-m-top_small" variant="brand" type="button" name="{!v.actionName}" label="{!v.actionName}" onclick="{!c.handleNext}" /-->
+            
+        <!-- </div>
+    </div> -->
+</aura:component>

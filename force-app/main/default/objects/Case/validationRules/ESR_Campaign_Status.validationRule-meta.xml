@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ESR_Campaign_Status</fullName>
+    <active>true</active>
+    <description>For Outbound when attempt date is entered,  the corresponding status is required</description>
+    <errorConditionFormula>AND( NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)), ISPICKVAL(ESR_Team__c ,&apos;Outbound Service&apos;),
+OR( 
+AND(NOT(ISBLANK(X1st_Attempt_Date__c )),ISBLANK(TEXT( X1st_Attempt_Status__c))),
+AND(NOT(ISBLANK( X2nd_Attempt_Date__c )),ISBLANK(TEXT( X2nd_Attempt__c))),
+AND(NOT(ISBLANK( X3rd_Attempt_Date__c )),ISBLANK(TEXT( X3rd_Attempt_Status__c)))))</errorConditionFormula>
+    <errorMessage>If a Call Attempt is made, the corresponding status must be entered.</errorMessage>
+</ValidationRule>

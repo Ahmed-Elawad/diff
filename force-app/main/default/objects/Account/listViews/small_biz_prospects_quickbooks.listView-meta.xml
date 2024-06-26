@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>small_biz_prospects_quickbooks</fullName>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ACCOUNT.PHONE1</columns>
+    <columns>ACCOUNT.EMPLOYEES</columns>
+    <columns>Frequency__c</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>ACCOUNT.ADDRESS1_ZIP</columns>
+    <columns>ACCOUNT.LAST_ACTIVITY</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>notEqual</operation>
+        <value>CORE Client,MMS Client,Premier MMS Client,Premier Core Client</value>
+    </filters>
+    <filters>
+        <field>Current_Prior_Method__c</field>
+        <operation>equals</operation>
+        <value>5 Intuit/Quickbks</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.EMPLOYEES</field>
+        <operation>lessOrEqual</operation>
+        <value>5</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Account.CoreAccountRecordType</value>
+    </filters>
+    <label>Smallbiz Prospects using Quickbooks</label>
+    <sharedTo>
+        <group>CORE</group>
+        <roleAndSubordinates>COREZONE13</roleAndSubordinates>
+        <roleAndSubordinates>COREZONE14</roleAndSubordinates>
+        <roleAndSubordinates>COREZONE15</roleAndSubordinates>
+    </sharedTo>
+</ListView>

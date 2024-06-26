@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_completedPayrollRating_changes</fullName>
+    <active>true</active>
+    <description>If Payroll Rating and Payroll Rating Issues are populated and and the Date Survey Completed, then prevent user from changing fields</description>
+    <errorConditionFormula>AND(
+( NOT(ISPICKVAL(Payroll_Rating__c, &apos;&apos;)) ),
+( ISCHANGED(Payroll_Rating__c)  ),
+ NOT(ISBLANK(Date_Survey_Complete__c)),
+ $Profile.Name &lt;&gt;&quot;System Administrator&quot;
+)</errorConditionFormula>
+    <errorDisplayField>Payroll_Rating__c</errorDisplayField>
+    <errorMessage>You cannot modify the Payroll Rating field once the Survey has been completed</errorMessage>
+</ValidationRule>

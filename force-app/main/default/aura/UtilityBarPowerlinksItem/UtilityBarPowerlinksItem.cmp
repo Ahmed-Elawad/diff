@@ -1,0 +1,12 @@
+<aura:component description="UtilityBarPowerlinksItem">
+    <aura:attribute name="linkItem" type="Object" />
+
+    <div class="container">
+        <aura:if isTrue="{!v.linkItem.Is_Internal__c}">
+            <a href="{!v.linkItem.Url__c}">{!v.linkItem.Label__c}</a>
+            <aura:set attribute="else">
+                <a href="{!v.linkItem.Url__c}" target="_blank">{!v.linkItem.Label__c}</a>
+            </aura:set>
+        </aura:if>
+    </div>
+</aura:component>

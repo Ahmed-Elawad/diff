@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sales_Office_No_Role_Fields</fullName>
+    <active>true</active>
+    <description>Don&apos;t fill in any of the role fields for sales office org units</description>
+    <errorConditionFormula>AND(ISPICKVAL(Org_Type__c,&apos;Sales Office&apos;),
+OR(NOT(ISBLANK(UserRoleName__c)),NOT(ISBLANK(RepUserRoleName__c)),NOT(ISBLANK(UserRoleId__c)),NOT(ISBLANK(RepUserRoleId__c))))</errorConditionFormula>
+    <errorMessage>Don&apos;t fill in any of the role fields for sales office org units</errorMessage>
+</ValidationRule>

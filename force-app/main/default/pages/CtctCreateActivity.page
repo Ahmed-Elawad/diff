@@ -1,0 +1,23 @@
+<!-- Create activity for Contacts.
+
+   This hides the buttons for the quick action (save and cancel) https://docs.releasenotes.salesforce.com/en-us/summer15/release-notes/custom_actions_vf_pages_remove_pub_header.htm
+   not sure I like how it looks...
+   
+   showQuickActionVfHeader="false"
+
+   History
+   -------
+   09/20/2017 Josh Cartwright   Created 
+   
+ -->
+<apex:page standardController="Contact" 
+   showQuickActionVfHeader="true"
+   >
+
+  <c:PlatformTrackingComponent recordId="{!Id}" objectType="ContactCreateActivity" />
+   
+  <c:CreateActivity rendered="{!$User.UIThemeDisplayed == 'Theme3'}" />
+  <c:CreateActivitySLDS rendered= "{!$User.UIThemeDisplayed <> 'Theme3'}" />
+
+
+</apex:page>

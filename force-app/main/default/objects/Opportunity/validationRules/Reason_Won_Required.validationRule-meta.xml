@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reason_Won_Required</fullName>
+    <active>true</active>
+    <description>Reason Won is required on opportunities with a status of 70% or higher</description>
+    <errorConditionFormula>AND(
+NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+NOT(CONTAINS($Profile.Name,&apos;Sales Enablement&apos;)),
+NOT(CONTAINS($Profile.Name,&apos;Sales Admin&apos;)),
+NOT(CONTAINS($Profile.Name, &apos;MMS Sales ZSA - SB&apos;)),
+NOT(CONTAINS($Profile.Name,&apos;MMS Sales DSA - SB&apos;)),
+
+ISCHANGED(StageName),
+OR(
+IsPickVal(StageName,&apos;Sold&apos;),
+IsPickVal(StageName,&apos;Verbal Commit&apos;),
+IsPickVal(StageName,&apos;Sold-Submitted&apos;),
+IsPickVal(StageName,&apos;Sold - Submitted to CTT&apos;)
+),
+
+ISPICKVAL(Reason_Won__c,&apos;&apos;),
+OR(
+
+$RecordType.Name = &apos;Core Opportunity Record Type&apos;,
+$RecordType.Name = &apos;Core Virtual Sales&apos;,
+$RecordType.Name = &apos;MMS Opportunity Record Type&apos;
+
+),
+AND(OR(
+ISPICKVAL(OpportunityType__c, &apos;Payroll&apos;), ISPICKVAL(OpportunityType__c , &apos;Payroll-ASO&apos;))
+)
+)</errorConditionFormula>
+    <errorMessage>All Opportunities with Verbal Commit status or higher must have a Reason Won</errorMessage>
+</ValidationRule>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>S2S_ACT_Close_Error</fullName>
+    <active>true</active>
+    <description>Status Description required to close case</description>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&apos;System Administrator&apos;)) 
+,RecordType.Name =&apos;Service Support ACT Case Record Type&apos; 
+,  ISBLANK( Status_Description__c ) 
+, ISCHANGED( Status )
+, ISPICKVAL (Origin, &quot;S2S App&quot;)
+, ISPICKVAL(Status , &apos;Closed&apos;))</errorConditionFormula>
+    <errorMessage>Status Description required to close case</errorMessage>
+</ValidationRule>

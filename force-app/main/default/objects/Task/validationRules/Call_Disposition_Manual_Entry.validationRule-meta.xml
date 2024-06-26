@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Call_Disposition_Manual_Entry</fullName>
+    <active>false</active>
+    <errorConditionFormula>AND( $UserRole.Name   = &quot;NSS Inbound Rep - Kane&quot;, ISCHANGED(CallDisposition),
+CallDisposition &lt;&gt;  &quot;&quot;,
+CallDisposition &lt;&gt;  &quot;INB - Non-Sales Lead&quot;,
+CallDisposition &lt;&gt;  &quot;INB - Created Oppty - Unable to Reach&quot;,
+CallDisposition &lt;&gt;  &quot;INB - Created Oppty - Contacted&quot;,
+CallDisposition &lt;&gt;  &quot;INB - Created Oppty - Warm Rep Transfer&quot;,
+CallDisposition &lt;&gt;  &quot;INB - Callback&quot;,
+CallDisposition &lt;&gt;  &quot;INB - Customer Service - Employer&quot;,
+CallDisposition &lt;&gt;  &quot;INB - Customer Service - Employee&quot;,
+CallDisposition &lt;&gt;  &quot;INB - Answered/No One on Line&quot;,
+CallDisposition &lt;&gt;  &quot;INB - Previous Lead&quot;,
+CallDisposition &lt;&gt;  &quot;INB - Not Interested&quot;
+)</errorConditionFormula>
+    <errorDisplayField>CallDisposition</errorDisplayField>
+    <errorMessage>Call result must be &quot;INB - &quot;+ Non-Sales Lead, Created Oppty - Unable to Reach, Created Oppty - Contacted, Created Oppty - Warm Rep Transfer, Customer Service - Employer, Customer Service - Employee, Answered/No One on Line, Previous Lead, Not Interested</errorMessage>
+</ValidationRule>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reassign_Category_3_for_Service_Support1</fullName>
+    <active>true</active>
+    <description>If Reassign-Category 1 = Client Level Change-401k, and Reassign-Category 2 = Plan Elections - 401k, then Reassign-Category 3 needs to be filled in before saving the case</description>
+    <errorConditionFormula>AND(RecordTypeId=&quot;012700000001U2z&quot;, 
+ISPICKVAL( Reassign_Category_1__c,&quot;Client Level Change - 401k&quot;), 
+ISPICKVAL( Reassign_Category_2__c ,&quot;Plan Elections - 401k&quot;), 
+ISPICKVAL( Reassign_Category_3__c ,&quot;&quot;))</errorConditionFormula>
+    <errorDisplayField>Reassign_Category_3__c</errorDisplayField>
+    <errorMessage>Please enter value for Reassign Category 3</errorMessage>
+</ValidationRule>

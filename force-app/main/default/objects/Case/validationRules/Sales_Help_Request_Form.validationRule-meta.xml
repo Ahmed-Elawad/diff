@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sales_Help_Request_Form</fullName>
+    <active>true</active>
+    <description>To restrict Sub_type to the specified Profiles and display an Error message when anyone else attempts to submit</description>
+    <errorConditionFormula>AND(
+NOT(BEGINS($Profile.Name,&quot;Core Zone Administration - SB&quot;)),
+NOT(BEGINS($Profile.Name,&quot;HNBF Sales Administration&quot;)),
+NOT(BEGINS($Profile.Name,&quot;HRS Regional Sales Admin - SB&quot;)),
+NOT(BEGINS($Profile.Name,&quot;MMS Sales ZSA - SB&quot;)),
+NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)),
+NOT(BEGINS($Profile.Name,&quot;Core Manager&quot;)),
+NOT(BEGINS($Profile.Name,&quot;HNBF Sales Manager&quot;)),
+NOT(BEGINS($Profile.Name,&quot;HRS PEO Sales Manager&quot;)),
+NOT(BEGINS($Profile.Name,&quot;HRS Sales Manager&quot;)),
+NOT(BEGINS($Profile.Name,&quot;MMS Manager - SB&quot;)),
+NOT(BEGINS($Profile.Name,&quot;NSS Manager&quot;)),
+NOT(BEGINS($Profile.Name,&quot;PC Sales Manager - SB&quot;)),
+NOT(BEGINS($Profile.Name,&quot;NSS Manager&quot;)),
+NOT(CONTAINS($Profile.Name, &apos;Manager&apos;)),
+ISPICKVAL(Sub_Type__c, &apos;Contest Approval (Management Only)&apos;),
+ISNEW()
+)</errorConditionFormula>
+    <errorDisplayField>Sub_Type__c</errorDisplayField>
+    <errorMessage>Contest Approval requests must be submitted by Management.  Please work with your DSM or Zone Manager to have this request submitted.</errorMessage>
+</ValidationRule>

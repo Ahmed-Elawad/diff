@@ -1,0 +1,91 @@
+<apex:page controller="CloneOpportunityController" lightningStylesheets="true">
+	<apex:includeScript value="/support/console/42.0/integration.js"/>
+	<apex:stylesheet value="{!URLFOR($Resource.CloneOpportunity, 'CloneOpportunity.css')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.CloneOpportunity,'CloneOpportunity.js')}"/> 
+	<script type="text/javascript">
+    	function selectAllCheckboxes(obj,receivedInputID){
+            var inputCheckBox = document.getElementsByTagName("input");                  
+            for(var i=0; i<inputCheckBox.length; i++){          
+                if(inputCheckBox[i].id.indexOf(receivedInputID)!=-1){                                     
+                    inputCheckBox[i].checked = obj.checked;
+                }
+            }
+        }
+    </script>
+
+	<apex:form id="clone-form">
+
+		<apex:pageMessages />
+		<div id="statusSpinner">
+			<div class="spinner-background" >
+				&nbsp;
+			</div>
+			<div class="spinner-container">
+				<div class="spinner-box">
+					<img src="/img/loading.gif" class="spinner-gif" />
+					<span class="spinner-text" style="">Cloning Opportunity...</span>
+				</div>
+			</div>
+		</div>
+
+		<apex:pageBlock title="Clone Opportunity" >
+
+			<div class="page-block-section-padded">
+				<apex:pageBlockSection columns="2">
+                    <apex:inputField value="{!clonedOpp.Name}">
+                        <apex:actionSupport event="onclick" action="{!updateProductDisplay}" reRender="displayProductList"/>
+                    </apex:inputField>
+                    <apex:inputField required="true" value="{!clonedOpp.OpportunityType__c}">
+                        <apex:actionSupport event="onclick" action="{!updateProductDisplay}" reRender="displayProductList"/>
+                    </apex:inputField>
+                    <apex:inputField value="{!clonedOpp.CloseDate}">
+                        <apex:actionSupport event="onclick" action="{!updateProductDisplay}" reRender="displayProductList"/>
+                    </apex:inputField>
+                    <apex:inputField value="{!clonedOpp.Employees_Paid_Per_Payroll__c}">
+                        <apex:actionSupport event="onclick" action="{!updateProductDisplay}" reRender="displayProductList"/>
+                    </apex:inputField>
+                    <apex:outputField value="{!clonedOpp.Payroll_Units__c}"/> 
+                    <apex:outputField value="{!clonedOpp.Amount}"/>
+                    <apex:outputField value="{!clonedOpp.Non_Payroll_Units__c}"/>
+                    <apex:inputField value="{!clonedOpp.StageName}">
+                        <apex:actionSupport event="onclick" action="{!updateProductDisplay}" reRender="displayProductList"/>
+                    </apex:inputField>
+                    <apex:inputField value="{!clonedOpp.OwnerId}">
+                        <apex:actionSupport event="onclick" action="{!updateProductDisplay}" reRender="displayProductList"/>
+                    </apex:inputField>
+                    <apex:inputCheckbox label="Clone With Products?" value="{!cloneWithProducts}">
+                        <apex:actionSupport event="onclick" action="{!updateProductDisplay}" reRender="displayProductList"/>
+                    </apex:inputCheckbox>
+                    <apex:inputCheckbox label="Clone Handbook Contact?" value="{!cloneHandbookContact}"/>
+                    <apex:outputPanel id="displayProductList">
+                        <apex:actionRegion rendered="{!showProducts}">
+                            <apex:pageBlockTable value="{!productWrapperList}" var="product">
+                                <apex:column >
+                                    <apex:facet name="header">
+                                        <apex:inputCheckbox onclick="selectAllCheckboxes(this,'inputCheckId')"/>
+                                    </apex:facet>
+                                    <apex:inputCheckbox value="{!product.selected}" id="inputCheckId"/>
+                                </apex:column>
+                                <apex:column value="{!product.productName}" headervalue="Product Name"/>                                
+                                <apex:column headervalue="Payroll Unit">                                      
+                                     <apex:inputText value="{!product.payrolUnit}" id="puText"/>
+                                </apex:column>
+                                <apex:column headervalue="Non Payroll Unit">                                      
+                                     <apex:inputText value="{!product.nonpayrolUnit}" id="npuText"/>
+                                </apex:column>
+                                <apex:column headervalue="Total Price">                                      
+                                     <apex:inputText value="{!product.totalprice}" id="totrev"/>
+                                </apex:column>
+                            </apex:pageBlockTable>
+                        </apex:actionRegion>
+                    </apex:outputPanel>
+				</apex:pageBlockSection>
+			</div>
+			<div class="centered-buttons">
+				<apex:commandButton action="{!cloneOpportunity}" value="Clone" onclick="showLoadingIcon();" oncomplete="hideLoadingIcon();" reRender="clone-form"/>
+				<apex:commandButton onclick="cancel();" value="Cancel" />
+			</div>
+		</apex:pageBlock>
+	</apex:form>
+
+</apex:page>

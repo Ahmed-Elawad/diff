@@ -1,0 +1,358 @@
+<!-- Page for submitting CSA inquiries.
+
+   History
+   -------
+   10/04/2010 Dan Carmen        Increased API version to 19.0
+   06/02/2011 Leslie Hogan      Added additional fields for Comm/Audit Request Tracker
+   10/22/2011 Leslie Hogan      Removed Lori Clemons from Escalation Requests.
+   07/20/2012 Leslie Hogan      Changed Lisa Kouzan to be primary recipient of Escalation Request with Jaime Besio as CC.
+   01/18/2013 Carrie Marciano   Added Lead ID and Prospect Client Name fields as well as criteria that if Request Type is BANKS do not require Lead ID and Prospect Client Name to be populated
+   04/13/2016 Frank Lurz        Added the p4 parameter to EmailAuthor to allow for 3 additional email addresses - Case #19789144
+   08/25/2016 Marciano/Stouffer made Division selection an action so we could not require Sales Rep field when Division was P&C but require it for all others.
+   12/15/2016 Jermaine Stukes   Added Split Opportunity request type
+   04/07/2017 Sunnish Annu      Increased API version to 25.0 and Updated the Sales rep and Splitting Rep Name to get the inactive user values in a new table.
+   02/14/2018 Frank Lurz        Added the BIS ID / Client ID and Sales ID fields
+   03/08/2018 Frank Lurz        Added INTERNAL REFERRALS request type and additional functionality 
+   07/30/2018 Lynn Michels      Changed email addresses that the escalation is sent to
+   11/05/2018 Jermaine Stukes   Added message Case #30659324
+   11/28/2018 Carrie Marciano   Added Comm/Audit to have Branch and Client number required per FT#30994722 
+   05/10/2019 Jacob Hinds       Removing condition for sales rep not required for P+C
+   07/24/2019 Brandon Vidro     Changed 'Core' to 'SMB' - Case 33576940
+   12/09/2019 Jake Hinds        Updated wording on split policy
+   03/10/2019 Saketh Mysa       Changed email addresses that the escalation is sent to
+   01/05/2021 Carrie Marciano   Changed email addresses that the escalation is sent to
+   01/29/2021 Michael Karcz		Modified the submit button to prevent double-save
+   07/23/2023 Pratik Das        APR0139853: Changes to the 'Submit Corporate Commissions Inquiry'
+   05/20/2024 Eric Porter       APR0168566  Added a new field(Fiscal Month) to conditionally render on screen. 
+ -->
+<apex:page Controller="SubmitCSAInquiries2" tabStyle="Support__tab" title="Submit Corporate Commissions Inquiry" id="page">
+    
+  <apex:pageMessages />
+    <apex:includeScript value="/support/console/42.0/integration.js"/>
+
+    <script>
+    function saveConfirmationSave(split, objSaveBtn)
+    {
+        objSaveBtn.disabled = true;
+        objSaveBtn.value = "Saving…";
+        if(split)
+        {
+            alert('Please wait while your request is being submitted. \nYou will be redirected to the support form upon completion.');
+        }
+        doSave();
+    }
+    
+    function saveConfirmationSubmit(split, objSubmitBtn)
+    {
+        objSubmitBtn.disabled = true;
+        objSubmitBtn.value = "Submitting…";
+        if(split)
+        {
+            alert('Please wait while your request is being submitted. \nYou will be redirected to the support form upon completion.');
+        }
+        doSubmit();
+    }
+
+    function selectedUser(userId,userName)
+    {    
+        //alert("userId" + userId);       
+        //alert(document.getElementById("page:form:thePageBlock:section:salesRepSectionItem:salesRep").value);
+        var triggerFrm = document.getElementById('triggeredFrom').value;
+        if(triggerFrm == 'SR')
+        {
+            document.getElementById('page:form:salesRepId').value=userId;
+            document.getElementById('page:form:thePageBlock:section:salesRepSectionItem:salesRep').value=userName;
+        }
+        else
+        if(triggerFrm == 'SSR')
+        {
+            document.getElementById('page:form:splittingsalesRepId').value=userId;
+            document.getElementById('page:form:thePageBlock:section:splittinRepSectionItem:splittingSalesRep').value=userName;
+        }
+        else
+        {
+            document.getElementById('page:form:referringsalesRepId').value=userId;
+            document.getElementById('page:form:thePageBlock:section:referringRepSectionItem:referringRep').value=userName;
+        }
+        document.getElementById('userPopup').style.display='none';
+    }
+
+    function navigateToHomePage()
+    {
+
+        var closeSubtab = function closeSubtab(result) {
+            //Now that we have the tab ID, we can close it
+            if(result.id != null){
+                var tabId = result.id;
+                sforce.console.closeTab(tabId);
+            }
+        };
+
+        sforce.console.getEnclosingTabId(closeSubtab);
+
+
+        ({!$User.UIThemeDisplayed == 'Theme3'}) ? window.parent.location.href='/home/home.jsp' : sforce.one.navigateToURL('#/home');
+    }
+    function resetPage()
+    {
+        ({!$User.UIThemeDisplayed == 'Theme3'}) ? window.parent.location.href='/apex/SubmitCSARequest?sfdc.tabName=01r70000000U8Ga' : document.location.reload(true);
+    }
+
+    function openEmailDialog()
+    {
+        if({!$User.UIThemeDisplayed == 'Theme3'}){
+            window.parent.location.href='/_ui/core/email/author/EmailAuthor?p2_lkid=0037000000c2Dbm&p4=wmcdowell@paychex.com, rseth@paychex.com, mstein@paychex.com &rtype=003&p6=Escalation Request'; //lkouzan@paychex.com,
+        }else{
+            sforce.one.navigateToURL('/_ui/core/email/author/EmailAuthor?p2_lkid=0037000000c2Dbm&p4=wmcdowell@paychex.com, rseth@paychex.com, mstein@paychex.com &rtype=003&p6=Escalation Request'); //lkouzan@paychex.com,
+        }
+    }
+    </script>
+    <apex:form id="form">
+        <apex:pageBlock title="Submit Corporate Commissions Inquiry" id="thePageBlock" mode="edit">
+            <apex:pageBlockButtons >
+                    <apex:commandButton onclick="saveConfirmationSubmit({!split}, this);" value="{!If((setupFound),If((CSAInqSetup.Allow_Attachment__c),'Submit/Add Attachment','Submit'),'Submit')}" 
+                                        rendered="{!IF(CONTAINS($UserRole.Name,'CSA'),False, True)}" />
+                    <apex:commandButton onclick="saveConfirmationSave({!split}, this);" value="{!If((setupFound),If((CSAInqSetup.Allow_Attachment__c),'Save/Add Attachment','Save'),'Save')}" 
+                                        rendered="{!IF(CONTAINS($UserRole.Name, 'CSA'),True,False)}"/>
+					<apex:actionFunction name="doSubmit" action="{!submit}"/>
+					<apex:actionFunction name="doSave" action="{!save}"/>
+                
+                <apex:commandButton action="{!cancel}" value="Cancel" onComplete="navigateToHomePage()"/>
+                <apex:commandButton action="{!cancel}" value="Reset Form" onComplete="resetPage()"/>
+
+               <!-- <apex:commandButton value="Escalation Request" rendered="{!IF(CONTAINS($UserRole.Name,'Region'),True,!IF(CONTAINS($UserRole.Name,'Zone'),True,False))}" onComplete="openEmailDialog()"/>        -->  
+
+       
+            </apex:pageBlockButtons>
+            
+            <apex:pageBlockSection columns="1" >
+                <apex:pageblockSectionItem >
+                    <apex:outputLabel value="Request Type" />            
+                    <apex:actionRegion immediate="True" >
+                        <apex:inputField value="{!CSAInq.Request_Type__c}">
+                            <apex:actionSupport event="onchange" action="{!setRequestType}" rerender="thePageBlock" status="Type"/>
+                        </apex:inputField>
+                        <apex:actionStatus startText="Loading questions, please wait ..." id="Type"/>
+                    </apex:actionRegion>
+                </apex:pageblockSectionItem>
+            </apex:pageBlockSection>    
+            
+            <apex:pageBlockSection title="{!CSAInq.Request_Type__c}" columns="1" rendered="{!setupFound}" id="section">
+                <apex:inputField rendered="{!cSAInqSetup.Payroll_Specialist__c}" required="True" value="{!CSAInq.Payroll_Specialist__c}" /> 
+                <apex:inputField rendered="{!cSAInqSetup.Payroll_Spec_Branch_No__c}" required="True" value="{!CSAInq.Payroll_Spec_Branch_No__c}" />
+                <apex:inputField rendered="{!cSAInqSetup.SOAR_Referral_Type__c}" required="True" value="{!CSAInq.SOAR_Referral_Type__c}" />
+                <apex:pageBlockSectionItem rendered="{!cSAInqSetup.Division__c}">
+                   <apex:outputLabel for="division" value="{!IF((cSAInq.Request_Type__c == 'INTERNAL REFERRALS'),'Division Referring To ','Division ')}"/>
+                    <apex:actionRegion immediate="True" >
+                        <apex:inputField id="division" required="True" value="{!CSAInq.Division__c}">
+                            <apex:actionSupport event="onchange" rerender="thePageBlock" status="status">
+                            </apex:actionSupport>
+                        </apex:inputField>
+                    </apex:actionRegion> 
+                </apex:pageBlockSectionItem>
+                <apex:inputField rendered="{!cSAInqSetup.Product_Picklist_Single__c}" label="Product" required="{!IF(cSAInq.Request_Type__c == 'INTERNAL REFERRALS',TRUE,FALSE)}" value="{!CSAInq.Product_Picklist_Single__c}"/>
+                <apex:inputField rendered="{!cSAInqSetup.Submitted_By__c}" required="True" value="{!CSAInq.Submitted_By__c}" />
+                <apex:pageBlockSectionItem rendered="{!cSAInqSetup.Bank_Level__c}" >
+                    <apex:outputLabel value="Bank Level" for="bankLevel"/>
+                    <apex:actionRegion immediate="True" >
+                        <apex:inputField required="True" id="bankLevel" value="{!CSAInq.Bank_Level__c}"> 
+                            <apex:actionSupport event="onchange" rerender="thePageBlock" status="status">
+                            </apex:actionSupport>
+                        </apex:inputField>
+                        <apex:actionStatus startText="applying value..." id="status"/>
+                    </apex:actionRegion> 
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!showTier1}" >
+                    <apex:outputLabel value="Tier 1 Bank Name"/>
+                    <apex:inputField required="True" value="{!CSAInq.Tier_1_Bank__c}"/> 
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!showTier2}">
+                    <apex:outputLabel value="Tier 2 Bank Name"/>
+                    <apex:inputField required="True" value="{!CSAInq.Tier_2_Bank__c}"/> 
+                </apex:pageBlockSectionItem>
+                
+                <apex:inputField rendered="{!cSAInqSetup.Lead_ID__c}" required="{!cSAInqSetup.LeadIdRequired__c}" value="{!CSAInq.Lead_ID__c}" />
+                <apex:inputField rendered="{!cSAInqSetup.Referral_Bank_Name__c}" required="true" value="{!CSAInq.Referral_Bank_Name__c}" />
+                <apex:inputField rendered="{!cSAInqSetup.Affected_Role__c}" required="True" value="{!CSAInq.Affected_Role__c}" />
+                <apex:inputField rendered="{!cSAInqSetup.Bonus_Type__c}" required="True" value="{!CSAInq.Bonus_Type__c}" />
+                <apex:inputField rendered="{!cSAInqSetup.Bonus_Expected__c}" required="True" value="{!CSAInq.Bonus_Expected__c}" />
+                <apex:inputField rendered="{!cSAInqSetup.Bonus_Received__c}" required="True" value="{!CSAInq.Bonus_Received__c}" />
+                
+                <apex:inputField rendered="{!cSAInqSetup.Comp_Plan_Type__c}" required="True" value="{!CSAInq.Comp_Plan_Type__c}" />
+                
+                <apex:inputField rendered="{!cSAInqSetup.Unit_Type__c}"  required="True" value="{!CSAInq.Unit_Type__c}"/>         
+                
+                <apex:inputField rendered="{!cSAInqSetup.Affected_Unit__c}" value="{!CSAInq.Affected_Unit__c}"/>
+                <apex:inputField rendered="{!cSAInqSetup.Affected_Commission__c}" required="True" value="{!CSAInq.Affected_Commission__c}"/>
+                <apex:inputField rendered="{!cSAInqSetup.Affected_Revenue__c}" required="True" value="{!CSAInq.Affected_Revenue__c}"/>
+                
+                <apex:inputField rendered="{!cSAInqSetup.RECOGNITION_TYPE__c}" required="True" value="{!CSAInq.RECOGNITION_TYPE__c}" />
+                
+                <apex:inputField rendered="{!cSAInqSetup.Report_Status__c}" required="True" value="{!CSAInq.Report_Status__c}" />
+                <apex:inputField rendered="{!cSAInqSetup.Report_Name__c}" required="True" value="{!CSAInq.Report_Name__c}" />
+                
+                <apex:inputField rendered="{!cSAInqSetup.Term_ed_Rep__c}" value="{!CSAInq.Term_ed_Rep__c}" />   
+                <apex:inputField rendered="{!cSAInqSetup.Original_Units__c}" required="True" value="{!CSAInq.Original_Units__c}" />                       
+                <apex:inputField rendered="{!cSAInqSetup.New_Units__c}" required="True" value="{!CSAInq.New_Units__c}" />                                 
+                <apex:inputField rendered="{!cSAInqSetup.DSM__c}"  required="True" value="{!CSAInq.DSM__c}"/>                
+                <apex:inputField rendered="{!cSAInqSetup.RSM__c}" required="True" value="{!CSAInq.RSM__c}"/>                
+                
+                <apex:inputField rendered="{!cSAInqSetup.Order_Number__c}" value="{!CSAInq.Order_Number__c}"/>  
+                <apex:inputField rendered="{!cSAInqSetup.Referral_Type__c}" required="True" value="{!CSAInq.Referral_Type__c}"/>             
+                <apex:inputField rendered="{!cSAInqSetup.Processing_Branch__c}" value="{!CSAInq.Processing_Branch__c}"/>                
+                <apex:inputField rendered="{!cSAInqSetup.Branch_Number__c}" required="{!IF(OR(cSAInq.Request_Type__c == 'SPLIT OPPORTUNITY',cSAInq.Request_Type__c = 'INTERNAL REFERRALS',cSAInq.Request_Type__c = 'COMM/AUDIT - ** For Monthly Audit Use Only **',cSAInq.Request_Type__c = 'DISTRICT CREDIT REASSIGNMENT'),TRUE,FALSE)}" value="{!CSAInq.Branch_Number__c}"/>
+                <apex:inputField rendered="{!cSAInqSetup.Client_Number__c}" required="{!IF(OR(cSAInq.Request_Type__c == 'SPLIT OPPORTUNITY',cSAInq.Request_Type__c = 'INTERNAL REFERRALS',cSAInq.Request_Type__c = 'COMM/AUDIT - ** For Monthly Audit Use Only **',cSAInq.Request_Type__c = 'DISTRICT CREDIT REASSIGNMENT'),TRUE,FALSE)}" value="{!CSAInq.Client_Number__c}"/>
+                <apex:inputField rendered="{!cSAInqSetup.Prospect_Client_Name__c}" required="{!IF((CSAInq.Request_Type__c!='BANKS'),TRUE,FALSE)}" value="{!CSAInq.Prospect_Client_Name__c}"/>
+                <!--APR0139853: Changes to the 'Submit Corporate Commissions Inquiry' BAU Start-->
+                <apex:inputField rendered="{!cSAInqSetup.Related_Opportunity__c}"  value="{!CSAInq.Opportunity_Name__c}"/>
+                <!--APR0139853: Changes to the 'Submit Corporate Commissions Inquiry' BAU End-->
+                <apex:inputField rendered="{!cSAInqSetup.BISID_ClientID__c}" value="{!CSAInq.BISID_ClientID__c}"/>
+                <apex:inputField rendered="{!cSAInqSetup.Sales_ID__c}" value="{!CSAInq.Sales_ID__c}"/>
+                <apex:inputField rendered="{!IF((cSAInq.Request_Type__c != 'SPLIT OPPORTUNITY' && cSAInqSetup.Product_Picklist__c),TRUE,FALSE)}" required="{!IF((cSAInq.Request_Type__c != 'SPLIT OPPORTUNITY' && cSAInqSetup.Product_Picklist__c),TRUE,FALSE)}" value="{!CSAInq.Product_Picklist__c}"/>
+                <apex:inputField rendered="{!cSAInqSetup.Client_Start_Date__c}" value="{!CSAInq.Client_Start_Date__c}"/>  
+                <!-- APR0168566 New fiscal Month Field -->
+                <apex:inputField rendered="{!IF(  (CONTAINS($Profile.Name, 'HRS PEO Centric Administration'))||(CONTAINS($Profile.Name, 'HRS PEO Centric Sales - SB'))||(CONTAINS($Profile.Name, 'HRS PEO Sales Manager')),TRUE, FALSE)}" value="{!CSAInq.Fiscal_Month__c}"/>
+                <!-- APR0168566 New fiscal Month Field -->
+                <apex:inputField rendered="{!cSAInqSetup.Product_Start_Date__c}" required="{!IF(cSAInq.Request_Type__c == 'INTERNAL REFERRALS',TRUE,FALSE)}" value="{!CSAInq.Product_Start_Date__c}"/>              
+                <apex:inputField rendered="{!cSAInqSetup.Commissionable_Month__c}" required="{!IF(OR(cSAInq.Request_Type__c == 'SPLIT OPPORTUNITY',cSAInq.Request_Type__c = 'INTERNAL REFERRALS',cSAInq.Request_Type__c = 'DISTRICT CREDIT REASSIGNMENT'),TRUE,FALSE)}" value="{!CSAInq.Commissionable_Month__c}"/>
+                <apex:inputField rendered="{!cSAInqSetup.Commissionable_Year__c}" required="{!IF(cSAInq.Request_Type__c == 'INTERNAL REFERRALS',TRUE,FALSE)}" value="{!CSAInq.Commissionable_Year__c}"/> 
+                <apex:inputField rendered="{!cSAInqSetup.Suggested_Revenue__c}" value="{!CSAInq.Suggested_Revenue__c}"/>
+                <apex:inputField rendered="{!cSAInqSetup.District_to_be_Credited__c}" required="{!IF(cSAInq.Request_Type__c == 'DISTRICT CREDIT REASSIGNMENT',TRUE,FALSE)}" value="{!cSAInq.District_to_be_Credited__c}"/> 
+                
+                <apex:inputField rendered="{!cSAInqSetup.Web_Request_Type__c}" required="True" value="{!CSAInq.Web_Request_Type__c}"/>
+                <apex:inputField rendered="{!cSAInqSetup.Request_Type__c}" required="True" value="{!CSAInq.Request_Type__c}" />
+                <apex:inputField rendered="{!cSAInqSetup.URL__c}" required="True" Style="width:400px;" value="{!CSAInq.URL__c}" />
+                <apex:inputField rendered="{!cSAInqSetup.Additional_URLs_Affected__c}" Style="width:400px;" value="{!CSAInq.Additional_URLs_Affected__c}" />
+                <apex:inputField rendered="{!cSAInqSetup.Business_Justification__c}" Style="width:400px;" required="True" value="{!CSAInq.Business_Justification__c}" />
+                <apex:inputField rendered="{!cSAInqSetup.Bonus_Effected__c}" value="{!CSAInq.Bonus_Effected__c}" />              
+
+                <apex:pageBlockSectionItem rendered="{!cSAInqSetup.Sales_Rep__c}" id="salesRepSectionItem">
+                    <apex:outputLabel value="Sales Rep"/>
+                    <apex:outputPanel id="salesRepPanel">
+                           <div class = "requiredInput">
+                           <div class = "requiredBlock" style="display:'block'"></div>                    
+                        <apex:inputText label="Sales Rep"  id="salesRep" required="true" html-readonly="true" title="Please click on the Lookup (Magnify Glass) Icon to search for and select the rep"/> 
+                        <!-- input type="button" onclick="document.getElementById('userPopup').style.display='block';document.getElementById('triggeredFrom').value='SR';" value="Search"/ -->
+                        <a href="#" onclick="document.getElementById('userPopup').style.display='block';document.getElementById('triggeredFrom').value='SR';document.getElementById('j_id0:j_id125:j_id128:j_id129:j_id130:searchField').value = document.getElementById('j_id0:j_id28:thePageBlock:j_id41:j_id96:salesRep').value;document.getElementById('searchButton').click();">
+                            <img src="/img/s.gif" alt="Sales Rep Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';this.className = 'lookupIconOn';" title="Sales Rep User Lookup (New Window)"/>
+                        </a>
+                          </div>                        
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!cSAInqSetup.Splitting_Rep_Name__c}" id="splittinRepSectionItem">
+                    <apex:outputLabel value="Splitting Rep Name"/>
+                    
+                    <apex:outputPanel >
+                        <div class = "requiredInput">
+                            <div class = "requiredBlock" style="display:{!IF(cSAInq.Request_Type__c == 'SPLIT OPPORTUNITY','block','none')}"></div>
+                            <apex:inputText id="splittingSalesRep" label="Splitting Rep Name" required="{!(cSAInq.Request_Type__c == 'SPLIT OPPORTUNITY')}" html-readonly="true" title="Please click on the Lookup (Magnify Glass) Icon to search for and select the rep"/> 
+                            <!-- input type="button" onclick="document.getElementById('userPopup').style.display='block';document.getElementById('triggeredFrom').value='SSR';" value="Search"/ -->
+                            <a href="#" onclick="document.getElementById('userPopup').style.display='block';document.getElementById('triggeredFrom').value='SSR';document.getElementById('j_id0:j_id125:j_id128:j_id129:j_id130:searchField').value = document.getElementById('j_id0:j_id28:thePageBlock:j_id41:j_id101:splittingSalesRep').value;document.getElementById('searchButton').click();">
+                                <img src="/img/s.gif" alt="Sales Rep Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';this.className = 'lookupIconOn';" title="Splitting Rep User Lookup (New Window)"/>
+                            </a>
+                        </div>                       
+                    </apex:outputPanel>
+                    
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem rendered="{!cSAInqSetup.Referring_Rep__c}" id="referringRepSectionItem">     
+                    <apex:outputLabel value="Referring Rep Name"/>      
+                    <apex:outputPanel >     
+                           <div class = "requiredInput">        
+                           <div class = "requiredBlock" style="display:{!IF(cSAInq.Request_Type__c == 'INTERNAL REFERRALS','block','none')}"></div>     
+                        <apex:inputText id="referringRep" label="Referring Rep Name" required="{!(cSAInq.Request_Type__c == 'Referrals')}" html-readonly="true" title="Please click on the Lookup (Magnify Glass) Icon to search for and select the rep"/>         
+                        <!-- input type="button" onclick="document.getElementById('userPopup').style.display='block';document.getElementById('triggeredFrom').value='RSR';" value="Search"/ -->     
+                        <a href="#" onclick="document.getElementById('userPopup').style.display='block';document.getElementById('triggeredFrom').value='RSR';document.getElementById('j_id0:j_id125:j_id128:j_id129:j_id130:searchField').value = document.getElementById('j_id0:j_id28:thePageBlock:j_id41:j_id101:referringRep').value;document.getElementById('searchButton').click();">     
+                            <img src="/img/s.gif" alt="Sales Rep Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';this.className = 'lookupIconOn';" title="Referring Rep User Lookup (New Window)"/>   
+                        </a>        
+                 </div>                             
+                    </apex:outputPanel>     
+                </apex:pageBlockSectionItem>
+
+                <apex:inputField rendered="{!cSAInqSetup.TRR__c}" value="{!CSAInq.TRR__c}"/>  
+                
+                <apex:inputField rendered="{!cSAInqSetup.District_Number__c}" required="True" value="{!CSAInq.District_Number__c}"/>
+                <apex:inputField rendered="{!cSAInqSetup.District__c}" required="True" value="{!CSAInq.District__c}"/>
+                <apex:inputField rendered="{!cSAInqSetup.Zone_Number_Picklist__c}" required="True" value="{!CSAInq.Zone_Number_Picklist__c}"/>
+                <apex:inputField rendered="{!cSAInqSetup.Action_Add_Modify__c}" required="True" value="{!CSAInq.Action_Add_Modify__c}"/>
+                <apex:inputField rendered="{!cSAInqSetup.Reason_for_Request__c}" required="True" value="{!CSAInq.Reason_for_Request__c}"/>
+                <apex:inputField rendered="{!cSAInqSetup.Question_Comment__c}" Style="width:400px;" value="{!CSAInq.Qstion_Cment__c}"/>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel rendered="{!cSAInqSetup.Approved_Reject_Status__c}" style="text-align:center;font-weight:bold;" value="*** For Corporate Use Only ***"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:inputField rendered="{!cSAInqSetup.Approved_Reject_Status__c}" value="{!CSAInq.Approved_Reject_Status__c}"/>
+                <apex:inputField rendered="{!cSAInqSetup.Approved_Revenue__c}" value="{!CSAInq.Approved_Revenue__c}"/>
+                <apex:inputField rendered="{!cSAInqSetup.Reason_Code__c}" value="{!CSAInq.Reason_Code__c}"/>
+                <apex:inputField rendered="{!cSAInqSetup.Client_Platform__c}" value="{!CSAInq.Client_Platform__c}"/>
+                <apex:inputField rendered="{!cSAInqSetup.Corporate_Comment__c}" Style="width:400px;" value="{!CSAInq.Corporate_Comment__c}"/> 
+                 <apex:pageBlockSectionItem >
+                    <apex:outputLabel for="products" rendered="{!IF((cSAInq.Request_Type__c == 'SPLIT OPPORTUNITY'&& CSAInq.Division__c == 'HRS'),TRUE,FALSE)}" value="Product "/>
+                    <apex:selectList size="1" id="products" required="{!IF((cSAInq.Request_Type__c == 'SPLIT OPPORTUNITY'&& CSAInq.Division__c == 'HRS'),TRUE,FALSE)}" rendered="{!IF((cSAInq.Request_Type__c == 'SPLIT OPPORTUNITY'&& CSAInq.Division__c == 'HRS'),TRUE,FALSE)}" value="{!CSAInq.Product_Picklist__c}">
+                        <apex:selectOptions value="{!Products}"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:outputText rendered="{!IF(cSAInq.Request_Type__c == 'SPLIT OPPORTUNITY',TRUE,FALSE)}">
+                    <p align="Left"><font color="red">
+                        <b>Please Note Per Policy:<br/>
+                            <br/>All Revenue will be split 50/50.<br/>
+                            <br/>All Units will be split 50/50.<br/>
+                            <br/>Splits should not be submitted in place of a referral. All referrals must be submitted using the referral process.<br/>                      
+                        </b></font></p>
+                </apex:outputText>
+                <apex:outputText rendered="{!IF(cSAInq.Request_Type__c == 'INTERNAL REFERRALS',TRUE,FALSE)}">
+                    <p align="Left"><font color="red">
+                        <b>Please Note Per Policy:<br/>
+                            <br/>A referral must be submitted for each product you are expecting credit on.  
+                            This includes any opt-in product within a bundle.<br/></b></font></p>
+                </apex:outputText>
+                <apex:outputText rendered="{!IF(cSAInq.Request_Type__c == 'DISTRICT CREDIT REASSIGNMENT',TRUE,FALSE)}">
+                    <p align="Left"><font color="red">
+                        <b>Please Note Per Policy:<br/>
+                            <!-- <br/>The District Credit Reassignment needs to be submitted by the District losing the revenue.<br/>
+                            <br/>When a Sales Representative is reassigned by the Company to a new district within the same division the units and or revenue will follow the Sales Representative.<br/>
+                            <br/>When a Sales Representative chooses to make a geographic move any units and or revenue from their previous district will be returned to the district assigned at original time of sale.<br/>
+                            <br/>When a Sales Representative transfers to a new division the units and or revenue sold while in the previous division will be credited to the district from the original division.<br/> -->
+                            <br/>This form needs to be submitted by the District losing the revenue ONLY for the below scenarios:<br/>
+                            <br/>When a Sales Representative chooses to make a geographic move, any units and/or revenue from their previous district will be returned to that district via a House Account adjustment through this process.<br/>
+                            <br/>When a Sales Representative transfers to a new division, the units and/or revenue sold while in the previous division will be credited to the original division's district and the rep will be compensated through Division Transfer credit as a separate commission only payment based on their old role.<br/>
+                        </b></font></p>
+                </apex:outputText>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:inputText id="salesRepId" value="{!CSAInq.Sales_Rep__c}" style="display:none"/>
+        <apex:inputText value="{!CSAInq.Splitting_Rep_Name__c}" id="splittingsalesRepId" style="display:none"/> 
+        <apex:inputText value="{!CSAInq.Referring_Rep__c}" id="referringsalesRepId" style="display:none"/> 
+    </apex:form>
+    <apex:form >
+        <input type="text" id="triggeredFrom" value="" style="display:none"/>
+        <apex:actionFunction action="{!searchUser}" id="search" name="search" reRender="results"/>
+        <div style="display:none" id="userPopup">
+            <div style="position:fixed;top:0px;left:0px;width:100%;height:100%;opacity:0.8;background-color:grey;z-index:500"/>
+            <div style="position:fixed;top:20%;left:10%;width:50%;height:70%;z-index:1000">
+            <apex:pageBlock >
+                <apex:pageBlockSection columns="3">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Search"/>
+                        <apex:inputText id="searchField" value="{!searchString}" title="Search"/>
+                    </apex:pageBlockSectionItem>
+                    <input type="button" value="Search" id="searchButton" onclick="search()"/>
+                    <input type="button" value="Close" onclick="document.getElementById('userPopup').style.display='none';"/>
+                </apex:pageBlockSection>
+
+                <apex:pageBlockTable value="{!results}" var="r" id="results">
+                    <apex:column value="{!r.name}" headerValue="Full Name" onclick="selectedUser('{!r.id}','{!JSENCODE(r.name)}')"/>
+                    <apex:column value="{!r.Username}" headerValue="User Name" onclick="selectedUser('{!r.id}','{!JSENCODE(r.name)}')"/>
+                    <apex:column value="{!r.Email}" headerValue="Email"/>
+                    <apex:column value="{!r.IsActive}" headerValue="Is Active"/>
+                    <apex:column value="{!r.Person_ID_Number__c}" headerValue="Rep ID"/>
+                    <!-- apex:column value="r.fullname" headerValue="Full Name"/ -->
+                </apex:pageBlockTable>
+            </apex:pageBlock>
+            </div>
+        </div>
+    </apex:form>
+</apex:page>

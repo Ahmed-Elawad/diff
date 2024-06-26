@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BeneTrac_EDI_QR_Cases_rqd_fields</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND
+(
+
+ISPICKVAL( Status, &quot;Complete&quot;),
+RecordType.Id = &quot;0120g000000chkx&quot;,
+ISBLANK(Contact_Name__c),
+ISBLANK(Production_Date__c),
+ISBLANK(Ready_for_Test_Date__c),
+ISPICKVAL(Connection_Type__c,&quot;&quot;)
+)</errorConditionFormula>
+    <errorMessage>Below fields are required before completing this case.
+Contact Name,
+Production Date
+Ready for Test Date
+Connection Type</errorMessage>
+</ValidationRule>

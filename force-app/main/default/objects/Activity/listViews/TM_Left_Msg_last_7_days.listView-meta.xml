@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TM_Left_Msg_last_7_days</fullName>
+    <columns>TASK.SUBJECT</columns>
+    <columns>TASK.WHO_NAME</columns>
+    <columns>TASK.WHAT_NAME</columns>
+    <columns>TASK.DUE_DATE</columns>
+    <columns>TASK.STATUS</columns>
+    <columns>TASK.LAST_UPDATE</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>TASK.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Task.MMSTaskRecordType</value>
+    </filters>
+    <filters>
+        <field>TASK.SUBJECT</field>
+        <operation>equals</operation>
+        <value>Left Voicemail</value>
+    </filters>
+    <filters>
+        <field>TASK.TYPE</field>
+        <operation>equals</operation>
+        <value>Telemarketing</value>
+    </filters>
+    <filters>
+        <field>TASK.DUE_DATE</field>
+        <operation>equals</operation>
+        <value>LAST_N_DAYS:7</value>
+    </filters>
+    <label>TM - Left Msg - last 7 days</label>
+    <sharedTo>
+        <group>MMS</group>
+    </sharedTo>
+</ListView>

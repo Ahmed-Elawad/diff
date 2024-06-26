@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Previous_distribution_trade_date</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name, &quot;System Admin&quot;)),
+OR($Profile.Name = &quot;2008-09 HRS 4S Operations&quot;,$Profile.Name = &quot;2008-09 HRS 4S Operations B&quot;,$Profile.Name =&quot;2008-09 HRS 4S Service Manager&quot;),
+
+
+
+IF(RecordType.Name = &quot;HRS 4S Manual Trade&quot;,
+
+
+IF(OR(ISPICKVAL( Transaction_Code__c,&apos;Correction&apos;),ISPICKVAL(Transaction_Code__c,&apos;Reversal&apos;)), ISBLANK(Previous_Distribution_Trade_Date__c),false),False))</errorConditionFormula>
+    <errorMessage>Correction or Reversal, the Previous Distribution Trade Date is required.</errorMessage>
+</ValidationRule>

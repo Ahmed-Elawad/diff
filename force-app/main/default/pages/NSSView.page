@@ -1,0 +1,139 @@
+<!-- Page to view only partner information
+
+   History
+   -------
+   07/21/2014 Dan Carmen      Created 
+   12/10/2014 Dan Carmen   Change field mapped to start date for assets
+   11/03/2016 Dan Carmen   Changes to the form to make it more usable
+
+ -->
+<apex:page controller="NSSViewController"
+           id="nssViewPage"
+           showHeader="false"
+           tabStyle="Account"
+           sidebar="false"
+           extensions="NSSViewRemoteActions">
+
+    <style>
+      tr.dataRow {
+         background-color:white;
+      }
+      tr.dataRow:hover {
+         background-color: #e3f3ff;
+      }
+    </style>
+
+    <apex:includeScript value="{!$Resource.buttonsEnabledJs}" />
+    <script type="text/javascript">
+       handleGetPartners = function() {
+          // get the id to send
+          var idToSend = "{!objectId}";
+          var listType = document.getElementById("partnerCheckbox").checked;
+          //alert("idToSend="+idToSend+" listType="+listType);
+          // call the @RemoteAction method
+          document.getElementById("responseErrors").innerHTML = "Loading Territory Reps...";
+          Visualforce.remoting.Manager.invokeAction( '{!$RemoteAction.NSSViewRemoteActions.getReferralPartners}', idToSend,listType, handlePartnerResult );
+
+       } // handleGetPartners
+
+       handlePartnerResult = function(results, event) {
+          // make sure @RemoteAction has completed - event.status should be true
+          if (event.status) {
+             if (event.type == "exception") {
+                document.getElementById("responseErrors").innerHTML = event.message;
+             } else {
+                document.getElementById("responseErrors").innerHTML = "";
+                var header = document.getElementById("partnerTableHeader"), headerHtml=[];
+                headerHtml.push("<tr><th>Partner Type</th><th>Refer To</th><th>Phone</th></tr>");
+                header.innerHTML = headerHtml.join("");
+                
+                var container = document.getElementById("partnerResultsTable"), html=[];
+                for (var i=0, j=results.length; i<j; i++) {
+                   html.push("<tr class='dataRow'>");
+                   html.push("<td class='dataCell'>"+results[i].partnerType+"</td>");
+                   html.push("<td class='dataCell'>"+results[i].referTo+"</td>");
+                   html.push("<td class='dataCell'>"+results[i].phone+"</td>");
+                   html.push("</tr>");
+                } // for
+                container.innerHTML = html.join("");
+             }
+          }
+       } // handlePartnerResult
+       
+       document.addEventListener("DOMContentLoaded", function(event) {
+         handleGetPartners();
+       });
+
+    </script>
+
+
+   <!--  *************   ERROR BLOCK   *************** -->
+  <apex:pageBlock id="ErrorBlock" rendered="{!NOT(objectIdIsValid)}">
+     <apex:pageMessages />
+     
+  </apex:pageBlock>
+  
+  <apex:form id="displayForm">
+  <!-- **************** Main Display Block **************** -->
+  <apex:pageBlock id="DisplayBlock" rendered="{!objectIdIsValid}">
+     <apex:pageMessages />
+
+     <!--  ************   Key information  ***************** -->
+     <apex:pageBlockSection id="KeyInfo" rendered="{!showKeyInfo}" columns="1" collapsible="false" title="Key Prospect Info">
+        <apex:outputPanel rendered="{!hasOwnershipMsg}">
+           <apex:outputText style="color:black; font-weight: bold; font-size: {!ownershipFontSize}; background-color:{!ownershipColor}" value="{!ownershipMsg}" />
+        </apex:outputPanel>
+         <apex:pageBlockSectionItem rendered="{!hasSensitivities}">
+            <apex:outputLabel value="Sensitivities"/>
+            <apex:outputText value="{!sensitivityList}" />
+         </apex:pageBlockSectionItem>
+     </apex:pageBlockSection>     
+
+     <!--  ************   Account information  ***************** -->
+
+     <apex:actionRegion >
+     <apex:pageBlockSection id="AccountSection" rendered="{!isObjContact}" title="Prospect-Client Information" columns="2">
+        <apex:inputField value="{!acct.BillingStreet}" />
+        <apex:inputField value="{!acct.ShippingStreet}" />
+
+        <apex:inputField value="{!acct.BillingCity}" />
+        <apex:inputField value="{!acct.ShippingCity}" />
+
+        <apex:inputField value="{!acct.BillingState}" />
+        <apex:inputField value="{!acct.ShippingState}" />
+
+        <apex:inputField value="{!acct.BillingPostalCode}" />
+        <apex:inputField value="{!acct.ShippingPostalCode}" />
+
+        <apex:inputField value="{!acct.Frequency__c}" />
+        <apex:inputField value="{!acct.NumberOfEmployees}" />
+
+        <apex:inputField value="{!acct.Current_Prior_Method__c}" />
+        <apex:inputFIeld value="{!acct.PEOLeasing__c}" />
+
+        <apex:pageBlockSectionItem />
+
+        <apex:outputPanel >
+           <apex:commandButton value="Save Prospect-Client Changes" action="{!saveRecordChanges}" rerender="AccountSection" status="saveAccountStatus" />
+           <apex:actionStatus startText="Saving Prospect-Client changes..." id="saveAccountStatus"/>
+        </apex:outputPanel>
+     </apex:pageBlockSection>
+     </apex:actionRegion>
+
+    <apex:pageBlockSection rendered="{!AND(showMainForm,NOT(showSubmitReferralForm))}" collapsible="true" id="ReferralPartnerSection2" title="Territory Reps for {!zipCodeToUse}" columns="1">
+        <apex:outputText rendered="{!OR(isObjContact,isObjAccount)}" value="****Note: The shipping zip code determines the rep****" />
+        <apex:outputText id="partnerLoadStatus" value=""/>
+       <div id="responseErrors"> </div>
+       <table class="list" cellpadding="0" cellspacing="0">
+          <thead id="partnerTableHeader"></thead>
+          <tfoot></tfoot>
+          <tbody id="partnerResultsTable"></tbody>
+       </table>
+       
+       <input type="checkbox" id="partnerCheckbox" value="false" onclick="handleGetPartners();"></input><label for="partnerCheckbox">Show All Partners?</label>
+    </apex:pageBlockSection>
+
+  </apex:pageBlock>
+  
+  </apex:form>
+</apex:page>

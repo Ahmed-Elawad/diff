@@ -1,0 +1,35 @@
+<aura:component controller="PEOGettingStartedKnowledgeController" implements="forceCommunity:availableForAllPageTypes,force:appHostable,flexipage:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,lightning:isUrlAddressable,lightning:utilityItem,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="public">
+	<aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <aura:attribute name='showPageTitle' type='Boolean' />
+    
+    <aura:attribute name='knowledgeArticles' type='List' />
+    <aura:attribute name='knowledgeArticleMap' type='Map' />
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="showList" type="Boolean"/>
+    <aura:attribute name='selectedArticle' type='Knowledge__kav'/>
+    <div class="bodyCls">
+        <aura:if isTrue="{!v.showList}">
+            <div class="slds-box">
+                <aura:if isTrue="{!v.showPageTitle}"><h1 class="knowledgeHeader">Document Templates and Examples</h1></aura:if>
+                <aura:iteration items="{!v.knowledgeArticles}" var="article">
+                    <div class="titleContainer" data-id="{!article.Title}" onclick="{!c.getChild}">
+                    	<ui:outputtext class="knowledgeTitle slds-m-top_medium" value="{!article.Title}" click="{!c.goToArticle}"/>
+                    </div>
+                    
+                    <!--<hr/>-->
+                </aura:iteration>
+                <!--<lightning:datatable keyField="id" data="{!v.knowledgeArticles}" columns="{! v.columns }" hideCheckboxColumn="true"/>-->
+            </div>
+            <aura:set attribute="else">
+                <div class="slds-box">
+                    <h1 class="knowledgeHeader">{!v.selectedArticle.Title}</h1>
+                    <div style="font-size:12px; font-family: Graphik-Regular-Web;">
+                        <lightning:formattedRichText value="{!v.selectedArticle.Article_Body__c}"/><br/><br/></div>
+                    <div class="footer">
+                    	<lightning:button class="customButton" variant="brand" label="Go Back" onclick="{!c.goToList}"/>
+                    </div>
+                </div>
+            </aura:set>
+        </aura:if>
+    </div>
+</aura:component>

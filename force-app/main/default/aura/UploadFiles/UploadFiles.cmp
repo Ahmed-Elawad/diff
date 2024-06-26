@@ -1,0 +1,1607 @@
+<aura:component controller="CommunityFileUploadController" implements="force:appHostable" access="global">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.setupUpload}"/>
+    <aura:attribute name='init' type='Boolean' default="false" />
+    <aura:attribute name="currentAccount" type="Object"/>
+    <aura:attribute name="targetId" type="String"/>
+    <aura:attribute name="checklist" type="Object"/>
+    <aura:attribute name="WCFastPassSelected" type="Boolean"/>
+    <aura:attribute name='disableFilesUpload' type='boolean'/>
+    <aura:attribute name='disableMedicalUpload' type='boolean'/>
+    <aura:attribute name='disableWCUpload' type='boolean'/>
+    <aura:attribute name='disableCensus' type='boolean' default="false" />
+    <aura:attribute name="readOnlyString" type="String" default="" />
+    <aura:attribute name='parentAccountToCurrentAccount' type='String' />
+    <aura:attribute name="tabId" type="String" default="one"/>
+    <aura:attribute name="tabOption" type="String"/>
+    <aura:attribute name='isCommunityUser' type='boolean' default="false"/>
+    <!--Code refactoring: new attributes created:start-->
+    <aura:attribute name='isMedPrequal' type='boolean'  default="false"/>
+    <aura:attribute name='censusRequired' type='boolean' default="false"/>
+    <aura:attribute name='claimsReportRequired' type='boolean' default="false"/>
+    <aura:attribute name='hlthInsRenwReqd' type='boolean' default="false"/>
+    <aura:attribute name='hlthInsSummReqd' type='boolean' default="false"/>
+    <aura:attribute name='hlthInvReqd' type='boolean' default="false"/>
+    <aura:attribute name='lossRunsReqd' type='boolean' default="false"/>
+    <aura:attribute name='payrollRegReqd' type='boolean' default="false"/>
+    <aura:attribute name='suiReqd' type='boolean' default="false"/>
+    <aura:attribute name='wcDecReqd' type='boolean' default="false"/>
+    <aura:attribute name='wcReqd' type='boolean' default="false"/>
+    <aura:attribute name='wcRtNPrcReqd' type='boolean' default="false"/>
+    <aura:attribute name='misMedReqd' type='boolean' default="false"/>
+    <aura:attribute name='misWCReqd' type='boolean' default="false"/>
+    <aura:attribute name='AddntlDocsRqd' type='boolean' default="false"/>
+    <aura:attribute name='medInvReq' type='boolean' default="false"/>
+    <aura:attribute name='benefitSummReq' type='boolean' default="false"/>
+    <aura:attribute name='payrollReportReq' type='boolean' default="false"/>
+    <aura:attribute name="uploadParentPEOChecklist" type="Object"/>
+    <aura:attribute name='wcClsNWgsReqd' type='boolean' />
+    <aura:attribute name="PEOChecklist" type="Object"/>
+    <aura:attribute name='isCommUser' type='boolean' />
+    <!--Code refactoring: new attributes created:end-->
+    
+    <!--for numbering start-->
+    <aura:attribute name='wcDecReqdLabel' type='String' default="Workers' Comp Declaration Page" />
+    <aura:attribute name='WCpricingLabel' type='String' default="Workers’ Compensation Policy / Pricing" />
+    <aura:attribute name='misWCReqdLabel' type='String' default="Misc Files - Workers' Comp" />
+    <aura:attribute name='hlthInvReqdLabel' type='String' default="Health Invoice" />
+    <aura:attribute name='hlthInsSummReqdLabel' type='String' default="Benefit Summary" />
+    <aura:attribute name='hlthInsRenwReqdLabel' type='String' default="Health Insurance Renewal" />
+    <aura:attribute name='claimsReportRequiredLabel' type='String' default="Claims Report" />
+    <aura:attribute name='lossRunsReqdLabel' type='String' default="Workers' Comp Loss Runs" />
+    <aura:attribute name='wcReqdLabel' type='String' default="Workers' Comp Classes and Wages" />
+    <aura:attribute name='suiReqdLabel' type='String' default="SUI Rate Forms" />
+    <aura:attribute name='payrollRegReqdLabel' type='String' default="Payroll Register" />
+    <aura:attribute name='misMedReqdLabel' type='String' default="Misc Files - Medical" />
+    <aura:attribute name='AddntlDocsRqdLabel' type='String' default="Additional Misc Documents" />
+    <aura:attribute name='medInvReqLabel' type='String' default="Medical Invoice" />
+    <aura:attribute name='benefitSummReqLabel' type='String' default="Benefit Summary" />
+    <aura:attribute name='payrollReportReqLabel' type='String' default="Payroll Report" />
+    <aura:attribute name='CensusLabel' type='String' default="Census" />
+    <aura:attribute name='misHSFReqdLabel' type='String' default="HSF Census" /> <!--SFDC-16848-->
+    <!--for numbering end-->
+    <aura:handler name="change" value="{!v.tabId}" action="{!c.handleFocus}"/>
+    <lightning:workspaceAPI aura:id="workspace" />    
+    <!--for navigation-->
+    <aura:attribute name='tabList' type='String[]' default="['Basic Information', 'About Your Business']" />
+    <aura:attribute name='selectedTab' type='String'/>
+    <aura:attribute name="tabStyle" type="String"/>
+    <aura:attribute name='parentTabs' type='String[]' />
+    <aura:attribute name='ActiveParentTab' type='String'/>
+    <aura:attribute name='errorMsg' type='String' />
+    <aura:attribute name='uploadTabs' type='String[]' />
+    <aura:attribute name='parentTabsetUsesIteration' type='Boolean' />
+    <aura:attribute name='OnboardingChecklists' type='Object[]' /> 
+    <aura:handler name="change" value="{!v.OnboardingChecklists}" action="{!c.docListChanged}"/>
+    <aura:attribute name='requiredDocsUploaded' type='Boolean' default="false" />
+    <aura:attribute name='showButtonTitle' type='Boolean' default="false" />
+    
+    <aura:attribute name='iconsuiReqdLabel' type='String' />
+    <aura:attribute name='iconwcReqdLabel' type='String'  />	
+    <aura:attribute name='iconpayrollRegReqdLabel' type='String'  />	    
+    <aura:attribute name='iconbenefitSummReqLabel' type='String' />
+    <aura:attribute name='iconmedInvReqLabel' type='String' />
+    <aura:attribute name='iconpayrollReportReqLabel' type='String' />
+    <aura:attribute name='iconCensusLabel' type='String' />   
+    <aura:attribute name='iconhlthInvReqdLabel' type='String'  />	
+    <aura:attribute name='iconhlthInsSummReqdLabel' type='String'  />    
+    <aura:attribute name='iconhlthInsRenwReqdLabel' type='String' />
+    <aura:attribute name='iconclaimsReportRequiredLabel' type='String'  />	
+    <aura:attribute name='iconlossRunsReqdLabel' type='String'  />	    
+    <aura:attribute name='iconwcDecReqdLabel' type='String' />
+    <aura:attribute name='iconWCpricingLabel' type='String'  />	
+    <aura:attribute name='iconmisMedReqdLabel' type='String' />
+    <aura:attribute name='iconmisHSFReqdLabel' type='String'  />	
+    <aura:attribute name='iconmisWCReqdLabel' type='String'  />
+    <aura:attribute name='iconAddntlDocsRqdLabel' type='String'  />
+    <aura:attribute name='astsuiReqdLabel' type='Boolean' default="false" />	
+    <aura:attribute name='astwcReqdLabel' type='Boolean' default="false" />	
+    <aura:attribute name='astpayrollRegReqdLabel' type='Boolean' default="false" />	  
+    <aura:attribute name='astCensusLabel' type='Boolean' default="false" />	
+    <aura:attribute name='asthlthInvReqdLabel' type='Boolean' default="false" />		
+    <aura:attribute name='asthlthInsSummReqdLabel' type='Boolean' default="false" />	
+    <aura:attribute name='asthlthInsRenwReqdLabel' type='Boolean' default="false" />	
+    <aura:attribute name='astclaimsReportRequiredLabel' type='Boolean' default="false" />	
+    <aura:attribute name='astlossRunsReqdLabel' type='Boolean' default="false" />	
+    <aura:attribute name='astwcDecReqdLabel' type='Boolean' default="false" />	
+    <aura:attribute name='astWCpricingLabel' type='Boolean' default="false" />	
+    <aura:attribute name='astmisMedReqdLabel' type='Boolean' default="false" />	
+    <aura:attribute name='astmisHSFReqdLabel' type='Boolean' default="false" />	
+    <aura:attribute name='astmisWCReqdLabel' type='Boolean' default="false" />	
+    <aura:attribute name='astAddntlDocsRqdLabel' type='Boolean' default="false" />	
+    <aura:attribute name='astbenefitSummReqLabel' type='Boolean' default="false" />	
+    <aura:attribute name='astmedInvReqLabel' type='Boolean' default="false" />	
+    <aura:attribute name='astpayrollReportReqLabel' type='Boolean' default="false" />	
+    
+    <aura:handler name="PEOUWCompFileUploadEvent" event="c:PEOUWFileUploadEvent" 
+                  action="{!c.handleCustomCmpEvent}"/>
+    <aura:attribute name='redpayrollRegReqdLabel' type='String'  />
+    <!-- save function reference used by tab navigation -->
+    <aura:attribute name='saveFunc' type='Object' />
+    <!--sfdc-14688-->
+    <aura:attribute name="nmbrOfAttchments" type="Integer" default="0"/>
+    <aura:attribute name='isUploadSection' type='boolean' default="true"/>
+    <aura:attribute name='isLoading' type='boolean' default="true"/>
+    <aura:attribute name='benchMarkPos' type='String' />
+    <aura:attribute name='section' type='String'/>
+    <aura:attribute name='benchMarkTabRequired' type='Boolean' default='false'/>
+    <aura:attribute name="hasBenchmarkPermission" type="Boolean" default="false"/>
+    <aura:attribute name="isTraditional" type="Boolean" default="true"/>
+    <!--SPA changes-->
+    <aura:attribute name="isLastTab" type="Boolean" default="false"/>
+    <aura:registerEvent name='communityFormsTabNavigate' type='c:communityFormsTabNavigate' />
+
+    <aura:if isTrue="{!greaterthan(v.readOnlyString.length, 1)}">
+        <div style="width:100%">
+            <ui:message title="Evaluation Status" severity="info" closable="false" >
+                {!v.readOnlyString}
+            </ui:message>
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.AddntlDocsRqd == false}">
+        <div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12 slds-p-left_xx-large slds-p-horizontal_x-large " >
+            <lightning:formattedRichText value="Hello! Based on the information you have provided, we will need supporting documentation."/>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12 slds-p-left_xx-large slds-p-horizontal_x-large " >
+            <lightning:formattedRichText value="Each tab will indicate what is required with a description of the document."/>
+        </div>
+        <aura:if isTrue="{!v.censusRequired}">
+            <div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12 slds-p-left_xx-large slds-p-horizontal_x-large " >
+                <lightning:formattedRichText value="Please note that if your company has multiple entities, you will be asked to provide only one census document that should be inclusive of all entities."/>
+            </div>
+        </aura:if>
+    </aura:if>
+    <br/>	
+    <!--hlthInvReqd  {!v.hlthInvReqd}<br/>
+   hlthInsSummReqd  {!v.hlthInsSummReqd}<br/>
+   hlthInsRenwReqd {!v.hlthInsRenwReqd}<br/> -->
+    <aura:if isTrue="{!!v.init}">
+        <lightning:spinner alternativeText="Loading" size="medium" />
+        <aura:set attribute="else"> 
+            <lightning:tabset aura:id="tabs" variant="{!v.tabOption}" selectedTabId='{!v.selectedTab}'>
+                <!--Required Tabs Only-->
+                
+                <aura:if isTrue="{! and(v.censusRequired, v.astCensusLabel)}">  
+                    <lightning:tab  title="Census" aura:id="Census" id="Census"  tabindex="1"
+                                   endIconName="{!v.iconCensusLabel}">
+                        <aura:set attribute="label">
+                            {!v.CensusLabel} *
+                        </aura:set>               
+                        <c:CustomFileUpload nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}" 
+                                            TabiconName="iconCensusLabel" Docrequiredlabel=" - Required"
+                                            accountForUpload='{!v.currentAccount}' isParent='{!v.currentAccount.isParent__c}'
+                                            PEOCheckList="{!v.checklist}" documentName="Census" settingName="Census"
+                                            aura:Id="Census" 
+                                            disableFilesUpload="{!v.disableCensus}" 
+                                            uploadTitle="Upload Your Completed Census"
+                                            isCommunityUser="{!v.isCommUser}"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    <!--file not uploaded yet-->
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if>
+                
+                <aura:if isTrue="{! and(v.medInvReq, v.astmedInvReqLabel)}">
+                    <lightning:tab  title="Medical Invoice" aura:id="Medical Invoice" id="Medical Invoice" 
+                                   tabindex="2"      endIconName="{!v.iconmedInvReqLabel}">
+                        <aura:set attribute="label">
+                            {!v.medInvReqLabel} *
+                        </aura:set>
+                        
+                        <c:CustomFileUpload nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}" 
+                                            TabiconName="iconmedInvReqLabel" Docrequiredlabel=" - Required"
+                                            accountForUpload='{!v.currentAccount}' isParent='{!v.currentAccount.isParent__c}'
+                                            PEOCheckList="{!v.checklist}" documentName="Medical Invoice" 
+                                            settingName="Medical Invoice" disableFilesUpload="{!v.disableMedicalUpload}"
+                                            aura:Id="Medical Invoice" uploadTitle="Upload Medical Invoice"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    <!--file not uploaded yet-->
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{! and(v.benefitSummReq, v.astbenefitSummReqLabel)}">
+                    <lightning:tab  title="Benefit Summary" aura:id="BenefitSummary" id="BenefitSummary" 
+                                   endIconName="{!v.iconbenefitSummReqLabel}">
+                        <aura:set attribute="label">
+                            {!v.benefitSummReqLabel} *
+                        </aura:set>
+                        <c:CustomFileUpload nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}" 
+                                            TabiconName="iconbenefitSummReqLabel" Docrequiredlabel=" - Required"
+                                            accountForUpload='{!v.currentAccount}' isParent='{!v.currentAccount.isParent__c}'
+                                            PEOCheckList="{!v.checklist}" documentName="Benefit Summary" 
+                                            settingName="Benefit Summary" disableFilesUpload="{!v.disableMedicalUpload}"
+                                            aura:Id="Benefit Summary" uploadTitle="Upload Benefit Summary"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    <!--file not uploaded yet-->
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if>
+                
+                <!--aura:if isTrue="{! and(v.hlthInsSummReqd, v.asthlthInsSummReqdLabel)}">
+                    <lightning:tab   title="Benefit Summaries" id="Benefit Summaries"
+                                   endIconName="{!v.iconhlthInsSummReqdLabel}">
+                        <aura:set attribute="label">
+                            {!v.hlthInsSummReqdLabel} *
+                        </aura:set>
+                        <c:CustomFileUpload  nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}" 
+                                            accountForUpload='{!v.currentAccount}' isParent='{!v.currentAccount.isParent__c}'
+                                            PEOCheckList="{!v.checklist}" documentName="Health Insurance Summary" DocumentLabel="Benefit Summaries"
+                                            settingName="Health Insurance Summary" TabiconName="iconhlthInsSummReqdLabel" Docrequiredlabel=" - Required"
+                                            aura:Id="HealthInsuranceSummaryOfBenefits" disableFilesUpload="{!or(v.disableMedicalUpload,v.disableFilesUpload)}"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                   
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if-->
+                
+                <aura:if isTrue="{! and(v.hlthInsRenwReqd, v.asthlthInsRenwReqdLabel)}">
+                    <lightning:tab  title="Health Insurance Renewal" id="Health Insurance Renewal"
+                                   endIconName="{!v.iconhlthInsRenwReqdLabel}">
+                        <aura:set attribute="label">
+                            {!v.hlthInsRenwReqdLabel} *
+                        </aura:set>
+                        <c:CustomFileUpload  nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}" 
+                                            TabiconName="iconhlthInsRenwReqdLabel"
+                                            accountForUpload='{!v.currentAccount}' isParent='{!v.currentAccount.isParent__c}'
+                                            Docrequiredlabel=" - Required"
+                                            PEOCheckList="{!v.checklist}" documentName="Health Insurance Renewal"
+                                            settingName="Health Insurance Renewal" aura:Id="Health Insurance Renewal"
+                                            disableFilesUpload="{!or(v.disableMedicalUpload,v.disableFilesUpload)}"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    <!--file not uploaded yet-->
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if>
+                
+                <aura:if isTrue="{! and(v.claimsReportRequired, v.astclaimsReportRequiredLabel)}">
+                    <lightning:tab   title="Claims Report" id="Claims Report"
+                                   endIconName="{!v.iconclaimsReportRequiredLabel}">
+                        <aura:set attribute="label">
+                            {!v.claimsReportRequiredLabel} *
+                        </aura:set>
+                        <c:CustomFileUpload  nmbrOfAttchments='{!v.nmbrOfAttchments}'  TabiconName="iconclaimsReportRequiredLabel"
+                                            Docrequiredlabel=" - Required"
+                                            isCommUser="{!v.isCommunityUser}" accountForUpload='{!v.currentAccount}' 
+                                            isParent='{!v.currentAccount.isParent__c}' PEOCheckList="{!v.checklist}" 
+                                            documentName="Claims Report" settingName="Claims Information" aura:Id="Claims Report" 
+                                            disableFilesUpload="{!or(v.disableMedicalUpload,v.disableFilesUpload)}"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    <!--file not uploaded yet-->
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if>
+                
+                <!--aura:if isTrue="{! and(v.payrollReportReq, v.astpayrollReportReqLabel)}">
+                    <lightning:tab  title="Payroll Report" aura:id="Payroll Report" id="Payroll Report" 
+                                   endIconName="{!v.iconpayrollReportReqLabel}">
+                        <aura:set attribute="label">
+                            {!v.payrollReportReqLabel} *
+                        </aura:set>
+                        
+                        <c:CustomFileUpload nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}" 
+                                            TabiconName="iconpayrollReportReqLabel" Docrequiredlabel=" - Required"
+                                            accountForUpload='{!v.currentAccount}' isParent='{!v.currentAccount.isParent__c}'
+                                            PEOCheckList="{!v.checklist}" documentName="Payroll Report" settingName="Payroll Report"
+                                            aura:Id="Payroll Report" uploadTitle="Upload Payroll Report"/>
+                    </lightning:tab>
+                </aura:if-->
+               
+                <aura:if isTrue="{! and(v.misMedReqd, v.astmisMedReqdLabel)}">        
+                    <lightning:tab   title="Misc Files - Medical" id="Misc Files - Medical"
+                                   endIconName="{!v.iconmisMedReqdLabel}">
+                        <aura:set attribute="label">
+                            {!v.misMedReqdLabel} *
+                        </aura:set>
+                        <c:CustomFileUpload nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}"
+                                            TabiconName="iconmisMedReqdLabel" Docrequiredlabel=" - Required"  
+                                            accountForUpload='{!v.currentAccount}' isParent='{! v.currentAccount.isParent__c}'
+                                            PEOCheckList="{!v.checklist}" documentName="Misc Files - Medical" 
+                                            settingName="Other Med" aura:Id="Other Documents"
+                                            disableFilesUpload="{!v.disableFilesUpload}"
+                                            uploadTitle="Upload any additional files as instructed by your Sales rep"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    <!--file not uploaded yet-->
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                    </aura:if>
+                    <!--HSF test-->
+                    <!--<aura:if isTrue="{!(!v.isCommunityUser)}">
+                <lightning:tab  title="HSF Census" id="HSF Census"
+                                endIconName="{!v.iconmisHSFReqdLabel}">
+                     <aura:set attribute="label">
+                           {!v.misHSFReqdLabel} <p style="color:red">{!v.astmisHSFReqdLabel}</p>
+                        </aura:set>
+                    <aura:if isTrue="{!or(or(or(v.checklist.HSF_Submission_Status__c == 'FAVORABLE',v.checklist.HSF_Submission_Status__c == 'UNFAVORABLE'),v.checklist.HSF_Submission_Status__c == 'RESULTS INCONCLUSIVE'),v.checklist.HSF_Submission_Status__c == 'FAIL')}">
+                        <div class="slds-grid">
+                            <lightning:card class="HSFSummaryCard">
+                                <aura:if isTrue="{!v.checklist.HSF_Submission_Status__c == 'FAVORABLE'}">
+                                    <lightning:icon iconName="utility:success" alternativeText="Success!" variant="Success"
+                                                    title="success variant" size="small" style="margin-top: -0.4%;"/><b> HSF Census Review Result :  {!v.checklist.HSF_Submission_Status__c}  </b>
+                                </aura:if>
+                                <aura:if isTrue="{!v.checklist.HSF_Submission_Status__c == 'UNFAVORABLE'}">
+                                    <lightning:icon iconName="action:close" alternativeText="Success!" variant="error"
+                                                    title="success variant" size="small" style="margin-top: -0.4%;"/><b> HSF Census Review Result :  {!v.checklist.HSF_Submission_Status__c}  </b>
+                                </aura:if>
+                                <aura:if isTrue="{!v.checklist.HSF_Submission_Status__c == 'FAIL'}">
+                                    <lightning:icon iconName="action:close" alternativeText="Success!" variant="error"
+                                                    title="success variant" size="small" style="margin-top: -0.4%;"/><b> HSF Census Review Result :  {!v.checklist.HSF_Submission_Status__c}  </b>
+                                </aura:if>
+                                <aura:if isTrue="{!v.checklist.HSF_Submission_Status__c == 'RESULTS INCONCLUSIVE'}">
+                                    <lightning:icon iconName="utility:warning" alternativeText="Success!" variant="warning"
+                                                    title="success variant" size="small" style="margin-top: -0.4%;"/><b> HSF Census Review :  {!v.checklist.HSF_Submission_Status__c}  </b>
+                                </aura:if>
+                            </lightning:card>
+                        </div>
+                        <div style="padding-bottom:3%"></div>
+                    </aura:if>
+                    <c:CustomFileUpload nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}"
+                                       TabiconName="iconmisHSFReqdLabel"   accountForUpload='{!v.currentAccount}' 
+                                        isParent='{! v.currentAccount.isParent__c}' 
+                                        PEOCheckList="{!v.checklist}" documentName="HSF Census" settingName="HSF Census" 
+                                        aura:Id="HSF Census" disableFilesUpload="false" uploadTitle="Upload HSF Census"/>
+                </lightning:tab>          
+            </aura:if>-->
+                    <!--HSF test end-->
+                
+                 <aura:if isTrue="{! and(v.wcReqd, v.astwcReqdLabel)}">
+                    <lightning:tab  title="Workers' Comp Classes and Wages" 
+                                   id="Workers' Comp Classes and Wages" endIconName="{!v.iconwcReqdLabel}" onactive="{!c.handleFocus}">
+                        <aura:set attribute="label">
+                            {!v.wcReqdLabel} *
+                        </aura:set>
+                        <c:CustomFileUpload nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}"
+                                            TabiconName="iconwcReqdLabel"
+                                            accountForUpload='{!v.currentAccount}' isParent='{! v.currentAccount.isParent__c}'
+                                            DocumentLabel="Workers' Comp Classes and Wages" Docrequiredlabel=" - Required"
+                                            PEOCheckList="{!v.checklist}" documentName="WC Classes and Wages"
+                                            settingName="WC Classes and Wages" aura:Id="WCClassesWages"
+                                            disableFilesUpload="{!or(v.disableWCUpload,v.disableFilesUpload)}"/>
+                               <center>
+                                <!-- <lightning:button disabled="{!!v.requiredDocsUploaded}" 
+                                class="slds-m-top_medium" variant="brand" 
+                                label="Save &amp; Complete"
+                                 title="{!if(not(v.requiredDocsUploaded), 'Add all Required Documents' , '')}" 
+                                 onclick="{! c.sendCommunityFormsTabUpdate }"/> -->
+                                
+                                 <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                <!--file not uploaded yet-->
+                              
+                               <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                    <aura:if isTrue="{!v.showButtonTitle}" >
+                                            <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                    </aura:if>
+                                </span>
+                                <span class="slds-size_1-of-1">
+                                    <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                    <lightning:button disabled="true"
+                                    variant="brand" 
+                                    
+                                    label="Save &amp; Complete"/>
+                                </span> </span> 
+                               </div>
+                            </aura:if>  
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false"  variant="brand" 
+                                    label="Save &amp; Complete"
+                                     onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                                </center>
+
+                        </lightning:tab>
+                </aura:if>
+                
+                <aura:if isTrue="{!not(v.WCFastPassSelected)}">
+                    <aura:if isTrue="{! and(v.lossRunsReqd, v.astlossRunsReqdLabel)}">
+                        <lightning:tab   title="Workers' Comp Loss Runs" id="Workers' Comp Loss Runs"
+                                       endIconName="{!v.iconlossRunsReqdLabel}">
+                            <aura:set attribute="label">
+                                {!v.lossRunsReqdLabel} *
+                            </aura:set>
+                            <c:CustomFileUpload  nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}" 
+                                                TabiconName="iconlossRunsReqdLabel"
+                                                accountForUpload='{!v.currentAccount}' isParent='{!v.currentAccount.isParent__c}'
+                                                DocumentLabel="Workers' Comp Loss Runs" Docrequiredlabel=" - Required"
+                                                PEOCheckList="{!v.checklist}" 
+                                                documentName="Loss Runs" settingName="WC Loss Runs" aura:Id="LossRuns" 
+                                                disableFilesUpload="{!or(v.disableWCUpload,v.disableFilesUpload)}"/>
+                            <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    <!--file not uploaded yet-->
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                        </lightning:tab>
+                    </aura:if>
+                </aura:if>
+                <aura:if isTrue="{! and(v.wcRtNPrcReqd, v.astWCpricingLabel)}">
+                    <lightning:tab   title="Workers’ Compensation Policy / Pricing" 
+                                   id="Workers’ Compensation Policy / Pricing"  endIconName="{!v.iconWCpricingLabel}">
+                        <aura:set attribute="label">
+                            {!v.WCpricingLabel} *
+                        </aura:set>
+                        <c:CustomFileUpload nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}" 
+                                            TabiconName="iconWCpricingLabel"
+                                            accountForUpload='{!v.currentAccount}' isParent='{! v.currentAccount.isParent__c}' 
+                                            DocumentLabel="Workers’ Compensation Policy / Pricing" Docrequiredlabel=" - Required"
+                                            PEOCheckList="{!v.checklist}" documentName="WC Rates and Pricing" 
+                                            settingName="WC Rates and Pricing" aura:Id="WCRatesandPricing" 
+                                            disableFilesUpload="{!or(v.disableWCUpload,v.disableFilesUpload)}"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    <!--file not uploaded yet-->
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if>
+                
+                <aura:if isTrue="{! and(v.misWCReqd, v.astmisWCReqdLabel)}">     
+                    <lightning:tab  title="Misc Files - Workers' Comp" id="Misc Files - Workers' Comp"
+                                   endIconName="{!v.iconmisWCReqdLabel}">
+                        <aura:set attribute="label">
+                            {!v.misWCReqdLabel} *
+                        </aura:set>
+                        <c:CustomFileUpload nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}"
+                                            TabiconName="iconmisWCReqdLabel" Docrequiredlabel=" - Required" 
+                                            accountForUpload='{!v.currentAccount}' 
+                                            isParent='{! v.currentAccount.isParent__c}' 
+                                            PEOCheckList="{!v.checklist}" documentName="Misc Files - Workers' Comp" 
+                                            settingName="Other WC" aura:Id="Misc Files - Workers' Comp" 
+                                            disableFilesUpload="{!v.disableFilesUpload}"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    <!--file not uploaded yet-->
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if>
+                
+                <!--aura:if isTrue="{! and(v.wcDecReqd, v.astwcDecReqdLabel)}">
+                    <lightning:tab   title="Workers' Comp Declaration Page" 
+                                   id="Workers' Comp Declaration Page"    endIconName="{!v.iconwcDecReqdLabel}">
+                        <aura:set attribute="label">
+                            {!v.wcDecReqdLabel} *
+                        </aura:set>
+                        <c:CustomFileUpload nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}" 
+                                            accountForUpload='{!v.currentAccount}' TabiconName="iconwcDecReqdLabel" Docrequiredlabel=" - Required"
+                                            isParent='{! v.currentAccount.isParent__c}' PEOCheckList="{!v.checklist}" 
+                                            documentName="WC Declarations Page/PEO Current Rate" DocumentLabel="Workers' Comp Declaration Page"
+                                            settingName="WC Declarations Page" aura:Id="WCDeclarationPage" 
+                                            disableFilesUpload="{!or(v.disableWCUpload,v.disableFilesUpload)}"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">                                    
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if-->      
+                               
+                <!--aura:if isTrue="{! and(v.suiReqd, v.astsuiReqdLabel)}">        
+                    <lightning:tab  title="SUI Rate Forms" id="SUI Rate Forms" 
+                                   endIconName="{!v.iconsuiReqdLabel}" > 
+                        <aura:set attribute="label">
+                            {!v.suiReqdLabel} *
+                        </aura:set>
+                        <c:CustomFileUpload  nmbrOfAttchments='{!v.nmbrOfAttchments}' 
+                                            isCommUser="{!v.isCommunityUser}" 
+                                            accountForUpload='{!v.currentAccount}'
+                                            isParent='{! v.currentAccount.isParent__c}' 
+                                            PEOCheckList="{!v.checklist}"
+                                            documentName="SUI Rate Forms" 
+                                            settingName="SUI Rate Forms" 
+                                            aura:Id="SUIRateForms" TabiconName="iconsuiReqdLabel" Docrequiredlabel=" - Required"
+                                            disableFilesUpload="{!or(v.disableWCUpload,v.disableFilesUpload)}"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                     
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if-->
+                <aura:if isTrue="{! and(v.payrollRegReqd, v.astpayrollRegReqdLabel)}">                
+                    <lightning:tab   title="Payroll Register" 
+                                   id="Payroll Register" 
+                                   endIconName="{!v.iconpayrollRegReqdLabel}"> 
+                        <aura:set attribute="label">
+                            {!v.payrollRegReqdLabel} *
+                        </aura:set>
+                        <c:CustomFileUpload  nmbrOfAttchments='{!v.nmbrOfAttchments}'
+                                            isCommUser="{!v.isCommunityUser}" 
+                                            accountForUpload='{!v.currentAccount}'
+                                            isParent='{! v.currentAccount.isParent__c}'
+                                            PEOCheckList="{!v.checklist}" 
+                                            TabiconName="iconpayrollRegReqdLabel" Docrequiredlabel=" - Required" 
+                                            documentName="Payroll Register" DocumentLabel="Payroll Register"
+                                            settingName="Payroll Register" aura:Id="Payroll Register"
+                                            disableFilesUpload="{!v.disableFilesUpload}"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    <!--file not uploaded yet-->
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if>
+                
+                <aura:if isTrue="{! and(v.hlthInvReqd, v.asthlthInvReqdLabel)}">
+                    <lightning:tab  title="Health Invoice" id="Health Invoice"	
+                                   endIconName="{!v.iconhlthInvReqdLabel}">
+                        <aura:set attribute="label">
+                            {!v.hlthInvReqdLabel} *
+                        </aura:set>
+                        <c:CustomFileUpload nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}" 
+                                            TabiconName="iconhlthInvReqdLabel" Docrequiredlabel=" - Required"
+                                            accountForUpload='{!v.currentAccount}' isParent='{!v.currentAccount.isParent__c}'
+                                            PEOCheckList="{!v.checklist}" documentName="Health Invoice" 
+                                            settingName="Health Invoice" aura:Id="Current Health Invoice"
+                                            disableFilesUpload="{!or(v.disableMedicalUpload,v.disableFilesUpload)}"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    <!--file not uploaded yet-->
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if>	
+                 <aura:if isTrue="{! and(v.AddntlDocsRqd, v.astAddntlDocsRqdLabel)}">     
+                     <lightning:tab   title="Additional Misc Documents" id="Additional Misc Documents"
+                                    endIconName="{!v.iconAddntlDocsRqdLabel}">
+                         <aura:set attribute="label">
+                             {!v.AddntlDocsRqdLabel} *
+                         </aura:set>
+                         <c:CustomFileUpload nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}"                                     
+                                             TabiconName="iconAddntlDocsRqdLabel" Docrequiredlabel=" - Required"  accountForUpload='{!v.currentAccount}' isParent='{! v.currentAccount.isParent__c}'
+                                             PEOCheckList="{!v.checklist}" documentName="Additional Misc Documents" 
+                                             settingName="Other" aura:Id="Other Documents Misc" 
+                                             disableFilesUpload="{!v.disableFilesUpload}"
+                                             uploadTitle="After our initial evaluation, additional documentation may be requested. Please upload those files here."/>
+                         <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                             <center> 
+                                 <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                     <!--file not uploaded yet-->
+                                     <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                         <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                             <aura:if isTrue="{!v.showButtonTitle}" >
+                                                 <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                             </aura:if>
+                                         </span>
+                                         <span class="slds-size_1-of-1">
+                                             <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                 <lightning:button disabled="true"
+                                                                   variant="brand" 
+                                                                   
+                                                                   label="Finish"/>
+                                             </span> </span> 
+                                     </div>
+                                 </aura:if> 
+                                 <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                     <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                       variant="brand" label="Finish"
+                                                       onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                 </aura:if>
+                             </center>
+                         </aura:if>
+                     </lightning:tab>
+                </aura:if>
+                
+                <!--Optional Documents Tabs Only-->
+                
+                <aura:if isTrue="{! and(v.censusRequired, v.astCensusLabel==false)}">  
+                    <lightning:tab  title="Census" aura:id="Census1" id="Census1" 
+                                   endIconName="{!v.iconCensusLabel}">
+                        <aura:set attribute="label">
+                            {!v.CensusLabel} 
+                        </aura:set>              
+                        <c:CustomFileUpload nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}" 
+                                            TabiconName="iconCensusLabel"
+                                            accountForUpload='{!v.currentAccount}' isParent='{!v.currentAccount.isParent__c}'
+                                            PEOCheckList="{!v.checklist}" documentName="Census" settingName="Census"
+                                            aura:Id="Census" 
+                                             disableFilesUpload="{!v.disableCensus}"  
+                                            uploadTitle="Upload Your Completed Census"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    <!--file not uploaded yet-->
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{! and(v.medInvReq, v.astmedInvReqLabel==false)}">
+                    <lightning:tab  title="Medical Invoice" aura:id="1Medical Invoice" id="1Medical Invoice" 
+                                   endIconName="{!v.iconmedInvReqLabel}">
+                        <aura:set attribute="label">
+                            {!v.medInvReqLabel}
+                        </aura:set>
+                        <c:CustomFileUpload nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}" 
+                                            TabiconName="iconMedInvLabel" disableFilesUpload="{!v.disableMedicalUpload}"
+                                            accountForUpload='{!v.currentAccount}' isParent='{!v.currentAccount.isParent__c}'
+                                            PEOCheckList="{!v.checklist}" documentName="Medical Invoice" settingName="Medical Invoice"
+                                            aura:Id="Medical Invoice" uploadTitle="Upload Medical Invoice"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    <!--file not uploaded yet-->
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{! and(v.benefitSummReq, v.astbenefitSummReqLabel==false)}">
+                    <lightning:tab  title="Benefit Summary" aura:id="BenefitSummary" id="BenefitSummary" 
+                                   endIconName="{!v.iconbenefitSummReqLabel}">
+                        <aura:set attribute="label">
+                            {!v.benefitSummReqLabel}
+                        </aura:set>
+                        <c:CustomFileUpload nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}" 
+                                            TabiconName="iconbenefitSummReqLabel" 
+                                            disableFilesUpload="{!v.disableMedicalUpload}"
+                                            accountForUpload='{!v.currentAccount}' isParent='{!v.currentAccount.isParent__c}'
+                                            PEOCheckList="{!v.checklist}" documentName="Benefit Summary" settingName="Benefit Summary"
+                                            aura:Id="Benefit Summary" uploadTitle="Upload Benefit Summary"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+ 
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if>
+                <!--aura:if isTrue="{! and(v.hlthInsSummReqd, v.asthlthInsSummReqdLabel==false)}">
+                    <lightning:tab   title="Benefit Summaries" id="Benefit Summaries"
+                                   endIconName="{!v.iconhlthInsSummReqdLabel}">
+                        <aura:set attribute="label">
+                            {!v.hlthInsSummReqdLabel} 
+                        </aura:set>
+                        <c:CustomFileUpload  nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}" 
+                                            accountForUpload='{!v.currentAccount}' isParent='{!v.currentAccount.isParent__c}'
+                                            PEOCheckList="{!v.checklist}" documentName="Health Insurance Summary" DocumentLabel="Benefit Summaries"
+                                            settingName="Health Insurance Summary" TabiconName="iconhlthInsSummReqdLabel"
+                                            aura:Id="HealthInsuranceSummaryOfBenefits" disableFilesUpload="{!or(v.disableMedicalUpload,v.disableFilesUpload)}"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if-->
+                <aura:if isTrue="{! and(v.hlthInsRenwReqd, v.asthlthInsRenwReqdLabel==false)}">
+                    <lightning:tab  title="Health Insurance Renewal" id="Health Insurance Renewal"
+                                   endIconName="{!v.iconhlthInsRenwReqdLabel}">
+                        <aura:set attribute="label">
+                            {!v.hlthInsRenwReqdLabel}  
+                        </aura:set>
+                        <c:CustomFileUpload  nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}"
+                                            TabiconName="iconhlthInsRenwReqdLabel"
+                                            accountForUpload='{!v.currentAccount}' isParent='{!v.currentAccount.isParent__c}' 
+                                            PEOCheckList="{!v.checklist}" documentName="Health Insurance Renewal"
+                                            settingName="Health Insurance Renewal" aura:Id="Health Insurance Renewal" 
+                                            disableFilesUpload="{!or(v.disableMedicalUpload,v.disableFilesUpload)}"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    <!--file not uploaded yet-->
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if>
+                
+                <aura:if isTrue="{! and(v.claimsReportRequired, v.astclaimsReportRequiredLabel==false)}">
+                    <lightning:tab   title="Claims Report" id="Claims Report"
+                                   endIconName="{!v.iconclaimsReportRequiredLabel}">
+                        <aura:set attribute="label">
+                            {!v.claimsReportRequiredLabel}  
+                        </aura:set>
+                        <c:CustomFileUpload  nmbrOfAttchments='{!v.nmbrOfAttchments}'  TabiconName="iconclaimsReportRequiredLabel" 
+                                            isCommUser="{!v.isCommunityUser}" accountForUpload='{!v.currentAccount}' 
+                                            isParent='{!v.currentAccount.isParent__c}' PEOCheckList="{!v.checklist}" 
+                                            documentName="Claims Report" settingName="Claims Information" 
+                                            aura:Id="Claims Report" disableFilesUpload="{!or(v.disableMedicalUpload,v.disableFilesUpload)}"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    <!--file not uploaded yet-->
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{! and(v.payrollRegReqd, v.astpayrollRegReqdLabel==false)}">                
+                    <lightning:tab   title="Payroll Register" 
+                                   id="Payroll Register" 
+                                   endIconName="{!v.iconpayrollRegReqdLabel}"> 
+                        <aura:set attribute="label">
+                            {!v.payrollRegReqdLabel}  
+                        </aura:set>
+                        <c:CustomFileUpload  nmbrOfAttchments='{!v.nmbrOfAttchments}' 
+                                            isCommUser="{!v.isCommunityUser}" accountForUpload='{!v.currentAccount}' 
+                                            isParent='{! v.currentAccount.isParent__c}' PEOCheckList="{!v.checklist}" 
+                                            TabiconName="iconpayrollRegReqdLabel" documentName="Payroll Register" 
+                                            DocumentLabel="Payroll Register"
+                                            settingName="Payroll Register" aura:Id="Payroll Register" 
+                                            disableFilesUpload="{!v.disableFilesUpload}"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    <!--file not uploaded yet-->
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if>
+                <!--aura:if isTrue="{! and(v.payrollReportReq, v.astpayrollReportReqLabel==false)}">
+                    <lightning:tab  title="Payroll Report" aura:id="Payroll Report" id="Payroll Report" 
+                                   endIconName="{!v.iconpayrollReportReqLabel}">
+                        <aura:set attribute="label">
+                            {!v.payrollReportReqLabel}
+                        </aura:set>
+                        <c:CustomFileUpload nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}" 
+                                            TabiconName="iconpayrollReportReqLabel"
+                                            accountForUpload='{!v.currentAccount}' isParent='{!v.currentAccount.isParent__c}'
+                                            PEOCheckList="{!v.checklist}" documentName="Payroll Report" settingName="Payroll Report"
+                                            aura:Id="Payroll Report" uploadTitle="Upload Payroll Report"/>
+                    </lightning:tab>
+                </aura:if-->
+                
+                <aura:if isTrue="{! and(v.misMedReqd, v.astmisMedReqdLabel==false)}">        
+                    <lightning:tab   title="Misc Files - Medical" id="Misc Files - Medical"
+                                   endIconName="{!v.iconmisMedReqdLabel}">
+                        <aura:set attribute="label">
+                            {!v.misMedReqdLabel}  
+                        </aura:set>
+                        <c:CustomFileUpload nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}"
+                                            TabiconName="iconmisMedReqdLabel"   accountForUpload='{!v.currentAccount}' isParent='{! v.currentAccount.isParent__c}'
+                                            PEOCheckList="{!v.checklist}" documentName="Misc Files - Medical" 
+                                            settingName="Other Med" aura:Id="Other Documents" 
+                                            disableFilesUpload="{!v.disableFilesUpload}"
+                                            uploadTitle="Upload any additional files as instructed by your Sales rep"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    <!--file not uploaded yet-->
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                    
+                </aura:if>
+              
+               <!--<center><lightning:button aura:id="saveAndComplete" disabled="{!v.nmbrOfAttchments == 0}" class="slds-m-top_medium" variant="brand" label="Save &amp; Complete" title="Add all Required Documents" onclick="{! c.sendCommunityFormsTabUpdate }"/></center>
+                   -->   
+                <aura:if isTrue="{!not(v.WCFastPassSelected)}">
+                    <aura:if isTrue="{! and(v.lossRunsReqd, v.astlossRunsReqdLabel==false)}">
+                        <lightning:tab   title="Workers' Comp Loss Runs" id="Workers' Comp Loss Runs"
+                                       endIconName="{!v.iconlossRunsReqdLabel}">
+                            <aura:set attribute="label">
+                                {!v.lossRunsReqdLabel} 
+                            </aura:set>
+                            <c:CustomFileUpload  nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}" TabiconName="iconlossRunsReqdLabel"
+                                                accountForUpload='{!v.currentAccount}' isParent='{!v.currentAccount.isParent__c}'
+                                                DocumentLabel="Workers' Comp Loss Runs"
+                                                PEOCheckList="{!v.checklist}" 
+                                                documentName="Loss Runs" settingName="WC Loss Runs" aura:Id="LossRuns" 
+                                                disableFilesUpload="{!or(v.disableWCUpload,v.disableFilesUpload)}"/>
+                            <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    <!--file not uploaded yet-->
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                        </lightning:tab>
+                    </aura:if>
+                </aura:if>
+                
+                <aura:if isTrue="{! and(v.wcRtNPrcReqd, v.astWCpricingLabel==false)}">
+                    <lightning:tab   title="Workers’ Compensation Policy / Pricing" 
+                                   id="Workers’ Compensation Policy / Pricing"  endIconName="{!v.iconWCpricingLabel}">
+                        <aura:set attribute="label">
+                            {!v.WCpricingLabel}  
+                        </aura:set>
+                        <c:CustomFileUpload nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}" TabiconName="iconWCpricingLabel"
+                                            accountForUpload='{!v.currentAccount}' isParent='{! v.currentAccount.isParent__c}' 
+                                            DocumentLabel="Workers’ Compensation Policy / Pricing"
+                                            PEOCheckList="{!v.checklist}" documentName="WC Rates and Pricing" 
+                                            settingName="WC Rates and Pricing" aura:Id="WCRatesandPricing"
+                                            disableFilesUpload="{!or(v.disableWCUpload,v.disableFilesUpload)}"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    <!--file not uploaded yet-->
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{! and(v.misWCReqd, v.astmisWCReqdLabel==false)}">     
+                    <lightning:tab  title="Misc Files - Workers' Comp" id="Misc Files - Workers' Comp"
+                                   endIconName="{!v.iconmisWCReqdLabel}">
+                        <aura:set attribute="label">
+                            {!v.misWCReqdLabel}  
+                        </aura:set>
+                        <c:CustomFileUpload nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}"
+                                            TabiconName="iconmisWCReqdLabel"  accountForUpload='{!v.currentAccount}' 
+                                            isParent='{! v.currentAccount.isParent__c}' 
+                                            PEOCheckList="{!v.checklist}" documentName="Misc Files - Workers' Comp" 
+                                            settingName="Other WC" aura:Id="Misc Files - Workers' Comp" 
+                                            disableFilesUpload="{!v.disableFilesUpload}"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    <!--file not uploaded yet-->
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if>
+                <!--aura:if isTrue="{! and(v.wcDecReqd, v.astwcDecReqdLabel==false)}">
+                    <lightning:tab   title="Workers' Comp Declaration Page" 
+                                   id="Workers' Comp Declaration Page"    endIconName="{!v.iconwcDecReqdLabel}">
+                        <aura:set attribute="label">
+                            {!v.wcDecReqdLabel}  
+                        </aura:set>
+                        <c:CustomFileUpload nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}" 
+                                            accountForUpload='{!v.currentAccount}' TabiconName="iconwcDecReqdLabel"
+                                            isParent='{! v.currentAccount.isParent__c}' PEOCheckList="{!v.checklist}" 
+                                            documentName="WC Declarations Page/PEO Current Rate" DocumentLabel="Workers' Comp Declaration Page"
+                                            settingName="WC Declarations Page" aura:Id="WCDeclarationPage" 
+                                            disableFilesUpload="{!or(v.disableWCUpload,v.disableFilesUpload)}"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                   
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if-->
+                <!--aura:if isTrue="{! and(v.suiReqd, v.astsuiReqdLabel==false)}">        
+                    <lightning:tab  title="SUI Rate Forms" id="SUI Rate Forms" 
+                                   endIconName="{!v.iconsuiReqdLabel}" > 
+                        <aura:set attribute="label">
+                            {!v.suiReqdLabel}  
+                        </aura:set>
+                        <c:CustomFileUpload  nmbrOfAttchments='{!v.nmbrOfAttchments}' 
+                                            isCommUser="{!v.isCommunityUser}" 
+                                            accountForUpload='{!v.currentAccount}'
+                                            isParent='{! v.currentAccount.isParent__c}' 
+                                            PEOCheckList="{!v.checklist}"
+                                            documentName="SUI Rate Forms" 
+                                            settingName="SUI Rate Forms" 
+                                            aura:Id="SUIRateForms" TabiconName="iconsuiReqdLabel" 
+                                            disableFilesUpload="{!or(v.disableWCUpload,v.disableFilesUpload)}"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if-->
+                
+                
+                <aura:if isTrue="{! and(v.hlthInvReqd, v.asthlthInvReqdLabel==false)}">
+                    <lightning:tab  title="Health Invoice" id="Health Invoice"	
+                                   endIconName="{!v.iconhlthInvReqdLabel}">
+                        <aura:set attribute="label">
+                            {!v.hlthInvReqdLabel}  
+                        </aura:set>
+                        <c:CustomFileUpload nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}" 
+                                            TabiconName="iconhlthInvReqdLabel"
+                                            accountForUpload='{!v.currentAccount}' isParent='{!v.currentAccount.isParent__c}'
+                                            PEOCheckList="{!v.checklist}" documentName="Health Invoice" 
+                                            settingName="Health Invoice" aura:Id="Current Health Invoice" 
+                                            disableFilesUpload="{!or(v.disableMedicalUpload,v.disableFilesUpload)}"/>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    <!--file not uploaded yet-->
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:if>	
+                  <aura:if isTrue="{! and(v.AddntlDocsRqd, v.astAddntlDocsRqdLabel==false)}">     
+                      <lightning:tab   title="Additional Misc Documents" id="Additional Misc Documents"
+                                     endIconName="{!v.iconAddntlDocsRqdLabel}">
+                          <aura:set attribute="label">
+                              {!v.AddntlDocsRqdLabel}  
+                          </aura:set>
+                          <c:CustomFileUpload nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}"                                     
+                                              TabiconName="iconAddntlDocsRqdLabel"   accountForUpload='{!v.currentAccount}' isParent='{! v.currentAccount.isParent__c}'
+                                              PEOCheckList="{!v.checklist}" documentName="Additional Misc Documents"
+                                              settingName="Other" aura:Id="Other Documents Misc" 
+                                              disableFilesUpload="{!v.disableFilesUpload}" uploadTitle="After our initial evaluation, additional documentation may be requested. Please upload those files here."/>
+                          <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                              <center> 
+                                  <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                      <!--file not uploaded yet-->
+                                      <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                          <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                              <aura:if isTrue="{!v.showButtonTitle}" >
+                                                  <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                              </aura:if>
+                                          </span>
+                                          <span class="slds-size_1-of-1">
+                                              <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                  <lightning:button disabled="true"
+                                                                    variant="brand" 
+                                                                    
+                                                                    label="Finish"/>
+                                              </span> </span> 
+                                      </div>
+                                  </aura:if> 
+                                  <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                      <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                        variant="brand" label="Finish"
+                                                        onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                  </aura:if>
+                              </center>
+                          </aura:if>
+                      </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{! and(v.wcReqd, v.astwcReqdLabel==false)}">
+                    <lightning:tab  title="Workers' Comp Classes and Wages" 
+                                   id="Workers' Comp Classes and Wages" endIconName="{!v.iconwcReqdLabel}" onactive="{!c.handleFocus}">
+                        <aura:set attribute="label">
+                            {!v.wcReqdLabel}  
+                        </aura:set>
+                        <!--{!v.checklist.Workers_Comp_Underwriting_Path_Type__c}  {!v.checklist.Medical_Underwriting_Path_Type__c}-->
+                        <c:CustomFileUpload nmbrOfAttchments='{!v.nmbrOfAttchments}' isCommUser="{!v.isCommunityUser}"
+                                            TabiconName="iconwcReqdLabel"
+                                            accountForUpload='{!v.currentAccount}' isParent='{! v.currentAccount.isParent__c}'
+                                            DocumentLabel="Workers' Comp Classes and Wages"
+                                            PEOCheckList="{!v.checklist}" documentName="WC Classes and Wages" 
+                                            settingName="WC Classes and Wages" aura:Id="WCClassesWages" 
+                                            disableFilesUpload="{!or(v.disableWCUpload,v.disableFilesUpload)}"/>
+                        <aura:if isTrue="{!not(v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    <!--file not uploaded yet-->
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                        <aura:if isTrue="{!and(v.isLastTab,v.isTraditional)}">
+                            <center> 
+                                <aura:if isTrue="{!!v.requiredDocsUploaded}">
+                                    <!--file not uploaded yet-->
+                                    <div class="slds-wrap slds-grid slds-align_absolute-center">
+                                        <span class="slds-size_1-of-1" style="height: 30px; width: 220px;">
+                                            <aura:if isTrue="{!v.showButtonTitle}" >
+                                                <span style="background-color:#bb2a26;padding:6px;color:#fff;font-weight:bold;border-radius:5px">Add all required documents</span>
+                                            </aura:if>
+                                        </span>
+                                        <span class="slds-size_1-of-1">
+                                            <span style="width: 200px;" onmouseenter="{!c.showTitle}" onmouseleave="{!c.hideTitle}">
+                                                <lightning:button disabled="true"
+                                                                  variant="brand" 
+                                                                  
+                                                                  label="Finish"/>
+                                            </span> </span> 
+                                    </div>
+                                </aura:if> 
+                                <aura:if isTrue="{!v.requiredDocsUploaded}">
+                                    <lightning:button disabled="false" class="slds-m-top_medium" 
+                                                      variant="brand" label="Finish"
+                                                      onclick="{! c.sendCommunityFormsTabUpdate }"/>
+                                </aura:if>
+                            </center>
+                        </aura:if>
+                        </lightning:tab>
+                </aura:if>
+            </lightning:tabset>
+        </aura:set>
+    </aura:if>
+    <div>
+        <c:communityFormNavButtons tabNameList='{!v.uploadTabs}' 
+                                   currentPos='{!v.selectedTab}' 
+                                   allPossibleParents='{!v.parentTabs}'
+                                   activeParent='{!v.ActiveParentTab}'
+                                   parentTabsetUsesIteration='True'
+                                   saveFunc='{!v.saveFunc}'
+                                   nmbrOfAttchments = '{!v.nmbrOfAttchments}'
+                                   isUploadSection = '{!v.isUploadSection}'
+                                   isCommunityUser= '{!v.isCommunityUser}'
+                                   benchMarkPos = '{!v.benchMarkPos}'
+                                   UploadDocsList='{!v.OnboardingChecklists}'
+                                   section='{!v.section}'                              
+                                   benchMarkTabRequired = '{!v.benchMarkTabRequired}'
+                                   requiredDocsUploaded = '{!v.requiredDocsUploaded}'
+                                   isLastTab= '{!v.isLastTab}'/> 
+    </div>
+</aura:component>

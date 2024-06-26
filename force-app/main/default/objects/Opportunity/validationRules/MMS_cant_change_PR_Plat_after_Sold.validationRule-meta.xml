@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MMS_cant_change_PR_Plat_after_Sold</fullName>
+    <active>true</active>
+    <description>MMS cannot change the PR platform after changing an opportunity to sold</description>
+    <errorConditionFormula>RecordTypeId =&quot;012300000000hQQ&quot; &amp;&amp;
+ISCHANGED( Payroll_Platform__c ) &amp;&amp;
+ ISPICKVAL(StageName ,&quot;Sold&quot;)</errorConditionFormula>
+    <errorMessage>Once an opportunity is sold, you cannot modify the payroll platform</errorMessage>
+</ValidationRule>

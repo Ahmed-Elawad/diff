@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Limit_who_can_edit_audit_rejectfinal_rcd</fullName>
+    <active>true</active>
+    <description>based on record type and profile limit who can edit this record</description>
+    <errorConditionFormula>IF(OR(ISPICKVAL(PRIORVALUE(Status__c),&apos;Audit Reject Final&apos;), ISPICKVAL(Status__c, &apos;Audit Reject Final&apos;)) &amp;&amp; 
+NOT($Profile.Name =&apos;NSS Manager Admin&apos;) &amp;&amp;
+NOT($Profile.Name =&apos;Sales Enablement&apos;) &amp;&amp;
+NOT ($Profile.Name = &apos;Sales CSA&apos;) &amp;&amp;
+NOT ($Profile.Name = &apos;System Administrator&apos;), 
+true, false)</errorConditionFormula>
+    <errorMessage>You do not have permission to edit this Audit Reject FInal record.</errorMessage>
+</ValidationRule>

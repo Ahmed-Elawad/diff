@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Total_Days_for_Training__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>If(ISNULL( NCT_Scheduled_Date__c), 
+
+(today() - (NCT_Scheduled_Date__c)), 
+
+(NCT_Scheduled_Date__c - Client_Load_Date__c  - 2*( floor((NCT_Scheduled_Date__c - DATE(1985, 6, 24))/7) - floor((Client_Load_Date__c - DATE(1985, 6, 24))/7))))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>Number of days is calculated starting from the date that the case is transferred to the Advisor until date of when client attended live client training</inlineHelpText>
+    <label>Total Days between Setup and LCT</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>FSA_Cancel_Date_Entered</fullName>
+    <active>true</active>
+    <description>Cannot enter a FSA Cancel Date until pending Tasks are completed</description>
+    <errorConditionFormula>NOT(ISNULL(  FSA_Cancel_Date_Entered__c ))&amp;&amp;
+(
+CONTAINS( Pending_FSA_Tasks__c , &quot;CPR NPR Callout&quot;)||
+CONTAINS( Pending_FSA_Tasks__c , &quot;Unresolved Paperwork Discrepancy&quot;)
+)</errorConditionFormula>
+    <errorMessage>You cannot fill out &quot;FSA Cancel Date Entered&quot; until the following Pending Tasks are Resolved: CPR NPR Callout, Unresolved Paperwork Discrepancy, and Pending FSA Claim Filing Shutoff.</errorMessage>
+</ValidationRule>

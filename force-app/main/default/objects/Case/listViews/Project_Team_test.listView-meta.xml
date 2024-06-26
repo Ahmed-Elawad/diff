@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Project_Team_test</fullName>
+    <booleanFilter>(2 AND 8 AND 7) AND (1 OR 3 OR 4 OR 5 OR 6)</booleanFilter>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>OWNER_NAME</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>Product__c</columns>
+    <columns>Branch_Client_ID__c</columns>
+    <columns>NAME</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>Date_Time_First_Modified__c</columns>
+    <columns>CASES.LAST_UPDATE</columns>
+    <columns>CASES.RECORDTYPE</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.Service_Support_HRO_Case,Case.Service_Support_STM_Case,Case.Service_Support_TAA_Case</value>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Solved,Closed - APR Created,Cancelled,Completed,Do Not Support,Order Denied</value>
+    </filters>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.Service_Onboarding_TAA_Case2,Case.Service_HRO_BeneTrac_Integration_Record_Type</value>
+    </filters>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.Service_Onboarding_STM_Record_Type</value>
+    </filters>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.Service_Onboarding_HRO_Case_Record_Type,Case.Service_Onboarding_EAO_Case_Record_Type</value>
+    </filters>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.Service_Onboarding_W2_Only_Case_Record_Type</value>
+    </filters>
+    <filters>
+        <field>User_Level_1_Supervisor__c</field>
+        <operation>equals</operation>
+        <value>Camille Cochran</value>
+    </filters>
+    <filters>
+        <field>User_Title__c</field>
+        <operation>equals</operation>
+        <value>Service Specialist - Online Services</value>
+    </filters>
+    <label>TAAHRO Project Team Open Cases</label>
+    <sharedTo>
+        <group>OS_Analysts</group>
+        <roleAndSubordinates>TimeAttendanceSupervisorInbound</roleAndSubordinates>
+    </sharedTo>
+</ListView>

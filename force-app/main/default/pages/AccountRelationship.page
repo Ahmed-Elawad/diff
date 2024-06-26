@@ -1,0 +1,32 @@
+<apex:page controller="AccountRelationshipController" 
+           tabStyle="Account"
+           showHeader="false">
+  <apex:pageMessages />
+
+  <apex:pageBlock >
+    <apex:sectionHeader title="{!displayTitle}"/>
+    
+    <!--  If there is no data found, display the following  -->
+    <apex:PageBlockSection rendered="{!NOT(hasAccts)}" title="No Accounts found for {!accountInfo}.">
+    </apex:PageBlockSection>
+    
+    <!--  If data is found, display the account list -->
+    <apex:PageBlockSection rendered="{!hasAccts}" title="{!sectionTitle}">
+      <apex:form >
+       <apex:dataTable value="{!accts}" var="acct" cellPadding="4" border="1">
+          <apex:column > 
+            <apex:facet name="header">Prospect-Client Name</apex:facet>
+            <apex:outputLink value="/{!acct.id}">
+               {!acct.Name}
+            </apex:outputLink>
+          </apex:column>
+          <apex:column headerValue="Prospect-Client Number"> 
+            <apex:outputText value="{!acct.AccountNumber}"/>
+          </apex:column>
+       </apex:dataTable>
+      </apex:form>
+    </apex:PageBlockSection>
+    
+  </apex:pageBlock>
+
+</apex:page>

@@ -1,0 +1,1269 @@
+<!-- Used to create an opportunity.
+
+   History
+   -------
+   12/13/2010 Dan Carmen   Created
+   03/01/2011 Dan Carmen   Added in logic for the other sales forces. 
+   12/9/2011  Carrie Marciano   added Auto_Create_Follow_up__c on MMS
+   10/29/2012 Dan Carmen   Added Referring Employee field
+   08/16/2013 Justin Stouffer Added MSP Opportunity Section
+   04/06/2016 Justin Stouffer   Added in logic to display differently in Salesforce1.
+   11/22/2016 Justin Stouffer Added Check Date Field.
+   03/03/2017 Jacob Hinds    Adding existing opportunity stuff
+   05/01/2017 Saketh Mysa    Add Opportunity fields in HRS Opportunity Section
+   12/20/2017 Dan Carmen        Added functionality for selecting the Opportunity Type
+   03/11/2019 Jacob Hinds    Adding PEO
+   04/02/2020 Saketh Mysa    added new sections for HNB, P&C, Merchant Services, TAA, ESR, PBA Opportunities
+   04/02/2020 Saketh Mysa    Removed Payroll Platfrom from HNB section
+   04/30/2020 Saketh Mysa     US 34010746 Updates
+   11/16/2020 Brandon Vidro     APR0109214 - Added Other Competition field
+   10/20/2021 Dan Carmen        Add Product of Interest
+   03/30/2022 Susmitha Somavarapu Local Competitor Error Resolution (APR0132939)
+   05/12/2023 Rohit Ranjan APR0148368: Removed Payroll_Unit__c Checkbox Reference
+
+ -->
+<apex:component > 
+    <apex:attribute name="oppty" description="The Opportunity"
+        type="Opportunity" required="true" />
+    <apex:attribute name="acct" description="The Account" type="Account"
+        required="true" />
+    <apex:attribute name="ctct" description="The Contact" type="Contact"
+        required="true" />
+    <apex:attribute name="isCore" description="Is this a core opportunity"
+        type="Boolean" required="true" />
+    <apex:attribute name="isMMS" description="Is this an MMS opportunity"
+        type="Boolean" required="true" />
+    <apex:attribute name="isHRS" description="Is this an HRS opportunity"
+        type="Boolean" required="true" />
+    <apex:attribute name="isAncillary"
+        description="Is this an ancillary opportunity" type="Boolean"
+        required="true" />
+    <apex:attribute name="isMSP" description="Is this an MSP opportunity"
+        type="Boolean" required="true" />
+    <apex:attribute name="isPEO" description="Is this a PEO opportunity"
+        type="Boolean" required="true" />
+    <apex:attribute name="isTAA" description="Is this a TAA opportunity"
+        type="Boolean" required="true" />
+    
+    <!-- Start Added by Saketh -->
+    <!-- <apex:attribute name="isHNB" description="Is this a HNB opportunity"
+		type="Boolean" required="true" /> -->
+    <apex:attribute name="isPC" description="Is this a PNC opportunity"
+        type="Boolean" required="true" />
+    <apex:attribute name="isMS" description="Is this a MerchantService opportunity"
+        type="Boolean" required="true" />
+    <apex:attribute name="isESR" description="Is this a ESR opportunity"
+        type="Boolean" required="true" />
+    <apex:attribute name="isPBA" description="Is this a PBA opportunity"
+        type="Boolean" required="true" /> 
+    <apex:attribute name="isHNB" description="Is this an HNBF opportunity"
+        type="Boolean" required="true" />
+    <!-- End Added by Saketh -->
+    
+    <!-- Updated For myStaffingPro -->
+    <apex:attribute name="prodName" description="The name of the product"
+        type="String" required="true" />
+    <apex:attribute name="salesOrg" description="The sales org of the rep"
+        type="String" required="true" />
+    <apex:attribute name="isSF1" description="Is this SalesForce 1"
+        type="Boolean" required="false" default="false" />
+    <apex:attribute name="companySelected"
+        description="Has a Company been selected from the picklist?"
+        type="Boolean" required="true" />
+    <apex:attribute name="existingOpps"
+        description="Existing Opportunities for the table"
+        type="ExistingOpptyWrapper[]" required="true" default="false" />
+    <apex:attribute name="storeSelectedOppty"
+        description="Controller Method to Call" type="ApexPages.Action"
+        required="true" default="false" />
+    <apex:attribute name="createOppty"
+        description="Controller Method to Call" type="Boolean" required="true"
+        default="false" />
+    <apex:attribute name="hasExistingOpps"
+        description="If there are existing opptys, show table" type="Boolean"
+        required="true"/>
+    <apex:attribute name="eventSubject"
+        description="Event Subject" type="String"
+        required="false" default="false" />
+    <apex:attribute name="eventDescription"
+        description="Event Description" type="String"
+        required="false" default="false" />
+    <apex:attribute name="allowCreateOpp" type="Boolean"
+        description="Is the user allowed to create an opportunity?"
+        required="false" default="true" />
+    <apex:attribute name="existingOppMsg" type="String"
+        description="The title printed on the section for existing opportunities"
+        required="false" default="Do You Want to Log Your EUP Against an Existing Opportunity?" />
+
+    <style type="text/css"> 
+
+.headerRed {font-size:15px;
+    text-align: center;
+    color: red;
+    font-family: FGMedCon, arial;
+    margin: 12px 0 6px;
+    font-weight: bold;
+    font-style: normal;
+    line-height: 17px;
+    white-space: nowrap;
+}
+.headerBlack {font-size:15px;
+    text-align: center;
+    color: blue;
+    font-family: FGMedCon, arial;
+    margin: 12px 0 6px;
+    font-weight: bold;
+    font-style: normal;
+    line-height: 17px;
+    white-space: nowrap;
+}
+   </style>
+   
+    <apex:outputPanel id="createOpptyContainer">
+        <apex:outputPanel rendered="{!NOT(isSF1)}">
+        
+            <apex:outputPanel rendered="{!createOppty}">
+                <!--  Core Opportunity -->
+                <apex:pageBlockSection rendered="{!isCore}"
+                    id="createOpptyCore" title="New {!prodName} Opportunity"
+                    columns="2"> <!-- rendered="{!AND(isCore,NOT(isAncillary))}" -->
+                    <apex:inputField value="{!oppty.name}" />
+                    <apex:outputField value="{!oppty.OpportunityType__c}" />
+                    
+                    <apex:inputField value="{!oppty.CloseDate}" id="closeDt" />
+                    <apex:inputField value="{!oppty.LeadSource}" id="leadSource"
+                        required="true" />
+                    <apex:inputFIeld value="{!oppty.Check_Date__c}" />
+                    <apex:inputField value="{!oppty.Level_2__c}" />
+                    <apex:inputField value="{!oppty.Referral_Account__c}"
+                        id="referralAccount" />
+                    <apex:inputField value="{!oppty.Referral_Contact__c}"
+                        id="referralContact" />
+                    <apex:inputField value="{!oppty.Primary_Competition__c}"
+                        id="primComp" required="true" />
+                    <apex:inputField value="{!oppty.Client_Referral__c}" id="refSource" />
+                    <apex:inputField value="{!oppty.Other_Competition__c}"
+                                     id="otherComp" required="false" /> 
+                    <apex:inputField value="{!acct.Current_Prior_Method__c}"
+                        id="CurPriorMeth" required="true" />
+                    <apex:inputField value="{!oppty.Mthd_Lead_Rcvd__c}"
+                        id="mthdLeadRcvd" />
+                    <apex:inputField value="{!oppty.Local_Competitors__c}"
+                        id="localComp" />
+                    <apex:inputField value="{!oppty.Referring_Employee__c}" />
+                    <apex:inputField value="{!oppty.Auto_Create_Follow_up__c}"
+                        id="autoFollowUp" />
+                </apex:pageBlockSection>
+
+                <!--  MMS Opportunity -->
+                <apex:pageBlockSection rendered="{!isMMS}"
+                    id="createOpptyMMS" title="New {!prodName} Opportunity" columns="2"> <!-- rendered="{!AND(isMMS,NOT(isAncillary))}" -->
+                    <apex:inputField value="{!oppty.name}" />
+                    <apex:outputField value="{!oppty.OpportunityType__c}" />
+
+                    <apex:inputField value="{!oppty.LeadSource}" id="leadSource"
+                        required="true" />
+                    <apex:inputField value="{!acct.Current_Prior_Method__c}"
+                        id="CurPriorMeth" required="true" />
+					<apex:inputField value="{!oppty.Level_2__c}" />
+                    <apex:inputField value="{!oppty.Referral_Account__c}"
+                        id="referralAccount" />		
+                    <apex:inputField value="{!oppty.Referral_Contact__c}"
+                        id="referralContact" />
+                    <apex:inputField value="{!oppty.Client_Referral__c}" id="refSource" />
+
+                    <apex:inputField value="{!oppty.Primary_Competition__c}"
+                        id="primComp" required="true" />
+                    <apex:inputField value="{!oppty.Other_Competition__c}"
+                        id="otherComp" />
+
+                    <apex:inputField value="{!oppty.CloseDate}" id="closeDt" />
+                    <apex:inputField value="{!oppty.Local_Competitors__c}"
+                        id="localComp" />
+
+                    <apex:inputField value="{!oppty.Core_Conversion_Reason__c}"
+                        id="conConvReason" />
+                    <apex:inputField value="{!oppty.Core_Branch_Client_Number__c}"
+                        id="coreCltBranchNbr" />
+
+                    <apex:inputField value="{!oppty.Auto_Create_Follow_up__c}"
+                        id="autoFollowUp" />
+                    <apex:inputField value="{!oppty.Referring_Employee__c}" />
+				<!--	<apex:inputField value="{!oppty.Payroll_Unit__c}" />  -->
+
+                </apex:pageBlockSection>
+
+                <!--  MSP Opportunity -->
+                <!-- Updated For myStaffingPro -->
+                <apex:pageBlockSection rendered="{!isMSP}" id="createOpptyMsp"
+                    title="New {!prodName} Opportunity" columns="2">
+                    <apex:inputField value="{!oppty.name}" />
+                    <apex:outputField value="{!oppty.OpportunityType__c}" />
+
+                    <apex:inputField value="{!oppty.LeadSource}" id="leadSource"
+                        required="true" />
+                    <apex:inputField value="{!oppty.Referring_Employee__c}" />
+                    <apex:inputField value="{!oppty.Level_2__c}" />
+                    <apex:inputField value="{!oppty.CloseDate}" id="closeDt" />
+                </apex:pageBlockSection>
+
+                <!--  HRS Opportunity -->
+                <apex:pageBlockSection rendered="{!isHRS}" id="createOpptyHRS"
+                    title="New {!prodName} Opportunity" columns="2">
+                    <apex:inputField value="{!oppty.name}" />
+                    <apex:outputField value="{!oppty.OpportunityType__c}" />
+
+                    <apex:inputField value="{!oppty.CloseDate}" id="closeDt" />
+                    <apex:inputField value="{!oppty.LeadSource}" id="leadSource"
+                        required="true" />
+
+                    <apex:inputField value="{!oppty.DM__c}" id="dmCheckbox" />
+                    <apex:inputField value="{!oppty.Level_2__c}" />
+                    
+                    <apex:inputField value="{!oppty.Non_DM__c}" id="nonDmCheckbox" />
+                    <apex:inputField value="{!oppty.Referral_Contact__c}"
+                        id="referralContact" />
+
+                    <apex:inputField value="{!oppty.Referring_Employee__c}" />
+                     <!--
+                    <apex:inputField value="{!ctct.Products__c}" required="false"/>
+                     -->
+                    	
+                    <apex:inputField value="{!oppty.Local_Competitors__c}"	
+                    id="localComp" />
+                </apex:pageBlockSection>
+                
+                <!-- PEO Opportunity -->
+                <apex:pageBlockSection rendered="{!isPEO}" id="createOpptyPEO"
+                    title="New {!prodName} Opportunity" columns="2">
+                    <apex:inputField value="{!oppty.name}" />
+                    <apex:outputField value="{!oppty.OpportunityType__c}" />
+
+                    <apex:inputField value="{!oppty.CloseDate}" id="closeDt" />
+                    <apex:inputField value="{!oppty.LeadSource}" id="leadSource"
+                        required="true" />
+
+                    <apex:inputField value="{!oppty.DM__c}" id="dmCheckbox" />
+                    <apex:inputField value="{!oppty.Level_2__c}" />
+                    <apex:inputField value="{!oppty.Non_DM__c}" id="nonDmCheckbox" />
+                    <apex:inputField value="{!oppty.Referral_Contact__c}"
+                        id="referralContact" />
+
+																
+	 
+                    
+                    <apex:inputField value="{!oppty.Referring_Employee__c}" />
+                    <apex:inputField value="{!oppty.Payroll_Platform__c}" required="true"/>
+                    <apex:inputField value="{!oppty.Payroll_Current_Prior_Method__c}"/>
+                      <apex:inputField value="{!oppty.Local_Competitors__c}"	
+                   />
+                    <!--  required="true" -->
+                </apex:pageBlockSection>
+                
+				<!--  PNC, TAA, ESR, PBA Opportunity -->
+                <apex:pageBlockSection rendered="{!OR(isPC, isESR, isPBA, isTAA)}" id="createOpptyPNCTAAESRPBA" title="New {!prodName} Opportunity" columns="2">
+                    
+                    <apex:inputField value="{!oppty.name}" />
+                    <apex:inputField value="{!oppty.OpportunityType__c}" html-disabled="true"/>
+                    
+                    <apex:inputField value="{!oppty.CloseDate}" id="closeDt" />
+                    <apex:inputField value="{!oppty.HNBF_Sales_Type__c}" />
+                    <apex:inputField value="{!oppty.LeadSource}" id="leadSource"
+                        required="true" />
+                    <apex:inputFIeld value="{!oppty.Check_Date__c}" />
+                    <apex:inputField value="{!oppty.Level_2__c}" />
+                    <apex:inputField value="{!oppty.Referral_Contact__c}"
+                        id="referralContact" />
+                    <apex:inputField value="{!oppty.Primary_Competition__c}"
+                        id="primComp" required="true" />
+                    <apex:inputField value="{!oppty.Client_Referral__c}" id="refSource" />
+                    <apex:inputField value="{!acct.Current_Prior_Method__c}"
+                        id="CurPriorMeth" required="true" />
+                    <apex:inputField value="{!oppty.Mthd_Lead_Rcvd__c}"
+                        id="mthdLeadRcvd" />
+                    <apex:inputField value="{!oppty.Local_Competitors__c}"
+                        id="localComp" />
+                    <apex:inputField value="{!oppty.Referring_Employee__c}" />
+                    <apex:inputField value="{!oppty.Auto_Create_Follow_up__c}"
+                        id="autoFollowUp" />
+                </apex:pageBlockSection>
+				
+				<!-- MerchantService Opportunity -->
+                <apex:pageBlockSection rendered="{!isMS}" id="createOpptyMerchantService"
+                    title="New {!prodName} Opportunity" columns="2">
+                    
+                    <apex:inputField value="{!oppty.name}" />
+                    <apex:inputField value="{!oppty.OpportunityType__c}" html-disabled="true"/>
+                    
+                    <apex:inputField value="{!oppty.CloseDate}" id="closeDt" />
+                    <apex:inputField value="{!oppty.HNBF_Sales_Type__c}" />
+                    <apex:inputField value="{!oppty.LeadSource}" id="leadSource"
+                        required="true" />
+                    <!-- <apex:inputFIeld value="{!oppty.Check_Date__c}" /> -->
+                    <apex:inputField value="{!oppty.Level_2__c}" />
+                    <apex:inputField value="{!oppty.Referral_Contact__c}"
+                        id="referralContact" />
+                    <apex:inputField value="{!oppty.Primary_Competition__c}"
+                        id="primComp" required="true" />
+                    <apex:inputField value="{!oppty.Client_Referral__c}" id="refSource" />
+                    <!-- <apex:inputField value="{!acct.Current_Prior_Method__c}" id="CurPriorMeth" required="true" /> -->
+                    <apex:inputField value="{!oppty.Mthd_Lead_Rcvd__c}"
+                        id="mthdLeadRcvd" />
+                    <!-- <apex:inputField value="{!oppty.Local_Competitors__c}"
+                        id="localComp" /> -->
+                    <apex:inputField value="{!oppty.Referring_Employee__c}" />
+                    <apex:inputField value="{!oppty.Auto_Create_Follow_up__c}"
+                        id="autoFollowUp" />
+                </apex:pageBlockSection>
+				
+                <!--  HNB Opportunity -->
+                <apex:pageBlockSection rendered="{!isHNB}" id="createOpptyHNB"
+                    title="New {!prodName} Opportunity" columns="2">
+                    <apex:inputField value="{!oppty.name}" />
+                    <apex:inputField value="{!oppty.OpportunityType__c}" html-disabled="true"/>
+
+                    <apex:inputField value="{!oppty.CloseDate}" id="closeDt" />
+                    <apex:inputField value="{!oppty.HNBF_Sales_Type__c}" />
+                    <apex:inputField value="{!oppty.LeadSource}" id="leadSource"
+                        required="true" />
+
+                    <apex:inputField value="{!oppty.DM__c}" id="dmCheckbox" />
+                    <apex:inputField value="{!oppty.Level_2__c}" />
+                    <apex:inputField value="{!oppty.Referral_Contact__c}"
+                        id="referralContact" />
+
+                    <apex:inputField value="{!oppty.Non_DM__c}" id="nonDmCheckbox" />
+                    <apex:inputField value="{!oppty.Referring_Employee__c}" />
+                    <!-- <apex:inputField value="{!oppty.Payroll_Platform__c}" required="true"/> -->
+                </apex:pageBlockSection>
+                
+				<!-- End Added by Saketh -->
+				
+                <!--  HRS Opportunity 401 products-->
+                <apex:pageBlockSection rendered="{!AND(isHRS, salesOrg=='HRS')}"
+                    id="createOpptyHRS_ProdsHRS" title="Products Presented" columns="3">
+
+                    <apex:repeat value="{!$ObjectType.Opportunity.FieldSets.X401_Products}"
+                        var="prod">
+                        <apex:inputField value="{!oppty[prod]}" />
+                    </apex:repeat>
+
+                </apex:pageBlockSection>
+                <!--
+           <apex:pageBlockSection rendered="{!AND(isHRS, salesOrg=='HRS')}" id="createOpptyHRS_ProdsHRS2" columns="1" >
+        
+             <th>If this is a 401(k) presentation, verify that the email address of the contact is present and valid so that the Fee Disclosure
+             can be sent. If it is not correct, cancel, fix the email address on the contact, and re-enter this form.
+             </th>
+           </apex:pageBlockSection>
+            -->
+                <!--  HRS Opportunity PEO/ASO products-->
+                <apex:pageBlockSection rendered="{!AND(isHRS, salesOrg=='PAS')}"
+                    id="createOpptyHRS_ProdsPEO" title="Products Presented" columns="3">
+                    <apex:repeat value="{!$ObjectType.Opportunity.FieldSets.PEO_ASO_Products}"
+                        var="prod">
+                        <apex:inputField value="{!oppty[prod]}" />
+                    </apex:repeat>
+
+                </apex:pageBlockSection>
+
+                <!--  HRS Opportunity HNBF products-->
+                <apex:pageBlockSection rendered="{!AND(isHRS, salesOrg=='HNBF')}"
+                    id="createOpptyHRS_ProdsHNBF" title="Products Presented"
+                    columns="3">
+                    <apex:repeat value="{!$ObjectType.Opportunity.FieldSets.HNBF_Products}"
+                        var="prod">
+                        <apex:inputField value="{!oppty[prod]}" />
+                    </apex:repeat>
+                </apex:pageBlockSection>
+            </apex:outputPanel>
+        </apex:outputPanel>
+    </apex:outputPanel>
+    <apex:outputPanel id="createOpptyContainerSF1">
+        <apex:outputPanel id="SF1" rendered="{!isSF1}">
+          <!-- 
+            <apex:outputPanel id="tableSF1" rendered="{!AND(companySelected,hasExistingOpps)}">
+                <h2 class="section-head">{!existingOppMsg}</h2>
+                <apex:actionRegion >
+                <div style="overflow: scroll; width: 100%; height: 100%;"> 
+                    <table class="table table-hover well table-striped">
+                        <thead>
+                            <tr>
+                                <th>Use</th>
+                                <th>Opportunity Name</th>
+                                <th>Status</th>
+                                <th>Created Date</th>
+                                <th>Run Effective Date</th>
+                                <th>Opportunity Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <apex:repeat value="{!existingOpps}" var="wrap"
+                                id="existingOppsRepeat">
+                                <tr>
+                                    <td><apex:inputCheckbox value="{!wrap.selected}"  disabled="{!NOT(allowCreateOpp)}">
+                                            <apex:actionSupport event="onchange"
+                                                action="{!storeSelectedOppty}"
+                                                rerender="createOpptyContainerSF1"
+                                                status="existingOpptyStatus"
+                                                oncomplete="updateEvent({!eventSubject},{!eventDescription},true);"/>
+                                        </apex:inputCheckbox> <apex:actionStatus id="existingOpptyStatus">
+                                            <apex:inputCheckbox value="{!wrap.selected}" disabled="true" />
+                                        </apex:actionStatus></td>
+                                    <td><apex:outputLink value="{!URLFOR($Action.Opportunity.View, wrap.opp.Id)}">{!wrap.opp.Name}</apex:outputLink>
+                                    </td>
+                                    <td><apex:outputText value="{!wrap.opp.StageName}"/>
+                                    </td>
+                                    <td><apex:outputText value="{0,date,MM/dd/yyyy}"> <apex:param value="{!wrap.opp.CreatedDate}" /> </apex:outputText>
+                                    </td>
+                                    <td><apex:outputText value="{0,date,MM/dd/yyyy}"> <apex:param value="{!wrap.opp.CloseDate}" /> </apex:outputText>
+                                    </td>
+                                    <td><apex:outputText value="{!wrap.opp.OpportunityType__c}"/>
+                                    </td>
+                                </tr>
+                            </apex:repeat>
+                        </tbody>
+                    </table>
+                </div>
+                </apex:actionRegion>
+            </apex:outputPanel>
+             -->
+            <apex:outputPanel rendered="{!createOppty}">
+                <section class="section">
+                    <h2 class="section-head">New {!prodName} Opportunity</h2>
+                    <!--  Core Opportunity -->
+                    <apex:outputPanel rendered="{!isCore}"
+                        id="createOpptyCoreSF1" title="New {!prodName} Opportunity"> <!-- "{!AND(isCore,NOT(isAncillary))}" -->
+                        <div class="form-group has-error">
+                            <label class="control-label" for="OppName1">Opportunity
+                                Name</label>
+                            <apex:inputField type="text" styleClass="form-control"
+                                value="{!oppty.name}" id="OppName1" />
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="control-label" for="closeDt1">Run-Effective
+                                Date</label>
+                            <apex:inputField type="date" styleClass="form-control"
+                                value="{!oppty.CloseDate}" id="closeDt1" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="opptyCheckDate">Check
+                                Date</label>
+                            <apex:inputField styleClass="form-control"
+                                value="{!oppty.Check_Date__c}" id="opptyCheckDate" />
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="control-label" for="leadSource1">Lead
+                                Source</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.LeadSource}" id="leadSource1" required="false" />
+                        </div>
+						
+						<div class="form-group has-error">
+                            <label class="control-label" for="level1">Level 2</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.Level_2__c}" id="level1" required="false" />
+                        </div>
+						
+                        <div class="form-group has-error">
+                            <label class="control-label" for="primComp1">Primary
+                                Competition</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.Primary_Competition__c}" id="primComp1"
+                                required="false" />
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="control-label" for="CurPriorMeth">Payroll
+                                Current-Prior Method</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!acct.Current_Prior_Method__c}" id="CurPriorMeth"
+                                required="false" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="localComp">Local
+                                Competitors</label>
+                            <apex:inputField type="text" styleClass="form-control"
+                                value="{!oppty.Local_Competitors__c}" id="localComp" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="mthdLeadRcvd">Method
+                                Lead Received</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.Mthd_Lead_Rcvd__c}" id="mthdLeadRcvd" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="referralContact1">Referral
+                                Contact</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!oppty.Referral_Contact__c}"
+                                    id="referralContact1" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <label class="control-label" for="refSource">Client
+                                Referral</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!oppty.Client_Referral__c}"
+                                    id="refSource" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <label class="control-label" for="refEmp1">Referring
+                                Employee</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!oppty.Referring_Employee__c}"
+                                    id="refEmp1" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="autoFollowUp1111">Auto
+                                Create Follow-up</label>
+                            <div class="col-md-10">
+                                <apex:inputField style="checkbox"
+                                    value="{!oppty.Auto_Create_Follow_up__c}" id="autoFollowUp1111" />
+                            </div>
+                        </div>
+                    </apex:outputPanel>
+
+                    <!--  MMS Opportunity -->
+                    <apex:outputPanel rendered="{!isMMS}"
+                        id="createOpptyMMSSF1" title="New {!prodName} Opportunity"> <!-- "{!AND(isMMS,NOT(isAncillary))}" -->
+                        <div class="form-group has-error">
+                            <label class="control-label" for="OppName3">Opportunity
+                                Name</label>
+                            <apex:inputField type="text" styleClass="form-control"
+                                value="{!oppty.name}" id="OppName3" />
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="control-label" for="closeDt3">Run-Effective
+                                Date</label>
+                            <apex:inputField type="date" styleClass="form-control"
+                                value="{!oppty.CloseDate}" id="closeDt3" />
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="control-label" for="leadSource3">Lead
+                                Source</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.LeadSource}" id="leadSource3" required="true" />
+                        </div>
+						
+						<div class="form-group has-error">
+                            <label class="control-label" for="level3">Level 2</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.Level_2__c}" id="level3" required="false" />
+                        </div>
+						
+                        <div class="form-group has-error">
+																					  
+																				  
+																		   
+													   
+														  
+                            <label class="control-label" for="primComp3">Primary
+                                Competition</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.Primary_Competition__c}" id="primComp3"
+                                required="true" />
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="control-label" for="CurPriorMeth3">Payroll
+                                Current-Prior Method</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!acct.Current_Prior_Method__c}" id="CurPriorMeth3"
+                                required="true" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="localComp4">Local
+                                Competitors</label>
+                            <apex:inputField type="text" styleClass="form-control"
+                                value="{!oppty.Local_Competitors__c}" id="localComp4" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="mthdLeadRcvd3">Method
+                                Lead Received</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.Mthd_Lead_Rcvd__c}" id="mthdLeadRcvd3" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="otherComp3">Other
+                                Competition</label>
+                            <div class="form-control">
+                                <apex:inputField styleClass="form-control"
+                                    value="{!oppty.Other_Competition__c}" id="otherComp3" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="conConvReason3">Core
+                                Conversion Reason</label>
+                            <div class="form-control">
+                                <apex:inputField styleClass="form-control"
+                                    value="{!oppty.Core_Conversion_Reason__c}" id="conConvReason3" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="coreCltBranchNbr3">Core
+                                Branch Client Number</label>
+                            <div class="form-control">
+                                <apex:inputField styleClass="form-control"
+                                    value="{!oppty.Core_Branch_Client_Number__c}"
+                                    id="coreCltBranchNbr3" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="referralContact3">Referral
+                                Contact</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!oppty.Referral_Contact__c}"
+                                    id="referralContact3" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <label class="control-label" for="refSource3">Client
+                                Referral</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!oppty.Client_Referral__c}"
+                                    id="refSource3" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <label class="control-label" for="refEmp3">Referring
+                                Employee</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!oppty.Referring_Employee__c}"
+                                    id="refEmp3" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="autoFollowUp11113">Auto
+                                Create Follow-up</label>
+                            <div class="col-md-10">
+                                <apex:inputField style="checkbox"
+                                    value="{!oppty.Auto_Create_Follow_up__c}"
+                                    id="autoFollowUp11113" />
+                            </div>
+                        </div>
+							  
+												
+												   
+					<!--	<div class="form-group">
+                            <label class="col-md-2 control-label" for="PayrollUnit3">Payroll Unit</label>
+                            <div class="col-md-10">
+                                <apex:inputField style="checkbox"
+                                    value="{!oppty.Payroll_Unit__c}"
+                                    id="PayrollUnit3" />
+                            </div>
+                        </div>  -->
+																	
+													
+								  
+																		
+                    </apex:outputPanel>
+
+                    <!--  MSP Opportunity -->
+                    <!-- Updated For myStaffingPro -->
+                    <apex:outputPanel rendered="{!isMSP}" id="createOpptyMspSF1"
+                        title="New {!prodName} Opportunity">
+                        <div class="form-group has-error">
+                            <label class="control-label" for="OppName5">Opportunity
+                                Name</label>
+                            <apex:inputField type="text" styleClass="form-control"
+                                value="{!oppty.name}" id="OppName5" />
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="control-label" for="leadSource5">Lead
+                                Source</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.LeadSource}" id="leadSource5" required="true" />
+                        </div>
+						
+						<div class="form-group has-error">
+                            <label class="control-label" for="level5">Level 2</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.Level_2__c}" id="level5" required="false" />
+                        </div>
+						
+                        <div class="form-group">
+                            <label class="control-label" for="refEmp5">Referring
+                                Employee</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!oppty.Referring_Employee__c}"
+                                    id="refEmp5" />
+                            </div>
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="control-label" for="closeDt5">Run-Effective
+                                Date</label>
+                            <apex:inputField type="date" styleClass="form-control"
+                                value="{!oppty.CloseDate}" id="closeDt5" />
+                        </div>
+                          <div class="form-group">	
+                            <label class="control-label" for="localComp5">Local	
+                                Competitors</label>	
+                            <apex:inputField type="text" styleClass="form-control"	
+                                value="{!oppty.Local_Competitors__c}" id="localComp5" />	
+                        </div>
+                    </apex:outputPanel>
+
+                    <!--  HRS Opportunity -->
+                    <apex:outputPanel rendered="{!isHRS}" id="createOpptyHRSSF1"
+                        title="New {!prodName} Opportunity">
+                        <div class="form-group has-error">
+                            <label class="control-label" for="OppName6">Opportunity
+                                Name</label>
+                            <apex:inputField type="text" styleClass="form-control"
+                                value="{!oppty.name}" id="OppName6" />
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="control-label" for="closeDt6">Run-Effective
+                                Date</label>
+                            <apex:inputField type="date" styleClass="form-control"
+                                value="{!oppty.CloseDate}" id="closeDt6" />
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="control-label" for="leadSource66">Lead
+                                Source</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.LeadSource}" id="leadSource66" required="true" />
+                        </div>
+						
+						<div class="form-group has-error">
+                            <label class="control-label" for="level6">Level 2</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.Level_2__c}" id="level6" required="false" />
+                        </div>
+						
+                        <div class="form-group">
+                            <label class="control-label" for="referralContact6">Referral
+                                Contact</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!oppty.Referral_Contact__c}"
+                                    id="referralContact6" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="refEmp6">Referring
+                                Employee</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!oppty.Referring_Employee__c}"
+                                    id="refEmp6" />
+                            </div>
+                        </div>
+                        <!-- <div class="form-group">
+                            <label class="control-label" for="payrollPlatform6">Payroll
+                                Platform</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!oppty.Payroll_Platform__c}"
+                                    id="payrollPlatform6" required="true"/>
+                            </div>
+                        </div> -->
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="dmCheckbox6">DM</label>
+                            <div class="col-md-10">
+                                <apex:inputField value="{!oppty.DM__c}" id="dmCheckbox6" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="nonDmCheckbox6">Non-DM</label>
+                            <div class="col-md-10">
+                                <apex:inputField value="{!oppty.Non_DM__c}" id="nonDmCheckbox6" />
+                            </div>
+                        </div>
+                           <div class="form-group">	
+                            <label class="control-label" for="localComp6">Local	
+                                Competitors</label>	
+                            <apex:inputField type="text" styleClass="form-control"	
+                                value="{!oppty.Local_Competitors__c}" id="localComp6" />	
+                        </div>
+                        <!--
+                        <div class="form-group">
+                            <label class="control-label" for="hrsProdInterest">Product of Interest</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!ctct.Products__c}"
+                                    id="hrsProdInterest" />
+                            </div>
+                        </div>
+                        -->
+                    </apex:outputPanel>
+
+                    <!-- PEO Opportunity -->
+                    <apex:outputPanel rendered="{!isPEO}" id="createOpptyPEOSF1"
+                        title="New {!prodName} Opportunity">
+                        <div class="form-group has-error">
+                            <label class="control-label" for="OppName7">Opportunity
+                                Name</label>
+                            <apex:inputField type="text" styleClass="form-control"
+                                value="{!oppty.name}" id="OppName7" />
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="control-label" for="closeDt7">Run-Effective
+                                Date</label>
+                            <apex:inputField type="date" styleClass="form-control"
+                                value="{!oppty.CloseDate}" id="closeDt7" />
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="control-label" for="leadSource7">Lead
+                                Source</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.LeadSource}" id="leadSource7" required="true" />
+                        </div>
+						
+						<div class="form-group has-error">
+                            <label class="control-label" for="level7">Level 2</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.Level_2__c}" id="level7" required="false" />
+                        </div>
+						
+                        <div class="form-group">
+                            <label class="control-label" for="referralContact7">Referral
+                                Contact</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!oppty.Referral_Contact__c}"
+                                    id="referralContact7" />
+                            </div>
+                        </div>
+														  
+																					  
+																				  
+																		   
+													   
+                        <div class="form-group">
+                            <label class="control-label" for="refEmp7">Referring
+                                Employee</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!oppty.Referring_Employee__c}"
+                                    id="refEmp7" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="payrollPlatform7">Payroll
+                                Platform</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!oppty.Payroll_Platform__c}"
+                                    id="payrollPlatform7" required="true"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="pcpm7">Payroll
+                                Current Prior Method</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!oppty.Payroll_Current_Prior_Method__c}"
+                                    id="pcpm7"/> <!-- required="true" -->
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="dmCheckbox7">DM</label>
+                            <div class="col-md-10">
+                                <apex:inputField value="{!oppty.DM__c}" id="dmCheckbox7" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="nonDmCheckbox7">Non-DM</label>
+                            <div class="col-md-10">
+                                <apex:inputField value="{!oppty.Non_DM__c}" id="nonDmCheckbox7" />
+                            </div>
+                              </div>	
+                        <div class="form-group">	
+                            <label class="control-label" for="localComp7">Local	
+                                Competitors</label>	
+                            <apex:inputField type="text" styleClass="form-control"	
+                                value="{!oppty.Local_Competitors__c}" id="localComp7" />
+                        </div>
+                    </apex:outputPanel>
+					
+					<!--  TAA, PNC, ESR, PBA Opportunity -->
+                    <apex:outputPanel rendered="{!OR(isPC, isESR, isPBA, isTAA)}"
+                        id="createOpptyTAAPNCESRPBASF1" title="New {!prodName} Opportunity">
+                        <div class="form-group has-error">
+                            <label class="control-label" for="OppName8">Opportunity
+                                Name</label>
+                            <apex:inputField type="text" styleClass="form-control"
+                                value="{!oppty.name}" id="OppName8" />
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="control-label" for="closeDt8">Run-Effective
+                                Date</label>
+                            <apex:inputField type="date" styleClass="form-control"
+                                value="{!oppty.CloseDate}" id="closeDt8" />
+                        </div>
+						
+						<div class="form-group has-error">
+                            <label class="control-label" for="opportunityType8">Opportunity type
+                                </label>
+                            <apex:inputField styleClass="form-control"
+                                value="{!oppty.OpportunityType__c}" id="opportunityType8" html-disabled="true"/>
+                        </div>
+						<div class="form-group has-error">
+                            <label class="control-label" for="oppSubType8">Opportunity SubType
+                                </label>
+                            <apex:inputField styleClass="form-control"
+                                value="{!oppty.HNBF_Sales_Type__c}" id="oppSubType8" />
+                        </div>
+						
+                        <div class="form-group">
+                            <label class="control-label" for="opptyCheckDate8">Check
+                                Date</label>
+                            <apex:inputField styleClass="form-control"
+                                value="{!oppty.Check_Date__c}" id="opptyCheckDate8" />
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="control-label" for="leadSource8">Lead
+                                Source</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.LeadSource}" id="leadSource8" required="false" />
+                        </div>
+						
+						<div class="form-group has-error">
+                            <label class="control-label" for="level8">Level 2</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.Level_2__c}" id="level8" required="false" />
+                        </div>
+						
+                        <div class="form-group has-error">
+                            <label class="control-label" for="primComp8">Primary
+                                Competition</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.Primary_Competition__c}" id="primComp8"
+                                required="false" />
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="control-label" for="CurPriorMeth8">Payroll
+                                Current-Prior Method</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!acct.Current_Prior_Method__c}" id="CurPriorMeth8"
+                                required="false" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="localComp8">Local
+                                Competitors</label>
+                            <apex:inputField type="text" styleClass="form-control"
+                                value="{!oppty.Local_Competitors__c}" id="localComp8" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="mthdLeadRcvd8">Method
+                                Lead Received</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.Mthd_Lead_Rcvd__c}" id="mthdLeadRcvd8" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="referralContact8">Referral
+                                Contact</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!oppty.Referral_Contact__c}"
+                                    id="referralContact8" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <label class="control-label" for="refSource8">Client
+                                Referral</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!oppty.Client_Referral__c}"
+                                    id="refSource8" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <label class="control-label" for="refEmp8">Referring
+                                Employee</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!oppty.Referring_Employee__c}"
+                                    id="refEmp8" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="autoFollowUp8">Auto
+                                Create Follow-up</label>
+                            <div class="col-md-10">
+                                <apex:inputField style="checkbox"
+                                    value="{!oppty.Auto_Create_Follow_up__c}" id="autoFollowUp8" />
+                            </div>
+                        </div>
+                    </apex:outputPanel>
+                    
+                    <!--  MerchantService Opportunity -->
+                    <apex:outputPanel rendered="{!isMS}"
+                        id="createOpptyMSSF1" title="New {!prodName} Opportunity">
+                        <div class="form-group has-error">
+                            <label class="control-label" for="OppName9">Opportunity
+                                Name</label>
+                            <apex:inputField type="text" styleClass="form-control"
+                                value="{!oppty.name}" id="OppName9" />
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="control-label" for="closeDt9">Run-Effective
+                                Date</label>
+                            <apex:inputField type="date" styleClass="form-control"
+                                value="{!oppty.CloseDate}" id="closeDt9" />
+                        </div>
+						
+						<div class="form-group has-error">
+                            <label class="control-label" for="opportunityType9">Opportunity type
+                                </label>
+                            <apex:inputField styleClass="form-control"
+                                value="{!oppty.OpportunityType__c}" id="opportunityType9" html-disabled="true"/>
+                        </div>
+						<div class="form-group has-error">
+                            <label class="control-label" for="oppSubType9">Opportunity SubType
+                                </label>
+                            <apex:inputField styleClass="form-control"
+                                value="{!oppty.HNBF_Sales_Type__c}" id="oppSubType9" />
+                        </div>
+						
+                        <!-- <div class="form-group">
+                            <label class="control-label" for="opptyCheckDate9">Check
+                                Date</label>
+                            <apex:inputField styleClass="form-control"
+                                value="{!oppty.Check_Date__c}" id="opptyCheckDate9" />
+                        </div> -->
+                        <div class="form-group has-error">
+                            <label class="control-label" for="leadSource9">Lead
+                                Source</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.LeadSource}" id="leadSource9" required="false" />
+                        </div>
+						
+						<div class="form-group has-error">
+                            <label class="control-label" for="level9">Level 2</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.Level_2__c}" id="level9" required="false" />
+                        </div>
+						
+                        <div class="form-group has-error">
+                            <label class="control-label" for="primComp9">Primary
+                                Competition</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.Primary_Competition__c}" id="primComp9"
+                                required="false" />
+                        </div>
+                        <!-- <div class="form-group has-error">
+                            <label class="control-label" for="CurPriorMeth9">Payroll
+                                Current-Prior Method</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!acct.Current_Prior_Method__c}" id="CurPriorMeth9"
+                                required="false" />
+                        </div> -->
+                        <!-- <div class="form-group">
+                            <label class="control-label" for="localComp9">Local
+                                Competitors</label>
+                            <apex:inputField type="text" styleClass="form-control"
+                                value="{!oppty.Local_Competitors__c}" id="localComp9" />
+                        </div> -->
+                        <div class="form-group">
+                            <label class="control-label" for="mthdLeadRcvd9">Method
+                                Lead Received</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.Mthd_Lead_Rcvd__c}" id="mthdLeadRcvd9" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="referralContact9">Referral
+                                Contact</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!oppty.Referral_Contact__c}"
+                                    id="referralContact9" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <label class="control-label" for="refSource9">Client
+                                Referral</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!oppty.Client_Referral__c}"
+                                    id="refSource9" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <label class="control-label" for="refEmp9">Referring
+                                Employee</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!oppty.Referring_Employee__c}"
+                                    id="refEmp9" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="autoFollowUp9">Auto
+                                Create Follow-up</label>
+                            <div class="col-md-10">
+                                <apex:inputField style="checkbox"
+                                    value="{!oppty.Auto_Create_Follow_up__c}" id="autoFollowUp9" />
+                            </div>
+                        </div>
+                    </apex:outputPanel>
+                    
+                    <!--  HNB Opportunity -->
+                    <apex:outputPanel rendered="{!isHNB}" id="createOpptyHNBSF1"
+                        title="New {!prodName} Opportunity">
+                        <div class="form-group has-error">
+                            <label class="control-label" for="OppName10">Opportunity
+                                Name</label>
+                            <apex:inputField type="text" styleClass="form-control"
+                                value="{!oppty.name}" id="OppName10" />
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="control-label" for="closeDt10">Run-Effective
+                                Date</label>
+                            <apex:inputField type="date" styleClass="form-control"
+                                value="{!oppty.CloseDate}" id="closeDt10" />
+                        </div>
+						
+						<div class="form-group has-error">
+                            <label class="control-label" for="opportunityType10">Opportunity type
+                                </label>
+                            <apex:inputField styleClass="form-control"
+                                value="{!oppty.OpportunityType__c}" id="opportunityType10" html-disabled="true"/>
+                        </div>
+						<div class="form-group has-error">
+                            <label class="control-label" for="oppSubType10">Opportunity SubType
+                                </label>
+                            <apex:inputField styleClass="form-control"
+                                value="{!oppty.HNBF_Sales_Type__c}" id="oppSubType10" />
+                        </div>
+						
+                        <div class="form-group has-error">
+                            <label class="control-label" for="leadSource10">Lead
+                                Source</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.LeadSource}" id="leadSource10" required="true" />
+                        </div>
+						
+						<div class="form-group has-error">
+                            <label class="control-label" for="level10">Level 2</label>
+                            <apex:inputField type="auto" styleClass="form-control"
+                                value="{!oppty.Level_2__c}" id="level10" required="false" />
+                        </div>
+						
+                        <div class="form-group">
+                            <label class="control-label" for="referralContact10">Referral
+                                Contact</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!oppty.Referral_Contact__c}"
+                                    id="referralContact10" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="refEmp10">Referring
+                                Employee</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!oppty.Referring_Employee__c}"
+                                    id="refEmp10" />
+                            </div>
+                        </div>
+                        <!-- <div class="form-group">
+                            <label class="control-label" for="payrollPlatform10">Payroll
+                                Platform</label>
+                            <div class="form-control">
+                                <apex:inputField value="{!oppty.Payroll_Platform__c}"
+                                    id="payrollPlatform10" required="true"/>
+                            </div>
+                        </div> -->
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="dmCheckbox10">DM</label>
+                            <div class="col-md-10">
+                                <apex:inputField value="{!oppty.DM__c}" id="dmCheckbox10" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="nonDmCheckbox10">Non-DM</label>
+                            <div class="col-md-10">
+                                <apex:inputField value="{!oppty.Non_DM__c}" id="nonDmCheckbox10" />
+                            </div>
+                        </div>
+                    </apex:outputPanel>
+					
+                    <!--  HRS Opportunity 401 products-->
+                    <apex:outputPanel rendered="{!AND(isHRS, salesOrg=='HRS')}"
+                        id="createOpptyHRS_ProdsHRSSF1" title="Products Presented">
+                        <div>
+                            <table class="table table-hover well table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Products</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <apex:repeat value="{!$ObjectType.Opportunity.FieldSets.X401_Products}"
+                                        var="prod" id="products7">
+                                        <tr>
+                                            <td>{!prod.label}</td>
+                                            <td><apex:inputField value="{!oppty[prod]}" /></td>
+                                        </tr>
+                                    </apex:repeat>
+                                </tbody>
+                            </table>
+                        </div>
+                    </apex:outputPanel>
+                    <!--
+       <apex:pageBlockSection rendered="{!AND(isHRS, salesOrg=='HRS')}" id="createOpptyHRS_ProdsHRS2">
+    
+         <th>If this is a 401(k) presentation, verify that the email address of the contact is present and valid so that the Fee Disclosure
+         can be sent. If it is not correct, cancel, fix the email address on the contact, and re-enter this form.
+         </th>
+       </apex:pageBlockSection>
+        -->
+                    <!--  HRS Opportunity PEO/ASO products-->
+                    <apex:outputPanel rendered="{!AND(isHRS, salesOrg=='PAS')}"
+                        id="createOpptyHRS_ProdsPEOSF1" title="Products Presented">
+                        <div>
+                            <table class="table table-hover well table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Products</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <apex:repeat value="{!$ObjectType.Opportunity.FieldSets.PEO_ASO_Products}"
+                                        var="prod" id="products8">
+                                        <tr>
+                                            <td>{!prod.label}</td>
+                                            <td><apex:inputField value="{!oppty[prod]}" /></td>
+                                        </tr>
+                                    </apex:repeat>
+                                </tbody>
+                            </table>
+                        </div>
+                    </apex:outputPanel>
+
+                    <!--  HRS Opportunity HNBF products-->
+                    <apex:outputPanel rendered="{!AND(isHRS, salesOrg=='HNBF')}"
+                        id="createOpptyHRS_ProdsHNBFSF1" title="Products Presented">
+                        <div>
+                            <table class="table table-hover well table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Products</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <apex:repeat value="{!$ObjectType.Opportunity.FieldSets.HNBF_Products}"
+                                        var="prod" id="products9">
+                                        <tr>
+                                            <td>{!prod.label}</td>
+                                            <td><apex:inputField value="{!oppty[prod]}" /></td>
+                                        </tr>
+                                    </apex:repeat>
+                                </tbody>
+                            </table>
+                        </div>
+                    </apex:outputPanel>
+                </section>
+            </apex:outputPanel>
+            <!-- panel container around the create oppty module. conditionally rendered based on existing opp table selection -->
+        </apex:outputPanel>
+        <!-- page block to be rerendered for existing oppty -->
+    </apex:outputPanel>
+    <!-- sf1 output panel -->
+</apex:component>

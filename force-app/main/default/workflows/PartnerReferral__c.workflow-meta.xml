@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Email_Ancillary_1</fullName>
+        <description>Email Ancillary 1</description>
+        <protected>false</protected>
+        <recipients>
+            <field>EcomAncillaryEmail1__c</field>
+            <type>email</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>MKTG_All_Purpose/EcomAncillaryProduct1</template>
+    </alerts>
+    <alerts>
+        <fullName>Email_Ancillary_2</fullName>
+        <description>Email Ancillary 2</description>
+        <protected>false</protected>
+        <recipients>
+            <field>EcomAncillaryEmail2__c</field>
+            <type>email</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>MKTG_All_Purpose/EcomAncillaryProduct2</template>
+    </alerts>
+    <alerts>
+        <fullName>SOAR_Email</fullName>
+        <ccEmails>soaremailreferral@f-mzd1b5ujur8uqo9ysg4d9z1rbfnp55gvoghor9ml0mrw7thbo.3-6m6heau.na5.apex.salesforce.com</ccEmails>
+        <description>SOAR Email</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>jstouffer@paychex.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>Center_of_Excellence_Email_Templates/SOAR_Email</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>Clear_Process_SOAR</fullName>
+        <field>Process_SOAR__c</field>
+        <literalValue>0</literalValue>
+        <name>Clear Process SOAR</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Set_Processed</fullName>
+        <field>Processed__c</field>
+        <literalValue>1</literalValue>
+        <name>Set Processed</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Ancillary_1_Sent</fullName>
+        <description>Update the EmailAncillaryFirstSent__c field</description>
+        <field>EcomAncillaryEmail1Sent__c</field>
+        <formula>now()</formula>
+        <name>Update Ancillary 1 Sent</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Ancillary_2_Sent</fullName>
+        <description>Update the EcomAncillaryEmail2Sent__c to indicate the email was sent</description>
+        <field>EcomAncillaryEmail2Sent__c</field>
+        <formula>now()</formula>
+        <name>Update Ancillary 2 Sent</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Ecom Ancillary 1</fullName>
+        <actions>
+            <name>Email_Ancillary_1</name>
+            <type>Alert</type>
+        </actions>
+        <actions>
+            <name>Update_Ancillary_1_Sent</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>PartnerReferral__c.EcomAction__c</field>
+            <operation>equals</operation>
+            <value>OCC Form 2</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>PartnerReferral__c.EcomAncillaryEmail1__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>PartnerReferral__c.EcomAncillaryEmail1Sent__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>PartnerReferral__c.EcomAncillaryBody__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>When an ancillary product request comes in, notify the HBR group that it may be on it&apos;s way</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ecom Ancillary 2</fullName>
+        <actions>
+            <name>Email_Ancillary_2</name>
+            <type>Alert</type>
+        </actions>
+        <actions>
+            <name>Update_Ancillary_2_Sent</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>PartnerReferral__c.EcomAction__c</field>
+            <operation>equals</operation>
+            <value>Onboarding Completed</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>PartnerReferral__c.EcomAncillaryEmail2__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>PartnerReferral__c.EcomAncillaryEmail2Sent__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>PartnerReferral__c.EcomAncillaryBody__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>Send the second message to the HBR group</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Process SOAR</fullName>
+        <actions>
+            <name>SOAR_Email</name>
+            <type>Alert</type>
+        </actions>
+        <actions>
+            <name>Clear_Process_SOAR</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Set_Processed</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>PartnerReferral__c.Process_SOAR__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

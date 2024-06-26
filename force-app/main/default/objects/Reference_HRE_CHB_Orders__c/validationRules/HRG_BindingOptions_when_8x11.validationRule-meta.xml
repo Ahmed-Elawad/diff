@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRG_BindingOptions_when_8x11</fullName>
+    <active>true</active>
+    <description>C10 - if 8 1/2 x 11 = True and (Binder Quantity &gt; 0 or Spanish Binder &gt; 0), then 8 1/2 x 11 Binding Options Field must be Not Null</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;Handbook HR Solutions Order Record Type&quot; ), 
+( X8_x_11__c ), 
+( (Binder_Quantity__c &gt; 0) || (Spanish_Binder_Quantity__c &gt; 0) ), 
+( ISPICKVAL(X8_x_11_Options__c, &apos;&apos;) ), 
+(Historical_Order_Indicator__c = 0), 
+(NOT(BEGINS($Profile.Name,&quot;HR Essentials&quot;))), 
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))) 
+)</errorConditionFormula>
+    <errorDisplayField>X8_x_11_Options__c</errorDisplayField>
+    <errorMessage>You must select a 8 ½ x 11 Binding Options value when checking the 8 1/2 x 11 field and requesting to print handbooks.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>X1_CPA_Monthly_Outreach2</fullName>
+    <columns>TASK.SUBJECT</columns>
+    <columns>TASK.WHAT_NAME</columns>
+    <columns>TASK.DUE_DATE</columns>
+    <columns>TASK.STATUS</columns>
+    <columns>Outcome__c</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>TASK.CLOSED</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>TASK.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Task.Referral_Source_Telemarketing_Task</value>
+    </filters>
+    <filters>
+        <field>TASK.DUE_DATE</field>
+        <operation>lessOrEqual</operation>
+        <value>NEXT_N_DAYS:7</value>
+    </filters>
+    <label>1- CPA Monthly Outreach</label>
+    <sharedTo>
+        <group>CORE</group>
+        <group>Virtual_Sales</group>
+        <role>SeniorVPSales</role>
+    </sharedTo>
+</ListView>

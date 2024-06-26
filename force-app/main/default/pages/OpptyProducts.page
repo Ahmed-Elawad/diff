@@ -1,0 +1,598 @@
+<!-- Add products to an Opportunity.
+
+   History
+   -------
+   03/24/2011 Dan Carmen        Created.
+   11/01/2011 Dan Carmen        Performance enhancements.
+   12/09/2011 Dan Carmen        Locked apply and save buttons when clicked.
+   04/13/2012 Dan Carmen        Modified refresh target for save button.
+   02/22/2017 Carrie Marciano   Removed the bottom buttons, to eliminate double save
+   03/28/2017 Saketh Mysa       Included buttons on top and bottom of the page. Buttons will be disabled on click to avoid product lines being added multiple times.
+   02/13/2018 Jake Hinds        Commenting out stage per INC1462722
+   12/11/2018 Josh Cartwright       Added UIThemeDisplayed to check for console
+   06/10/2023 Jaipal            APR0152229: Added new column to display in manage products: Non Payroll Unit
+ -->
+<apex:page standardController="Opportunity" extensions="OpptyProductsController"
+           id="OpptyProductsPage">
+
+<!-- 
+<link rel="Stylesheet" type="text/css" href="{!$Resource.ExtJs}/ext-3.4.0/resources/css/ext-all.css" />
+<script type="text/javascript" src="{!$Resource.ExtJs}/ext-3.4.0/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="{!$Resource.ExtJs}/ext-3.4.0/ext-all.js"></script>
+
+<script type="text/javascript">
+   function setMessage(msg1,msg2) {
+       // TODO: Add an Ext Message Progress Box
+       Ext.Msg.progress(msg1, msg2);
+       return false;
+    }
+     
+    function clearMessage() {
+       // TODO: Call the Ext Message Progress Box Hide function
+       Ext.Msg.hide();
+    }
+  
+</script>
+ -->
+
+
+<apex:includeScript value="{!URLFOR($Resource.jQuery_Mobile,'jquery-1.11.2.min.js')}"/> 
+<script>
+function blockReleaseBtns(disable){
+    $('.saveBtnClass,.saveBtnClass2').each(function(){
+        if(disable){
+            $(this).prop("disabled",true)
+            $(this).addClass('btnDisabled');
+            $(this).val('Applying Changes...');
+        }
+        else {
+            $(this).prop("disabled",false)
+            $(this).removeClass('btnDisabled'); 
+        }   
+    });   
+}
+
+</script>
+
+    <!--
+   <apex:include pageName="OpptyProductsLightning" rendered="{!OR($User.UIThemeDisplayed == 'Theme4d',$User.UIThemeDisplayed == 'Theme4u')}"/>
+
+
+   <apex:form rendered="{!AND($User.UIThemeDisplayed != 'Theme4d', $User.UIThemeDisplayed != 'Theme4u')}">
+  -->
+    <apex:form >
+
+    <apex:sectionHeader rendered="{!opptyComplete}" title="{!blockTitle}" subtitle="Manage Products" />
+   
+ <!-- ************************  No Opportunity Passed in  ************************ -->
+
+      <apex:pageBlock rendered="{!AND(NOT(opptyComplete),NOT(opptyFound))}">
+         <apex:pageMessages />
+         <apex:pageBlockButtons >
+            <apex:commandButton action="{!cancel}" value="Return to Opportunity" />
+         </apex:pageBlockButtons>
+      </apex:pageBlock>
+
+ <!-- ************************  Incomplete Opportunity ************************ -->
+
+      <apex:pageBlock rendered="{!AND(NOT(opptyComplete),opptyFound)}" title="Complete the Opportunity Information to Continue">
+         <apex:pageMessages />
+         <apex:pageBlockButtons >
+            <apex:commandButton action="{!checkOpptyAndContinue}" value="Continue to Product Setup" />
+            <apex:commandButton action="{!cancel}" value="Return to Opportunity" />
+         </apex:pageBlockButtons>
+         
+             <!--  The fields from the opportunity -->
+            <apex:pageBlockSection columns="2" id="opptyFields" title="Opportunity {!productHelper.oppty.Name}">
+               <apex:inputField rendered="{!productHelper.useEmpsPerPay}" value="{!productHelper.oppty.Employees_Paid_Per_Payroll__c}" >
+               </apex:inputField>
+               <apex:inputField value="{!productHelper.oppty.CloseDate}" />
+               <apex:inputField rendered="{!productHelper.useFrequency}" value="{!productHelper.oppty.Frequency__c}" >
+               </apex:inputField>
+            </apex:pageBlockSection>
+
+
+      </apex:pageBlock>
+
+ <!-- ************************  Product Selection Block ************************ -->
+
+      <apex:pageBlock rendered="{!opptyComplete}" id="productTypeSelectionBlock" >
+      
+         <apex:pageMessages />
+         <apex:pageBlockButtons >
+         <apex:panelGrid id="productButtons" style="width:100%; text-align:center; ">
+           <apex:outputPanel >
+            <!-- 
+            <apex:commandButton id="applyButton" rendered="{!NOT(readOnly)}" action="{!calcRevenue}" value="Apply Changes/Calculate Revenue" />
+            <apex:commandButton id="saveButton" rendered="{!NOT(readOnly)}" action="{!saveProducts}" value="Save to Opportunity" />
+             -->
+            <!-- <apex:actionStatus rendered="{!NOT(readOnly)}" id="applyButtonStatus">
+               <apex:facet name="stop">
+                  <apex:commandButton id="applyButtonActive" action="{!calcRevenue}" value="Apply Changes/Calculate Revenue" status="applyButtonStatus" disabled="false" rerender="productTypeSelectionBlock"/>
+               </apex:facet>
+               <apex:facet name="start">
+                  <apex:commandButton id="applyButtonDisabled" action="{!calcRevenue}" value="Applying Changes..." status="applyButtonStatus" disabled="true" rerender="productTypeSelectionBlock"/>
+               </apex:facet>
+            </apex:actionStatus>
+            <apex:actionStatus rendered="{!NOT(readOnly)}" id="saveToOpportunityStatus">
+               <apex:facet name="stop">
+                  <apex:commandButton id="saveButtonActive" action="{!saveProducts}" value="Save to Opportunity" status="saveToOpportunityStatus" disabled="false" rerender="productTypeSelectionBlock"/>
+               </apex:facet>
+               <apex:facet name="start">
+                  <apex:commandButton id="saveButtonDisabled" action="{!saveProducts}" value="Saving..." status="saveToOpportunityStatus" disabled="true" rerender="productTypeSelectionBlock"/>
+               </apex:facet>
+            </apex:actionStatus>
+            <apex:commandButton id="cancelButton" rendered="{!NOT(readOnly)}" action="{!cancel}" value="Cancel" />
+            <apex:commandButton rendered="{!readOnly}" action="{!cancel}" value="Return to Opportunity" />
+            
+            <apex:actionStatus id="oneclick_quicksave" onstart="disable_buttons()" onstop="enable_buttons()"/>
+            -->
+            <apex:commandButton id="applyButtonActive" action="{!calcRevenue}" value="Apply Changes/Calculate Revenue"  rerender="productTypeSelectionBlock" styleClass="saveBtnClass" onclick="blockReleaseBtns(true);" oncomplete="blockReleaseBtns(false);"/>
+            <apex:commandButton id="saveButtonActive" action="{!saveProducts}" value="Save to Opportunity"  rerender="productTypeSelectionBlock" styleClass="saveBtnClass2" onclick="blockReleaseBtns(true);" oncomplete="blockReleaseBtns(false);"  />
+            <apex:commandButton id="cancelButton" rendered="{!NOT(readOnly)}" action="{!cancel}" value="Cancel" />
+          </apex:outputPanel>
+         </apex:panelGrid>
+         </apex:pageBlockButtons>
+         <apex:actionRegion >
+
+            <!--  The fields from the opportunity - modifiable -->
+            <apex:pageBlockSection rendered="{!NOT(readOnly)}" columns="2" id="opptyFields" title="Opportunity {!productHelper.oppty.Name}">
+             
+               <!--  if number of employees changes, recalc all selected products -->
+               <apex:inputField value="{!productHelper.oppty.Employees_Paid_Per_Payroll__c}" >
+                  <apex:actionSupport event="onchange" action="{!productHelper.changeEmpCount}" rerender="productTypeSelectionBlock" status="empCountStatus"/>
+               </apex:inputField>
+               
+               <!--02/13/18 JSH commenting out per INC1462722<apex:inputField value="{!productHelper.oppty.StageName}" />-->
+               
+               <apex:inputField value="{!productHelper.oppty.CloseDate}" />
+               
+               <apex:inputField value="{!productHelper.oppty.Frequency__c}" >
+                  <apex:actionSupport event="onchange" action="{!productHelper.changeFrequency}" rerender="productTypeSelectionBlock" status="frequencyStatus"/>
+               </apex:inputField>
+               
+        <!--    MM: Commented out because it will never work without is controlling field
+                <apex:inputField rendered="{!productHelper.salesOrg = 'PAY'}" value="{!productHelper.oppty.Service_Location__c}" />
+        -->              
+
+ <!-- 
+               <apex:outputField value="{!productHelper.oppty.ForecastCategory}" />
+               <apex:outputField value="{!productHelper.oppty.ForecastCategoryName}" />
+                -->
+            </apex:pageBlockSection>
+
+            <apex:actionStatus startText="Recalculating for new frequency..." id="frequencyStatus"/>
+            <apex:actionStatus startText="Recalculating for new employee count..." id="empCountStatus"/>
+            
+            <!--  The fields from the opportunity - readOnly -->
+            <apex:pageBlockSection rendered="{!readOnly}" columns="2" id="opptyFields_readOnly" title="Opportunity {!productHelper.oppty.Name}">
+               <apex:outputField value="{!productHelper.oppty.Employees_Paid_Per_Payroll__c}" />
+               <!--02/13/18 JSH commenting out per INC1462722<apex:outputField value="{!productHelper.oppty.StageName}" />-->
+               <apex:outputField value="{!productHelper.oppty.CloseDate}" />
+               <apex:outputField value="{!productHelper.oppty.Frequency__c}" />
+
+        <!--    MM: Commented out because it will never work without is controlling field
+                <apex:inputField rendered="{!productHelper.salesOrg = 'PAY'}" value="{!productHelper.oppty.Service_Location__c}" />
+        -->         
+
+                       <!-- 
+               <apex:outputField value="{!productHelper.oppty.ForecastCategory}" />
+               <apex:outputField value="{!productHelper.oppty.ForecastCategoryName}" />
+                -->
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection columns="3" rendered="{!productHelper.hasPriceSchedule}">
+               <apex:pageBlockSectionItem >
+                  <apex:outputLabel value="Current Pricing Schedule(s)"/>
+                  <apex:outputText value="{!productHelper.priceHelper.priceScheduleKey}"/>
+               </apex:pageBlockSectionItem>
+               <apex:pageBlockSectionItem rendered="{!NOT(readOnly)}" >
+                  <apex:outputLabel value="Cost Center"/>
+                  <apex:inputText value="{!productHelper.costCenter}">
+                  <apex:actionSupport event="onchange" action="{!changePriceSchedule}" rerender="productTypeSelectionBlock" status="priceScheduleStatus"/>
+                  </apex:inputText>
+               </apex:pageBlockSectionItem>
+               <apex:actionStatus startText="Retrieving new price schedule..." id="priceScheduleStatus"/>
+            </apex:pageBlockSection>
+
+ <!-- ************************  Package Selection ************************ -->
+            <apex:pageBlockSection rendered="{!productHelper.packagesAvailable}" columns="1" id="pkgSelectionSection" title="Select a Package" >
+               <apex:pageBlockSectionItem rendered="{!productHelper.hasMultiplePlatforms}" >
+                  <apex:outputLabel value="Select a Payroll Platform"/>
+                  <apex:outputPanel >
+                     <apex:selectList value="{!productHelper.oppty.Payroll_Platform__c}"
+                                      title="Select a Payroll Platform."
+                                      size="1" >
+                        <apex:selectOptions value="{!productHelper.availPayrollPlatforms}"/>
+                        <apex:actionSupport event="onchange" action="{!productHelper.changePackage}" rerender="productTypeSelectionBlock" status="payPlatStatus"/>
+                     </apex:selectList>
+                  </apex:outputPanel>
+               </apex:pageBlockSectionItem>
+               <apex:actionStatus rendered="{!productHelper.hasMultiplePlatforms}" startText="Changing Payroll Platform..." id="payPlatStatus"/>
+               <apex:pageBlockSectionItem rendered="{!NOT(productHelper.pkgSelected)}" >
+                  <apex:outputLabel value="Select a Package"/>
+                  <apex:outputPanel >
+                     <apex:selectList value="{!productHelper.selectedPkgOption}"
+                                      title="Select a Package."
+                                      size="1" >
+                        <apex:selectOptions value="{!productHelper.pkgOptions}"/>
+                        <apex:actionSupport event="onchange" action="{!productHelper.selectPkg}" rerender="productTypeSelectionBlock" status="pkgStatus"/>
+                     </apex:selectList>
+                     &nbsp;
+                     <apex:commandLink rendered="{!AND(productHelper.hasNonShortList,productHelper.isShortPkgList)}" action="{!productHelper.changeShowPkg}" value="Show All Pkgs" immediate="true" rerender="pkgSelectionSection" status="changePkgStatus"/>
+                     <apex:commandLink rendered="{!AND(productHelper.hasNonShortList,NOT(productHelper.isShortPkgList))}" action="{!productHelper.changeShowPkg}" value="Show Less Pkgs" immediate="true" rerender="pkgSelectionSection" status="changePkgStatus"/>
+                  </apex:outputPanel>
+               </apex:pageBlockSectionItem>
+               <apex:pageBlockSectionItem rendered="{!productHelper.pkgSelected}" >
+                  <apex:outputLabel value="Selected Package"/>
+                  <apex:outputPanel >
+                     <apex:outputText value="{!productHelper.selectedPkgName}"/>
+                     <apex:commandLink rendered="{!NOT(readOnly)}" action="{!productHelper.changePackage}" value="Change Package" immediate="true" />
+                  </apex:outputPanel>
+               </apex:pageBlockSectionItem>
+               <apex:actionStatus startText="Changing Package..." id="pkgStatus"/>
+               <apex:actionStatus startText="Setting Product Information..." id="changePkgStatus"/>
+
+            </apex:pageBlockSection>
+
+ <!-- ************************  Select Product button ************************ -->
+            <apex:pageBlockSection rendered="{!AND(NOT(productHelper.packagesAvailable),productHelper.hasDefaultProd)}" columns="1" id="selectProductBtnSection" title="Product Selection Button" >
+               <apex:commandButton rendered="{!NOT(readOnly)}" action="{!productHelper.selectStandaloneProduct}" value="Select Product" />
+            </apex:pageBlockSection>
+
+ <!-- ************************  Discount Information ************************ -->
+            <apex:pageBlockSection rendered="{!AND(NOT(readOnly),NOT(productHelper.hasDefaultProd),productHelper.pkgSelected,OR(productHelper.totalRecord.discPctAllowed,productHelper.totalRecord.freeMonthsAllowed))}" columns="2" id="prodDiscountSelectionSection" title="Discount Information" >
+               <apex:pageBlockSectionItem rendered="{!productHelper.totalRecord.freeMonthsAllowed}" >
+                  <apex:outputLabel value="Free Months"/>
+                  <apex:selectList value="{!productHelper.totalRecord.selectedFreeMonths}"
+                                   title="Free Months"
+                                    size="1" >
+                     <apex:selectOptions value="{!productHelper.totalRecord.freeMonthsOptions}"/>
+                  </apex:selectList>
+               </apex:pageBlockSectionItem>
+               <apex:pageBlockSectionItem rendered="{!NOT(productHelper.totalRecord.freeMonthsAllowed)}" />
+               
+               <apex:pageBlockSectionItem rendered="{!productHelper.totalRecord.discPctAllowed}" >
+                  <apex:outputLabel value="Discount %"/>
+                  <apex:outputPanel >
+                     <apex:inputText value="{!productHelper.totalRecord.oli.Discount_Percent__c}" size="5" />
+                     % for
+                     <apex:selectList value="{!productHelper.totalRecord.selectedDiscMonths}"
+                                   title="Discount Duration"
+                                    size="1" >
+                        <apex:selectOptions value="{!productHelper.totalRecord.discMonthsOptions}"/>
+                     </apex:selectList>
+                  </apex:outputPanel>
+               </apex:pageBlockSectionItem>
+               <apex:commandButton action="{!productHelper.applyDiscountAllProducts}" value="Apply Discount to All Products" rerender="productTypeSelectionBlock" status="prodApplyDiscountStatus"/>
+               <apex:pageBlockSectionItem />
+               <apex:outputLabel value="Discounts will apply to all products that are eligible for a discount and will override any discount currently set. Only the maximum discount allowed for each product will be applied." />
+            </apex:pageBlockSection>
+            <apex:actionStatus startText="Applying Discount..." id="prodApplyDiscountStatus"/>
+            
+ <!-- ************************  Product Information ************************ -->
+
+            <apex:pageBlockSection rendered="{!AND(productHelper.pkgSelected,NOT(productHelper.hasDefaultProd))}" columns="1" id="prodSelectionSection" title="Product Information" >
+               
+               <apex:outputPanel rendered="{!productHelper.showAllColumns}">
+                  <apex:image url="{!URLFOR($Resource.Tree_Images, 'collapse2.png')}" width="15" height="15" alt="Collapse" title="Click to hide the non-enterable columns" >
+                        <apex:actionSupport event="onclick" action="{!productHelper.changeShowColumns}" rerender="prodSelectionSection" status="statusHideColumns">
+                        </apex:actionSupport>
+                  </apex:image>
+                  &nbsp; 
+                  <apex:commandLink action="{!productHelper.changeShowColumns}" value="Hide Columns" immediate="true" rerender="prodSelectionSection" status="statusHideColumns"/>
+                  &nbsp;&nbsp;
+                  <apex:actionStatus startText="Hiding Columns..." id="statusHideColumns"/>
+               </apex:outputPanel>
+               
+               <apex:outputPanel rendered="{!NOT(productHelper.showAllColumns)}">
+ <!--                   <apex:image url="{!URLFOR($Resource.Tree_Images, 'expand2.png')}" onClick="setMessage('test','testing...');" width="15" height="15" alt="Expand" title="Click to display all columns">  -->
+                  <apex:image url="{!URLFOR($Resource.Tree_Images, 'expand2.png')}" width="15" height="15" alt="Expand" title="Click to display all columns">
+                        <apex:actionSupport event="onclick" action="{!productHelper.changeShowColumns}" rerender="prodSelectionSection" status="statusExpandColumns">
+                        </apex:actionSupport>
+                  </apex:image>
+                  &nbsp;  
+                  <apex:commandLink action="{!productHelper.changeShowColumns}" value="Show All Columns" rerender="prodSelectionSection" status="statusExpandColumns"/>
+                  &nbsp;&nbsp;
+                  <apex:actionStatus startText="Expanding Table..." id="statusExpandColumns"/>
+               </apex:outputPanel>
+               
+               <apex:outputPanel rendered="{!productHelper.includedChildrenExist}" >
+                  <apex:outputText style="color: #616D7E; font-weight: bold;" value="**" />
+                  <apex:outputText style="color: BLACK; font-weight: bold;" value="= Included In Package Price" />
+               </apex:outputPanel>
+
+               <apex:outputPanel >
+               <apex:actionStatus startText="Configuring Products..." id="prodSelectionStatus"/>
+               <apex:actionStatus startText="Expanding Tree..." id="prodExpandTreeStatus"/>
+               <apex:actionStatus startText="Collapsing Tree..." id="prodCollapseTreeStatus"/>
+               <apex:actionStatus startText="Adding Adjustment..." id="prodAdjustmentStatus"/>
+               <apex:actionStatus startText="Deleting Adjustment..." id="prodDeleteAdjustmentStatus"/>
+               </apex:outputPanel>
+
+               <apex:pageBlockTable id="prodTable" value="{!productHelper.displayProdList}" var="prod" cellPadding="4" border="1">
+               
+                  <apex:column rendered="{!AND(productHelper.isSold,productHelper.isDsaRecordType)}" headerValue="Action" >
+                     <apex:outputPanel rendered="{!AND(prod.selected,prod.hasEntry,NOT(prod.isAdjustment),OR(NOT(prod.hasTrueup),NOT(prod.hasChargeback),NOT(prod.hasReferral)))}" >
+                        <apex:commandLink rendered="{!AND(NOT(prod.isAdjustment),NOT(prod.hasTrueup))}" action="{!productHelper.addAdjustment}" value="True-Up" immediate="false" rerender="productTypeSelectionBlock" status="prodAdjustmentStatus">
+                           <apex:param name="prodId" value="{!prod.prodId}"/>
+                           <apex:param name="adjType" value="True-Up"/>
+                        </apex:commandLink>
+                        <apex:outputPanel rendered="{!AND(NOT(prod.hasTrueup),NOT(prod.hasChargeback))}">
+                        &nbsp;|&nbsp;
+                        </apex:outputPanel>
+                        <apex:commandLink rendered="{!AND(NOT(prod.isAdjustment),NOT(prod.hasChargeback))}" action="{!productHelper.addAdjustment}" value="Chrgbk" immediate="false" rerender="productTypeSelectionBlock" status="prodAdjustmentStatus">
+                           <apex:param name="prodId" value="{!prod.prodId}"/>
+                           <apex:param name="adjType" value="Chargeback"/>
+                        </apex:commandLink>
+                        <apex:outputPanel rendered="{!AND(NOT(prod.hasReferral),OR(NOT(prod.hasChargeback),AND(prod.hasChargeback,NOT(prod.hasTrueup))))}">
+                        &nbsp;|&nbsp;
+                        </apex:outputPanel>
+                        <apex:commandLink rendered="{!AND(NOT(prod.isAdjustment),NOT(prod.hasReferral))}" action="{!productHelper.addAdjustment}" value="Ref" immediate="false" rerender="productTypeSelectionBlock" status="prodAdjustmentStatus">
+                           <apex:param name="prodId" value="{!prod.prodId}"/>
+                           <apex:param name="adjType" value="Referral"/>
+                        </apex:commandLink>
+                     </apex:outputPanel>
+                     <apex:outputPanel rendered="{!AND(prod.isAdjustment,NOT(prod.isClosed))}" >
+                        <apex:commandLink action="{!productHelper.deleteAdjustment}" value="Delete" immediate="false" rerender="productTypeSelectionBlock" status="prodDeleteAdjustmentStatus">
+                           <apex:param name="prodId" value="{!prod.prodId}"/>
+                        </apex:commandLink>
+                     </apex:outputPanel>
+                  </apex:column>
+                  
+                  <apex:column >
+                     <apex:image rendered="{!AND(prod.hasChildren,prod.displayAllChildren,prod.hasHiddenChildren)}" url="{!URLFOR($Resource.Tree_Images, 'collapse2.png')}" width="15" height="15" alt="Collapse" title="Click to hide the products under {!prod.name} that do not affect revenue" >
+                        <apex:actionSupport event="onclick" action="{!productHelper.changeShowChildren}" rerender="prodSelectionSection" status="prodCollapseTreeStatus">
+                           <apex:param name="entryId" value="{!prod.entry.Id}"/>
+                        </apex:actionSupport>
+                     </apex:image>
+                     <apex:image rendered="{!AND(prod.hasChildren,NOT(prod.displayAllChildren),prod.hasHiddenChildren)}" url="{!URLFOR($Resource.Tree_Images, 'expand2.png')}" width="15" height="15" alt="Expand" title="Click to display all products for {!prod.name}">
+                        <apex:actionSupport event="onclick" action="{!productHelper.changeShowChildren}" rerender="prodSelectionSection" status="prodExpandTreeStatus">
+                           <apex:param name="entryId" value="{!prod.entry.Id}"/>
+                        </apex:actionSupport>
+                     </apex:image>
+                  </apex:column>
+ 
+                  <apex:column headerValue="Product"> 
+                     <apex:facet name="footer">
+                        Total
+                     </apex:facet>
+                     <apex:repeat rendered="{!AND(prod.hasEntry,prod.isChild)}" value="{!prod.levels}" var="level" id="blankSpace">
+                        <apex:image url="{!URLFOR($Resource.Tree_Images, 'blank2.png')}" width="15" height="15" />
+                     </apex:repeat>
+                      <apex:inputCheckbox rendered="{!AND(prod.hasEntry,OR(readOnly,prod.isClosed,prod.isAdjustment))}" disabled="true" value="{!prod.selected}" />
+                      <apex:inputCheckbox rendered="{!AND(prod.hasEntry,NOT(readOnly),NOT(prod.isClosed),NOT(prod.isAdjustment))}" disabled="{!prod.isMandatory}" value="{!prod.selected}">
+                        <!-- 
+                        <apex:actionSupport event="onclick" action="{!productHelper.changeProdSelection}" rerender="prodSelectionSection" status="prodSelectionStatus">
+                           <apex:param name="entryId" value="{!prod.entry.Id}"/>
+                           <apex:param name="linkId" value="{!prod.linkId}" />
+                        </apex:actionSupport>
+                         -->
+                     </apex:inputCheckbox>
+                     &nbsp;
+                     <apex:outputText rendered="{!prod.includedInParentPrice}" style="color: #616D7E; font-weight: bold;" value="**" />
+                     <apex:outputText rendered="{!prod.pricingExistsButDoesntMatch}" style="color: red; font-weight: bold;" value="**{!prod.name}" />
+                     <apex:outputText rendered="{!NOT(prod.pricingExistsButDoesntMatch)}" value="{!prod.name}" />
+                  </apex:column>
+                  
+                  <apex:column headerValue="Ovrd">
+                     <apex:inputCheckbox rendered="{!prod.selected}" disabled="{!OR(prod.isAdjustment,prod.isClosed)}" value="{!prod.oli.User_Override__c}" >
+                        <!--  <apex:actionSupport event="onclick" rerender="prodTable" status="prodSelectionStatus" />  -->
+                     </apex:inputCheckbox>
+                  </apex:column>
+                  <apex:column headerValue="Prod Start Date">
+                     <apex:inputField rendered="{!AND(NOT(prod.isClosed),prod.oli.User_Override__c,prod.hasEntry,OR(prod.selected,prod.showRevenue),NOT(readOnly))}" value="{!prod.oli.ServiceDate}" />
+                     <apex:outputField rendered="{!AND(NOT(prod.oli.User_Override__c),prod.hasEntry,OR(prod.selected,prod.showRevenue),NOT(readOnly))}" value="{!prod.oli.ServiceDate}" />
+                     <apex:outputField rendered="{!AND(prod.hasEntry,OR(prod.Selected,prod.showRevenue),OR(readOnly,prod.isClosed))}" value="{!prod.oli.ServiceDate}" />
+                  </apex:column>
+                  <apex:column headerValue="Status">
+                     <apex:inputField rendered="{!AND(NOT(prod.isClosed),NOT(readOnly),prod.oli.User_Override__c,prod.selected,NOT(prod.isAdjustment))}" value="{!prod.oli.Status__c}" />
+                     <apex:outputField rendered="{!AND(OR(prod.isClosed,readOnly,NOT(prod.oli.User_Override__c)),prod.selected,NOT(prod.isAdjustment))}" value="{!prod.oli.Status__c}" />
+                  </apex:column>
+                  
+                  <apex:column rendered="{!productHelper.isSold}" headerValue="True-Up/Chrgbk">
+                     <apex:outputField rendered="{!prod.hasEntry}" value="{!prod.oli.Adj_Type__c}" />
+                     
+                  </apex:column>
+                  
+                  <apex:column rendered="{!productHelper.hasPayrollUnit}" headerValue="Payroll Unit">
+                     <apex:facet name="footer">
+                        <apex:outputField value="{!productHelper.totalRecord.oli.Payroll_Unit__c}" />
+                     </apex:facet>
+                     <apex:inputText rendered="{!AND(NOT(readOnly),NOT(prod.isClosed),prod.selected,prod.hasEntry,prod.entry.Product2.Is_Payroll_Unit__c)}" value="{!prod.oli.Payroll_Unit__c}" size="2" />
+                     <apex:outputField rendered="{!OR(readOnly,prod.isClosed,AND(NOT(prod.hasEntry),prod.hasPayrollUnit))}" value="{!prod.oli.Payroll_Unit__c}" />
+                  </apex:column>
+                   
+                   <apex:column rendered="{!productHelper.hasNonPayrollUnit}" headerValue="Non Payroll Unit"> 
+                     <apex:facet name="footer">
+                        <apex:outputField value="{!productHelper.totalRecord.oli.Non_Payroll_Unit__c}" />
+                     </apex:facet>
+                     <apex:inputText rendered="{!AND(NOT(readOnly),NOT(prod.isClosed),prod.selected,prod.hasEntry,prod.entry.Product2.Is_Non_Payroll_Unit__c)}" value="{!prod.oli.Non_Payroll_Unit__c}" size="2" />
+                     <apex:outputField rendered="{!OR(readOnly,prod.isClosed,AND(NOT(prod.hasEntry),prod.hasNonPayrollUnit))}" value="{!prod.oli.Non_Payroll_Unit__c}" />
+                  </apex:column>
+                  
+                  <apex:column headerValue="Setup Fee"> 
+                     <apex:facet name="footer">
+                        <apex:outputField value="{!productHelper.totalRecord.oli.Setup_Fee__c}" />
+                     </apex:facet>
+                     <apex:inputText rendered="{!AND(NOT(readOnly),NOT(prod.isClosed),prod.selected,prod.hasEnterableSetupFee,NOT(prod.hasSetupFeePicklist))}" value="{!prod.setupFee}" size="6"/>
+                     <apex:selectList rendered="{!AND(NOT(readOnly),NOT(prod.isClosed),prod.selected,prod.hasEnterableSetupFee,prod.hasSetupFeePicklist)}"
+                                      value="{!prod.setupFeeSelectedOption}"
+                                      title="Select a Setup Fee."
+                                      size="1" >
+                        <apex:selectOptions value="{!prod.setupFeeOptions}"/>
+                     </apex:selectList>
+                     <apex:outputField rendered="{!OR(AND(NOT(prod.HasEnterableSetupFee),prod.hasSetupFee),AND(prod.selected,OR(readOnly,prod.isClosed),prod.hasEnterableSetupFee))}" value="{!prod.oli.Setup_Fee__c}" />
+                  </apex:column>
+                  
+                  <apex:column headerValue="Trans Qty"> 
+                     <apex:inputText rendered="{!AND(NOT(readOnly),NOT(prod.isClosed),prod.hasEntry,prod.enterUnit,NOT(prod.isAdjustment))}" value="{!prod.unit}" size="3" />
+                     <apex:outputField rendered="{!AND(OR(readOnly,prod.isClosed),prod.hasEntry,prod.enterUnit,NOT(prod.isAdjustment))}" value="{!prod.oli.Unit__c}" />
+                     <apex:outputText rendered="{!AND(prod.hasEntry,prod.enterUnit,NOT(prod.isAdjustment))}" value="({!prod.entry.Product2.Unit_Type__c})"/>
+                  </apex:column>
+
+                  <apex:column rendered="{!productHelper.showAllColumns}" headerValue="Base Fee" > 
+                      <apex:facet name="header">Base Fee</apex:facet> 
+                     <apex:outputField value="{!prod.oli.Base_Fee__c}" />
+                  </apex:column>
+                  
+                  <apex:column rendered="{!productHelper.showAllColumns}" headerValue="Trans Fee" > 
+                     <apex:facet name="header">Trans Fee</apex:facet> 
+                     <apex:outputField value="{!prod.oli.Transaction_Fee__c}" />
+                  </apex:column>
+
+                  <apex:column rendered="{!productHelper.totalRecord.freeMonthsAllowed}" headerValue="Free Months" > 
+                     <apex:facet name="header">Free Months</apex:facet> 
+                     <apex:selectList rendered="{!AND(NOT(readOnly),NOT(prod.isClosed),prod.selected,prod.hasEntry,prod.freeMonthsAllowed)}" 
+                                   value="{!prod.selectedFreeMonths}"
+                                   title="Free Months"
+                                    size="1" >
+                        <apex:selectOptions value="{!prod.freeMonthsOptions}"/>
+                     </apex:selectList>
+                     <apex:outputField rendered="{!AND(OR(readOnly,prod.isClosed),prod.selected,prod.hasEntry,prod.freeMonthsAllowed)}" value="{!prod.oli.Discount_Free_Months__c}" />
+                  </apex:column>
+                  
+                  <apex:column rendered="{!productHelper.totalRecord.discPctAllowed}" headerValue="Discount %" > 
+                    <apex:facet name="header">Discount %</apex:facet> 
+                    <apex:outputPanel rendered="{!AND(NOT(readOnly),NOT(prod.isClosed),prod.selected,prod.hasEntry,prod.discPctAllowed)}">
+                     <apex:inputText value="{!prod.oli.Discount_Percent__c}" size="5" />
+                     % for
+                     <apex:selectList value="{!prod.selectedDiscMonths}"
+                                   title="Discount Duration"
+                                    size="1" >
+                        <apex:selectOptions value="{!prod.discMonthsOptions}"/>
+                     </apex:selectList>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!AND(OR(readOnly,prod.isClosed),prod.selected,prod.hasEntry,prod.discPctAllowed,prod.hasDiscPct)}">
+                       <apex:outputField value="{!prod.oli.Discount_Percent__c}" />
+                       % for
+                       <apex:outputField value="{!prod.oli.Discount_Months__c}" />
+                    </apex:outputPanel>
+                  </apex:column>
+                  
+                  <apex:column rendered="{!AND(productHelper.showAllColumns,OR(productHelper.totalRecord.discPctAllowed,productHelper.totalRecord.freeMonthsAllowed))}" headerValue="Annual Disc" > 
+                     <apex:facet name="header">Annual Disc</apex:facet> 
+                     <apex:outputField value="{!prod.oli.Discount_Annualized__c}" />
+                  </apex:column>
+                  
+                  <apex:column rendered="{!productHelper.showAllColumns}" headerValue="Pricing">
+                     <apex:facet name="header">Pricing</apex:facet> 
+                     <apex:outputField rendered="{!AND(prod.hasEntry,prod.showPricePerFreq)}" value="{!prod.oli.Price_Per_Frequency__c}" />
+                     <apex:outputText rendered="{!AND(prod.hasEntry,prod.showPricePerFreq)}" value="{!prod.billingPeriod}" />
+                  </apex:column>
+                  
+                  <apex:column rendered="{!productHelper.showAllColumns}" headerValue="Annual Price" >
+                     <apex:facet name="header">Annual Price</apex:facet> 
+                     <apex:facet name="footer">
+                        <apex:outputField value="{!productHelper.totalRecord.oli.Total_Calced__c}" />
+                     </apex:facet>
+                     <apex:outputField rendered="{!prod.showRevCalcd}" value="{!prod.oli.Total_Calced__c}" />
+                  </apex:column>
+
+
+                  <apex:column headerValue="Rev Adj +/-" >
+                     <apex:facet name="header">Rev Adj +/-</apex:facet> 
+                     <apex:inputText rendered="{!AND(NOT(readOnly),NOT(prod.isClosed),prod.showRevAdj)}" value="{!prod.revAdj}" size="8"/>
+                     <apex:outputField rendered="{!AND(OR(readOnly,prod.isClosed),prod.showRevAdj)}" value="{!prod.oli.Rev_Adj__c}" />
+                  </apex:column>
+                  
+                  <apex:column headerValue="Est Revenue" > 
+                     <apex:facet name="footer">
+                        <apex:outputField value="{!productHelper.totalRecord.oli.TotalPrice}" />
+                     </apex:facet>
+                     <apex:outputField rendered="{!AND(NOT(prod.enterRevenueManually),prod.showRevenue)}" value="{!prod.oli.TotalPrice}" />
+                     <apex:inputText rendered="{!AND(prod.selected,prod.enterRevenueManually,NOT(readOnly),NOT(prod.isClosed))}" value="{!prod.estRev}" size="8"/>
+                     <apex:outputField rendered="{!AND(prod.selected,prod.enterRevenueManually,OR(readOnly,prod.isClosed))}" value="{!prod.oli.TotalPrice}"/>
+                   </apex:column>
+ 
+ <!-- 
+                  <apex:column rendered="{!NOT(readOnly)}" headerValue="Revenue" > 
+                     <apex:facet name="footer">
+                        <apex:outputField value="{!productHelper.totalRecord.oli.TotalPrice}" />
+                     </apex:facet>
+                     <apex:inputText rendered="{!AND(NOT(prod.isClosed),prod.hasEntry)}" value="{!prod.estRev}" size="8"/>
+                     <apex:outputField rendered="{!OR(prod.isClosed,NOT(prod.hasEntry))}" value="{!prod.oli.TotalPrice}" />
+                   </apex:column>
+  -->
+               </apex:pageBlockTable>
+
+               <apex:outputPanel >
+                  <apex:outputText style="color: BLACK; font-weight: bold;" value="Key: Ovrd = Override. Select this box if you want the date and status to not follow the Opportunity Status and Date. Use 'Apply Changes/Calculate Revenue' after selecting the override checkbox(es)." />
+               </apex:outputPanel>
+               
+            </apex:pageBlockSection>
+
+<!-- **************************** Default Product section  **************************** -->
+            <apex:pageBlockSection rendered="{!productHelper.hasDefaultProd}" columns="1" id="defaultProductSection" title="Product Information" >
+               
+               <apex:pageBlockTable id="defaultProdTable" value="{!productHelper.defaultProds}" var="prod" cellPadding="4" border="1">
+               
+                  <apex:column headerValue="Product"> 
+                      <apex:inputCheckbox disabled="true" value="{!prod.selected}" />
+                     &nbsp;
+                     <apex:outputText value="{!prod.name}" />
+                  </apex:column>
+                  
+                  <apex:column headerValue="Prod Start Date">
+                     <apex:outputField value="{!prod.oli.ServiceDate}" />
+                  </apex:column>
+                  <apex:column headerValue="Status">
+                     <apex:outputField value="{!prod.oli.Status__c}" />
+                  </apex:column>
+                  
+                  <apex:column rendered="{!productHelper.hasPayrollUnit}" headerValue="Unit">
+                     <apex:facet name="footer">
+                        <apex:outputField value="{!productHelper.totalRecord.oli.Payroll_Unit__c}" />
+                     </apex:facet>
+                     <apex:inputText rendered="{!AND(NOT(readOnly),NOT(prod.isClosed),prod.selected,prod.hasEntry,prod.entry.Product2.Is_Payroll_Unit__c)}" value="{!prod.oli.Payroll_Unit__c}" size="2" />
+                     <apex:outputField rendered="{!OR(readOnly,prod.isClosed,AND(NOT(prod.hasEntry),prod.hasPayrollUnit))}" value="{!prod.oli.Payroll_Unit__c}" />
+                  </apex:column>
+                  
+                  <apex:column headerValue="Est Revenue" > 
+                      <!-- jc removing <apex:inputText value="{!prod.estRev}" size="8"/>-->
+                    <apex:outputText value="{!prod.estRev}"/>
+                   </apex:column>
+ 
+               </apex:pageBlockTable>
+
+               <apex:outputPanel >
+                  <apex:outputText style="color: RED; font-weight: bold;" value="‘Unknown’ is not a valid product and cannot be used.  Please use either ‘Select a Package’ or ‘Select Product’ from above." />
+               </apex:outputPanel>
+               
+            </apex:pageBlockSection>
+
+
+         </apex:actionRegion>
+ 
+ <!--        
+         <apex:panelGrid id="productButtonsBottom" style="width:100%; text-align:center; ">
+           <apex:outputPanel >
+            <apex:actionStatus rendered="{!NOT(readOnly)}" id="applyButtonStatusBottom">
+               <apex:facet name="stop">
+                  <apex:commandButton id="applyButtonActiveBottom" action="{!calcRevenue}" value="Apply Changes/Calculate Revenue" status="applyButtonStatusBottom" disabled="false" rerender="productTypeSelectionBlock"/>
+               </apex:facet>
+               <apex:facet name="start">
+                  <apex:commandButton id="applyButtonDisabledBottom" action="{!calcRevenue}" value="Applying Changes..." status="applyButtonStatusBottom" disabled="true" rerender="productTypeSelectionBlock"/>
+               </apex:facet>
+            </apex:actionStatus>
+            <apex:actionStatus rendered="{!NOT(readOnly)}" id="saveToOpportunityStatusBottom">
+               <apex:facet name="stop">
+                  <apex:commandButton id="saveButtonActiveBottom" action="{!saveProducts}" value="Save to Opportunity" status="saveToOpportunityStatusBottom" disabled="false" rerender="productTypeSelectionBlock"/>
+               </apex:facet>
+               <apex:facet name="start">
+                  <apex:commandButton id="saveButtonDisabledBottom" action="{!saveProducts}" value="Saving..." status="saveToOpportunityStatusBottom" disabled="true" rerender="productTypeSelectionBlock"/>
+               </apex:facet>
+            </apex:actionStatus>
+            <apex:commandButton id="cancelButtonBottom" rendered="{!NOT(readOnly)}" action="{!cancel}" value="Cancel" />
+            <apex:commandButton rendered="{!readOnly}" action="{!cancel}" value="Return to Opportunity" />
+            
+            <apex:actionStatus id="oneclick_quicksaveBottom" onstart="disable_buttons()" onstop="enable_buttons()"/>
+            </apex:outputPanel>
+         </apex:panelGrid>
+-->
+         
+      </apex:pageBlock>
+      
+
+   </apex:form>
+</apex:page>

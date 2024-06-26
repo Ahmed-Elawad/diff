@@ -1,0 +1,88 @@
+<template>
+    <div class="slds-wrap slds-text-heading_small">
+        <lightning-icon icon-name="standard:task" title="Activities"
+            size="small" ></lightning-icon>
+        <lightning-formatted-text class="slds-m-left_x-small"
+            value="  Activities" ></lightning-formatted-text>
+    </div>
+    <div>
+        <lightning-datatable key-field="Id"
+        data={listOfActivities}
+        columns={columns}
+        hide-checkbox-column	>
+
+        </lightning-datatable>
+         <!-- <table class="slds-table slds-table_bordered slds-table_fixed-layout slds-table_resizable-cols" role="grid"   aria-labelledby="element-with-table-label other-element-with-table-label">
+            <thead>
+                <tr class="slds-line-height_reset ">
+                  <th class="" scope="col">
+                    <div class="slds-truncate slds-resizable" title="Subject">Subject</div>
+                  </th>
+                  <th class="" scope="col">
+                    <div class="slds-truncate slds-resizable" title="Activity Date">Activity Date</div>
+                  </th>
+                  <th class="" scope="col">
+                    <div class="slds-truncate slds-resizable" title="Time">Time</div>
+                  </th>
+                  <th class="" scope="col">
+                    <div class="slds-truncate slds-resizable" title="Related To">Related To</div>
+                  </th>
+                  <th class="" scope="col">
+                    <div class="slds-truncate slds-resizable" title="Activity Type">Activity Type</div>
+                  </th>      
+                  <th class="" scope="col">
+                    <div class="slds-truncate slds-resizable" title="Owner">Owner</div>
+                  </th>
+                  <th class="" scope="col">
+                    <div class="slds-truncate slds-resizable" title="Status">Status</div>
+                  </th>
+                  
+                  
+                </tr>
+              </thead>
+              <tbody>
+              <template for:each={listOfActivities} for:item="act">
+                <tr key={act.id} class="slds-hint-parent slds-is-resizable slds-is-sortable">
+                    <th data-label="Subject" scope="row">
+                        <div class="slds-truncate" title={act.Subject}>
+                          <lightning-formatted-url 
+                                value={act.Link}
+                                label={act.Subject} 
+                                target="_self" ></lightning-formatted-url>
+                        </div>
+                      </th>
+                    
+                      <td data-label="Activity Date" role="gridcell">
+                        <div class="slds-truncate" title={act.ActivityDate}>
+                            <lightning-formatted-date-time year="2-digit"
+                            month="2-digit"
+                            day="numeric" value={act.ActivityDate} time-zone="UTC"></lightning-formatted-date-time>
+                        </div>
+                      </td>
+                      <td data-label="ActivityTime" role="gridcell">
+                        <div class="slds-truncate" title={act.ActivityTime}>
+                          <lightning-formatted-date-time 
+                          hour="2-digit" minute="2-digit"
+                            time-zone-name="short" value={act.ActivityTime}></lightning-formatted-date-time>
+                      </div>
+                      </td>
+                    <td data-label="Related To" role="gridcell">
+                      <div class="slds-truncate" title="Related To">{act.ContactName}</div>
+                    </td>
+                    <td data-label="Activity Type" role="gridcell">
+                      <div class="slds-truncate" title={act.ActivityType}>{act.ActivityType}</div>
+                    </td>
+                    <td data-label="Owner" role="gridcell">
+                        <div class="slds-truncate" title={act.OwnerName}>{act.OwnerName}</div>
+                      </td>
+                      <td data-label="Status" role="gridcell">
+                        <div class="slds-truncate" title={act.Status}>{act.Status}</div>
+                      </td>
+                      
+                  </tr>
+                  </template>
+                  </tbody>
+            </table> -->
+    </div>
+    
+</template>

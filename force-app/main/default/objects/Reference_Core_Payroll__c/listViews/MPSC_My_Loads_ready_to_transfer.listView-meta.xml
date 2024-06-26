@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MPSC_My_Loads_ready_to_transfer</fullName>
+    <booleanFilter>1 AND (2 OR 3)</booleanFilter>
+    <columns>Prospect_Client_Number__c</columns>
+    <columns>Prospect_Client_Name__c</columns>
+    <columns>NAME</columns>
+    <columns>Current_Step__c</columns>
+    <columns>Post_First_Payroll_Verification_Date__c</columns>
+    <columns>TAA_Implementation_Coordinator__c</columns>
+    <columns>HRO_Implementation_Coordinator__c</columns>
+    <columns>HR_Generalist__c</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>Payroll_Status__c</field>
+        <operation>notEqual</operation>
+        <value>Lost Client,Completed</value>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>equals</operation>
+        <value>(6 of 7) Client ready for transition to ongoing support</value>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>equals</operation>
+        <value>(5 of 7) 1st run complete – Finalizing implementation</value>
+    </filters>
+    <label>MPSC - My Loads, Payroll Processed</label>
+    <sharedTo>
+        <roleAndSubordinates>Director_Enterprise_Services</roleAndSubordinates>
+    </sharedTo>
+</ListView>

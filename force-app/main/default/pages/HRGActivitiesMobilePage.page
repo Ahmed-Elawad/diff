@@ -1,0 +1,96 @@
+<!-- 
+ * Page for HRG on-going activities in Salesforce 1.
+ * History
+ * -------
+ * 3/15/2015 Cindy Freeman and Justin Stouffer   Created
+ * 01/01/2016 Justin Stouffer                    Comprehensive Update
+ * 05/19/2016 Justin Stouffer   Revised to be a standalone visualforce page and added mass create to client base and openSFActivity functionality.
+ *-->
+<apex:page StandardController="Account" extensions="HRGActivitiesMobilePageController"
+    docType="html-5.0" standardStylesheets="false" showheader="false" sidebar="false" applyHtmlTag="true" applyBodyTag="true">
+    <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+    <apex:stylesheet value="{!URLFOR($Resource.jQuery_Mobile,'jquery.mobile-1.4.5.min.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.Salesforce1Bootstrap, 'bootstrap-sf1-010-beta15/dist/css/bootstrap-namespaced.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.HRGMobStyle)}"/>
+    <apex:includeScript value="{!URLFOR($Resource.iOSFix)}"/> 
+    <apex:includeScript value="{!URLFOR($Resource.jQuery_Mobile,'jquery-1.11.2.min.js')}"/>    
+    <script>
+        $(document).bind("mobileinit", function(){
+            $.event.special.swipe.scrollSupressionThreshold = (screen.availWidth) / 6;  // (default: 10) (pixels) – More than this horizontal displacement, and we will suppress scrolling.
+            $.event.special.swipe.horizontalDistanceThreshold = (screen.availWidth) / 6; // (default: 30) (pixels) – Swipe horizontal displacement must be less than this.
+            $.event.special.swipe.verticalDistanceThreshold = (screen.availHeight) / 20; // (default: 75) (pixels) – Swipe vertical displacement must be less than this.
+            $.event.special.swipe.durationThreshold = 500; // (default: 1000) (milliseconds) – More time than this, and it isn't a swipe.
+        });
+    </script>
+    <apex:includeScript value="{!URLFOR($Resource.jQuery_Mobile,'jquery.mobile-1.4.5.min.js')}"/>
+    <script>
+            accountId = "{!Account.Id}";
+            accountName = "{!Account.name}";
+            console.log('account id='+accountId);     
+    </script>
+    <apex:includeScript value="{!URLFOR($Resource.HRGMobScript)}"/>      
+    </head>
+    <body>
+    <div data-role="page">
+        <div data-role="header">
+            <div data-role="navbar" class="nextButton">
+                <ul>
+                    <li><button class="ui-btn ui-icon-arrow-l ui-btn-icon-left"><br/></button></li>
+                    <li><button type="button" onclick="recCheck();">Next</button></li>
+                    <li><button class="ui-btn ui-icon-arrow-r ui-btn-icon-right"><br/></button></li>
+                </ul>
+            </div><!-- /navbar -->
+            <div data-role="navbar" class="navIcons">
+                <ul>
+                    <li><button class="ui-btn ui-icon-arrow-l ui-btn-icon-left"><br/></button></li>
+                    <li><button type="button" onclick="processStndActivities();">Save</button></li>
+                    <li><button class="ui-btn ui-icon-arrow-r ui-btn-icon-right"><br/></button></li>
+                </ul>
+            </div><!-- /navbar -->
+            <div data-role="navbar" class="saveButton">
+                <ul>
+                    <li><button type="button" onclick="processStndActivities();">Save</button></li>
+                </ul>
+            </div><!-- /navbar -->
+        </div><!-- /header -->
+        <div data-role="content">
+            <div id="landing" style="display: none;">
+                <h1>{!Account.name}</h1>
+                <h4>Where would you like to go?</h4>
+                <button type="button" id="btnAcctHealth" onclick="gotoAcctHealth()">Update Client Health &nbsp;<apex:outputField value="{!Account.Premier__c}" /></button>
+                <button type="button" id="btnProdUtil" onclick="gotoProdUtil()">Product Utilization (0%)</button>
+                <button type="button" id="btnOnbAct" onclick="gotoOnboarding('Onboarding')">Onboarding Activities (0%)</button>
+                <button type="button" id="btnOnbCon" onclick="gotoOnboarding('Onboarding Concerns')">Onboarding Concerns (0)</button>
+                <button type="button" id="btnOnbSet" onclick="gotoOnboarding('Onboarding Setup')">Onboarding Setup (0)</button>
+                <button type="button" id="btnOnbDates" onclick="gotoOnboardingDates()">Onboard Dates/CC Mtg</button>
+                <button type="button" id="btnNewOngAct" onclick="gotoNewOngoing()">Add New Ongoing Activities</button>
+                <button type="button" id="btnOpenOngAct" onclick="gotoOngoing('Ongoing')">Open Ongoing Activities (0)</button>
+                <button type="button" id="btnOpenOpenSFAct" onclick="gotoOpenSFActivities()">Open Salesforce Activites (0)</button>
+            </div>           
+            
+            <div id="askNumber">
+                <h1>{!Account.name}</h1>
+                <h4>How many ongoing activities are you adding? (Limit of 10)</h4>
+                <label id="errorLabel"></label>
+                <input id="nbrNewOngoing" type="number" placeholder="Enter Number"/>
+                <button type="button" onclick="addButtonClick()">Add</button>
+                <button type="button" onclick="gotoLanding()">Back To Menu</button>
+            </div>        
+    
+            <div id="main">
+                <div class="recMessage">
+                    <h4>Some of the activities you created are incomplete and will not be saved. Are you sure you want to save and go to the next step?</h4>
+                    <button class="popupButton ui-btn ui-corner-all ui-icon-check ui-btn-icon-top ui-btn-inline ui-shadow" onclick="processHRGActivities()">Yes</button>
+                    <button class="popupButton ui-btn ui-corner-all ui-icon-back ui-btn-icon-top ui-btn-inline ui-shadow" onclick="closePopUp()">No</button>
+                </div>
+                <div class="messages"></div>       
+                <div id="allRecs">
+                </div>
+                <div id="acctList">
+                </div>
+            </div>
+        </div><!-- /content --> 
+    </div><!-- /page --> 
+    </body>
+</apex:page>

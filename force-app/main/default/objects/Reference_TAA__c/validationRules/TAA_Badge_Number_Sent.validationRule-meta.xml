@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TAA_Badge_Number_Sent</fullName>
+    <active>false</active>
+    <description>Rule makes you pick yes or no for badge number sent if Build Status is Build Complete.
+APR0142251 Deactivated the VR.</description>
+    <errorConditionFormula>ISPICKVAL( Build_Status__c, &quot;Build Complete&quot;) &amp;&amp; 
+(ISPICKVAL( Badge_Numbers_Sent_to_HRO__c , &quot;&quot;))</errorConditionFormula>
+    <errorDisplayField>Badge_Numbers_Sent_to_HRO__c</errorDisplayField>
+    <errorMessage>Please pick a value for Badge Number Sent before proceeding.</errorMessage>
+</ValidationRule>

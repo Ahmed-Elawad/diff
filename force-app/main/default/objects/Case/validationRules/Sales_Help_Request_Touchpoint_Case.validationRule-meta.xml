@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sales_Help_Request_Touchpoint_Case</fullName>
+    <active>true</active>
+    <description>MMS New Cadence requests must be submitted by an MMS District or Zone Sales Manager. For all other Touchpoint requests, please select Request Type: Tool Support with Sub-Type: Touchpoint.</description>
+    <errorConditionFormula>AND(RecordType.Name = &apos;Sales Help Request Case&apos;,
+ISPICKVAL(Type,&apos;New Touchpoint Cadence&apos;),
+ISPICKVAL(Sub_Type__c,&apos;MMS&apos;),
+NOT(CONTAINS($Profile.Name, &apos;MMS Manager - SB&apos;)),
+NOT(BEGINS($Profile.Name, &apos;System Admin&apos;)),
+ISNEW())</errorConditionFormula>
+    <errorMessage>MMS New Cadence requests must be submitted by an MMS District or Zone Sales Manager. For all other Touchpoint requests, please select Request Type: Tool Support with Sub-Type: Touchpoint.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Approved_Quote_Exception_Reason</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+Approved_Quotes_Exception__c,
+ISBLANK( TEXT(Approved_Quote_Exception_Reason__c) ),
+DATEVALUE(CreatedDate) &gt;= DATE(2020,04,24) ,
+NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+NOT($Profile.Name = &apos;MMS SDR&apos;)
+)</errorConditionFormula>
+    <errorMessage>Enter a reason for the Approved Quote Exception.</errorMessage>
+</ValidationRule>

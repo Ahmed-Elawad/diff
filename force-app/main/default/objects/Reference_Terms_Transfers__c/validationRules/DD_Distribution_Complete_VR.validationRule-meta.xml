@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DD_Distribution_Complete_VR</fullName>
+    <active>true</active>
+    <errorConditionFormula>RecordType.Name = &apos;Death Distribution&apos; &amp;&amp; NOT ISBLANK( Distribution_Entered__c) &amp;&amp; (
+
+ISBLANK(Employer_Authorization_to_Distribute__c) ||
+ISBLANK(Death_Certificate__c)||
+ISBLANK(Distribution_Paperwork__c)
+)</errorConditionFormula>
+    <errorDisplayField>Distribution_Entered__c</errorDisplayField>
+    <errorMessage>Distribution cannot be completed if Employer Authorization to Distribute, Death Certificate or Distribution Paperwork is blank</errorMessage>
+</ValidationRule>

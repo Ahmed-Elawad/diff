@@ -1,0 +1,149 @@
+<apex:page standardController="Referral_Account__c" recordSetVar="records" extensions="HoldOutController">
+	 <apex:sectionHeader title="Assign Hold Outs"/> 
+<apex:form > 
+	<apex:pageBlock rendered="{!Not(recordsFound)}" id="NoRecordsSelectedBlock">
+	 <apex:pagemessages />
+	 <apex:commandbutton value="Cancel" action="{!cancel}" /> 
+	</apex:pageBlock>
+
+	<apex:pageBlock rendered="{!recordsFound}" id="selectReassignUserBlock">
+	 <apex:pagemessages />
+	
+<apex:pageBlockSection >
+  
+		<apex:outputPanel >
+			<apex:commandbutton rendered="{!hasDisplayList}"  value="Assign Records and Hold Outs" onclick="return confirmAssignHoldOut()"/>
+				
+  				 <apex:actionFunction action="{!assignHoldOut}" name="jsAssignHoldOut" />					
+  				 &nbsp;	
+			<apex:commandbutton value="Cancel" action="{!cancel}" /> 	
+	       </apex:outputPanel> 
+
+	<script type="text/javascript">
+	   function confirmAssignHoldOut() {
+	       if (confirm("Are you sure you want assign an owner and add a hold out to these records?")) {
+	          return jsAssignHoldOut();
+	       }
+	       return false;
+	    }
+	</script>
+
+</apex:pageBlockSection>
+
+
+<apex:pageBlockSection columns="1" rendered="{Not(!hasDisplayList)}">
+
+
+
+</apex:pageBlockSection>
+
+
+		<apex:pageBlockSection columns="2" rendered="{!hasDisplayList}">
+    
+	       	  <apex:pageBlockSectionItem > 
+
+              <apex:outputLabel value="Sales Org"/> 
+              <apex:outputPanel >
+                 <apex:selectList rendered="{!mzac.hasMultipleSalesOrgs}" value="{!mzac.searchZa.Sales_Org__c}" title="Available Sales Orgs" size="1">
+                    <apex:selectOptions value="{!mzac.salesOrgPicklist}"/>
+                    <apex:actionSupport event="onchange" action="{!reassignSalesOrgSelected}" rerender="selectReassignUserBlock" status="updatingStructureStatus" />  
+                 </apex:selectList>
+                 <apex:outputField rendered="{!NOT(mzac.hasMultipleSalesOrgs)}" value="{!mzac.searchZa.Sales_Org__c}" />
+              </apex:outputPanel>              
+           </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+         		  <apex:outputLabel value="Hold Out Reason"  />          			
+        			<apex:selectList value="{!newPHoldOutDesc}" size="1" required="true">        
+					<apex:selectOptions value="{!NewPermHoldOut}"  />  	 	
+          			</apex:selectList>					     
+				</apex:pageBlockSectionItem> 
+               
+	                 <apex:pageBlockSectionItem rendered="{!mzac.hasZoneOptions}" >
+                    <apex:outputLabel value="Zone"/>
+                    <apex:outputPanel >
+                       <apex:selectList value="{!mzac.selectedReassignZoneId}" title="Available Zones" size="1">
+                          <apex:selectOptions value="{!mzac.zoneOptions}"/>
+                          <apex:actionSupport event="onchange" action="{!reassignZoneSelected}" rerender="selectReassignUserBlock" status="updatingReassignStructureStatus" />  
+                       </apex:selectList>
+                    </apex:outputPanel> 
+                 </apex:pageBlockSectionItem> 
+           
+            <apex:pageBlockSectionItem />
+  
+                 <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="District" /> 
+                    <apex:outputPanel >
+                       <apex:selectList rendered="{!mzac.hasDistrictReassignOptions}" value="{!mzac.selectedReassignDistrictId}" title="Available Districts" size="1">
+                          <apex:selectOptions value="{!mzac.districtReassignOptions}"/>
+                          <apex:actionSupport event="onchange" action="{!reAssignDistrictSelected}" rerender="selectReassignUserBlock" status="updatingReassignStructureStatus" />  
+                       </apex:selectList>
+                       <apex:outputText rendered="{!NOT(mzac.hasDistrictReassignOptions)}" value="{!mzac.districtName}" />
+                    </apex:outputPanel>
+                 </apex:pageBlockSectionItem>
+	             <apex:actionStatus startText="Updating Organization Structure..." id="updatingReassignStructureStatus"/>
+	             
+					<apex:pageBlockSectionItem >
+				              <apex:outputLabel value="New Owner" />
+				              <apex:outputPanel >
+				                 <apex:selectList rendered="{!hasReassignRepOptions}" value="{!reassignSelectedRepID}" title="Available Reps" size="1">
+				                    <apex:selectOptions value="{!reassignRepOptions}"/>
+				                 </apex:selectList>
+				                 <apex:outputText rendered="{!NOT(hasReassignRepOptions)}" value="No Reps Found" />
+				              </apex:outputPanel>
+				           </apex:pageBlockSectionItem>            
+		
+		 
+		</apex:pageBlockSection> 		 
+		
+		
+	</apex:pageBlock>
+
+
+ 
+<apex:pageBlock title="Records to be assigned:">
+				
+	  			<apex:pageBlockTable rendered="{!hasDisplayList}" id="raHoldOutTable" value="{!displayList}" var="rec" cellPadding="2" border="1">
+			 	
+	            <apex:column value="{!rec.refAcct.Name}" />     
+	            <apex:column value="{!rec.refAcct.Street_Address_1__c}" />                 
+	            <apex:column value="{!rec.refAcct.City__c}" />  
+	            <apex:column value="{!rec.refAcct.State_Province__c}" />              
+	            <apex:column value="{!rec.refAcct.Zip_Postal_Code__c}" />  
+	            <apex:column value="{!rec.refAcct.Referral_Source_Business_Type__c}" />  
+	            <apex:column value="{!rec.refAcct.End_Date__c}" /> 
+	            <apex:column value="{!rec.refAcct.Owner.Name}" headerValue="Owner Name" /> 
+	            <apex:column value="{!rec.refAcct.Hold_Out__c}" />  
+                <apex:column value="{!rec.refAcct.Hold_Out_Reason__c}" /> 
+				 
+			</apex:pageBlockTable>  
+	
+</apex:pageBlock>
+
+
+
+<apex:pageBlock title="These records cannot be assigned" rendered="{!hasNoAccessList}">
+	  			<apex:pageBlockTable id="raNoAccessTable" value="{!noAccessList}" var="rec" cellPadding="2" border="1">
+			 	
+
+	            <apex:column value="{!rec.noAccessReason}" headerValue="Reason"/>
+	            <apex:column value="{!rec.refAcct.Name}" />     
+	            <apex:column value="{!rec.refAcct.Street_Address_1__c}" />                 
+	            <apex:column value="{!rec.refAcct.City__c}" />  
+	            <apex:column value="{!rec.refAcct.State_Province__c}" />              
+	            <apex:column value="{!rec.refAcct.Zip_Postal_Code__c}" />  
+	            <apex:column value="{!rec.refAcct.Referral_Source_Business_Type__c}" />  
+	            <apex:column value="{!rec.refAcct.End_Date__c}" /> 
+	            <apex:column value="{!rec.refAcct.Owner.Name}" headerValue="Owner Name" /> 
+	            <apex:column value="{!rec.refAcct.Hold_Out__c}" /> 
+	            <apex:column value="{!rec.refAcct.Hold_Out_Reason__c}" />  
+	              
+	                
+				 
+			</apex:pageBlockTable>  
+	
+</apex:pageBlock>
+	
+
+
+</apex:form>
+</apex:page>

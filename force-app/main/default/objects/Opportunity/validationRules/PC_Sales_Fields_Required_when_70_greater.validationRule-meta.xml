@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PC_Sales_Fields_Required_when_70_greater</fullName>
+    <active>true</active>
+    <description>You must enter an Opportunity Sub-Type when the opportunity probability is 70% or greater.</description>
+    <errorConditionFormula>AND(
+	NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+	OR(
+		BEGINS($Profile.Name,&apos;PC Sales Administration - SB&apos;),
+		BEGINS($Profile.Name,&apos;PC Sales Manager - SB&apos;),
+		BEGINS($Profile.Name,&apos;PC Sales Rep - SB&apos;)
+	),
+	BEGINS($RecordType.DeveloperName, &apos;PC&apos;),
+	Probability&gt;=0.70,
+	NOT(ISBLANK(TEXT(OpportunityType__c))),
+	ISPICKVAL(HNBF_Sales_Type__c,&apos;&apos;)		
+)</errorConditionFormula>
+    <errorMessage>You must enter an Opportunity Sub-Type when the opportunity probability is 70% or greater.</errorMessage>
+</ValidationRule>

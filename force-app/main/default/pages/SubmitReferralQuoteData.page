@@ -1,0 +1,47 @@
+<!--
+*This visulalforce page is created to submit referral from P&C Quote Data
+*History
+*------------------
+*09/25/2023 Pratik Das         Created APR0154201: Add process/button to P&C Quote Data
+-->
+<apex:page controller="SubmitReferralQuoteDataController">
+<apex:form >
+  <!-- Begin Default Content REMOVE THIS -->
+  <apex:pageMessages ></apex:pageMessages>
+  <!-- End Default Content REMOVE THIS -->
+  <!-- lstpcQuoteData -->
+  <apex:pageBlock title="Please find the P&C Quote Data information below before proceeding" rendered="{!lstpcQuoteData[0].Opportunity__c!=null}">
+    <apex:pageBlockTable value="{!lstpcQuoteData}" var="Record">
+      <apex:column >
+      <apex:facet name="header">Do you have Workers Comp?</apex:facet>
+      <apex:outputText value="{!Record.Do_you_have_Workers_Comp__c}"/>
+    </apex:column>
+    <apex:column >
+      <apex:facet name="header">Workers Comp Carrier Name</apex:facet>
+      <apex:outputText value="{!Record.Workers_Comp_Carrier_Name__c}"/>
+    </apex:column>
+    <apex:column >
+      <apex:facet name="header">Renewal Date</apex:facet>
+      <apex:outputText value="{!Record.Renewal_Date__c}"/>
+    </apex:column>
+    <apex:column >
+      <apex:facet name="header">Notes</apex:facet>
+      <apex:outputText value="{!Record.Notes__c}"/>
+    </apex:column>
+    </apex:pageBlockTable>
+    <apex:pageBlockButtons >
+      <apex:commandButton action="{!redirectReferral}" value="Proceed"/>
+      <apex:param name="accountId" value="{!accountId}" />
+      <!-- MA {!accountId} -->
+      </apex:pageBlockButtons>
+  </apex:pageBlock>
+
+  <!-- <apex:pageBlock rendered="{!lstpcQuoteData[0].Opportunity__c!=null}">
+      <apex:pageBlockButtons >
+        <apex:commandButton action=”{!redirectReferral}” value=”Proceed”/>
+      </apex:pageBlockButtons>
+  </apex:pageBlock > -->
+
+</apex:form>
+
+</apex:page>

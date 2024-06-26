@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sales_Reps_Do_Not_Change_Stage</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND
+(
+
+AND
+(
+
+NOT(BEGINS($Profile.Name, &quot;System Admin&quot;)),
+
+CONTAINS ( $User.Job_Name__c , &quot;Sales Representative&quot;),
+
+OR
+(
+
+RecordType.DeveloperName = &apos;PEOASOOpportunityFSSRecordType&apos;,
+RecordType.DeveloperName = &apos;CoreOpportunityDSARecordType&apos;,
+RecordType.DeveloperName = &apos;CoreReferralRevenueOpportunityRecordTypeDSA&apos;,
+RecordType.DeveloperName = &apos;HNBF_Opportunity_DSA_Record_Type&apos;,
+RecordType.DeveloperName = &apos;HRS401kOpportunityFSSRecordType&apos;,
+RecordType.DeveloperName = &apos;MMSOpportunityDSARecordType&apos;,
+RecordType.DeveloperName = &apos;MMSReferralRevenueOpportunityDSA&apos;,
+RecordType.DeveloperName = &apos;Payment_Processing_DSA_Opportunity&apos;,
+RecordType.DeveloperName = &apos;PCWC_Opportunity_DSA_Record_Type&apos;,
+RecordType.DeveloperName = &apos;TAA_DSA_Opportunity_Record_Type&apos;,
+RecordType.DeveloperName = &apos;PEO_Opportunity_FSS_Record_Type&apos;,
+RecordType.DeveloperName = &apos;Prism_PEO_Opportunity_FSS_Record_Type&apos;
+
+)
+
+),
+
+(NOT(BEGINS($UserRole.Name,&quot;Core Sales Administration - SB&quot;))),
+(NOT(BEGINS($UserRole.Name,&quot;Core Zone Administration - SB&quot;))),
+(NOT(BEGINS($Profile.Name,&quot;Virtual Ancillary Sales Administration&quot;))),
+(NOT($Profile.Name = &apos;NSS Manager Admin&apos;)),
+
+PRIORVALUE(Probability) &gt;= 0.9,
+ISCHANGED(StageName)
+
+)</errorConditionFormula>
+    <errorMessage>You cannot change the Status once the Opportunity has been submitted to the sales admin.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TeamSellingASO__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <formula>AND(NOT( CurrentClient__c )
+,NumberOfEmployees &gt;= 10
+,NumberOfEmployees &lt; 100
+,NOT(ISPICKVAL(AccountSource,&quot;Referral-Bank&quot;))
+,NOT(ISPICKVAL(AccountSource,&quot;Referral-CPA&quot;))
+,NOT(ISPICKVAL(AccountSource,&quot;Referral-CPA-AICPA&quot;))
+,NOT(ISPICKVAL(AccountSource,&quot;Referral-CPA-AICPA Platinum&quot;))
+,NOT(ISPICKVAL(AccountSource,&quot;Referral-CPA-Non-AICPA&quot;))
+, NOT(INCLUDES(Referral_National_Account__r.Sensitivity__c,&quot;HR&quot;))
+)</formula>
+    <inlineHelpText>Is this available for ASO Team Selling?</inlineHelpText>
+    <label>Team Selling ASO</label>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

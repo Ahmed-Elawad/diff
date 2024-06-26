@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_TicketType_populated</fullName>
+    <active>true</active>
+    <description>Force users to populate the Ticket Type field, depending on specific Status values.</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;Reference PAC Record Type&quot; ), 
+
+(NOT(ISNEW())),
+($RecordType.Name = &quot;Reference PAC Record Type&quot; ), 
+(ISPICKVAL(Ticket_Type__c, &apos;&apos;)),
+( (NOT(ISPICKVAL(Status__c, &apos;Pending PAC Review - New Notice Received&apos;))) || (NOT(ISPICKVAL(Status__c, &apos;Pending PAC Review - Additional Notice Received&apos;))) || (NOT(ISPICKVAL(Status__c, &apos;Pending PAC Review - Transferring to PAC Service &amp; Support Team&apos;))) ),
+($Profile.Name &lt;&gt;&quot;System Administrator&quot;) 
+)</errorConditionFormula>
+    <errorDisplayField>Ticket_Type__c</errorDisplayField>
+    <errorMessage>You must enter a value in the Ticket Type field.</errorMessage>
+</ValidationRule>

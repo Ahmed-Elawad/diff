@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sales_Division__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>Used to translate old sales org names to new ones without messing with sales org code</description>
+    <externalId>false</externalId>
+    <formula>IF(TEXT(Sales_Division_Override__c)&lt;&gt;&quot;&quot;,
+TEXT(Sales_Division_Override__c),
+IF( AND ( ISPICKVAL( Sales_Org__c, &quot;PAY&quot;), CONTAINS(UserRole.Name,&quot;VIRTUAL SALES CORE&quot;), CONTAINS(UserRole.Name, &quot;HICKS&quot;) || CONTAINS(UserRole.Name, &quot;ROBERTSON&quot;) || CONTAINS(UserRole.Name, &quot;MANGIAVELLANO&quot;)|| CONTAINS(UserRole.Name, &quot;CLARK&quot;)|| CONTAINS(UserRole.Name, &quot;LOUVAIN&quot;)|| CONTAINS(UserRole.Name, &quot;278&quot;)|| CONTAINS(UserRole.Name, &quot;STANGIS&quot;)),
+&apos;Virtual SMB Inbound&apos;,
+IF( AND ( ISPICKVAL( Sales_Org__c, &quot;PAY&quot;), CONTAINS(UserRole.Name,&quot;SMB Virtual Channel&quot;)),
+&apos;SMB Virtual Channel&apos;,
+IF( AND ( CONTAINS(UserRole.Name,&quot;VIRTUAL SALES REP - DISTRICT 214-DIVINCENZO (HRD&quot;)),
+&apos;Virtual Merchant Services&apos;,
+IF( AND ( ISPICKVAL( Sales_Org__c, &quot;PAY&quot;),
+OR(CONTAINS(UserRole.Name,&quot;HYBRID DEDICATED&quot;),CONTAINS(UserRole.Name,&quot;VIRTUAL DEDICATED&quot;),
+CONTAINS(UserRole.Name,&quot;SMB New Business&quot;))),&apos;SMB New Business&apos;,
+IF( AND( ISPICKVAL( Sales_Org__c, &quot;HNBF&quot;), CONTAINS(UserRole.Name, &quot;Virtual Sales&quot;)|| CONTAINS(UserRole.Name, &quot;VIRTUAL SALES&quot;)),
+&apos;Virtual HNBF&apos;,
+IF(ISPICKVAL( Sales_Org__c, &quot;TAA&quot;),
+&quot;Virtual TAA&quot;,
+IF( AND( ISPICKVAL( Sales_Org__c, &quot;HNBF&quot;), NOT(CONTAINS(UserRole.Name,&quot;VIRTUAL&quot;))),
+&apos;Field HNBF&apos;,
+IF( AND( ISPICKVAL( Sales_Org__c, &quot;PC&quot;), CONTAINS(UserRole.Name,&quot;VIRTUAL SALES&quot;)),
+&apos;Virtual PC&apos;,
+IF( AND( ISPICKVAL( Sales_Org__c, &quot;ESR&quot;), CONTAINS(UserRole.Name,&quot;VIRTUAL SALES&quot;)),
+&apos;Virtual ESR&apos;,
+IF( AND( ISPICKVAL( Sales_Org__c, &quot;PBA&quot;), CONTAINS(UserRole.Name,&quot;VIRTUAL SALES&quot;)),
+&apos;Virtual PBA&apos;,
+IF( AND( ISPICKVAL( Sales_Org__c, &quot;MS&quot;), CONTAINS(UserRole.Name,&quot;VIRTUAL SALES&quot;)),
+&apos;Virtual Merchant Services&apos;,
+IF( AND ( OR( ISPICKVAL( Sales_Org__c, &quot;BusDev&quot;),ISPICKVAL( Sales_Org__c, &quot;PAY&quot;)), OR ( BEGINS(UserRole.Name,&quot;Bank Centric&quot;), (BEGINS(UserRole.Name, &quot;Bank Channel&quot;)))),
+&apos;Bank Channel&apos;,
+IF( AND( ISPICKVAL( Sales_Org__c, &quot;PAS&quot;), CONTAINS(UserRole.Name,&quot;MMS&quot;)),
+&apos;RSR&apos;,
+IF( AND ( CONTAINS(UserRole.Name,&quot;NSC&quot;)),
+&apos;NSC&apos;,
+IF ( AND ( OR( ISPICKVAL( Sales_Org__c, &quot;BusDev&quot;),ISPICKVAL( Sales_Org__c, &quot;PAY&quot;)), OR ( CONTAINS(UserRole.Name,&quot;Sales Account Manager&quot;), (CONTAINS(UserRole.Name, &quot;Strategic Accounts&quot;)) ) ) ,
+&apos;Strategic Accounts&apos;,
+IF(TEXT(Sales_Org__c) = &apos;PAY&apos;,
+&apos;SMB Channel&apos;,
+IF( AND( ISPICKVAL(Sales_Org__c, &quot;MMS&quot;), CONTAINS(UserRole.Name, &quot;CSR&quot;)),
+&apos;CSSR&apos;,
+IF(AND(TEXT(Sales_Org__c) = &apos;MMS&apos;, CONTAINS(UserRole.Name, &apos;SALES DEVELOPMENT&apos;)),
+&apos;MMS SDR&apos;,
+IF(AND(TEXT(Sales_Org__c) = &apos;MMS&apos;, NOT(CONTAINS(UserRole.Name, &apos;SALES DEVELOPMENT&apos;))),
+&apos;Field MMS&apos;,
+IF( AND ( CONTAINS(UserRole.Name,&quot;NSS Outbound Rep 1.6 - Client ITB Hybrid&quot;)),
+&apos;Agency NSS&apos;,
+IF(TEXT(Sales_Org__c) = &apos;PAS&apos;,
+&apos;ASO&apos;,
+IF( AND ( ISPICKVAL( Sales_Org__c, &quot;HRS&quot;), CONTAINS(UserRole.Name, &quot;288&quot;) || CONTAINS(UserRole.Name, &quot;289&quot;) || CONTAINS(UserRole.Name, &quot;290&quot;)|| CONTAINS(UserRole.Name, &quot;291&quot;)|| CONTAINS(UserRole.Name, &quot;292&quot;) || CONTAINS(UserRole.Name, &quot;293&quot;)),
+&apos;Virtual Retirement&apos;,
+TEXT(Sales_Org__c)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+))))))</formula>
+    <label>Sales Division</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>HBK_Word_Doc_Changes_Indication</fullName>
+        <description>Sets the Reference Handbooks Version.Word Doc Changes Indicator to &quot;True&quot;</description>
+        <field>Word_Doc_Changes_Indicator__c</field>
+        <literalValue>1</literalValue>
+        <name>HBK: Word Doc Changes Indication</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>HBK_Word_Doc_Changes_Indicator_Clear</fullName>
+        <description>Sets the Reference Handbooks Version.Word Doc Changes Indicator to &quot;False&quot;</description>
+        <field>Word_Doc_Changes_Indicator__c</field>
+        <literalValue>0</literalValue>
+        <name>HBK: Word Doc Changes Indicator Clear</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>HBK%3A Version Word Doc Change False</fullName>
+        <actions>
+            <name>HBK_Word_Doc_Changes_Indicator_Clear</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>(ISBLANK(Word_Doc_Changes__c)) = True</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>HBK%3A Version Word Doc Change True</fullName>
+        <actions>
+            <name>HBK_Word_Doc_Changes_Indication</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>If Word Doc Changes is NOT blank, then set the Word Doc Changes Indicator</description>
+        <formula>NOT(ISBLANK(Word_Doc_Changes__c)) = True</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

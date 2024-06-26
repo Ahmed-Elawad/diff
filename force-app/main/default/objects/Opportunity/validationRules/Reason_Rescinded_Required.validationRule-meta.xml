@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reason_Rescinded_Required</fullName>
+    <active>false</active>
+    <description>Makes Reason Rescinded Required when an opportunity is saved with &quot;Rescinded&quot;</description>
+    <errorConditionFormula>AND(
+NOT(BEGINS($Profile.Name, &quot;System Admin&quot;)),
+ISCHANGED(StageName),
+ISPICKVAL(Reason_Rescinded__c,&quot;&quot;),
+RecordType.DeveloperName = &apos;HNBF_Opportunity_Record_Type&apos;,
+ISPICKVAL(StageName ,&quot;Rescinded&quot;))</errorConditionFormula>
+    <errorDisplayField>Reason_Rescinded__c</errorDisplayField>
+    <errorMessage>Reason Rescinded is required when the opportunity is Rescinded.</errorMessage>
+</ValidationRule>

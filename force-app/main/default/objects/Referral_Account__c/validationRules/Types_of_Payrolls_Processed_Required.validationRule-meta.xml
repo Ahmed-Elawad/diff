@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Types_of_Payrolls_Processed_Required</fullName>
+    <active>false</active>
+    <description>When the Number of Payrolls the Firm Processes is populated, the field Types of Payrolls Processed is required.</description>
+    <errorConditionFormula>AND(
+RecordType.Name = &quot;Core Referral Source Record Type&quot;,
+ISCHANGED( Number_of_Payrolls_the_Firm_Processes__c ),
+NOT( ISPICKVAL( Number_of_Payrolls_the_Firm_Processes__c, &quot;&quot; )),
+ISBLANK( Types_of_Payrolls_Processed__c ),
+$User.ProfileName__c &lt;&gt; &quot;System Administrator&quot;,
+$User.ProfileName__c &lt;&gt; &quot;Sales Enablement&quot;
+)</errorConditionFormula>
+    <errorMessage>Types of Payrolls Processed cannot be blank when Number of Payrolls the Firm Processes is populated.</errorMessage>
+</ValidationRule>

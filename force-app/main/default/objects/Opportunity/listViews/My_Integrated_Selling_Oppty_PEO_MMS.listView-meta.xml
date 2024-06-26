@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>My_Integrated_Selling_Oppty_PEO_MMS</fullName>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>OPPORTUNITY.AMOUNT</columns>
+    <columns>OPPORTUNITY.CLOSE_DATE</columns>
+    <columns>OPPORTUNITY.NEXT_STEP</columns>
+    <columns>OPPORTUNITY.LEAD_SOURCE</columns>
+    <columns>OpportunityType__c</columns>
+    <columns>Age_Excluding_Weekends__c</columns>
+    <columns>OPPORTUNITY.LAST_ACTIVITY</columns>
+    <columns>OPPORTUNITY.PUSH_COUNT</columns>
+    <columns>OPPORTUNITY.CREATED_DATE</columns>
+    <filterScope>Team</filterScope>
+    <filters>
+        <field>NSS_Source__c</field>
+        <operation>equals</operation>
+        <value>Inbound,Inbound-Oasis</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.PROBABILITY</field>
+        <operation>greaterThan</operation>
+        <value>0.0</value>
+    </filters>
+    <filters>
+        <field>OpportunityType__c</field>
+        <operation>equals</operation>
+        <value>Payroll,Payroll-ASO,Payroll-HR Pro,PEO</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.CLOSE_DATE</field>
+        <operation>equals</operation>
+        <value>THIS_FISCAL_YEAR</value>
+    </filters>
+    <filters>
+        <field>JointAppointmentReps__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <label>My Integrated Selling Oppty (PEO/MMS)</label>
+</ListView>

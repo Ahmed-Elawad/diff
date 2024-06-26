@@ -1,0 +1,286 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes" access="global" >
+    
+     <!-- auto save -->
+    <aura:registerEvent name='autoSave' type='c:CommunityFormsAutoSave' />
+    <aura:attribute name='autoSaveRecords' type='map' />
+    
+    <aura:attribute name='propertyMngmntRec' type='Object' />
+    <aura:attribute name='radioGroupOptions' type='List' default="[{'label': 'Yes', 'value':'Yes'},{'label':'No','value':'No'}]" />
+    <aura:attribute name='radioGroupOptionsEmplVsContracted' type='List' default="[{'label': 'Employed', 'value':'Employed'},{'label':'Contracted','value':'Contracted'}]" />
+    <aura:attribute name='radioOptionsSold' type='List' default="[{'label': 'Storefront', 'value':'Storefront'},{'label':'Internet','value':'Internet'},{'label':'Both','value':'Both'}]" />
+    <aura:attribute name="dontAllowChanges" type="Boolean" default="true" />
+	<aura:attribute name="parentAccount" type="Account"/>
+    <aura:attribute name="allAccounts" type="Account[]" />
+    
+
+    <lightning:layout>
+        <lightning:layoutItem size="6"  padding="around-small">
+            <lightning:input aura:id='What_type_of_property_do_you_manage__c'
+                             disabled='{!v.dontAllowChanges}' 
+                             name='What_type_of_property_do_you_manage__c'
+                             label='What type of property do you manage?'
+                             value="{!v.propertyMngmntRec.What_type_of_property_do_you_manage__c}"
+                             onchange='{!c.handleChange}'
+                             required="true"/>
+            <lightning:input aura:id='Percentage_of_residential_property__c'
+                             disabled='{!v.dontAllowChanges}' 
+                             type='Number'
+                             min='0'
+                             name='Percentage_of_residential_property__c'
+                             label='Percentage of residential property'
+                             onchange='{!c.handleChange}'
+                             value="{!v.propertyMngmntRec.Percentage_of_residential_property__c}"
+                             required="true"/>
+            <aura:if isTrue="{! greaterthan(v.propertyMngmntRec.Percentage_of_residential_property__c,0)}">
+                <lightning:input aura:id='Type_of_residential_property_managed__c'
+                                 disabled='{!v.dontAllowChanges}' 
+                                 name='Type_of_residential_property_managed__c'
+                                 onchange='{!c.handleChange}'
+                                 label='What kind of residential property?  E.G.  Apartments, condos, etc..'
+                                 value="{!v.propertyMngmntRec.Type_of_residential_property_managed__c}"
+                                 required="true"/>
+                <lightning:input aura:id='Number_of_properties_managed__c'
+                                 disabled='{!v.dontAllowChanges}' 
+                                 type='Number'
+                                 min='0'
+                                 name='Number_of_properties_managed__c'
+                                 label='Number of properties managed?'
+                                 onchange='{!c.handleChange}'
+                                 value="{!v.propertyMngmntRec.Number_of_properties_managed__c}"
+                                 required="true"/>
+            </aura:if>
+            <lightning:input aura:id='Percentage_of_commercial_property__c'
+                             disabled='{!v.dontAllowChanges}' 
+                             type='Number'
+                             min='0'
+                             name='Percentage_of_commercial_property__c'
+                             label='Percentage of Commerical property'
+                             onchange='{!c.handleChange}'
+                             value="{!v.propertyMngmntRec.Percentage_of_commercial_property__c}"
+                             required="true"/>
+            <aura:if isTrue="{! greaterthan(v.propertyMngmntRec.Percentage_of_commercial_property__c,0)}">
+                <lightning:input aura:id='Type_of_commercial_properties_managed__c'
+                                 disabled='{!v.dontAllowChanges}' 
+                                 name='Type_of_commercial_properties_managed__c'
+                                 onchange='{!c.handleChange}'
+                                 label='What kind of commercial property?  E.G.  Industrial, mixed use, etc..'
+                                 value="{!v.propertyMngmntRec.Type_of_commercial_properties_managed__c}"
+                                 required="true"/>
+                <lightning:input aura:id='Number_of_commercial_properties_managed__c'
+                                 disabled='{!v.dontAllowChanges}' 
+                                 type='Number'
+                                 min='0'
+                                 name='Number_of_commercial_properties_managed__c'
+                                 label='Number of properties managed?'
+                                 onchange='{!c.handleChange}'
+                                 value="{!v.propertyMngmntRec.Number_of_commercial_properties_managed__c}"
+                                 required="true"/>
+            </aura:if>
+            <lightning:radioGroup disabled='{!v.readOnly}' 
+                                  name='Contractors_responsible_development__c'
+                                  label="Are you contractually responsible for any construction/real estate development projects in addition to property management?"
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.propertyMngmntRec.Contractors_responsible_development__c}"
+                                  required="true"/>
+            <aura:if isTrue="{!v.propertyMngmntRec.Contractors_responsible_development__c=='Yes'}" >
+                <lightning:radioGroup disabled='{!v.readOnly}' 
+                                      name='Contracts_with_licensed_GC_or_builder__c'
+                                      label="Do you contract with a licensed GC or builder who conducts the projects and hires the sub-contractors?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange='{!c.handleChange}'
+                                      value="{!v.propertyMngmntRec.Contracts_with_licensed_GC_or_builder__c}"
+                                      required="true"/>
+                <lightning:radioGroup disabled='{!v.readOnly}' 
+                                      name='Conducts_projects_and_hires_subcontract__c'
+                                      label="Do you conduct the construction project and hire the sub-contractors?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange='{!c.handleChange}'
+                                      value="{!v.propertyMngmntRec.Conducts_projects_and_hires_subcontract__c}"
+                                      required="true"/>
+            </aura:if>
+            <lightning:radioGroup disabled='{!v.readOnly}' 
+                                  name='Weight_restriction_one_EE_Property_mgmt__c'
+                                  label='Is there a weight restriction any one EE may/would lift (lbs)?'
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.propertyMngmntRec.Weight_restriction_one_EE_Property_mgmt__c}"
+                                  required="true"/>
+            <aura:if isTrue="{!v.propertyMngmntRec.Weight_restriction_one_EE_Property_mgmt__c=='Yes'}" >
+                <lightning:input aura:id='what_is_the_maximum_weight__c'
+                                 disabled='{!v.dontAllowChanges}' 
+                                 type='Number'
+                                 min='0'
+                                 name='what_is_the_maximum_weight__c'
+                                 label='What is the maximum weight?'
+                                 onchange='{!c.handleChange}'
+                                 value="{!v.propertyMngmntRec.what_is_the_maximum_weight__c}"
+                                 required="true"/>
+            </aura:if>
+            <lightning:input aura:id='What_services_are_subcontracted__c'
+                             disabled='{!v.dontAllowChanges}' 
+                             name='What_services_are_subcontracted__c'
+                             label='What services do you subcontract out to others?'
+                             value="{!v.propertyMngmntRec.What_services_are_subcontracted__c}"
+                             onchange='{!c.handleChange}'
+                             required="true"/>
+            <lightning:radioGroup disabled='{!v.readOnly}' 
+                                  name='Security_personal_provided_on_premises__c'
+                                  label='Do you provide security personnel at any of the properties?'
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.propertyMngmntRec.Security_personal_provided_on_premises__c}"
+                                  required="true"/>
+            <aura:if isTrue="{!v.propertyMngmntRec.Security_personal_provided_on_premises__c=='Yes'}" >
+                <lightning:radioGroup disabled='{!v.readOnly}' 
+                                      name='Is_property_security_armed__c'
+                                      label='Are they armed?'
+                                      options="{!v.radioGroupOptions}"
+                                      onchange='{!c.handleChange}'
+                                      value="{!v.propertyMngmntRec.Is_property_security_armed__c}"
+                                      required="true"/>
+                
+            </aura:if>
+        </lightning:layoutItem>
+        <lightning:layoutItem size="6"  padding="around-small">
+            <lightning:radioGroup disabled='{!v.readOnly}' 
+                                  name='Do_any_employees_live_on_site__c'
+                                  label='Do any employees live on site?'
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.propertyMngmntRec.Do_any_employees_live_on_site__c}"
+                                  required="true"/>
+            <aura:if isTrue="{!v.propertyMngmntRec.Do_any_employees_live_on_site__c=='Yes'}" >
+                <lightning:input aura:id='How_many_employees_live_on_site__c'
+                                 disabled='{!v.dontAllowChanges}' 
+                                 type='Number'
+                                 min='1'
+                                 name='How_many_employees_live_on_site__c'
+                                 label='What is the maximum weight?'
+                                 onchange='{!c.handleChange}'
+                                 value="{!v.propertyMngmntRec.How_many_employees_live_on_site__c}"
+                                 required="true"/>
+                <lightning:radioGroup disabled='{!v.readOnly}' 
+                                      name='Is_the_rent_reduced_for_onsite_living__c'
+                                      label='Is the rent reduced?'
+                                      options="{!v.radioGroupOptions}"
+                                      onchange='{!c.handleChange}'
+                                      value="{!v.propertyMngmntRec.Is_the_rent_reduced_for_onsite_living__c}"
+                                      required="true"/>
+                <aura:if isTrue="{!v.propertyMngmntRec.Is_the_rent_reduced_for_onsite_living__c=='Yes'}" >
+                    <lightning:input aura:id='What_is_the_amount_reduced__c'
+                                     disabled='{!v.dontAllowChanges}' 
+                                     type='Number'
+                                     min='1'
+                                     name='What_is_the_amount_reduced__c'
+                                     label='What is the amount reduced?'
+                                     onchange='{!c.handleChange}'
+                                     value="{!v.propertyMngmntRec.What_is_the_amount_reduced__c}"
+                                     required="true"/>
+                </aura:if>
+                <lightning:radioGroup disabled='{!v.readOnly}' 
+                                      name='Is_the_rent_waived__c'
+                                      label='Is the rent waived?'
+                                      options="{!v.radioGroupOptions}"
+                                      onchange='{!c.handleChange}'
+                                      value="{!v.propertyMngmntRec.Is_the_rent_waived__c}"
+                                      required="true"/>
+                <aura:if isTrue="{!v.propertyMngmntRec.Is_the_rent_waived__c=='Yes'}" >
+                    <lightning:input aura:id='What_is_the_amount_waived__c'
+                                     disabled='{!v.dontAllowChanges}' 
+                                     type='Number'
+                                     min='1'
+                                     name='What_is_the_amount_waived__c'
+                                     label='What is the amount waived?'
+                                     onchange='{!c.handleChange}'
+                                     value="{!v.propertyMngmntRec.What_is_the_amount_waived__c}"
+                                     required="true"/>
+                </aura:if>
+            </aura:if>
+            <lightning:radioGroup disabled='{!v.readOnly}' 
+                                  name='Has_affordable_living_properties__c'
+                                  label='Are any of the properties section 8 or HUD housing properties?'
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.propertyMngmntRec.Has_affordable_living_properties__c}"
+                                  required="true"/>
+            <lightning:input aura:id='Num_of_emp_doing_general_maintinance__c'
+                             disabled='{!v.dontAllowChanges}' 
+                             type='Number'
+                             min='0'
+                             name='Num_of_emp_doing_general_maintinance__c'
+                             label='How many employees are doing general maintenance work?'
+                             onchange='{!c.handleChange}'
+                             value="{!v.propertyMngmntRec.Num_of_emp_doing_general_maintinance__c}"
+                             required="true"/>
+            <lightning:radioGroup disabled='{!v.readOnly}' 
+                                  name='Are_any_doing_lawn_maintenance__c'
+                                  label='Are any doing lawn maintenance?'
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.propertyMngmntRec.Are_any_doing_lawn_maintenance__c}"
+                                  required="true"/>
+            <lightning:radioGroup disabled='{!v.readOnly}' 
+                                  name='Properties_have_gaurds__c'
+                                  label='Are there any guards?'
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.propertyMngmntRec.Properties_have_gaurds__c}"
+                                  required="true"/>
+            <aura:if isTrue="{!v.propertyMngmntRec.Properties_have_gaurds__c=='Yes'}" >
+                <lightning:radioGroup disabled='{!v.readOnly}' 
+                                      name='Are_guards_employed_or_contracted_out__c'
+                                      label='Are these guards employees or contracted out?'
+                                      options="{!v.radioGroupOptionsEmplVsContracted}"
+                                      onchange='{!c.handleChange}'
+                                      value="{!v.propertyMngmntRec.Are_guards_employed_or_contracted_out__c}"
+                                      required="true"/>
+                <lightning:radioGroup disabled='{!v.readOnly}' 
+                                      name='Are_property_guards_armed__c'
+                                      label='Armed or unarmed?'
+                                      options="{!v.radioGroupOptions}"
+                                      onchange='{!c.handleChange}'
+                                      value="{!v.propertyMngmntRec.Are_property_guards_armed__c}"
+                                      required="true"/>
+            </aura:if>
+            <lightning:radioGroup disabled='{!v.readOnly}' 
+                                  name='Are_major_repairs_or_work_contracted_out__c'
+                                  label='When it comes time for major repair or specialized work (roof work, re-wiring, re-plumbing, guard duties, snow removal, etc.) will you contract out these jobs?'
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.propertyMngmntRec.Are_major_repairs_or_work_contracted_out__c}"
+                                  required="true"/>
+            <aura:if isTrue="{!v.propertyMngmntRec.Are_major_repairs_or_work_contracted_out__c=='Yes'}" >
+                <lightning:input aura:id='Who_contracts_major_work__c'
+                                 disabled='{!v.dontAllowChanges}' 
+                                 onchange='{!c.handleChange}'
+                                 name='Who_contracts_major_work__c'
+                                 label='Who contracts with the sub-contractor?  You the property manager or the owner of the property you are managing?'
+                                 value="{!v.propertyMngmntRec.Who_contracts_major_work__c}"
+                                 required="true"
+                                 maxlength='255'/>
+            </aura:if>
+            <lightning:radioGroup disabled='{!v.readOnly}' 
+                                  name='Do_you_own_properties_being_managed__c'
+                                  label='Do you own any of the buildings you are managing?'
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.propertyMngmntRec.Do_you_own_properties_being_managed__c}"
+                                  required="true"/>
+            <lightning:input aura:id='Who_contracts_major_work__c'
+                             disabled='{!v.dontAllowChanges}' 
+                             name='Employees_work_on_site_or_travel__c'
+                             onchange='{!c.handleChange}'
+                             label='Do employees work at one site only, or do they travel to / from different sites in a typical work day?'
+                             value="{!v.propertyMngmntRec.Employees_work_on_site_or_travel__c}"
+                             required="true" />
+            <lightning:radioGroup disabled='{!v.readOnly}' 
+                                  name='Do_you_handle_process_any_evictions__c'
+                                  label='Do you handle / process any evictions?'
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.propertyMngmntRec.Do_you_handle_process_any_evictions__c}"
+                                  required="true"/>
+        </lightning:layoutItem>
+    </lightning:layout>
+</aura:component>

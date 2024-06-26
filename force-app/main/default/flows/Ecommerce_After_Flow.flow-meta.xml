@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <description>Ecom Abandon to Prospect</description>
+        <name>Ecom_Abandon_to_Prospect</name>
+        <label>Ecom Abandon to Prospect</label>
+        <locationX>50</locationX>
+        <locationY>839</locationY>
+        <actionName>ECommerce__c.Ecom_Abandon_to_Prospect</actionName>
+        <actionType>emailAlert</actionType>
+        <connector>
+            <targetReference>Update_Abandoned_Prospect_Sent</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>ECommerce__c.Ecom_Abandon_to_Prospect</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Ecommerce Email the HBR</description>
+        <name>Ecommerce_Email_the_HBR</name>
+        <label>Ecommerce Email the HBR</label>
+        <locationX>50</locationX>
+        <locationY>431</locationY>
+        <actionName>ECommerce__c.Ecommerce_Email_the_HBR</actionName>
+        <actionType>emailAlert</actionType>
+        <connector>
+            <targetReference>Update_Abandon_Sent_Date</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>ECommerce__c.Ecommerce_Email_the_HBR</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>58.0</apiVersion>
+    <decisions>
+        <description>When an abandoned action comes in, email the prospect. Only trigger this if the Email Abandon field is populated also because we want to make sure we are sending to the HBR also.</description>
+        <name>Email_Prospect</name>
+        <label>Email Prospect</label>
+        <locationX>182</locationX>
+        <locationY>731</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Ecommerce_Email_Prospect_Abandoned</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.EmailAbandonProspect__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.EmailAbandonProspectSent__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Action__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>Abandoned</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.EmailAbandon__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Ecom_Abandon_to_Prospect</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Ecommerce Email Prospect Abandoned</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>When an ecommerce record comes in with an action of abandoned, an email is sent to the HBR group.</description>
+        <name>EmailHBR</name>
+        <label>Email HBR</label>
+        <locationX>182</locationX>
+        <locationY>323</locationY>
+        <defaultConnector>
+            <targetReference>Email_Prospect</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Ecommerce_Email_HBR_Abandoned</name>
+            <conditionLogic>1 AND 2 AND 3 AND 4</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.EmailAbandon__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.EmailAbandonSent__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Action__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Form 2 - Abandoned</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Action__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Form 3 - Abandoned</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Ecommerce_Email_the_HBR</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Ecommerce Email HBR Abandoned</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <interviewLabel>Ecommerce After Flows {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Ecommerce After Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <description>Update the date/time the abandon email was sent to the HBR group</description>
+        <name>Update_Abandon_Sent_Date</name>
+        <label>Update Abandon Sent Date</label>
+        <locationX>50</locationX>
+        <locationY>539</locationY>
+        <connector>
+            <targetReference>Email_Prospect</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>EmailAbandonSent__c</field>
+            <value>
+                <elementReference>$Flow.CurrentDateTime</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <description>Update the sent date/time to indicate that the email was sent to the prospect.</description>
+        <name>Update_Abandoned_Prospect_Sent</name>
+        <label>Update Abandoned Prospect Sent</label>
+        <locationX>50</locationX>
+        <locationY>947</locationY>
+        <inputAssignments>
+            <field>EmailAbandonProspectSent__c</field>
+            <value>
+                <elementReference>$Flow.CurrentDateTime</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>EmailHBR</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Action__c</field>
+            <operator>Contains</operator>
+            <value>
+                <stringValue>Abandoned</stringValue>
+            </value>
+        </filters>
+        <object>ECommerce__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

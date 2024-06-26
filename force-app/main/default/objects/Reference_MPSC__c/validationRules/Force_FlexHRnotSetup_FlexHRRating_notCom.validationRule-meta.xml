@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_FlexHRnotSetup_FlexHRRating_notCom</fullName>
+    <active>true</active>
+    <description>If Flex HR Rating = &quot;Not Complete&quot;, then force an entry in the Online Access not setup or the Flex HR Rating Notes field</description>
+    <errorConditionFormula>AND(
+ ISPICKVAL(Flex_HR_Rating__c,&quot;Not Complete&quot;),
+ ( NOT(Online_Access_not_setup__c) &amp;&amp; 
+ ISBLANK(Flex_HR_Rating_Notes__c) ),
+ $Profile.Name &lt;&gt;&quot;System Administrator&quot;
+)</errorConditionFormula>
+    <errorDisplayField>Online_Access_not_setup__c</errorDisplayField>
+    <errorMessage>You must populate the Online Access not setup or the Flex HR Rating Notes field when setting Flex HR Rating = Not Complete.</errorMessage>
+</ValidationRule>

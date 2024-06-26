@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Incoming_Checks</fullName>
+    <active>true</active>
+    <description>If Record Type = &apos;401k Incoming Checks and ACHs&apos; and Transmission Method = &apos;Chase 401k&apos; and Amount is greater than $100,000, then the Ready for Trade date field cannot be populated (saved) until the $100k Approval is checked.</description>
+    <errorConditionFormula>AND( 
+ISCHANGED( Ready_for_Trade__c ), 
+$RecordType.Name  = &quot;401k Incoming Checks and ACHs&quot;,
+ISPICKVAL(Transmission_Method__c,&quot;Chase 401k&quot;), 
+Amount__c &gt; 100000, 
+X100k_Approval__c = false 
+)</errorConditionFormula>
+    <errorMessage>$100k Approval should be ticked</errorMessage>
+</ValidationRule>

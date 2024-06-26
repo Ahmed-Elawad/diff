@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>S2S_Initial_Contact_Complete_Required</fullName>
+    <active>true</active>
+    <description>You must reach out to the contact and &quot;Initial Client Contact Completed&quot; must be checked before status can be changed.</description>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&apos;System Administrator&apos;))
+,RecordType.Name =&quot;Sales2Service Case&quot; 
+,ISCHANGED( Status ) 
+,(Initial_Client_Contact_Completed__c != true))</errorConditionFormula>
+    <errorMessage>Case status cannot be updated until &quot;Initial Client Contact Completed&quot; is checked.</errorMessage>
+</ValidationRule>

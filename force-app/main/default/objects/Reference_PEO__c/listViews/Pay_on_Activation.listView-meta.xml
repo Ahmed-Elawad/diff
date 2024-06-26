@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pay_on_Activation</fullName>
+    <columns>NAME</columns>
+    <columns>Account_Lookup__c</columns>
+    <columns>Branch_Client_Number__c</columns>
+    <columns>RECORDTYPE</columns>
+    <columns>Contractual_Specialist_Name__c</columns>
+    <columns>X401_k_ok_to_Run__c</columns>
+    <columns>First_Check__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>notEqual</operation>
+        <value>Reference_PEO__c.PEO_Client_Risk_Assessment,Reference_PEO__c.PEO_Existing_Client_Onboarding</value>
+    </filters>
+    <filters>
+        <field>No_Start_Client__c</field>
+        <operation>notEqual</operation>
+        <value>1</value>
+    </filters>
+    <filters>
+        <field>X401_k_ok_to_Run__c</field>
+        <operation>greaterThan</operation>
+        <value>12/31/2049</value>
+    </filters>
+    <filters>
+        <field>First_Check__c</field>
+        <operation>greaterThan</operation>
+        <value>1/1/2017</value>
+    </filters>
+    <label>Pay on Activation</label>
+</ListView>

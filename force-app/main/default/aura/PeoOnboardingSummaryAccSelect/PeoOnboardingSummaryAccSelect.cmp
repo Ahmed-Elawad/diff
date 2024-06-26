@@ -1,0 +1,62 @@
+<aura:component controller="CommunitySummaryController" implements="forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable,lightning:utilityItem,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:appHostable" access="global">
+    
+    <aura:handler name='init' value='{!this}' action='{!c.init}' />
+    
+    <aura:attribute name='recordId' type='String' />
+    <aura:attribute name='userProfile' type='String' />
+    <aura:attribute name='ParentAccountId' type='String' />
+    <aura:attribute name='ParentAccount' type='String' />
+    <aura:attribute name='allAccounts' type='Account[]' />
+    <aura:attribute name='peoFullChecklist' type='PEO_Onboarding_Checklist__c' />
+    <aura:attribute name='recId' type='String' />
+    <aura:attribute name='waitingForResp' type='boolean' />
+    <aura:attribute name='progressRate' type='Integer' default='0'/>
+    <aura:attribute name='activeTab' type='String' />
+    <aura:attribute name='loaded' type='boolean' default='true' />
+    <aura:attribute name='error' type='boolean' default='false' />  
+    <aura:attribute name='medicalChecklist' type='Map' />
+    <aura:attribute name='portalExperience' type='String' />
+    <aura:attribute name='currentUser' type='Map' />
+    <aura:attribute name='industryStruct' type='Object' />
+    <aura:attribute name='covidQuestionnaireNeeded' type='Boolean' />
+    <aura:attribute name='WCFastPassChosen' type='Boolean' />
+    <aura:attribute name="tabType" type="String"/>
+    <aura:attribute name='errMsg' type='String' />
+    
+    <lightning:card>
+        <aura:if isTrue='{! and(v.loaded, !v.error) }'>
+            <lightning:tabset variant="{!v.tabType}" >
+                
+                <aura:iteration items="{!v.allAccounts}" var="account" indexVar="index" >
+                    <lightning:tab label="{!account.Name}" id="{!account.Name}" >
+                        <c:peoOnboardingSummary isParent='{! or(account.isParent__c, v.peoFullChecklist.Client_Add_on__c)}'
+                                                parentAccId='{!v.ParentAccount}' 
+                                                runningUserProfile='{!v.userProfile}' 
+                                                recordId='{!account.Id}'
+                                                Account='{!account}'
+                                                parentChecklist='{!v.peoFullChecklist}'
+                                                portalExperience = '{!v.portalExperience}'
+                                                industryStruct = '{!v.industryStruct}'
+                                                covidSummaryNeeded='{!v.covidQuestionnaireNeeded}'
+                                                WCFastPassSelected="{!v.WCFastPassChosen}"/>
+                    </lightning:tab>
+                </aura:iteration>
+                
+            </lightning:tabset>
+            
+            <aura:set attribute='else'>
+                <aura:if isTrue='{!v.error}'>
+                    Error Loading data please refresh. If the issue persists please contact admin for support.
+                    <aura:set attribute='else'>
+                        Loading summary...
+                        <lightning:progressRing size="large"
+                                                value="{!v.progressRate}" 
+                                                variant="active-step" 
+                                                direction="drain"/>
+                    </aura:set>
+                </aura:if>
+            </aura:set>
+        </aura:if>
+    </lightning:card>
+    
+</aura:component>

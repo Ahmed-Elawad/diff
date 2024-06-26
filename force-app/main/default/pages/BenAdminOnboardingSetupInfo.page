@@ -1,0 +1,105 @@
+<!--
+*	Page used by BenAdmin to gather information to be used by onboarding
+*
+*
+*
+*   07/11/2022	Carrie Marciano		Created. 
+*   09/20/2022  Carrie Marciano		Set field lengths on input fields, grayed out Submit button after click
+* 
+-->
+
+<apex:page docType="html-5.0" standardController="Opportunity" extensions="BenAdminOnboardingSetupInfoController" lightningStyleSheets="true" showHeader="true">
+    <style>
+        .vfHelpText a            {position:relative;}
+        .vfHelpText a span       {display: none;}
+        .vfHelpText a:hover span {display: block;
+        position:absolute;
+        top:1.05em;
+        padding:2px 5px;
+        right:1em; width:17em;  
+        background-color:#320991;
+        color:black;
+        }
+        .imgClass {
+            background-image: url(/img/help/helpOrbs.gif);
+            background-repeate: no-repeat;
+            width: 15px;
+            height: 13px;
+        }
+        .imgClass:hover{
+        	background-image: url(/img/help/helpOrbs.gif);
+            background-repeate: no-repeat;
+        	background-position: right;
+            width: 15px;
+            height: 13px;
+        }
+    </style>
+    <apex:includeScript value="{!$Resource.jQueryJs}" />
+    <apex:includeScript value="{!$Resource.buttonsEnabledJs}" />
+    <!-- ********** Apex Page Start ********** -->   
+    
+    <apex:outputPanel id="ResultsPanel">       
+        <apex:form id="inputForm" rendered="{!isForm}">
+            <apex:actionFunction action="{!Submit}" name="jsSubmit" />
+            <apex:pageMessages />
+            <apex:pageBlock title="BenAdmin Onboarding Information">    
+                <apex:pageBlockSection columns="2" showHeader="false" title="BenAdmin Onboarding Information">
+                    <apex:pageBlockSectionItem >                                               
+                        <apex:outputPanel styleClass="requiredInput">
+                            <apex:outputLabel value="Client day-to-day Contact:" for="clientContactforImp"/>                            
+                        	<img src="/s.gif" class="imgClass" title="Include Name and Email."/>
+                            <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        </apex:outputPanel>
+                        <apex:inputText value="{!clientContactforImp}" required="true" maxlength="100" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputPanel > 
+                            <apex:outputLabel value="Broker day-to-day Contact:" for="brokerContactforImp"/>
+                            <img src="/s.gif" class="imgClass" title="Include Name and Email."/>                                                                                     
+                        </apex:outputPanel> 
+						<apex:inputText value="{!brokerContactforImp}" required="false" maxlength="100"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Open Enrollment Date(s), if know:" for="openEnrollmentDates"/>
+                        <apex:inputText value="{!openEnrollmentDates}" required="false" maxlength="30"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Client Requested Delivery Date, if applicable:" for="clientReqDeliveryDate"/>
+                        <apex:inputText value="{!clientReqDeliveryDate}" required="false" maxlength="20"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Notes for Implementation:" for="notes"/>
+                        <apex:inputText value="{!notes}" required="false" maxlength="255"/>
+                 	</apex:pageBlockSectionItem>
+                 </apex:pageBlockSection>   
+                
+                 <apex:pageBlockSection columns="1" showHeader="false" title="Carrier Details" id="carrierSection" >
+                  <!--  <apex:pageBlockSectionItem > -->
+                        <apex:outputLabel rendered="{!nbrCarriers==null}" style="white-space:nowrap;" styleClass="biggerFont" value="How many carriers do they have?" />
+                    	<apex:outputPanel rendered="{!nbrCarriers==null}" >
+                        	<apex:inputText value="{!nbrCarriers}" size="4">
+                            	<apex:actionSupport event="oncomplete" action="{!changeNbrCarriers}" rerender="carrierSection" status="changeNbrAccountsStatus" />
+                        	</apex:inputText>
+                        	<apex:commandButton styleClass="blueButton" value="Update" action="{!changeNbrCarriers}" rerender="carrierSection" status="changeNbrAccountsStatus" />         
+                    	</apex:outputPanel>
+                    <!--  </apex:pageBlockSectionItem> -->   
+                    <apex:actionStatus startText="Changing Nbr of Carriers..." id="changeNbrAccountsStatus"/>
+                
+                    <apex:pageBlockTable rendered="{!nbrCarriers!=null}" value="{!displayCarriers}" var="carrier" cellPadding="2" border="0">
+                    	<apex:column headerValue="Carrier Name" style="vertical-align:middle"><apex:input type="text" value="{!carrier.carrierName}" required="false" /></apex:column>
+                        <apex:column headerValue="EDI Connection (Yes/No)" style="vertical-align:middle"><apex:input type="text" value="{!carrier.ediConnection}" required="false" /></apex:column>
+                        <apex:column headerValue="Group/Policy Number" style="vertical-align:middle"><apex:input type="text" value="{!carrier.groupPolicyNumber}" required="false" /></apex:column>
+                        <apex:column headerValue="Carrier Contact" style="vertical-align:middle"><apex:input type="text" value="{!carrier.carrierContact}" required="false" /></apex:column>
+                    </apex:pageBlockTable>
+                 </apex:pageBlockSection>   
+                 <apex:pageBlockButtons location="bottom">
+                    <!-- <apex:commandButton value="Submit" action="{!submit}" reRender="inputForm" > -->
+                    <apex:commandButton onclick="buttonsEnabled(false);return jsSubmit();" value="Submit" reRender="inputForm" />
+                    <!-- </apex:commandButton> -->
+                    <apex:commandButton value="Cancel" action="{!cancel}" immediate="true" html-formnovalidate="formnovalidate"/>
+                </apex:pageBlockButtons>                
+			</apex:pageBlock>
+		</apex:form>
+    </apex:outputPanel>
+    <!-- ********** Apex Page End ********** -->
+</apex:page>

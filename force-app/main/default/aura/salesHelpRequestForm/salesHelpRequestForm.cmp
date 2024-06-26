@@ -1,0 +1,103 @@
+<!--
+Created by: Michael Karcz
+08-12-2020  Jermaine Stukes   Updated to add Platform event
+12-21-2020  Jermaine Stukes		Reconfigured component to be Sales Help form rather than just a frame for VF
+-->
+
+<aura:component controller="SalesHelpRequestFormController" implements="force:lightningQuickAction,lightning:isUrlAddressable,force:appHostable,flexipage:availableForAllPageTypes,lightning:utilityItem" >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <!--Form Variables-->
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="currentURL" type="String" />
+    <aura:attribute name="shRecordType" type="String" />
+    <aura:attribute name="newCaseRecordId" type="String" />
+    <aura:attribute name="newCaseNumber" type="String" />
+    <aura:attribute name="newCaseType" type="String" />
+    <aura:attribute name="newCaseSubType" type="String" />
+    <aura:attribute name="newCaseDescription" type="String" />
+    <aura:attribute name="loading" type="Boolean" default="false" />
+    <aura:attribute name="salesHelpCustomSetting" type="Object" />
+    <aura:attribute name="formValidated" type="Boolean" default="true" />
+    <aura:attribute name="validationError" type="String" />
+    <aura:attribute name="newCaseCreated" type="Boolean" default="false" />
+    <aura:attribute name="filesAttached" type="Boolean" default="false" />
+    <aura:attribute name="attachedFiles" type="List" />
+    <!--End Form Variables-->
+    
+    <aura:if isTrue="{!v.newCaseCreated}">    
+        <lightning:card class="slds-card_boundary">
+        
+            <div class="slds-p-around_medium slds-text-color_success"><label><b>The following case has successfully been created.</b></label></div> 
+            <div class="slds-p-horizontal_medium"> <lightning:recordViewForm recordId="{!v.newCaseRecordId}" objectApiName="Case">
+            <div><label for="case_Number">Case Number:</label>
+                <lightning:outputField fieldName="CaseNumber" aura:id="case_Number" variant="label-hidden" class="slds-m-around_medium"/></div>
+            </lightning:recordViewForm>           
+            <aura:if isTrue="{!v.filesAttached}">
+                <div class="slds-p-top_medium"><b>Files Attached to Case:</b></div>
+                <aura:iteration items="{!v.attachedFiles}" var="Files">
+                    <div>{!Files}</div>
+                </aura:iteration>
+                <div class="slds-p-top_medium"><b>Attach additional files or close the form</b></div>
+                <aura:set attribute="else">
+                    <div class="slds-p-top_medium"><b>Use component below to attach files to the case or close the form.</b></div>
+                </aura:set>
+            </aura:if>
+            <div class="slds-p-around_medium"><lightning:fileUpload label="Attach Files to Case"
+                                                                    name="fileUploader"
+                                                                    multiple="true"
+                                                                    recordId="{!v.newCaseRecordId}"
+                                                                    onuploadfinished="{!c.handleUploadFinished}" /></div>
+            <lightning:utilityBarAPI aura:id="utilitybar" />
+            <div class="slds-m-top_medium slds-align_absolute-center">
+                <lightning:button variant="brand" label="Close Form" onclick="{! c.minimizeUtility }"/>
+            </div></div>
+        </lightning:card>
+        <aura:set attribute="else">
+            <lightning:card>
+            <lightning:notificationsLibrary aura:id="notifLib"/>
+            <lightning:recordEditForm aura:id="caseForm"
+                                      recordTypeId="{!v.shRecordType}"
+                                      objectApiName="Case"
+                                      onload="{!c.handleLoad}"
+                                      onsubmit="{!c.handleSubmit}"
+                                      onerror="{!c.handleOnError}"
+                                      onsuccess="{!c.handleSuccess}">
+                <lightning:messages/>
+                <div class="slds-text-heading_small">
+                    <div class="slds-p-top_medium slds-p-horizontal_medium">
+                        <label for="caseType" class="slds-text-color_error"><b>Type</b></label>
+                        <lightning:inputField fieldName="Type" aura:id="caseType" variant="label-hidden" required="true"/>
+                    </div>
+                    <div class="slds-p-top_medium slds-p-horizontal_medium">
+                        <label for="caseSubType" class="slds-text-color_error"><b>Sub-Type</b></label>
+                        <lightning:inputField fieldName="Sub_Type__c" aura:id="caseSubType" variant="label-hidden" required="true" onchange="{!c.checkMessages}" />
+                    </div>
+                    <div class="slds-p-top_medium slds-p-horizontal_medium">
+                        <label for="caseDescription" class="slds-text-color_error"><b>Description</b></label>
+                        <lightning:inputField fieldName="Description" aura:id="caseDescription" variant="label-hidden" required="true"/>
+                    </div>
+                    <div class="slds-p-top_medium slds-p-horizontal_medium">
+                        <label for="caseDueDate" class="slds-text-color_error"><b>Due Date</b></label>
+                        <lightning:inputField fieldName="Due_Date__c" aura:id="caseDueDate" variant="label-hidden" required="true"/>
+                    </div>
+                    <div class="slds-p-top_medium slds-p-horizontal_medium">
+                        <label for="caseEscalated"><b>Escalated:</b></label>
+                        <lightning:inputField fieldName="IsEscalated" variant="label-hidden" aura:id="caseEscalated"/>
+                </div>
+                    <div class="slds-p-top_medium slds-p-horizontal_medium">
+                        <label for="caseAltContact"><b>Alternate Contact:</b></label>
+                        <b><lightning:inputField fieldName="Alternate_Contact__c" variant="label-hidden" aura:id="caseAltContact"/></b></div>
+                </div>
+                <aura:if isTrue="{!v.formValidated}">
+                    <div class="slds-m-top_medium slds-align_absolute-center">
+                        <lightning:button variant="brand" label="Submit" type="submit" />
+                    </div>
+                </aura:if>
+            </lightning:recordEditForm>
+            </lightning:card>
+        </aura:set>
+    </aura:if>
+    <aura:if isTrue="{!v.loading}">
+        <lightning:spinner alternativeText="Loading" />
+    </aura:if>
+</aura:component>

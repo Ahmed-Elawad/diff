@@ -1,0 +1,444 @@
+<aura:component controller="ConvertContactToCommunityUser" implements="force:lightningQuickActionWithoutHeader,lightning:isUrlAddressable,lightning:utilityItem,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="public">
+    
+    <aura:html tag="style">
+        .cuf-content {
+            padding: 0 0rem !important;
+        	background-color: #F2F4F7;
+        }
+        .slds-p-around--medium {
+            padding: 0rem !important;
+        }       
+        .slds-modal__content{
+            height:unset !important;
+            max-height:unset !important; 
+        	background-color: #F2F4F7;
+        }
+        .slds-modal__container{
+            width: 90% !important;
+            max-width: 95% !important;
+            padding-bottom:2%;
+        	padding-top:2%;
+        } 
+        .slds-modal__content:last-child {
+        	box-shadow: unset;
+        }
+    </aura:html>
+    <!-- initialize by:
+  check existing community suer
+  check associated account
+  handle errors on no load of either -->
+    <aura:handler name="init" value="{!this}" action="{!c.initialize}" />
+    
+    <!-- running user attributes -->
+    <!-- record ID = current contact record ID -->
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="accountID" type="Id" />
+    <aura:attribute name="contactRec" type="Contact" />
+    <aura:attribute name="runningUser" type="User" />
+    <aura:attribute name='missingPermissionList' type='List' />
+    <aura:attribute name='checklist' type='Map' />
+    
+    <!-- new/old community user attr -->
+    <aura:attribute name="communityNickName" type="String" />
+    <aura:attribute name="communityUsername" type="String" />
+    <aura:attribute name="communityUser" type="User" />
+    <aura:attribute name="hasInactiveUser" type="Boolean" />
+    <aura:attribute name="reactivationNeeded" type="Boolean" />
+    <aura:attribute name="alias" type="String" />
+    <aura:attribute name='experience' type='String' />
+    <aura:attribute name='community_Welcome_Messsage__c' type='String' />
+    
+    <!-- form functionality attributes -->
+    <!-- control rendering, step, errors, etc -->
+    <aura:attribute name="disableContinue" type="Boolean" default='false'/>
+    <aura:attribute name='showForms' type='boolean' />
+    <aura:attribute name='step' type='Integer' default='0' />
+    <aura:attribute name='experienceOptions' type='List' />
+    <aura:attribute name='medicalReq' type='boolean' default='false'/>
+    <aura:attribute name='lockAccess' type='boolean' default='true' />
+    <aura:attribute name='benefitDateError' type='Boolean' />
+    <aura:attribute name='FastPass' type='Boolean' default='false'/>
+    <aura:attribute name='scrollToTop' type='boolean' />
+    <aura:handler name='change' value='{!v.scrollToTop}' action='{!c.handleScroll}' />
+    
+    <!-- Form answers/values used for checklist/other record creation -->
+    <aura:attribute name="WCFastPass" type="string" />
+    <aura:attribute name="WCInTargetHazardGroup" type="string" />
+    <aura:attribute name="WCPremiumUnderLimit" type="string" />
+    <aura:attribute name='medicalRequestedVal' type='String' />
+    <aura:attribute name='WCUnderwritingVal' type='String' />
+    <aura:attribute name='benEffectiveDate' type='Date' />
+    <aura:attribute name='medicalUwPath' type='String' />
+    <aura:attribute name='selfRetainReason' type='String' />
+    <aura:attribute name='existingChecklist' type='Map' />
+    
+    <aura:attribute name="opportunity" type="Opportunity" />
+    
+    <!-- used for progress ring/loading -->
+    <aura:attribute name='waitingForResp' type='boolean' />
+    <aura:attribute name='progressRate' type='Integer' default='0' />
+    
+    <!-- client add on attributes -->
+    <aura:attribute name='isClientAddON' type='Boolean' />
+    <lightning:workspaceAPI aura:id="navWorkspace"/>
+    <aura:attribute name='processAsClientAddOn' type='String' />
+    <aura:attribute name="addOnOptions" type="List" default="[
+                                                             {'label': 'Yes, continue as a client add on', 'value': 'Yes'},
+                                                             {'label': 'No, Do not coninue as a client add on', 'value': 'No'}
+                                                             ]"/>
+    
+    <!--Added by jidesh-->
+    <aura:attribute name="options" type="List" default="[
+                                                        {'label': 'Yes', 'value': 'Yes'},
+                                                        {'label': 'No', 'value': 'No'}
+                                                        ]"/>
+    <aura:attribute name="createCommUser" type="String" default=""/>
+    <aura:attribute name='fieldsMissing' type='boolean' />
+    <lightning:navigation aura:id="navService"/>
+    <aura:attribute name="pageReference" type="Object"/>
+    
+    <aura:if isTrue='{!v.lockAccess}'>
+        <aura:set attribute='else'>
+            <aura:if isTrue="{!v.waitingForResp}">
+                <lightning:spinner aura:id="loadingSpinner" 
+                                   alternativeText="Updating record for !v.currRecord.Name" 
+                                   size="large" />
+            </aura:if>
+            <div class="slds-col slds-size_1-of-12 slds-align_absolute-center">
+                <span> 
+                </span>
+            </div> 
+            <div aura:id ="formHeader" style="padding: 0px 20px 20px 20px;">
+                <header class="slds-modal__header" >
+                    <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate" style="padding: 20px 20px 0px 20px;">Access PEO Getting Started Portal</h2>
+                </header>
+            </div>
+            <div class="slds-col slds-size_1-of-1" style="padding: 0px 20px 20px 40px;">
+                <aura:if isTrue='{! v.step == 0}'>
+                	Loading, Please Wait
+                </aura:if>   
+                <aura:if isTrue='{! and(v.isClientAddON, v.step == 1)}'>
+                    <lightning:card title="Client Add-on">
+                        <ui:message title="Client Add-on" severity="warning" closable="false">
+                            The contact you are attempting to create a portal user is a child account of <a href="" onclick="{!c.openMultiIDParentTab}" class="uiOutputURL">{!v.contactRec.Account.SalesParent__r.Name}.</a>
+                            If you continue to create a portal user, the information provided will be processed as a client add on for the above prospect. All
+                            submission will also be processed as a client add-on.
+                        </ui:message>
+                        <lightning:radioGroup name="ConvertModal_isClientAddOnQuestion"
+                                              label="Would you like to continue to process as a Client add-on?"
+                                              aura:id="processAsClientAddOnSelection"
+                                              options="{! v.addOnOptions}"
+                                              value='{!v.processAsClientAddOn}' />
+                    </lightning:card>
+                </aura:if>
+                <aura:if isTrue="{!v.processAsClientAddOn == 'No'}">
+                    The following link will take you to the parent account of the multiID: <a href="" onclick="{!c.openMultiIDParentTab}" class="uiOutputURL">{!v.contactRec.Account.SalesParent__r.Name}.</a>
+                </aura:if>
+            </div>
+            <aura:if isTrue="{! or(and(v.isClientAddON, v.processAsClientAddOn == 'Yes'), not(v.isClientAddON) ) }">
+                <aura:if isTrue="{!and(v.step == 1,!v.communityUser)}">
+                    <lightning:card title="User Creation">
+                        <div aura:id ="askCreationDiv" class="slds-col slds-size_1-of-1" style="padding: 0px 20px 0px 20px;">
+                            <span>
+                                <lightning:radioGroup aura:id="askCreation" required="true"
+                                                      name='askCreation'
+                                                      label="Are you creating a Community Portal User?"
+                                                      options="{! v.options}" 
+                                                      onchange="{!c.checkCreateUser}"
+                                                      value="{!v.createCommUser}"/>
+                            </span>
+                        </div>
+                    </lightning:card>
+                </aura:if>
+                <aura:if isTrue="{!and(v.step == 1,v.hasInactiveUser)}">
+                    <lightning:card title="User Reactivation">
+                        <div aura:id ="askReactivationDiv" class="slds-col slds-size_1-of-1" style="padding: 0px 20px 0px 20px;">
+                            <span>
+                                <lightning:radioGroup aura:id="askReactivation" required="true"
+                                                      name='askReactivation'
+                                                      label="An Inactive Community User was found, do you want to reactivate the user?"
+                                                      options="{! v.options}"
+                                                      value="{!v.reactivationNeeded}"/>
+                            </span>
+                        </div>
+                    </lightning:card>
+                </aura:if>
+                <aura:if isTrue="{!and(v.step == 1,v.communityUser)}">
+                    
+                    <lightning:card title="Existing Community User Information">
+                    	<div aura:id ="existingUserInfoDiv" class="slds-col slds-size_1-of-1" style="padding: 0px 20px 0px 20px;">
+                            <lightning:input name="ConvertModal_ExistingUserName"
+                                                     label="Name"
+                                                     disabled="true"
+                                                     value="{!v.communityUser.Name}"
+                                                     aura:id="existingUserName"/>
+                            <lightning:input name="ConvertModal_ExistingUserUsername"
+                                                     label="Username"
+                                                     disabled="true"
+                                                     value="{!v.communityUser.Username}"
+                                                     aura:id="existingUserUsername"/>
+                            <lightning:input name="ConvertModal_ExistingUserEmail"
+                                                     label="Email"
+                                                     disabled="true"
+                                                     value="{!v.communityUser.Email}"
+                                                     aura:id="existingUserEmail"/>                        
+                    	</div>
+                    </lightning:card>
+                </aura:if>
+                <aura:if isTrue="{!v.step == 1}">
+                    <aura:if isTrue="{!v.createCommUser == 'Yes'}">
+                    	<lightning:card title="New Community User Information">
+                            <div aura:id ="createCommUserFields" style="padding: 0px 20px 0px 20px;">
+                                <lightning:input name="ConvertModal_ContactName"
+                                                 label="Contact Name"
+                                                 disabled="true"
+                                                 value="{!v.contactRec.Name}"
+                                                 aura:id="contName"/>
+                                <lightning:input name="ConvertModal_ContactEmail"
+                                                 label="Email"
+                                                 value="{!v.contactRec.Email}"
+                                                 disabled="true" />
+                                <lightning:input name="ConvertModal_ContactPhone"
+                                                 label="Phone"
+                                                 value="{!v.contactRec.Phone}"
+                                                 disabled="true" />
+                                <lightning:input aura:id="alias"
+                                                 name="ConvertModal_ContactAlias"
+                                                 label="Community Alias"
+                                                 value="{!v.alias}"
+                                                 disabled="true" /> 
+                                <lightning:input aura:id="communityUsername"
+                                                 type='email'
+                                                 name="ConvertModal_ContactCommunityUsername"
+                                                 value="{!v.communityUsername}"
+                                                 label='Community Username'
+                                                 fieldLevelHelp='The username used to log into the portal' />
+                                <lightning:input aura:id="communityNickName"
+                                                 name="ConvertModal_ContactCommunityNickName"
+                                                 value="{!v.communityNickName}"
+                                                 label='Portal Nickname'
+                                                 fieldLevelHelp='The new users nickname in the portal. Must be unique'/>
+                                <lightning:textArea aura:id="community_Welcome_Messsage__c"
+                                                    name="community_Welcome_Messsage__c"
+                                                    label='Community Welcome Message'
+                                                    value='{!v.community_Welcome_Messsage__c}'
+                                                    fieldLevelHelp='The welcome message you enter will be sent to the user as a part of their welcome email to the portal site. If you leave this blank no message will be added.'/>
+                            </div>
+                            <div aura:id ="portalExperienceDiv" style="padding: 0px 20px 0px 20px;">
+                                <lightning:select aura:id="portalExperience"
+                                                  name="ConvertModal_ContactPortalExperiance" 
+                                                  label='Portal Experience' 
+                                                  required='true'
+                                                  value='{!v.experience}'
+                                                  onchange='{!c.setExperience}'>
+                                    <aura:iteration items='{!v.experienceOptions}' var='option'>
+                                        <option value='{!option.label}'>{!option.value}</option>
+                                    </aura:iteration>
+                                </lightning:select>
+                            </div>
+                        </lightning:card><!--create comm user card-->
+                    </aura:if><!--if creating comm user-->
+                    <div aura:id ="formHeader2" style="padding: 0px 20px 20px 20px;">
+                        <header class="slds-modal__header" >
+                            <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate" style="padding: 20px 20px 0px 20px;">Select your Prospect / Client Portal Customization</h2>
+                        </header>
+                    </div>
+                    <lightning:card>
+                        <div aura:id ="createCommUserFields2" style="padding: 0px 20px 20px 20px;">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_1-of-2">
+                                    <legend class="slds-form-element__legend slds-form-element__label required">*</legend>
+                                    <legend class="slds-form-element__legend slds-form-element__label">Submit to Medical Underwriting?</legend>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2"></div>
+                                <div class="slds-col slds-size_2-of-2" style="padding: 0px 0px 0px 8px;">
+                                    Choose ‘No’ if the client does not currently offer medical, and does not want to offer medical  right now. Choose ‘Yes’ if the client offers medical or is self-retaining.
+                                </div>
+                                <div class="slds-col slds-size_2-of-2"></div> 
+                                <div class="slds-col slds-size_1-of-2" style="padding: 5px 0px 0px 0px;">
+                                    <lightning:select class="label-hidden"
+                                                      aura:id='medicalRequested'
+                                                      name='ConvertModal_MedicalRequestedInput'
+                                                      label='Submit to Medical Underwriting?'
+                                                      onchange='{!c.updateMedicalSelection}'
+                                                      value='{!v.medicalRequestedVal}'
+                                                      required='true'>
+                                        <option value='default'>Choose one...</option>
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                    </lightning:select> 
+                                </div>
+                                <div class="slds-col slds-size_2-of-2"></div>
+                                <div class="slds-col slds-size_2-of-2">
+                                    <aura:if isTrue="{!v.medicalRequestedVal=='Yes'}">
+                                        <lightning:layout>
+                                            <lightning:layoutItem size="6">
+                                                <div>
+                                                    <lightning:input class="label-hidden"
+                                                                     aura:id="effectiveDate" 
+                                                                     type="date" 
+                                                                     name="ConvertModal_effectiveDateSelection" 
+                                                                     value='{!v.benEffectiveDate}'
+                                                                     label="Benefits Effective Date" 
+                                                                     onchange='{!c.handleBenefitDateUpdate}'/>
+                                                    <aura:if isTrue='{!v.benefitDateError}'>
+                                                        <span  class="slds-text-color_error">Benefit Date can be from start of this month</span>
+                                                    </aura:if>
+                                                </div>
+                                            </lightning:layoutItem>
+                                            <lightning:layoutItem size="6">
+                                                <div style="padding: 0px 0px 0px 20px;">
+                                                    <legend class="slds-form-element__legend slds-form-element__label required">*</legend>
+                                                    <label class="slds-form-element__label" style="margin-right: 0.5rem;">Choose Medical Underwriting Path</label>
+                                                    <!--<lightning:helptext content="Test help text" />-->
+                                                    <lightning:select class="label-hidden"
+                                                                      aura:id='medicalUwPath'
+                                                                      name='ConvertModal_medicalUwPath'
+                                                                      label=''
+                                                                      value='{!v.medicalUwPath}'
+                                                                      required='true'>
+                                                        <option value='default'>Choose one...</option>
+                                                        <option value="Gradient Pre-Qualifier">Gradient Pre-Qualifier</option>
+                                                        <option value="Full Master Medical Submission">Full Master Medical Submission</option>
+                                                    </lightning:select> 
+                                                </div>
+                                            </lightning:layoutItem>
+                                        </lightning:layout>
+                                    </aura:if>
+                                </div>
+                            </div>
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning:radioGroup aura:id="prspctPeoUltlzn" required="true"
+                                                          name='prspctPeoUltlzn'
+                                                          label="Is the Prospect Currently Utilizing a PEO?"
+                                                          options="{! v.options}" 
+                                                          value="{!v.checklist.Health_Benefits_Currently_through_a_PEO__c}"/>
+                                </div>
+                            </div>
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning:select aura:id='submitToWCUnderwriting'
+                                                      name='ConvertModal_WCUnderwritingInput'
+                                                      label="Submit to Workersʼ Comp Underwriting?"
+                                                      onchange='{!c.updateWCFastPassInput}'
+                                                      value='{!v.WCUnderwritingVal}'
+                                                      required='true'
+                                                      disabled="{!and(v.disallowEdit,v.createCommUser == 'Yes')}">
+                                        <option value='default'>Choose one...</option>
+                                        <option value="Yes - WC to be reviewed">Yes - WC to be reviewed</option>
+                                        <option value="Yes - WC to be excluded">Yes - WC to be excluded</option>
+                                    </lightning:select> 
+                                </div>
+                            </div>
+                            <aura:if isTrue="{!v.WCUnderwritingVal == 'Yes - WC to be reviewed'}">
+                                <!--
+                                <div class="slds-col slds-size_1-of-2" style="padding: 0px 0px 20px 20px;">
+                                    <lightning:select aura:id='Self_retain_reason__c'
+                                                      name='Self_retain_reason__c'
+                                                      label='WC Premium is less than $10,000?'
+                                                      value="{!v.Self_retain_reason__c}"
+                                                      required='true'>
+                                        <option value='default'>Choose one...</option>
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                    </lightning:select>
+                                </div>-->
+                                <div class="slds-grid slds-wrap">
+                                    <div style="padding:10px 0px 10px 0px">
+                                        <c:PeoWcFastPassHelpText />
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-2">
+                                        <lightning:select aura:id='WCFastPass_Input'
+                                                          name='WCFastPass_Input'
+                                                          label="Workers' Comp FastPass"
+                                                          value="{!v.WCFastPass}"
+                                                          onchange='{!c.updateWCFastPassInput}'
+                                                          required='true'>
+                                            <option value='default'>Choose one...</option>
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </lightning:select>
+                                    </div>
+                                    <!--This link refers to the WC Help document SFDC-7208 -->
+                                    <div class="slds-col slds-size_1-of-2" style="padding: 30px 0px 0px 20px;"><a href="https://paychex.my.salesforce.com/sfc/p/300000006M6H/a/4u000000svxN/zvHyV9GZfxC_QVI.5fJNrUh9PPzdfKOQCapRdeRmL4I" target="_blank">Help Document</a></div>
+                                </div>
+                                <div class="slds-grid slds-wrap">
+                                    <aura:if isTrue="{!v.WCFastPass == 'Yes'}">
+                                        <div class="slds-col slds-size_1-of-2" style="padding: 0px 0px 20px 0px;">
+                                            <lightning:select aura:id='WCInTargetHazardGroup_Input'
+                                                              name='WCInTargetHazardGroup_Input'
+                                                              label='WC Codes are in Target Hazard Group?'
+                                                              value="{!v.WCInTargetHazardGroup}"
+                                                              onchange='{!c.updateWCFastPassInput}'
+                                                              required='true'>
+                                                <option value='default'>Choose one...</option>
+                                                <option value="Yes">Yes</option>
+                                                <option value="No">No</option>
+                                            </lightning:select>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-2" style="padding: 0px 0px 20px 20px;">
+                                            <lightning:select aura:id='WCPremiumUnderLimit_Input'
+                                                              name='WCPremiumUnderLimit_Input'
+                                                              label='WC Premium is less than $10,000?'
+                                                              value="{!v.WCPremiumUnderLimit}"
+                                                              onchange='{!c.updateWCFastPassInput}'
+                                                              required='true'>
+                                                <option value='default'>Choose one...</option>
+                                                <option value="Yes">Yes</option>
+                                                <option value="No">No</option>
+                                            </lightning:select>
+                                        </div>
+                                    </aura:if>
+                                </div>
+                                <aura:set attribute='else' >
+                                    <aura:if isTrue="{!v.WCUnderwritingVal == 'Yes - WC to be excluded'}">
+                                        <div class="slds-col slds-size_1-of-2">
+                                            <lightning:select aura:id='Self_retain_reason__c'
+                                                              name='Self_retain_reason__c'
+                                                              label="Self retain reason"
+                                                              value='{!v.selfRetainReason}'
+                                                              required='true' >
+                                                <option value='default'>Choose one...</option>
+                                                <option value="Related to Current SR Client">Related to Current SR Client</option>
+                                                <option value="Monopolistic State">Monopolistic State</option>
+                                                <option value="Channel Partner">Channel Partner</option>
+                                                <option value="Broker">Broker</option>
+                                                <option value="Prohibited Operations (at WC UW’s discretion)">Prohibited Operations (at WC UW’s discretion)</option>
+                                            </lightning:select> 
+                                        </div>
+                                    </aura:if>
+                                </aura:set>
+                            </aura:if> 
+                        </div>
+                    </lightning:card><!--addtl info card-->
+                    <div class="slds-col modal-footer slds-modal__footer" style="padding: 10px 10px 10px 10px;">        
+                        <lightning:button name='ConvertModal_cancelCreationButton'  variant="neutral" label="Cancel" onclick="{!c.closeModal}" />
+                            <aura:if isTrue="{!v.waitingForResp}">
+                                <lightning:progressRing value="{!v.progressRate}" variant="active-step" direction="drain"/>
+                            </aura:if>
+                            <lightning:button disabled='{!or(v.waitingForResp,v.disableContinue)}' name='ConvertModal_continueToFormButton' variant="brand" label="Continue" onclick="{!c.updateView}" />
+                    </div>
+                </aura:if>
+            </aura:if>
+            <aura:if isTrue='{!v.step == 2}'>
+                <aura:if isTrue="{!or(v.createCommUser == 'Yes',v.reactivationNeeded)}">
+                <div class="slds-col modal-footer slds-modal__footer slds-modal__footer_directional">
+                    <lightning:button name='ConvertModal_createUserButton' variant="brand" label="Go back" onclick="{!c.navigateBack}" />
+                        <span class="slds-p-right_medium">All done?</span>  
+                        <aura:if isTrue="{!v.createCommUser == 'Yes'}">
+                            <lightning:button name='ConvertModal_createUserButton' variant="brand" label="Create User" onclick="{!c.createUser}" />
+                        </aura:if>
+                        <aura:if isTrue="{!v.reactivationNeeded}">
+                            <lightning:button name='ConvertModal_reactivateUserButton' variant="brand" label="Reactivate User" onclick="{!c.callReactivateUser}" />
+                        </aura:if>
+                </div>
+                </aura:if>    
+                <div>
+                    <c:communityForms scrollFlag='{!v.scrollToTop}' chosenExperience='{!v.experience}' requestedMedical='{!v.medicalReq}' recordId='{!v.recordId}' WCFastPass='{!v.FastPass}'/>
+                </div>
+            </aura:if>
+        </aura:set>
+    </aura:if>
+    
+</aura:component>

@@ -1,0 +1,124 @@
+<aura:component controller="FirmProgramMembership" >
+    
+    <aura:attribute name="miRec" type="FirmProgramMembership.MembersInfo"/>
+    <aura:attribute name="isModalOpen" type="boolean" default="false"/>
+    <aura:attribute name="CPAFirmMemPortalReq" type="Partner_Portal_User_Details__c" default="{'sObjectType':'Partner_Portal_User_Details__c'}"/>
+    <!-- <aura:registerEvent name="cparemovefirm" type="c:CPARemoveFirmEvent"/> -->
+   <!-- <aura:registerEvent name="cparemoveAdmin" type="c:CPARemoveAdmin"/>
+    <aura:registerEvent name="cparemoveShared" type="c:CPARemoveShared"/> --> 
+    
+    
+    <tr class="slds-hint-parent">
+        <td data-label="First Name" Style='text-align: center;vertical-align:middle;'>
+            <div class="slds-truncate firstRow" style="h2" title="{!v.miRec.firstName}">{!v.miRec.firstName +' '+ v.miRec.lastName}</div>
+        </td>
+       <!-- <td data-label="Last Name" Style='text-align: center;vertical-align:middle;'>
+            <div class="slds-truncate firstRow" style="padding-top: 20px;" title="{!v.miRec.firstName}">{!v.miRec.lastName}</div>
+        </td> -->
+        <td data-label="Firm Administrator Access" Style='text-align: center;vertical-align:middle;'>
+            <!-- <lightning:input type="checkbox" class="firstRow" name="Admin CPA" onchange="{!c.handleOnChange}" label="Admin CPA" variant="label-hidden" checked="{!v.miRec.adminCPA}" /> -->
+            <!--div class="slds-truncate" title="{!v.miRec.adminCPA}">{!v.miRec.adminCPA}</div -->
+            <lightning:input type="toggle" checked ="{!v.miRec.adminCPA}" class="firstRow slds-align_absolute-center" style ="padding-left: 35%; padding-top: 5px" name="Admin CPA"
+                             value="{!v.miRec.adminCPA}" label="Admin CPA" variant="label-hidden" onchange ="{!c.updateMember}"
+                             messageToggleActive ="Admin"
+                             messageToggleInactive="Non-Admin" >
+               
+            </lightning:input>
+        </td>
+        <td data-label="View All Shared Clients" > <!--Style='text-align: center;vertical-align:middle;' -->
+                        <lightning:input type="toggle" checked ="{!v.miRec.cpaPortalShared}" class="firstRow slds-align_absolute-center" style ="padding-left: 35%; padding-top: 5px"  name="View All Shared Clients" onchange ="{!c.updateMember}" 
+                             value="{!v.miRec.cpaPortalShared}" label="View All Shared Clients" variant="label-hidden"
+                             messageToggleActive ="Yes"
+                             messageToggleInactive="No" >
+                
+            </lightning:input>
+            <!--
+            <lightning:input type="toggle" checked ="{!v.miRec.cpaPortalShared}"class="firstRow" name="View All Shared Clients" onchange="{!c.handleOnChange}" 
+                             value="{!v.miRec.cpaPortalShared}" label="View All Shared Clients" variant="label-hidden"
+                             messageToggleActive ="Yes"
+                             messageToggleInactive="No" >
+                             
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </lightning:input>-->
+            <!--<div class="slds-truncate" title="{!v.miRec.cpaPortalShared}">{!v.miRec.cpaPortalShared}</div>-->
+        </td>
+        <td data-label="Remove from Firm Account" Style="text-align: center;vertical-align:middle;">
+                <lightning:button  class ="RemoveButton"  label="Remove Member" aura:id="removeMemberButton" title="RemoveMember" onclick="{!c.openModel}" />
+            
+            
+            <!-- <lightning:input type="checkbox-button" class="firstRow slds-align_absolute-center" style ="" 
+                             name="Remove from first Account" label="Remove from first Account" variant="label-hidden" checked="{!v.miRec.removFromFirm}" onchange="{!c.openModel}"/> -->
+            <!--div class="slds-truncate" title="{!v.miRec.removFromFirm}">{!v.miRec.removFromFirm}</div-->
+        </td>
+    </tr>
+    
+    <div class="slds-m-around_xxx-small">
+        <!--Use aura:if tag to display/hide popup based on isModalOpen value-->  
+        <aura:if isTrue="{!v.isModalOpen}">
+             
+            <!-- Modal/Popup Box starts here-->
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <!-- Modal/Popup Box Header Starts here-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Remove from Firm Account</h2>
+                    </header>
+                    <!--Modal/Popup Box Body Starts here-->
+                    <h2 class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <p>Please confirm you would like to remove the following user from your account.
+                        </p>
+                        
+                        <lightning:layout >
+                            <lightning:layoutItem padding="around-small">
+                                <div class="header-column">
+                                    <p class="field-title" title="First Name">First Name</p>
+                                    <p>{!v.miRec.firstName}</p>
+                                </div>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem padding="around-small">
+                                <div class="header-column">
+                                    <p class="field-title" title="Last Name">Last Name</p>
+                                    <p>{!v.miRec.lastName}</p>
+                                </div>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem padding="around-small">
+                                <div class="header-column">
+                                    <p class="field-title" title="Email">Email</p>
+                                    <p>{!v.miRec.email}</p>
+                                </div>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                        <lightning:layout multipleRows="true">
+                            <lightning:layoutItem padding="around-small" size="12">
+                                <div class="header-column">
+                                    <lightning:textarea name="unenrollReason" aura:id="prgRec" required="true" label="Reason" value="{!v.miRec.unenrollReason}" />
+                                </div>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </h2>
+                    <!--Modal/Popup Box Footer Starts here-->
+                    <footer class="slds-modal__footer">
+                        <lightning:button class ="RemoveInProgressButton" 
+                                          variant="neutral"
+                                          label="Cancel"
+                                          title="Cancel"
+                                          onclick="{! c.closeModel }"/>
+                        <lightning:button class ="RemoveButton"
+                                          variant="brand"
+                                          label="OK"
+                                          title="OK"
+                                          onclick="{!c.submitDetails}"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </aura:if>
+    </div>
+    
+</aura:component>

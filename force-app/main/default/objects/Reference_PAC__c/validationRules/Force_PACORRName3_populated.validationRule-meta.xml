@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_PACORRName3_populated</fullName>
+    <active>true</active>
+    <description>Force users to populate the PAC ORR Name 3 field, depending on specific Training Opportunity 3 picklist values.</description>
+    <errorConditionFormula>AND( 
+ ($RecordType.Name = &quot;Reference PAC Record Type&quot; ), 
+ ( (ISPICKVAL(Training_Opportunity_3__c, &apos;Yes&apos;)) || (ISPICKVAL(Training_Opportunity_3__c, &apos;Partial?&apos;)) ), 
+ (ISBLANK(PAC_ORR_Name_3__c))
+)</errorConditionFormula>
+    <errorDisplayField>PAC_ORR_Name_3__c</errorDisplayField>
+    <errorMessage>You must enter a value in the PAC ORR Name 3 field, when selecting a Training Opportunity 3 of Yes or Partial?.</errorMessage>
+</ValidationRule>

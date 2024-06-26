@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Additional_missing_incorrect_info</fullName>
+    <active>true</active>
+    <description>If Additional missing incorrect info is true then Comments cannot be blank</description>
+    <errorConditionFormula>(ISPICKVAL(Submission_Type__c, &quot;AOR&quot;) || ISPICKVAL(Submission_Type__c, &quot;AOR and New Case&quot;) || ISPICKVAL(Submission_Type__c, &quot;New Case&quot;))
+&amp;&amp; Additional_missing_incorrect_info__c
+&amp;&amp; ISBLANK(Comments1__c)</errorConditionFormula>
+    <errorMessage>A Comment is required if Additional missing, incorrect info is true</errorMessage>
+</ValidationRule>

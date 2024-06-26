@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PAC_WarrantyApproved_restrict_values</fullName>
+    <active>true</active>
+    <description>Need to restrict certain Roles from using the Warranty Approved? picklist values of Approved  or Denied.</description>
+    <errorConditionFormula>AND(
+( (ISPICKVAL(Warranty_Approved__c,&quot;Approved&quot;)) || (ISPICKVAL(Warranty_Approved__c,&quot;Denied&quot;)) ),
+(ISCHANGED(Warranty_Approved__c)),
+($UserRole.Name &lt;&gt; &quot;Operating Risk Manager&quot;),
+(NOT(BEGINS($UserRole.Name,&quot;Operating Risk Supervisor&quot;))), 
+($UserRole.Name &lt;&gt; &quot;System Administrator&quot;)
+)</errorConditionFormula>
+    <errorDisplayField>Warranty_Approved__c</errorDisplayField>
+    <errorMessage>You cannot change the value in the Warranty Approved? field to Approved  or Denied.</errorMessage>
+</ValidationRule>

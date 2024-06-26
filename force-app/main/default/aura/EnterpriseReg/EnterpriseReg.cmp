@@ -1,0 +1,170 @@
+<aura:component controller="EZOnboardingRegistration" implements="lightning:isUrlAddressable,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <aura:html tag="style">
+        .toastMessage.forceActionsText{ white-space : pre-line !important; }
+    </aura:html>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="formLoaded" type="Boolean" default="false"/>
+    <aura:attribute name="isMMSStandalone" type="Boolean" default="false"/>
+    <aura:attribute name="isMulti" type="Boolean" default="false"/>    
+    <aura:attribute name="parentTracker" type="CSO_Tracking__c"/>   
+    <aura:attribute name="childWrapperList" type="Object[]" />
+    <aura:attribute name="opptyId" type="String" />
+    <aura:attribute name="opportunity" type="Opportunity" />
+    <aura:attribute name="acct" type="Account" />
+    <aura:attribute name="parentAccountLabel" type="String"/>
+    <aura:attribute name="productList" type="String[]" />
+	<aura:attribute name="currentTracker" type="CSO_Tracking__c"/>
+    <aura:attribute name="currentAcctId" type="String"/>
+    <aura:attribute name="currentAcctName" type="String"/>  
+    <aura:attribute name="loadSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="hideAcctComponent" type="Boolean" default="false"/>
+    <aura:attribute name="registrationError" type="Boolean" default="false"/>
+    <aura:attribute name="isComplete" type="Boolean" default="false"/>
+    <aura:attribute name="revalidated" type="Boolean" default="true"/>
+    <aura:attribute name="displayPostSubmitScreen" type="Boolean" default="false"/>
+    <aura:attribute name="selectedId" type="Id" />
+    <aura:attribute name="boolTrue" type="Boolean" default="true"/>
+    <aura:attribute name="boolFalse" type="Boolean" default="false"/>
+    <aura:attribute name="leverageSSTValue" type="Boolean" default="false"/>
+    <aura:attribute name="sstActive" type="Boolean" default="true"/>
+    <aura:attribute name="leverageSSTButton" type="String"/>
+    <aura:attribute name="sstStatus" type="String"/>
+    <aura:attribute name="sstVariant" type="String" default="brand"/>
+    <aura:attribute name="submitBtnLabel" type="String" default="Create Client and Submit New Client Profile"/>
+    <aura:attribute name="showCttButton" type="Boolean" default="true"/>
+    
+    <aura:handler name="validateEnterpriseForm" event="c:UpdateEntRegForm" action="{!c.checkUpdates}"/>
+    <aura:if isTrue="{!v.loadSpinner}">
+        <div class="exampleHolder">
+            <lightning:spinner alternativeText="Loading" />
+        </div>
+    </aura:if>
+    <div>
+        <lightning:card >
+            <lightning:layout  multipleRows="true">
+                <lightning:layoutItem size="12">
+                    <div class="slds-text-heading_large slds-align_absolute-center slds-box  slds-box_xx-small"  style="background-color:#f3f3f3"> 
+                        New Client Setup Form</div>
+                </lightning:layoutItem>
+                <aura:if isTrue="{!!v.displayPostSubmitScreen}">
+                    <lightning:layoutItem size="2" padding="around-small">
+                    <aura:if isTrue="{!v.showCttButton}">
+                      <div>
+                        <center>
+                        <lightning:button class="slds-m-top_small" variant="{!v.sstVariant}" label="{!v.leverageSSTButton}" onclick="{!c.sstClicked}"  />
+                        <br/><b style="color:red">MMS Enterprise Only</b><br/>
+                        {!v.sstStatus}
+                        </center>
+                       <!--
+                        <lightning:recordEditForm recordId="{!v.opportunity.Id}"
+                              aura:id="oppSSTQuestionFalse"
+                              onsuccess="{!c.doInit}"
+                              objectApiName="Opportunity">
+                          <div class="slds-hide">
+                            <lightning:inputField fieldName="LeverageSST__c" value ="{!v.leverageSSTValue}" />
+                            <lightning:inputField fieldName="SkipTriggers__c" value ="{!v.boolTrue}"  />
+                          </div>
+                          <lightning:button class="slds-m-top_small" variant="brand-outline" type="submit" label="{!v.leverageSSTButton}"  />
+                       </lightning:recordEditForm>
+                      -->
+                      </div>
+                    </aura:if>
+                        <lightning:verticalNavigation onselect="{!c.updateCurrentTrackingRec}" selectedItem="{!v.selectedId}">
+                            <lightning:verticalNavigationSection label="{!v.parentAccountLabel}">
+                                <aura:if isTrue="{!and(v.parentTracker.AcctValidated__c, v.parentTracker.SSTValidated__c)}">
+                                    <aura:if isTrue="{!!v.isMMSStandalone}">
+                                        <aura:if isTrue="{!and(v.parentTracker.UserErrorMessage__c != null, v.parentTracker.RevalidationNeeded__c)}">
+                                            <lightning:verticalNavigationItemIcon label="{!v.acct.Name}" 
+                                                                                  name="{!v.parentTracker.Id}" iconName="standard:first_non_empty" />
+                                            <aura:set attribute="else">
+                                                <lightning:verticalNavigationItemIcon label="{!v.acct.Name}" 
+                                                                                      name="{!v.parentTracker.Id}" iconName="standard:task2" />
+                                            </aura:set>
+                                        </aura:if>
+                                        <aura:set attribute="else">
+                                            <lightning:verticalNavigationItemIcon label="{!v.acct.Name}" 
+                                                                                  name="{!v.parentTracker.Id}" AccountId__r="standard:task2" />
+                                        </aura:set>
+                                    </aura:if>
+                                    <aura:set attribute="else">
+                                        <lightning:verticalNavigationItem label="{!v.acct.Name}" name="{!v.parentTracker.Id}"/>
+                                    </aura:set>
+                                </aura:if>
+                            </lightning:verticalNavigationSection>
+                            <aura:if isTrue="{!v.isMulti}">
+                                <lightning:verticalNavigationSection label="Child Prospect Client(s)">
+                                    <div class="slds-hide">  <lightning:verticalNavigationItem label="{!v.acct.Name}"  name="{!v.parentTracker.Id}"/></div>
+                                    <aura:iteration items="{!v.childWrapperList}" var="childWrapper">
+                                        <aura:if isTrue="{!and(childWrapper.tracker.AcctValidated__c, childWrapper.tracker.SSTValidated__c)}">
+                                            <aura:if isTrue="{!!v.isMMSStandalone}">
+                                                <aura:if isTrue="{!and(childWrapper.tracker.UserErrorMessage__c != null, childWrapper.tracker.RevalidationNeeded__c)}">
+                                                    <lightning:verticalNavigationItemIcon label="{!childWrapper.acct.Name}"
+                                                                                          name="{!childWrapper.tracker.Id}" iconName="standard:first_non_empty" />
+                                                    <aura:set attribute="else">
+                                                        <lightning:verticalNavigationItemIcon label="{!childWrapper.acct.Name}"
+                                                                                              name="{!childWrapper.tracker.Id}" iconName="standard:task2" />
+                                                    </aura:set>
+                                                </aura:if>
+                                                <aura:set attribute="else">
+                                                    <lightning:verticalNavigationItemIcon label="{!childWrapper.acct.Name}"  
+                                                                                          name="{!childWrapper.tracker.Id}" iconName="standard:task2"/>
+                                                </aura:set>
+                                            </aura:if>
+                                            <aura:set attribute="else">
+                                                <lightning:verticalNavigationItem label="{!childWrapper.acct.Name}"  name="{!childWrapper.tracker.Id}"/>
+                                            </aura:set>
+                                        </aura:if>
+                                    </aura:iteration>
+                                </lightning:verticalNavigationSection>
+                            </aura:if>
+                        </lightning:verticalNavigation>
+                    </lightning:layoutItem>
+                    
+                    <aura:if isTrue="{!and(v.formLoaded, !v.hideAcctComponent)}">
+                        <lightning:layoutItem size="10" padding="around-small" >
+                            <aura:if isTrue="{!v.registrationError}">
+                                <lightning:layoutItem size="10" padding="around-small">
+                                    <div>
+                                        <lightning:formattedText style="font-size: 16px; color: red" value="Issue Creating New Client: Please correct issue(s) and resubmit" />
+                                    </div>
+                                </lightning:layoutItem>
+                            </aura:if>
+                            <c:EnterpriseAccountInfo parentAccount="{!v.acct}" accountId="{!v.currentAcctId}" acctName="{!v.currentAcctName}" oppId="{!v.opptyId}" oppty="{!v.opportunity}" parentTracker="{!v.parentTracker}" tracker="{!v.currentTracker}" productList="{!v.productList}" isMulti="{!v.isMulti}" isMMSStandalone="{!v.isMMSStandalone}" />
+                        </lightning:layoutItem>
+                    </aura:if>
+                    <lightning:layoutItem size="12" class="slds-align_absolute-center" >
+                        <aura:if isTrue="{!!v.isMMSStandalone}">
+                            <lightning:button variant="success" disabled="{!or(!v.isComplete,!v.revalidated)}" name="Submit" label="{!v.submitBtnLabel}" onclick="{!c.submitEntForm}" />
+                            <aura:set attribute="else">
+                                <lightning:button variant="success" disabled="{!!v.isComplete}" name="Submit" label="Submit Form" onclick="{!c.submitMMSForm}"/>
+                            </aura:set>
+                        </aura:if>
+                    </lightning:layoutItem>
+                    <aura:set attribute="else">
+                        <lightning:layout  multipleRows="true">
+                            <lightning:layoutItem size="12" padding="around-medium" >
+                                <lightning:formattedText style="font-size: 16px; color: green; font-weight: bold" value="New Client Setup Form Submitted Successfully" />
+                            </lightning:layoutItem>
+                            <lightning:layoutItem size="12" padding="around-medium" >
+                                
+                                <b>Client Creation in Progress</b><br/><br/>
+                                <b>Next Steps</b><br/>
+                                - See status updates on the Client Setup and Onboarding section of your opportunity<br/><br/>
+                                <lightning:formattedText style=" color: red" value="Note: If any further action is required, you will be notified and asked to re-submit" /><br/>
+                                1- Open this form<br/>
+                                2- Make necessary changes<br/>
+                                3- Resubmit the form<br/><br/>
+                                
+                                <b>You may now return to Opportunity</b>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem size="12" padding="around-medium" >
+                                <lightning:button variant="brand" name="Submit" label="Close Form" onclick="{!c.closeFocusedTab}" />
+                            </lightning:layoutItem>
+                        </lightning:layout>                   
+                    </aura:set>
+                </aura:if>
+            </lightning:layout>
+        </lightning:card>
+    </div>
+</aura:component>

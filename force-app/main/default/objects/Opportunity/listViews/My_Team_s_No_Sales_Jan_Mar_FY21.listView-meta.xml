@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>My_Team_s_No_Sales_Jan_Mar_FY21</fullName>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>Contact_Name_TAA__c</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>OPPORTUNITY.LAST_ACTIVITY</columns>
+    <columns>OPPORTUNITY.LEAD_SOURCE</columns>
+    <columns>OPPORTUNITY.CLOSE_DATE</columns>
+    <columns>Employees_Paid_Per_Payroll__c</columns>
+    <columns>Active_Employees__c</columns>
+    <columns>W2__c</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>Reason_Not_Sold__c</columns>
+    <columns>Reason_Rescinded__c</columns>
+    <filterScope>Team</filterScope>
+    <filters>
+        <field>OPPORTUNITY.STAGE_NAME</field>
+        <operation>equals</operation>
+        <value>Not Sold,No Decision</value>
+    </filters>
+    <filters>
+        <field>Reason_Not_Sold__c</field>
+        <operation>notEqual</operation>
+        <value>Already engaged with prospect,Duplicate Opportunity,Employee Inquiry,Fraud,SOAR Bad Lead</value>
+    </filters>
+    <filters>
+        <field>Sales_Cycle_End_Date__c</field>
+        <operation>greaterOrEqual</operation>
+        <value>12/25/2020</value>
+    </filters>
+    <filters>
+        <field>Sales_Cycle_End_Date__c</field>
+        <operation>lessOrEqual</operation>
+        <value>4/1/2021</value>
+    </filters>
+    <label>My Team&apos;s No Sales Jan-Mar FY21</label>
+    <sharedTo>
+        <roleAndSubordinatesInternal>VIRTUAL_SALES_DISTRICT_201_HICKS_PAY</roleAndSubordinatesInternal>
+    </sharedTo>
+</ListView>

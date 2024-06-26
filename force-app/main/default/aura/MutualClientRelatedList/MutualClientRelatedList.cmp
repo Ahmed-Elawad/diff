@@ -1,0 +1,23 @@
+<aura:component controller="MutualClientRelatedListController" implements="lightning:isUrlAddressable">
+
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="mutualClients" type="Object[]"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="objectType" type="String"/>
+    <aura:attribute name="isAccountingFirm" type="Boolean" default="false"/>
+    <lightning:workspaceAPI aura:id="workspace" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+    <c:HeaderTemplate title="Prospect Clients" subtitle="Mutual Clients" iconName="standard:account"/>
+    <!--<lightning:dataTable keyField="id" data="{!v.mutualClients}" columns="{!v.columns}" hideCheckboxColumn="true"/>-->
+    <!--04/05/2023 - Vinay - Added LWC for extended Mutual Clinets functionality-->
+    <aura:if isTrue="{!v.isAccountingFirm}">
+        <c:mutualClientRelatedListTable tableData="{!v.mutualClients}" oncpafullnamechange="{!c.doInit}" parentRecordId="{!v.recordId}" parentObjectType="{!v.objectType}" onverification="{!c.getNewData}"></c:mutualClientRelatedListTable>
+        <aura:set attribute="else">
+            <lightning:dataTable keyField="id" data="{!v.mutualClients}" columns="{!v.columns}" hideCheckboxColumn="true"/>
+        </aura:set>
+    </aura:if> 
+    
+    <footer class="slds-p-top_x-small"></footer>
+
+</aura:component>

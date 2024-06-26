@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Number_of_Active_Ees</fullName>
+    <active>true</active>
+    <errorConditionFormula>RecordTypeId = &quot;01270000000UQ53&quot; &amp;&amp; NOT(ISPICKVAL( Current_Step__c ,&quot;(1 of 12) Sales Rep Conducting Needs Analysis&quot;)||
+(ISPICKVAL( Current_Step__c ,&quot;&quot;)))&amp;&amp;
+
+ISBLANK( Number_of_Active_EEs__c )</errorConditionFormula>
+    <errorDisplayField>Number_of_Active_EEs__c</errorDisplayField>
+    <errorMessage>Number of Active Ees is a required field when  &quot;Current Step&quot; field is not equal to &quot;(1 of 12) Sales Rep Conducting Needs Analysis&quot;</errorMessage>
+</ValidationRule>

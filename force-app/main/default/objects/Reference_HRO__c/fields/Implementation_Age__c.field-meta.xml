@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Implementation_Age__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>Checks how many days have passed since the Implementation Start Date.  Case 17359752
+Modified to exclude weekends and stop calculating when Launch Date is filled in Case #30680668</description>
+    <externalId>false</externalId>
+    <formula>If(ISNULL(Training_Completed__c),
+
+(today() - Implementation_Start_Date__c - 2*( floor((today() - DATE(1985, 6, 24))/7) - floor((Implementation_Start_Date__c - DATE(1985, 6, 24))/7))),
+
+(Training_Completed__c- Implementation_Start_Date__c - 2*( floor((Training_Completed__c- DATE(1985, 6, 24))/7) - floor((Implementation_Start_Date__c - DATE(1985, 6, 24))/7))))</formula>
+    <inlineHelpText>Number of days that have passed since the Implementation Start Date</inlineHelpText>
+    <label>Implementation Age</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

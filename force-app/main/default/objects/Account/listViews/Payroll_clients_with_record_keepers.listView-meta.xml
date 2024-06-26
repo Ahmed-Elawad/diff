@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Payroll_clients_with_record_keepers</fullName>
+    <columns>Federal_ID_Number__c</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ACCOUNT.EMPLOYEES</columns>
+    <columns>Do_Not_Call_Flag__c</columns>
+    <columns>ACCOUNT.PHONE1</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>X401K_Assets__c</columns>
+    <columns>Larkspur_401K_Assets__c</columns>
+    <columns>miedge_crm__Master_MSID__c</columns>
+    <columns>Brokerage_Firm__c</columns>
+    <columns>Broker_Name_Ref__c</columns>
+    <columns>HRS_401k_Workable__c</columns>
+    <columns>First_Run_Date__c</columns>
+    <filterScope>Team</filterScope>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>contains</operation>
+        <value>client</value>
+    </filters>
+    <filters>
+        <field>Out_of_Business__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>notEqual</operation>
+        <value>Lost Client,Oasis Client</value>
+    </filters>
+    <filters>
+        <field>X401_k__c</field>
+        <operation>notEqual</operation>
+        <value>1</value>
+    </filters>
+    <filters>
+        <field>Other_PEO_Client_Number__c</field>
+        <operation>equals</operation>
+    </filters>
+    <label>Retirement- Clients w/ RecordKeepers</label>
+    <sharedTo>
+        <roleAndSubordinates>HRS_SR_DIR_RETIREMENT</roleAndSubordinates>
+    </sharedTo>
+</ListView>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>S2S_Cannot_submit_non_payroll</fullName>
+    <active>true</active>
+    <description>There is a missing Bis ID. Unable to submit case</description>
+    <errorConditionFormula>AND(
+NOT(BEGINS($Profile.Name,&apos;System Administrator&apos;)) 
+,RecordType.Name =&apos;Sales2Service Case&apos; 
+,ISPICKVAL(Product__c, &apos;Payroll&apos;)
+,ISBLANK(Account.Bis_ID__c)
+)</errorConditionFormula>
+    <errorMessage>In order to submit a S2S Payroll case on a prospect-client, the record must include a Bis ID. Please submit the case on a record with a valid Bis ID.</errorMessage>
+</ValidationRule>

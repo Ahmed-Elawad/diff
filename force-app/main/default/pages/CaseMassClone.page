@@ -1,0 +1,25 @@
+<apex:page standardController="Case" showHeader="False" >
+    <script src="../../soap/ajax/49.0/connection.js" type="text/javascript"></script>
+    <script src="../../soap/ajax/49.0/apex.js" type="text/javascript"></script>
+
+    <script>
+        function execute(){
+            sforce.connection.sessionId = "{!$Api.Session_ID}";
+            console.log('inside java'+ "{!Case.Id}"); 
+            
+            var caseId = "{!Case.Id}";
+            
+            var sRet = sforce.apex.execute("IncidentCaseUtilities","massCreateIncidentCases", {caseId:caseId});
+        
+ window.close();
+        
+         
+    	}
+    </script>
+    <apex:form >
+        <apex:outputText value="Click 'Ok' to Clone Cases and Close this Window" /> 
+<!--   <apex:commandButton value="Ok" onclick="window.close();"/>-->
+   <apex:commandButton value="Ok" onclick="execute();"/>
+       
+        </apex:form>
+</apex:page>

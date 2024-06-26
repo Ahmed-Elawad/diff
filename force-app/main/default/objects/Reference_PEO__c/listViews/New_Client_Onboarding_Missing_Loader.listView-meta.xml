@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>New_Client_Onboarding_Missing_Loader</fullName>
+    <columns>NAME</columns>
+    <columns>Branch_Client_Number__c</columns>
+    <columns>Loader__c</columns>
+    <columns>Onboarding_Specialist__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_PEO__c.PEO_New_Client_Onboarding</value>
+    </filters>
+    <filters>
+        <field>Loader__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Onboarding_Specialist__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Account_Lookup__c</field>
+        <operation>notContain</operation>
+        <value>HRO T,PEO F</value>
+    </filters>
+    <label>New Client Onboarding- Missing Loader</label>
+    <sharedTo>
+        <role>PEOOperationsManager</role>
+    </sharedTo>
+</ListView>

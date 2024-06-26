@@ -1,0 +1,27 @@
+<!-- Page to handle Referrals.
+
+   History
+   -------
+   12/08/2011 Dan Carmen   Created 
+   01/25/2013 Cindy Freeman     Modified for FA referral process
+   05/17/2016 Jermaine Stukes Added note under Referring Opportunity section also added Note style in the css.
+   08/25/2016 Justin Stouffer Revised to be mobile-friendly.
+   08/25/2016 Jermaine Stukes Added attachment section.
+   10/03/2016 Justin Stouffer   Added DM and Multiple Locs for NSS Case 21556666
+   09/09/2017 Cindy Freeman     Added Frequency field
+   09/06/2022 Pujitha Madamanchi APR0133169: Require "zip code" on NSS Lead Page Layouts
+ -->
+<apex:page controller="ReferralControllerSmall"
+           tabStyle="Contact" 
+           id="referralPage"
+           showHeader="{!NOT(isPopup)}"
+           sidebar="{!NOT(isPopup)}"
+           lightningStylesheets="true">
+           
+      <!--APR0133169: Require "zip code" on NSS Lead Page Layouts : If zip is missing, display a page to enter Zip else, show Referral page-->     
+      <!--c:Referral /-->    
+      <c:ReferralZipMissing rendered="{!displayZip}"/> 
+      <c:Referral rendered="{!NOT(displayZip)}"/>  
+      
+   
+</apex:page>

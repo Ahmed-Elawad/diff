@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Changes_to_Original_Check_equals_No</fullName>
+    <active>true</active>
+    <description>If ‘Changes to Original Check’ = No: ‘Full Address_No PO Box’ and ‘Reason for V&amp;R’ are required</description>
+    <errorConditionFormula>AND( RecordType.DeveloperName = &apos;X401k_Void_and_Reissue&apos;,
+ISPICKVAL(Changes_to_Original_Check__c,&quot;No&quot;),
+OR(
+ISBLANK(Full_Address_No_PO_Box__c),
+ISPICKVAL(Reason_for_V_R__c,&quot;&quot;))
+)</errorConditionFormula>
+    <errorMessage>If ‘Changes to Original Check’ = No, ‘Full Address_No PO Box’ and ‘Reason for V&amp;R’ are required.</errorMessage>
+</ValidationRule>

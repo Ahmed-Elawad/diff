@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>OS_Field_Support3</fullName>
+    <booleanFilter>(1 AND 2 AND 3) OR (4 AND 5 AND 6 AND 7)</booleanFilter>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>Branch_Client_ID__c</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>Product__c</columns>
+    <columns>NAME</columns>
+    <columns>OWNER_NAME</columns>
+    <columns>Assigned_UC_Agent__c</columns>
+    <filterScope>Queue</filterScope>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.Service_Support_OS_Field_Support_Case</value>
+    </filters>
+    <filters>
+        <field>CASES.CREATED_DATE</field>
+        <operation>greaterOrEqual</operation>
+        <value>6/12/2017 12:00 AM</value>
+    </filters>
+    <filters>
+        <field>CASES.CLOSED_DATE</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.Sales_to_Service_Communication_Case</value>
+    </filters>
+    <filters>
+        <field>Product__c</field>
+        <operation>equals</operation>
+        <value>FlexTime,HRO,PST/TrueShift,TLO,GL,myStaffingPro</value>
+    </filters>
+    <filters>
+        <field>CASES.CREATED_DATE</field>
+        <operation>greaterOrEqual</operation>
+        <value>6/12/2017 12:00 AM</value>
+    </filters>
+    <filters>
+        <field>CASES.CLOSED_DATE</field>
+        <operation>equals</operation>
+    </filters>
+    <label>!!*OS Field Support- OS S2S</label>
+    <queue>OS_Field_Support_Queue</queue>
+    <sharedTo>
+        <role>HROnlineManager</role>
+        <role>TimeAttendanceBilling</role>
+        <role>TimeAttendanceLevel2SupportRep</role>
+        <role>TimeAttendanceManager</role>
+    </sharedTo>
+</ListView>

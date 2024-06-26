@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Send_Tax_Notice</fullName>
+        <ccEmails>taxnoticeservice@i-22ey39vmsvgybcm0ts8fjgaepuz7piip6rn316m4ho6b8oes5f.3-6m6heau.na64.apex.salesforce.com</ccEmails>
+        <description>Send Tax Notice</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>jstouffer@paychex.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>DefaultWorkflowUser</senderType>
+        <template>Center_of_Excellence_Email_Templates/Client_and_Field_Submission</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>CFS_populate_SubmissionDate</fullName>
+        <description>Set the Client &amp; Field Submission object&apos;s Submission Date to NOW()</description>
+        <field>Submission_Date__c</field>
+        <formula>NOW()</formula>
+        <name>CFS populate SubmissionDate</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Format_Federal_ID_Number</fullName>
+        <field>Federal_ID_Number__c</field>
+        <formula>LEFT(TEXT(Fed_ID_Numeric__c),2) &amp; &quot;-&quot; &amp; RIGHT(TEXT(Fed_ID_Numeric__c),7)</formula>
+        <name>Format Federal ID Number</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Format_Federal_ID_Number_Submitted</fullName>
+        <description>Add a hyphen after the first two numbers - ##-#######.</description>
+        <field>Federal_ID_Number__c</field>
+        <formula>(LEFT(Federal_ID_Number_Submitted__c,2)) &amp; &quot;-&quot; &amp; (RIGHT(Federal_ID_Number_Submitted__c,7))</formula>
+        <name>Format Federal ID Number Submitted</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Populate Fed ID Number using formatted Federal ID Number Submitted</fullName>
+        <actions>
+            <name>Format_Federal_ID_Number_Submitted</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Client_Field_Submission__c.Federal_ID_Number_Submitted__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>Populate the Fed ID Number field using a formatted Federal ID Number Submitted field</description>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>Send Tax Notice Email</fullName>
+        <actions>
+            <name>Send_Tax_Notice</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Client_Field_Submission__c.Submission_Done__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

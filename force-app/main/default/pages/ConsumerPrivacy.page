@@ -1,0 +1,695 @@
+<!-- 
+History
+-------
+09/19/2022 Chris Santoro   Created 
+10/26/2022 LoAnn Desmond added consumer email and phone to part II
+-->
+<apex:page id="ccpaPage" controller="ConsumerPrivacyController" showHeader="false">
+    <style type="text/css">
+        body
+        { 
+            background-color:#d3d3d3;
+        } 
+        .bPageBlock .pbTitle
+        {
+            width: 100%;
+            text-align: center;
+            font-size: 12pt;
+        }
+        .loader {
+          border: 8px solid #f3f3f3; /* Light grey */
+          border-top: 8px solid #3498db; /* Blue */
+          border-radius: 50%;
+          width: 30px;
+          height: 30px;
+          animation: spin 2s linear infinite;
+        }
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+    </style>
+    
+    <apex:form id="ccpaForm">
+        <script src="https://www.google.com/recaptcha/api.js" async="true" defer="true"></script>
+        <script>
+              var recaptcha = function() {
+                document.getElementById("errorSection").innerHTML = "";
+              };
+            
+            function submitForm(){
+                if(!grecaptcha.getResponse())
+                {
+                    document.getElementById("errorSection").innerHTML = "Please complete the reCAPTCHA verfication above.";
+                } 
+                else 
+                {
+                    if(validate(true))
+                    {
+                        document.getElementById("errorSection").innerHTML = "";
+                        document.getElementById("loader").style.display = "block";
+                        document.getElementById('submitButton').style.display = "none";
+                        SubmitForm();
+                    }
+                }
+            }
+
+            //When isSubmit is true, the submit button has been clicked. 
+            //isSubmit controls the highlighting of the missing fields as well as displaying validation error messages.
+            function validate(isSubmit = false)
+            {
+                var validated = true;
+                var submitterFirstName = document.querySelector("[id$='submitterFirstName']");
+                var submitterLastName = document.querySelector("[id$='submitterLastName']");
+                var phoneNumber = document.querySelector("[id$='phoneNumber']");
+                var emailAddress = document.querySelector("[id$='emailAddress']");
+                var emailAddressRekey = document.querySelector("[id$='emailAddressRekey']");
+                var options = document.querySelector('input[name$="options"]:checked');
+                var authAgentForm = document.querySelector('input[id$="authAgentForm"]');
+                var addressLine1 = document.querySelector("[id$='addressLine1']");
+                var city = document.querySelector("[id$='city']");
+                var state = document.querySelector("[id$='state']");
+                var zipCode = document.querySelector("[id$='zipCode']");
+                var ssn = document.querySelector("[id$='ssn']");
+                var ssnRekey = document.querySelector("[id$='ssnRekey']");
+                var dob = document.querySelector("[id$='dob']");          
+                var authAgentForm = document.querySelector("[id$='authAgentForm']");      
+                //var requestType = document.querySelector('input[name$="requestType"]:checked');
+                var categories = document.querySelector('input[name$="PI_Categories__c"]');
+                var specific = document.querySelector('input[name$="PI_Specific_Pieces__c"]');
+                var deletion = document.querySelector('input[name$="PI_Deletion__c"]');
+                var communicationType = document.querySelector('input[name$="communicationType"]:checked');
+                var consumerFirstName = document.querySelector("[id$=consumerFirstName]");
+                var consumerLastName = document.querySelector("[id$=consumerLastName]");
+                var consumerPhoneNumber = document.querySelector("[id$=consumerPhoneNumber]");
+                var consumerEmail = document.querySelector("[id$=consumerEmail]");
+                var validationArray = [];
+
+                if(options?.value == 'I am making the request below on behalf of myself')
+                {
+                    if(submitterFirstName.value != '' && consumerFirstName.value == '')
+                    {
+                        consumerFirstName.value = submitterFirstName.value;
+                    }
+                    if(submitterLastName.value != '' && consumerLastName.value == '')
+                    {
+                        consumerLastName.value = submitterLastName.value;
+                    }
+                    if(emailAddress.value != '' && emailAddressRekey.value != '' && consumerEmail.value == '')
+                    {
+                        consumerEmail.value = emailAddress.value;
+                    }
+                }
+                else if(options?.value == 'I am making the request below as an authorized agent of another Consumer')
+                {
+                   if(consumerFirstName.value != "" && consumerLastName.value != "" && submitterFirstName.value != "" && submitterLastName.value != "" && 
+                        consumerFirstName.value == submitterFirstName.value && consumerLastName.value == submitterLastName.value)
+                   {
+                        validationArray.push(['Submitter Name and Consumer Name cannot be the same', consumerFirstName]);
+                        validationArray.push(['', consumerLastName]);
+                        validated = false;
+                        console.log('submitter and consumer names are same');                   
+                   }
+                   if(emailAddress.value != "" && consumerEmail.value != "" && emailAddress.value == consumerEmail.value)
+                   {
+                        validationArray.push(['Submitter Email and Consumer Email cannot be the same', consumerEmail]);
+                        validated = false;
+                        console.log('submitter and consumer email are same');                       
+                   }
+                   if(authAgentForm.value == "")
+                   {
+                        validationArray.push(['CCPA Authorized Agent form or a copy of a Power of Attorney form attachment missing', authAgentForm]);
+                        validated = false;
+                        console.log('attachment missing');
+                   }
+                } else { authAgentForm.removeAttribute('style'); }   
+                
+                if(submitterFirstName.value == '')
+                {
+                    validationArray.push(['Submitter\'s First Name', submitterFirstName]);
+                    validated = false;
+                    console.log('first name blank');
+                } else { submitterFirstName.removeAttribute('style'); }     
+                   
+                if(submitterLastName.value == '')
+                {
+                    validationArray.push(['Submitter\'s Last Name', submitterLastName]);
+                    validated = false;
+                    console.log('last name name blank');
+                } else { submitterLastName.removeAttribute('style'); }
+                   
+                if(emailAddress.value == '')
+                {
+                    validationArray.push(['Email Address', emailAddress]);
+                    validated = false;
+                    console.log('email blank');
+                }
+                else 
+                {
+                    if(!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(emailAddress.value)))
+                    {
+                        alert('The email entered is invalid. Please enter a valid email address.');
+                        emailAddress.value = '';
+                        emailAddressRekey.value = '';
+                        validated = false;
+                        console.log('invalid email');
+                    }
+                }
+                   
+                if(emailAddressRekey.value == '')
+                {
+                    validationArray.push(['Rekey Email Address', emailAddressRekey]);
+                    validated = false;
+                    console.log('email blank');
+                }  
+                else if(emailAddress.value != '' && emailAddressRekey.value != '' && emailAddress.value != emailAddressRekey.value)
+                {
+                    validated = false;
+                    alert('Both Email Addresses must match. Please re-enter.');
+                    document.querySelector("[id$='emailAddress']").value = '';
+                    document.querySelector("[id$='emailAddressRekey']").value = '';
+                    console.log('email does not match');  
+                } 
+                else 
+                { 
+                   emailAddress.removeAttribute('style'); 
+                   emailAddressRekey.removeAttribute('style'); 
+                }  
+                   
+                if(consumerFirstName.value == '')
+                {
+                    validationArray.push(['Consumer\'s First Name', consumerFirstName]);
+                    validated = false;
+                    console.log('consumer first name blank');
+                } else { consumerFirstName.removeAttribute('style'); }
+                   
+                if(consumerLastName.value == '')
+                {
+                    validationArray.push(['Consumer\'s Last Name', consumerLastName]);
+                    validated = false;
+                    console.log('consumer last name blank');
+                } else { consumerLastName.removeAttribute('style'); }
+                   
+                if(consumerPhoneNumber.value == '')
+                {
+                    validationArray.push(['Consumer Phone Number', consumerPhoneNumber]);
+                    validated = false;
+                    console.log('consumer phone number');
+                } 
+                else if(!(/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(consumerPhoneNumber.value)))
+                {
+                   alert('The phone number entered is invalid. Please enter a valid phone number.');
+                   consumerPhoneNumber.value = '';
+                   validated = false;
+                   console.log('invalid phone');                  
+                }
+                else if(/^\d{10}$/.test(consumerPhoneNumber.value))
+                {
+                    var newPhone = (consumerPhoneNumber.value).substring(0,3) + '-' + (consumerPhoneNumber.value).substring(3,6) + '-' + (consumerPhoneNumber.value).substring(5,9);
+                    consumerPhoneNumber.value = newPhone;
+                }
+                else { consumerPhoneNumber.removeAttribute('style'); }
+                   
+                if(consumerEmail.value == '')
+                {
+                    validationArray.push(['Consumer Email', consumerEmail]);
+                    validated = false;
+                    console.log('consumer email');
+                } 
+                else if(!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(consumerEmail.value)))
+                {
+                   alert('The Consumer Email entered is invalid. Please enter a valid email address.');
+                   consumerEmail.value = '';
+                   validated = false;
+                   console.log('invalid consumer email');
+                }  
+                else { consumerEmail.removeAttribute('style'); }
+                   
+                if(addressLine1.value == '')
+                {
+                    validationArray.push(['Address Line 1', addressLine1]);
+                    validated = false;
+                    console.log('address blank');
+                } else { addressLine1.removeAttribute('style'); }
+                   
+                if(city.value == '')
+                {
+                    validationArray.push(['City', city]);
+                    validated = false;
+                    console.log('city blank');
+                } else { city.removeAttribute('style'); }
+                   
+                if(state.value == '')
+                {
+                    validationArray.push(['State', state]);
+                    validated = false;
+                    console.log('state blank');
+                } else { state.removeAttribute('style'); }
+                   
+                if(zipCode.value == '')
+                {
+                    validationArray.push(['Zip Code', zipCode]);
+                    validated = false;
+                    console.log('zip blank');
+                } else { zipCode.removeAttribute('style'); }
+                   
+                if(ssn.value == '')
+                {
+                    validationArray.push(['Social Security number', ssn]);
+                    validated = false;
+                    console.log('ssn and/or ssn rekey blank');
+                }
+                else if(!(/^(?!000|666)[0-8][0-9]{2}-(?!00)[0-9]{2}-(?!0000)[0-9]{4}$/.test(ssn.value)) && !(/^\d{9}$/.test(ssn.value)))
+                {
+                   alert('The Social Security number entered is invalid. Please enter a valid Social Security number.');
+                   ssn.value = '';
+                   ssnRekey.value = '';
+                   validated = false;
+                   console.log('invalid ssn');
+                }               
+                else if(/^\d{9}$/.test(ssn.value))
+                {
+                    var newSSN = (ssn.value).substring(0,3) + '-' + (ssn.value).substring(3,5) + '-' + (ssn.value).substring(5,9);
+                    ssn.value = newSSN;
+                }
+                   
+                if(ssnRekey.value == '')
+                {
+                    validationArray.push(['Re-enter Social Security number', ssnRekey]);
+                    validated = false;
+                    console.log('ssn and/or ssn rekey blank');                  
+                }
+                else if((ssn.value != '' && ssnRekey.value != '' && ssn.value != ssnRekey.value && (ssnRekey.value).includes('-')) ||
+                  (!(/^(?!000|666)[0-8][0-9]{2}-(?!00)[0-9]{2}-(?!0000)[0-9]{4}$/.test(ssnRekey.value)) && !(/^\d{9}$/.test(ssnRekey.value))))
+                {
+                    validated = false;
+                    alert('Both Social Security numbers must match. Please re-enter.');
+                    document.querySelector("[id$='ssn']").value = '';
+                    document.querySelector("[id$='ssnRekey']").value = '';
+                    console.log('ssn does not match');          
+                } 
+                else if(/^\d{9}$/.test(ssnRekey.value))
+                {
+                   var newSSN = (ssnRekey.value).substring(0,3) + '-' + (ssnRekey.value).substring(3,5) + '-' + (ssnRekey.value).substring(5,9);
+                   if(newSSN == ssn.value)
+                   {
+                        ssnRekey.value = newSSN;
+                   } 
+                   else
+                   {
+                        validated = false;
+                        alert('Both Social Security numbers must match. Please re-enter.');
+                        document.querySelector("[id$='ssn']").value = '';
+                        document.querySelector("[id$='ssnRekey']").value = '';
+                        console.log('ssn does not match');                    
+                   }    
+                }
+                else { ssn.removeAttribute('style'); ssnRekey.removeAttribute('style'); }
+                   
+                if(dob.value == '')
+                {
+                    validationArray.push(['Date of Birth', dob]);
+                    validated = false;
+                    console.log('dob blank');
+                } 
+                else if(!(/^(0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])[\/\-]\d{4}$/.test(dob.value)))
+                {
+                   alert('The birth date entered is invalid. Please enter a valid birth date.');
+                   dob.value = '';
+                   validated = false;
+                   console.log('invalid dob');
+                } else { dob.removeAttribute('style'); }
+                   
+                if(categories.checked == false && specific.checked == false && deletion.checked == false)
+                {
+                    validationArray.push(['Consumer Request', categories]);
+                    validated = false;
+                    console.log('request type blank');
+                   } //else { requestType.removeAttribute('style'); }
+                   
+                if(communicationType?.value == null)
+                {
+                    validationArray.push(['Communication Type', communicationType]);
+                    validated = false;
+                    console.log('communication type blank');
+                } 
+                else if(communicationType?.value == 'By mail at the following address:')
+                {
+                    console.log('validating mailing address');
+                    var mailingAddress1 = document.querySelector("[id$='mailingAddress1']");
+                    var mailingCity = document.querySelector("[id$='mailingCity']");
+                    var mailingState = document.querySelector("[id$='mailingState']");
+                    var mailingZipCode = document.querySelector("[id$='mailingZipCode']");                   
+                
+                    if(mailingAddress1.value == '')
+                    {
+                        validationArray.push(['Mailing Address 1', mailingAddress1]);
+                        validated = false;
+                        console.log('mailing address blank');
+                    } else { mailingAddress1.removeAttribute('style'); }
+                    if(mailingCity.value == '')
+                    {
+                        validationArray.push(['Mailing City', mailingCity]);
+                        validated = false;
+                        console.log('mailing city blank');
+                    } else { mailingCity.removeAttribute('style'); }
+                    if(mailingState.value == '')
+                    {
+                        validationArray.push(['Mailing State', mailingState]);
+                        validated = false;
+                        console.log('mailing state blank');
+                    } else { mailingState.removeAttribute('style'); }
+                    if(mailingZipCode.value == '')
+                    {
+                        validationArray.push(['Mailing Zip Code', mailingZipCode]);                   
+                        validated = false;
+                        console.log('mailing zip blank');
+                    } else { mailingZipCode.removeAttribute('style'); }
+                } else { communicationType.removeAttribute('style'); }
+                
+                //Update hidden elements 
+                if(options?.value == 'I am making the request below as an authorized agent of another Consumer')
+                {
+                    document.querySelector("[id$=authorizedAgentPanel]").style.display="block";
+                }
+                if(communicationType?.value == 'By mail at the following address:')
+                {
+                    document.querySelector("[id$=mailingAddressPanel]").style.display="block";
+                }
+                
+                //If the submit button was clicked, the below code will run
+                if(isSubmit || document.getElementById("errorSection").innerHTML.length > 0)
+                {
+                    if(validationArray.length > 0)
+                    {
+                        //Output any validation error
+                        var message = "The following fields need to be completed prior to submitting:<br/><br/>";
+                        for(var x = 0; x < validationArray.length; x++)
+                        {
+                            if(validationArray[x][1] != null)
+                            {
+                                validationArray[x][1].style.backgroundColor = '#FFFF8F';
+                            }
+                            if(validationArray[x][0] != "")
+                            {
+                                message +=  "&#x2022; " + validationArray[x][0] + "<br/>";
+                            }
+                        }   
+                        document.getElementById("errorSection").innerHTML = message + "<br/>";
+                    }
+                    else 
+                    {
+                        //Clear out any error messages if they have been fixed
+                        document.getElementById("errorSection").innerHTML = "";
+                    }
+                }
+                
+                if(validated)
+                {
+                    //document.getElementById('submitButton').disabled = false;
+                    console.log('Javascript validated');
+                    //ValidateForm();
+                    //console.log('ValidateForm() called');
+                    return true;
+                } 
+                else 
+                {
+                    return false;
+                }
+            }
+        </script>
+        
+        <center>
+            <div style="width:60%;margin-top:30pt;">
+                <apex:pageBlock id="ccpaPageBlock" title="CCPA Request Form">
+                    <apex:outputPanel id="ccpaMainOutputPanel" rendered="{!NOT(submitted)}">
+                        <apex:actionFunction name="ValidateForm" action="{!validateForm}"/>
+                        <apex:actionFunction name="SubmitForm" action="{!submitForm}"/>
+                        <apex:pageBlockSection id="ccpaMainPBS" columns="1">
+                            <apex:outputPanel >
+                                <p>
+                                    As described further in our CCPA Privacy Policy, as a California consumer you have the right to make certain requests about the personal information collected, used, or disclosed about you pursuant to CCPA and CPRA. Paychex is assisting businesses with these requests as a service provider. To exercise your rights, please complete the form below and press “submit” at the end of the form. The fields indicated by the asterisks are mandatory for submission.
+                                </p>
+                                <br/>
+                            </apex:outputPanel>
+                            <h2>
+                                PART I: Person Submitting the Request (Requestor or Authorized Agent)
+                            </h2>
+                            <apex:pageBlockSection columns="2">
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Submitter First Name"> <span style="color: red; font-size: 15px;">*</span> </apex:outputLabel>
+                                    <apex:outputPanel styleClass="requiredInput">
+                                        <apex:inputText value="{!refCP.Submitter_First_Name__c}" id="submitterFirstName" onchange="validate()" maxlength="25"/>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Submitter Last Name"> <span style="color: red; font-size: 15px;">*</span> </apex:outputLabel>
+                                    <apex:outputPanel styleClass="requiredInput">
+                                        <apex:inputText value="{!refCP.Submitter_Last_Name__c}" id="submitterLastName" onchange="validate()" maxlength="25"/>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Email Address"> <span style="color: red; font-size: 15px;">*</span> </apex:outputLabel>
+                                    <apex:outputPanel styleClass="requiredInput">
+                                        <apex:inputText value="{!refCP.Email_Address__c}" id="emailAddress" onchange="validate()">
+                                        </apex:inputText> 
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Rekey Email Address"> <span style="color: red; font-size: 15px;">*</span> </apex:outputLabel>
+                                    <apex:outputPanel styleClass="requiredInput">
+                                        <apex:inputText value="{!emailAddressRekey}" id="emailAddressRekey" onchange="validate()">
+                                        </apex:inputText> 
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                            </apex:pageBlockSection>
+                            <apex:pageBlockSection id="optionsSection" columns="1">
+                                <apex:pageBlockSectionItem labelStyle="width:35%;" dataStyle="width:50%;">
+                                    <apex:outputLabel value="Is this request being made on behalf of yourself or as an authorized agent of another Consumer?"> <span style="color: red; font-size: 15px;">*</span></apex:outputLabel> 
+                                    <apex:outputPanel styleClass="requiredInput">
+                                        <apex:actionRegion >
+                                            <apex:selectRadio id="options" value="{!requestOptionSelection}" title="Choose a Request Option" layout="pageDirection">
+                                                <apex:selectOptions value="{!requestOptions}"/>
+                                                <apex:actionSupport event="onchange" oncomplete="validate()" reRender="authorizedAgentPanel" />
+                                            </apex:selectRadio>
+                                            </apex:actionRegion>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                                <apex:outputPanel id="authorizedAgentPanel" style="display:none;">
+                                    <apex:pageBlockSectionItem >
+                                        If you are making the request as an authorized agent of another Consumer, you must complete the <a href="{!ccpaAuthAgentFormLink}" target="_blank">CCPA Authorized Agent form</a>, and attach a copy of the signed and completed form or a copy of a Power of Attorney to your request. 
+                                    </apex:pageBlockSectionItem>
+                                    <div style="text-align:center;">
+                                        <apex:pageBlockSectionItem >
+                                            <apex:inputFile id="authAgentForm" value="{!authAgentAttachment.body}" filename="{!authAgentAttachment.name}" onchange="validate()" /><!-- accept="application/pdf" />-->
+                                        </apex:pageBlockSectionItem>
+                                    </div>
+                                </apex:outputPanel>
+                            </apex:pageBlockSection>
+                            <h2>
+                                PART II: Identity Verification
+                            </h2>
+                            <p>
+                                In order, to respond to your request, the CCPA requires us to verify the identity of the Consumer exercising their rights under CCPA. Please provide the following information and ensure it matches the data Paychex currently has in its systems.      
+                            </p>
+                            <br/>
+                            <apex:pageBlockSection columns="2">
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Consumer First Name" > <span style="color: red; font-size: 15px;">*</span></apex:outputLabel> 
+                                    <apex:outputPanel styleClass="requiredInput">
+                                    <apex:inputText id="consumerFirstName" value="{!refCP.Consumer_First_Name__c}" onchange="validate()"/>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Consumer Last Name" > <span style="color: red; font-size: 15px;">*</span></apex:outputLabel> 
+                                    <apex:outputPanel styleClass="requiredInput">
+                                    <apex:inputText id="consumerLastName" value="{!refCP.Consumer_Last_Name__c}" onchange="validate()"/>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem> 
+                                  <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Consumer Phone Number" > <span style="color: red; font-size: 15px;">*</span></apex:outputLabel> 
+                                    <apex:outputPanel styleClass="requiredInput">
+                                    <apex:inputText value="{!refCP.Consumer_Phone__c}" id="consumerPhoneNumber" onchange="validate()" html-placeholder="###-###-####"/>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                                  <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Consumer Email" > <span style="color: red; font-size: 15px;">*</span></apex:outputLabel> 
+                                    <apex:outputPanel styleClass="requiredInput">
+                                    <apex:inputText value="{!refCP.Consumer_Email__c}" id="consumerEmail" onchange="validate()"/>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Address Line 1" > <span style="color: red; font-size: 15px;">*</span></apex:outputLabel> 
+                                    <apex:outputPanel styleClass="requiredInput">  
+                                    <apex:inputText value="{!refCP.Address_Line1__c}" id="addressLine1" onchange="validate()">
+                                    </apex:inputText> 
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Address Line 2" />
+                                    <apex:inputText value="{!refCP.Address_Line2__c}" id="addressLine2">
+                                    </apex:inputText> 
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="City" > <span style="color: red; font-size: 15px;">*</span></apex:outputLabel> 
+                                    <apex:outputPanel styleClass="requiredInput">
+                                    <apex:inputText value="{!refCP.City__c}" id="city" onchange="validate()">
+                                    </apex:inputText> 
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="State" > <span style="color: red; font-size: 15px;">*</span></apex:outputLabel> 
+                                    <apex:outputPanel styleClass="requiredInput">
+                                    <apex:selectList value="{!refCP.State__c}" style="width: 175px;" size="1" id="state">
+                                            <apex:selectOption itemValue="CA" itemLabel="California"/>
+                                    </apex:selectList> 
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Zip Code" > <span style="color: red; font-size: 15px;">*</span></apex:outputLabel> 
+                                    <apex:outputPanel styleClass="requiredInput">
+                                        <apex:inputText value="{!refCP.Zip_Code__c}" maxlength="5" id="zipCode" onchange="validate()">
+                                        </apex:inputText> 
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Your  Social Security Number" > <span style="color: red; font-size: 15px;">*</span></apex:outputLabel> 
+                                    <apex:outputPanel styleClass="requiredInput">
+                                        <apex:inputText value="{!ssn}" id="ssn" onchange="validate()" maxlength="11" html-placeholder="###-##-####">
+                                        </apex:inputText> 
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Date of Birth" > <span style="color: red; font-size: 15px;">*</span></apex:outputLabel> 
+                                    <apex:outputPanel styleClass="requiredInput">
+                                        <apex:inputText value="{!dateOfBirth}" id="dob" onchange="validate()" html-placeholder="MM/DD/YYYY"/>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Re-enter Social Security Number" > <span style="color: red; font-size: 15px;">*</span></apex:outputLabel> 
+                                    <apex:outputPanel styleClass="requiredInput">
+                                        <apex:inputText value="{!ssnRekey}" id="ssnRekey" onchange="validate()" maxlength="11" html-placeholder="###-##-####">
+                                        </apex:inputText> 
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                            </apex:pageBlockSection>
+                            <p>
+                                The following fields are optional and, if provided, will be used to assist Paychex in the locating the Consumer, only if the above information is not enough:
+                            </p>
+                            <br/>
+                            <apex:pageBlockSection > 
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Nickname or other name" />
+                                    <apex:inputText value="{!refCP.Nickname_or_other_name__c}" id="nickname"/>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Suffix" />
+                                    <apex:inputField id="prefix" style="width: 175px;" value="{!refCP.Prefix_or_Suffix__c}" />
+                                </apex:pageBlockSectionItem>  
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Legal Name of business associated with Consumer's Interaction with Paychex" />
+                                    <apex:inputText value="{!refCP.Company_Name__c}" id="companyName"/>
+                                </apex:pageBlockSectionItem>
+                            </apex:pageBlockSection>
+                            <apex:outputPanel >
+                                <p>
+                                    If Paychex is unable to verify the Consumer’s identity based on the above information, or if the Consumer is not located based on the information provided, your request will be denied, and you will be provided with information on next steps. See our California Privacy Policy for more information.  
+                                </p>
+                                <br/>
+                            </apex:outputPanel>
+                            <h2>
+                                PART III: Consumer Request <span style="color: red; font-size: 15px;">*</span>    
+                            </h2>
+                            <apex:pageBlockSection columns="1" id="ccpaPartIIIPBS"> 
+                                <apex:pageBlockSectionItem id="requestTypeSection">
+                                    <apex:outputPanel styleClass="requiredInput"> 
+                                            <apex:inputCheckbox onchange="validate()" value="{!refCP.PI_Categories__c}" id="PI_Categories__c"/><label> I would like to know the categories of Personal Information you have collected on me.</label> <br/>
+                                            <apex:inputCheckbox onchange="validate()" value="{!refCP.PI_Specific_Pieces__c}" id="PI_Specific_Pieces__c"/><label> I would like to know the specific pieces of Personal Information you have collected on me. </label><br/>
+                                            <apex:inputCheckbox onchange="validate()" value="{!refCP.PI_Deletion__c}" id="PI_Deletion__c"/><label> I would like to request the deletion of Personal Information you have collected on me. </label><br/>
+                                        <!--<ul style="list-style-type: none;padding: 0; margin: 0;">
+                                            <li><apex:inputCheckbox onchange="validate()" value="{!refCP.PI_Categories__c}" id="PI_Categories__c"/><label> I would like to know the categories of Personal Information you have collected on me.</label> <br/></li>
+                                            <li><apex:inputCheckbox onchange="validate()" value="{!refCP.PI_Specific_Pieces__c}" id="PI_Specific_Pieces__c"/><label> I would like to know the specific pieces of Personal Information you have collected on me in the 12 months preceding this request. </label><br/></li>
+                                            <li><apex:inputCheckbox onchange="validate()" value="{!refCP.PI_Deletion__c}" id="PI_Deletion__c"/><label> I would like to request the deletion of Personal Information you have collected on me. </label><br/></li>
+                                        </ul>-->
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                                <p>
+                                    Please let us know where we should send the response to your request: <span style="color: red; font-size: 15px;">*</span>
+                                </p>
+                                <apex:pageBlockSectionItem id="communicationTypePBSI">
+                                    <apex:outputPanel styleClass="requiredInput">
+                                        <apex:actionRegion >
+                                            <apex:selectRadio id="communicationType" value="{!refCP.Communication_Type__c}" title="Choose a Communication Type" layout="pageDirection">
+                                                <apex:selectOptions value="{!communicationOptions}"/>
+                                                <apex:actionSupport event="onchange" reRender="mailingAddressPanel" oncomplete="validate()"/>
+                                            </apex:selectRadio>
+                                        </apex:actionRegion>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                                <apex:outputPanel id="mailingAddressPanel" style="display:none;">
+                                    <apex:pageBlockSection columns="2">
+                                        <apex:pageBlockSectionItem id="mailingAddress1Item">
+                                            <apex:outputLabel value="Mailing Address Line 1" id="mailingAddressLine1PBSI"> <span style="color: red; font-size: 15px;">*</span> </apex:outputLabel>
+                                            <apex:outputPanel styleClass="requiredInput">
+                                            <apex:inputText value="{!refCP.Mailing_Address_Line1__c}" id="mailingAddress1" onchange="validate()"/>
+                                            </apex:outputPanel>
+                                        </apex:pageBlockSectionItem>
+                                        <apex:pageBlockSectionItem >
+                                            <apex:outputLabel value="Mailing Address Line 2" />
+                                            <apex:inputText value="{!refCP.Mailing_Address_Line2__c}" id="mailingAddress2" onchange="validate()"/>
+                                        </apex:pageBlockSectionItem>
+                                        <apex:pageBlockSectionItem >
+                                            <apex:outputLabel value="Mailing City" > <span style="color: red; font-size: 15px;">*</span> </apex:outputLabel>
+                                            <apex:outputPanel styleClass="requiredInput">
+                                            <apex:inputText value="{!refCP.Mailing_City__c}" id="mailingCity" onchange="validate()"/>
+                                            </apex:outputPanel>
+                                        </apex:pageBlockSectionItem>
+                                        <apex:pageBlockSectionItem >
+                                            <apex:outputLabel value="Mailing State" > <span style="color: red; font-size: 15px;">*</span> </apex:outputLabel>
+                                            <apex:outputPanel styleClass="requiredInput">
+                                            <apex:selectList value="{!refCP.Mailing_State__c}" style="width: 175px;" size="1" id="mailingState" onchange="validate()">
+                                                    <apex:selectOption itemValue="CA" itemLabel="California"/>
+                                                </apex:selectList> 
+                                            </apex:outputPanel>
+                                        </apex:pageBlockSectionItem>
+                                        <apex:pageBlockSectionItem >
+                                            <apex:outputLabel value="Mailing Zip Code" > <span style="color: red; font-size: 15px;">*</span> </apex:outputLabel>
+                                            <apex:outputPanel styleClass="requiredInput">
+                                            <apex:inputText value="{!refCP.Mailing_Zip_Code__c}" maxlength="5" id="mailingZipCode" onchange="validate()"/>
+                                            </apex:outputPanel>
+                                        </apex:pageBlockSectionItem>
+                                    </apex:pageBlockSection>
+                                </apex:outputPanel>
+                            </apex:pageBlockSection>
+                            <apex:outputPanel >
+                                <p>
+                                    I acknowledge that any false statement or other misrepresentation made on this form may subject me to civil and criminal penalties. I agree to indemnify and hold harmless Paychex, Inc., its affiliates and subsidiaries and each of their respective officers, directors, managers, members, employees and agents from any and all liability arising out of any fraudulent statements.                             
+                                </p>
+                                <p>
+                                    By submitting this form, I declare under penalties of perjury under the laws of the State of California that the foregoing information is true and correct.                            
+                                </p>
+                                <br/>
+                            </apex:outputPanel>
+                        </apex:pageBlockSection>
+                        <apex:outputPanel id="submissionPanel">
+                            <div align="center" style="padding-top:10px;">
+                                <apex:outputLabel style="color:red;font-weight: bold;" rendered="{!IF(errorMessage == '', false, true)}" value="{!errorMessage}" escape="false">
+                                    <br/>
+                                </apex:outputLabel>
+                                <div class="g-recaptcha" data-sitekey="{!reCAPTCHA_Site_Key}" data-callback="recaptcha"></div>
+                                <br/>
+                                <div id="errorSection" style='color: red;font-weight: bold;' /> <br/>
+                                <input type="button" value="Submit" id="submitButton" onclick="submitForm(false)" />
+                                <div id="loader" class="loader" style="display:none;"></div>
+                                <br/><br/>
+                            </div>
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                    <apex:outputPanel id="submitConfirmation" rendered="{!submitted}" style="margin-top:40pt;margin-bottom:40pt;font-weight:bold;">
+                        Your request has been submitted! You will receive a confirmation email shortly.
+                    </apex:outputPanel>
+                </apex:pageBlock>
+            </div>
+        </center>
+    </apex:form>
+</apex:page>

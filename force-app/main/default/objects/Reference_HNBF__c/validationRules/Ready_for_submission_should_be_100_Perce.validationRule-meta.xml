@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Ready_for_submission_should_be_100_Perce</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+ISPICKVAL(Current_Step__c, &apos;Onboarding Complete&apos;),
+NOT(Ready_for_Submission__c = 1.0), OR (ISPICKVAL(Submission_Type__c, &apos;AOR&apos;), ISPICKVAL(Submission_Type__c, &apos;AOR and New Case&apos;), ISPICKVAL(Submission_Type__c, &apos;AOR with Renewal&apos;), ISPICKVAL(Submission_Type__c, &apos;New Case&apos;), ISPICKVAL(Submission_Type__c, &apos;Renewal within 30 days&apos;), ISPICKVAL(Submission_Type__c, &apos;Renewal within 60 days&apos;), ISPICKVAL(Submission_Type__c, &apos;Renewal within 90 days&apos;)))</errorConditionFormula>
+    <errorMessage>Ready for submission should be 100% to change current step to Onboarding Complete</errorMessage>
+</ValidationRule>

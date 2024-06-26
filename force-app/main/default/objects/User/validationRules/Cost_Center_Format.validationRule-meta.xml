@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cost_Center_Format</fullName>
+    <active>false</active>
+    <description>Cost Center should be 4 character with leading zeros</description>
+    <errorConditionFormula>NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)) &amp;&amp; LEN( Cost_Center__c ) &lt;&gt;0 &amp;&amp; NOT(REGEX( Cost_Center__c , &quot;\\d{4}&quot;))</errorConditionFormula>
+    <errorDisplayField>Cost_Center__c</errorDisplayField>
+    <errorMessage>**** Cost Center should be 4 characters with leading zeros ****</errorMessage>
+</ValidationRule>

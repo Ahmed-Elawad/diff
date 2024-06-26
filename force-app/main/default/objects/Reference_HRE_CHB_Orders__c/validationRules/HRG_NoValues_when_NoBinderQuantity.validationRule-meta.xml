@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRG_NoValues_when_NoBinderQuantity</fullName>
+    <active>true</active>
+    <description>if Binder Quantity and Spanish Binder Quantity = Null, then the Binder Cover Option, Client Name to be Printed on Binder, Binder Color, Binder Template and Logo for the Binder  fields can NOT be populated by HRGs.</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;Handbook HR Solutions Order Record Type&quot;), 
+( (ISNULL(Binder_Quantity__c)) &amp;&amp; (ISNULL(Spanish_Binder_Quantity__c)) ), 
+( (NOT(ISPICKVAL(Art__c, &apos;&apos;))) || (NOT(ISPICKVAL(Outside_Color__c, &apos;&apos;))) || (NOT(ISPICKVAL(Template__c, &apos;&apos;))) || (NOT(ISPICKVAL(Logo_for_the_Binder__c, &apos;&apos;))) || (NOT(ISBLANK(Client_Name_to_be_Printed_on_Binder__c))) ), 
+(Historical_Order_Indicator__c = 0),
+(NOT(BEGINS($Profile.Name,&quot;HR Essentials&quot;))), 
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))) 
+)</errorConditionFormula>
+    <errorDisplayField>Binder_Quantity__c</errorDisplayField>
+    <errorMessage>You can NOT select a Binder Cover Option, Logo for the Binder, Client Name to be Printed on Binder, Binder Template or a Binder Color field value when no value is entered for the Binder Quantity and the Spanish Binder Quantity fields.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>S2S_Alt_contact_must_be_paychex_emp</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&apos;System Administrator&apos;)) 
+, RecordType.Name =&quot;Sales2Service Case&quot; 
+, Alternate_Contact__c !=&apos;&apos; 
+, ISBLANK( Alternate_Contact__r.HR_Person_Id__c ))</errorConditionFormula>
+    <errorMessage>Alternate Contact must be a Paychex Employee. Unable to Save Case.</errorMessage>
+</ValidationRule>

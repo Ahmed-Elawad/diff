@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Verify_BeneTrac_Asset_Name</fullName>
+    <active>true</active>
+    <description>Ensure the BeneTrac asset name is formatted as in the picklist.  Their products do not come thru HRIS so we are trying to force a picklist value into the text field to allow better reporting.</description>
+    <errorConditionFormula>AND( 
+(LEN(TEXT(BeneTrac_Products__c )) &gt; 0), 
+(TEXT(BeneTrac_Products__c)) &lt;&gt; Name, 
+($Profile.Name = &quot;BeneTrac Operations&quot;),
+($Profile.Name &lt;&gt;&quot;System Administrator&quot;) 
+)</errorConditionFormula>
+    <errorMessage>The Product and Service Name must be exactly the same as the BeneTrac Products field.</errorMessage>
+</ValidationRule>

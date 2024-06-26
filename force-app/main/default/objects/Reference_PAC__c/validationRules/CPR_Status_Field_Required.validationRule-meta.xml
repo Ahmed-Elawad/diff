@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CPR_Status_Field_Required</fullName>
+    <active>true</active>
+    <description>On Reference PAC Objects; Record Type Reference PAC. Create a validation rule that triggers when the field named Status starts with &quot;Closed&quot;, the field named CPR Status EQUALS NULL, field named CPR Group New? = &quot;Yes&quot; , and field named Main Responsibility</description>
+    <errorConditionFormula>AND(($RecordType.Name = &quot;Reference PAC Record Type&quot; ),
+BEGINS(TEXT(Status__c),&apos;Closed&apos;),
+ISBLANK(TEXT(CPR_Status__c)),
+ISPICKVAL(CPR_Group_New__c,&apos;Yes&apos;),
+BEGINS(TEXT(Main_Responsibility__c),&apos;Client&apos;),
+NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)))</errorConditionFormula>
+    <errorMessage>CPR Status field can&apos;t be NULL</errorMessage>
+</ValidationRule>

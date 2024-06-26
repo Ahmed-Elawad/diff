@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>If_Who_is_Paying_equals_Paychex</fullName>
+    <active>true</active>
+    <description>If ‘Who is Paying’ = Paychex, then the ‘Delivery Company’ must be UPS</description>
+    <errorConditionFormula>AND
+(
+ISPICKVAL( Who_Is_Paying__c , &quot;Paychex&quot; ),
+!ISPICKVAL(  Delivery_Company__c ,&quot;UPS&quot; ),
+RecordType.Name = &quot;401k Overnight Request&quot;
+)</errorConditionFormula>
+    <errorDisplayField>Delivery_Company__c</errorDisplayField>
+    <errorMessage>Delivery Company must be UPS when Who is Paying = Paychex</errorMessage>
+</ValidationRule>

@@ -1,0 +1,1144 @@
+<!-- Component for creation of Activity - tasks and events.
+
+   History
+   -------
+   10/27/2017 Dan Carmen          Changed to use $User.UIThemeDisplayed
+   11/10/2017 Dan Carmen          Add lightning component display
+   05/31/2018 Mike Matonis        Provided look and feel for lightning
+   07/25/2018 Dan Carmen          DemandGen - Warm Transfer
+   08/08/2018 Cindy Freeman       added nextDisabled to nextButtonActive to fix bug of ReferringOpty not being created
+   12/17/2018 Josh Cartwright     added #auraErrorMessage {display: none;} to prevent iframe errror from displaying. 
+   12/17/2018 Josh Cartwright     removed add more referrals button 
+   10/4/2019  Jake Hinds          added queue functionality for Refer To
+   12/26/2019 Cindy Freeman       changed Transfer Reason so displays for VSRs and NSRs
+   03/21/2020 Cindy Freeman       removed callOut to toggleVForce
+   02/12/2021 Manmeet Vaseer      APR0114125 - New Process: NSS to Identify Channel Lead Source (US1-US3)
+                                  Requirements: https://wiki.paychex.com/display/CP/APR0114125+-+New+Process%3A+NSS+to+Identify+Channel+Lead+Source
+   09/26/2020 Pujitha Madamanchi Remove Transfer Reason logic
+   12/27/2021 Dan Carmen          Display Partner Type and NSS Source at the top of the table.
+   06/15/2022 Susmitha Somavarapu Wholesaler-Refer a Referral Contact (US3 Clearslide)
+   04/21/2020 Pratik Das        APR0132179: Change lead ownership from DSA to DSM
+   06/13/2023 Pujitha Madamanchi  Add how is lead qualified?.
+   07/15/2023 Pratik Das         APR0151864: SMB Channel Evolution
+   11/13/2023 Pujitha Madamanchi  Add Account lookup.
+ -->
+
+<apex:component controller="ReferralController" allowDML="true">
+    
+ <c:DisplayAccountContactInfo rendered="{!AND(OR($User.UIThemeDisplayed == 'Theme4d',$User.UIThemeDisplayed == 'Theme4u'),accountId != null)}"
+                 accountId="{!accountId}" contactId="{!contactId}" />
+                 
+  <c:DisplayLeadInfo rendered="{!AND(OR($User.UIThemeDisplayed == 'Theme4d',$User.UIThemeDisplayed == 'Theme4u'),primaryLeadId != null)}"
+                 leadId="{!primaryLeadId}"  />
+                
+  <c:DisplayPageBanner rendered="{!AND($User.UIThemeDisplayed != 'Theme4d',$User.UIThemeDisplayed != 'Theme4u')}" 
+                 sourceRecId="{!refObjectId}"  />
+
+     
+
+    <apex:form id="referralForm">
+    <apex:pageMessages />
+    <apex:includeScript value="{!URLFOR($Resource.iOSFix)}"/> 
+
+    <script>
+    
+        //window.onload=function(){ 
+        //doCallout();
+        //}
+    
+ 
+    function setDateTime(dateStr,timeStr) {
+        var meetingTimeField = document.getElementById("{!$Component.referralForm.ReferralBlock.calendarSection.meetingStartTimeField}");
+        
+        if (meetingTimeField) {
+            meetingTimeField.value = timeStr;
+        } else {
+            alert("meeting time field not found! timeStr="+timeStr);
+            
+        } 
+        
+        var meetingDateField = document.getElementById("{!$Component.referralForm.ReferralBlock.calendarSection.meetingDateField}");
+        
+        if (meetingDateField) {
+            meetingDateField.value = dateStr;
+        } else {
+            alert("meeting date field not found! dateStr="+dateStr);
+        }    
+    } 
+    </script>
+
+    <style>
+      .button-spacing{
+        margin: 1px;
+      }
+    <!-- code to hide iframe error--> 
+        #auraErrorMessage {
+      display: none;   }          
+
+    </style>
+    <apex:actionRegion >
+    <!-- <apex:actionFunction name="doCallout" immediate="true" action="{!toggleVForce}"  rerender="{!IF(renderVForce,'','Vforce')}" oncomplete="document.getElementById('statusSpinner').style.visibility='hidden'"/> -->
+    <apex:outputPanel id="statusSpinnerPanel">
+        <div id="statusSpinner" style="{!IF(renderVForce,'visibility: hidden','visibility: visible')}">
+            <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+                &nbsp;
+            </div>
+            <div style="position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin-top: 30% ;Text-align:center">
+                <div style="display: inline-block; padding: 2px; background-color: #fff; width: 125px;">
+                    <img src="/img/loading.gif" style="float: left; margin: 8px;" />
+                    <span style="display: inline-block; padding: 10px 0px;">Please Wait...</span>
+                </div>
+            </div>
+       </div>
+   </apex:outputPanel>
+   <apex:outputPanel id="Vforce">
+       <apex:outputPanel rendered="{!renderVForce}">
+          <apex:outputPanel id="Desktop" rendered="{!$User.UIThemeDisplayed <> 'Theme4t'}"> 
+           <style type="text/css">
+                .tableStyle {border-collapse:collapse;border: 1px solid black; width:80%;padding:0px;spacing:1px;}
+                .nameHeaderCell { font-weight: bold;padding:0px;width:20%; color:blue;}
+                .timeHeaderCell { padding:0px;width:7%; }
+                .freeCell { padding:0px;height:8px;background-color:white;}
+                .busyCell { padding:0px;height:8px;background-color:#FA5858; font-weight: bold}
+                .tableRowHeader { vertical-align:center;padding:0px;padding-bottom:0px }
+                .tableRow { vertical-align:center;padding:0px;border-top: #BDBDBD solid thin; padding-bottom:0px}
+           </style>
+           
+           <apex:sectionHeader rendered="{!NOT(isEmbeddedForm)}" title="Paychex Referrals" subtitle="{!sectionHeaderSubTitle}" />
+           
+           <apex:pageBlock rendered="{!isError}" id="ErrorBlock"> 
+              <apex:pageBlockButtons >
+                 <apex:commandButton rendered="{!NOT(isPopup)}" value="Cancel" immediate="true" action="{!cancel}" />
+                 <apex:commandButton rendered="{!isPopup}" value="Cancel" onClick="window.top.close(); return false;" />
+              </apex:pageBlockButtons>
+              
+              <apex:pageBlockSection id="ErrorSelectionSection" rendered="{!AND(idIsValid,NOT(isSalesRep))}" columns="1">
+                 <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Do you wish to enter a referral for someone else, or are you entering it for yourself?"/>
+                    <apex:selectList value="{!nonRepOption}" title="Select a Sales Org" size="1" disabled="{!unauthorizedUser}">
+                       <apex:selectOptions value="{!nonRepOptions}"/>
+                       <apex:actionSupport event="onchange" action="{!nonRepOptionSelected}"/>
+                    </apex:selectList>
+                 </apex:pageBlockSectionItem>
+                 
+                 <apex:pageBlockSectionItem rendered="{!nonRepOption=='Someone Else'}">
+                    <apex:outputLabel value="Select a Sales Rep"/>
+                    <apex:inputField required="true" value="{!tempRef.User__c}" />
+                 </apex:pageBlockSectionItem>
+        
+                 <apex:pageBlockSectionItem rendered="{!AND(nonRepOption=='Myself',hasSalesOrgOptions)}" >
+                    <apex:outputLabel value="Select a Sales Org"/>
+                    <apex:selectList value="{!salesOrg}" title="Select a Sales Org" size="1">
+                       <apex:selectOptions value="{!salesOrgOptions}"/>
+                       <apex:actionSupport event="onchange" action="{!setSalesOrg}" />
+                    </apex:selectList>
+                 </apex:pageBlockSectionItem>
+                 
+                  <apex:commandButton rendered="{!nonRepOption=='Someone Else'}" style="margin: 0.2rem 36.5%;" value="Use This Rep" immediate="false" action="{!setReferralUser}" />
+                 
+              </apex:pageBlockSection>
+           </apex:pageBlock>
+        
+           <!-- *******************   Main block to select partners we are referring to ************************ -->
+        
+           <apex:pageBlock rendered="{!NOT(isError)}" id="ReferralBlock" > 
+
+
+               <apex:pageMessages /> 
+                 <!-- 
+              <apex:pageBlockButtons >
+                 <apex:commandButton value="{!IF(isStep1,'Verify Selection(s)',IF(isStep2,'Submit Referral(s)',IF(isStep3,'Complete-Return to '+returnName,'Next Step')))}" action="{!nextStep}" />
+                 <apex:commandButton value="{!IF(isStep1,'Verify Selection(s)',IF(isStep2,'Submit Referral(s)',IF(isStep3,'Complete-Return to '+returnName,'Next Step')))}" action="{!nextStep}" />         
+                 <apex:commandButton value="{!nextStepButtonTitle}" action="{!nextStep}" />
+                 <apex:commandButton rendered="{!OR(isTelemarketing,isStep2)}" value="Previous" action="{!previousStep}" />
+                 <apex:commandButton rendered="{!NOT(isStep3)}" value="Cancel" immediate="true" action="{!cancel}" />
+                 <apex:commandButton rendered="{!AND(OR(isTelemarketing,isStep2),NOT(isStep3))}" value="Previous" action="{!previousStep}" />         
+              </apex:pageBlockButtons>
+                  -->
+        
+              <apex:panelGrid id="productButtons" style="width:100%; text-align:center; margin-bottom: 0.5rem;">
+                 <a id="dateTime"/>
+                <apex:outputPanel >
+    
+                    <apex:actionStatus id="nextButtonStatus" rendered="{!NOT(Or(isStep3,attachShow))}">
+                       <apex:facet name="stop">
+                          <apex:commandButton id="nextButtonActive" action="{!nextStep}" styleClass="button-spacing" value="{!nextStepButtonTitle}" status="nextButtonStatus" disabled="{!nextDisabled}" rerender="ReferralBlock"/>
+                       </apex:facet>
+                       <apex:facet name="start">
+                          <apex:commandButton id="nextButtonDisabled" value="Processing..." styleClass="button-spacing" status="nextButtonStatus" disabled="true" rerender="ReferralBlock"/>
+                       </apex:facet>
+                    </apex:actionStatus>
+            
+                    
+                    <!------Attachment Button----->
+                    <apex:actionStatus id="attachButtonStatus" rendered="{!AND(isStep2,NOT(attachShow))}" >
+                        <apex:facet name="stop">
+                            <apex:commandButton id="attachButtonActive" action="{!showAttach}" value="Add Attachment" status="attachButtonStatus" disabled="false" rerender="attachPanel,ReferralBlock"/>
+                        </apex:facet>
+                        <apex:facet name="start">
+                            <apex:commandButton id="attachButtonDisabled" value="Opening..." status="attachButtonStatus" disabled="true" rerender="attachPanel,ReferralBlock"/>
+                        </apex:facet>
+                    </apex:actionStatus>
+                    
+                    <apex:commandButton rendered="{!AND(isStep3,isEmbeddedForm)}" value="{!nextStepButtonTitle}" onClick="window.top.location.href='{!redirectUrl}'; return false;" />
+
+                    <apex:actionStatus id="nextButtonStatus3" rendered="{!AND(NOT(isEmbeddedForm),NOT(isPopup),isStep3)}">
+                       <apex:facet name="stop">
+                          <apex:commandButton id="nextButtonStep3" action="{!nextStep}" value="{!nextStepButtonTitle}" status="nextButtonStatus" disabled="false" immediate="true"/>
+                       </apex:facet>               
+                    </apex:actionStatus>
+                    
+                    <apex:actionStatus id="lastButtonStatus" rendered="{!AND(NOT(isTelemarketing),NOT(isOasis),isStep3)}">
+                       <apex:facet name="stop">
+                          <apex:commandButton id="lastButtonActive" action="{!nextStepOpty}" value="Complete-Return to My Opportunity" status="nextButtonStatus" disabled="false" immediate="true"/>
+                       </apex:facet>
+                    </apex:actionStatus>               
+                       <!--ATTACHMENT BUTTON-->
+                    <!--<apex:commandButton rendered="{!isStep2}" value="Add Attachment" action="{!goToAttach}" />-->
+                    
+                    <apex:actionStatus id="prevButtonStatus" rendered="{!isStep2}" >
+                       <apex:facet name="stop">
+                          <apex:commandButton id="prevButtonActive" action="{!previousStep}" value="Previous" styleClass="button-spacing" status="prevButtonStatus" disabled="false" rerender="ReferralBlock"/>
+                       </apex:facet>
+                       <apex:facet name="start">
+                          <apex:commandButton id="prevButtonDisabled" value="Processing..." styleClass="button-spacing" status="prevButtonStatus" disabled="true" rerender="ReferralBlock"/>
+                       </apex:facet>
+                    </apex:actionStatus>
+                    <apex:commandButton rendered="{!AND(isPopup,isStep3)}" value="Complete-Close Window" styleClass="button-spacing" onClick="window.top.close(); return false;" />
+                    <apex:commandButton rendered="{!AND(NOT(isPopup),NOT(isStep3),NOT(isEmbeddedForm))}" value="Cancel" styleClass="button-spacing" immediate="true" action="{!cancel}" />
+                    <apex:commandButton rendered="{!AND(NOT(isStep3),isPopup)}" value="Cancel" styleClass="button-spacing" onClick="window.top.close(); return false;" />
+                    <apex:commandButton rendered="{!AND(NOT(isStep3),isEmbeddedForm)}" value="Cancel" styleClass="button-spacing" onClick="window.top.location.href='{!redirectUrl}'; return false;" />
+                    
+                 </apex:outputPanel>
+              </apex:panelGrid>
+        
+              <!-- **************   Referral Type (internal vs external) ******************************* -->
+              
+              <apex:pageBlockSection collapsible="false" id="nssRoleSection" columns="1" rendered="{!allowRoleChange}">
+                 <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Select your Role"/>
+                    <apex:selectList value="{!nssSource}" title="Role Options" size="1">
+                       <apex:selectOptions value="{!roleOptions}"/>
+                       <apex:actionSupport event="onchange" action="{!roleChanged}" status="changeRoleStatus" rerender="ReferralBlock" />
+                    </apex:selectList>
+                 </apex:pageBlockSectionItem>
+                 <apex:actionStatus startText="Changing Role..." id="changeRoleStatus"/>
+              </apex:pageBlockSection>
+
+              
+              <apex:pageBlockSection collapsible="false" id="referralTypeSection" columns="1" rendered="{!showReferralOptions}">
+                 <apex:pageBlockSectionItem rendered="{!NOT(isStep1)}">
+                    <apex:outputLabel value="Type of Referral"/>
+                    <apex:outputText value="{!partnerType}" />
+                 </apex:pageBlockSectionItem>
+                 
+                 <apex:pageBlockSectionItem rendered="{!isStep1}" >
+                    <apex:outputLabel value="Select the Type of Referral"/>
+                    <apex:selectList value="{!partnerType}" title="Referral Options" size="1">
+                       <apex:selectOptions value="{!referralOptions}"/>
+                       <apex:actionSupport event="onchange" action="{!setReferralOption}" status="changeRefTypeStatus" rerender="ReferralBlock" />
+                    </apex:selectList>
+                 </apex:pageBlockSectionItem>
+                 <apex:actionStatus startText="Changing Referral Type..." id="changeRefTypeStatus"/>
+                  
+              </apex:pageBlockSection>
+              
+              <apex:pageBlockSection collapsible="false" id="referralSourceSection" columns="1" rendered="{!AND(isStep1,hasReferralSource)}">
+                 
+                    <apex:selectRadio label="What was the final qualification method?" value="{!qualifyType}" rendered="{!isNsrInbound}" required="true"  layout="pageDirection">
+                        <apex:selectOption itemLabel="Call" itemValue="Call"/>
+                        <apex:selectOption itemLabel="Chat" itemValue="Chat"/> 
+                        <apex:selectOption itemLabel="Email" itemValue="Email"/>       
+                        <apex:selectOption itemLabel="Text" itemValue="Text"/>      
+                    </apex:selectRadio>
+                 
+                 <apex:pageBlockSectionItem >
+                    <apex:outputLabel style="white-space:nowrap;" value="How did the lead hear about Paychex?"/>
+                    <apex:selectList value="{!selectedReferralSourceOption}" title="Referral Source Options" size="1">
+                       <apex:selectOptions value="{!referralSourceOptions}"/>
+                       <apex:actionSupport event="onchange" action="{!referralSourceChanged}" status="changeRefSourceOptionStatus" rerender="ReferralBlock" />
+                    </apex:selectList>
+                 </apex:pageBlockSectionItem>
+                 <apex:actionStatus startText="Please Wait-Changing Referral Source option..." id="changeRefSourceOptionStatus"/>
+                 
+                 <!-- APR0147647 -->
+                    <apex:pageBlockSectionItem rendered="{!AND(isReferringLead,isNsrInbound)}">
+                        <apex:outputLabel value="Account" />
+                        <apex:inputField value="{!defReferral.Selected_Account__c}" />
+                    </apex:pageBlockSectionItem>
+                    
+                 <!-- APR0114125 -->
+                 <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Client Referral" />
+                    <apex:inputField value="{!defReferral.Client_Referral__c}" />
+                 </apex:pageBlockSectionItem>
+                 <apex:pageBlockSectionItem > 
+                    <apex:outputLabel value="Referral Contact" />
+                    <apex:inputField value="{!defReferral.Referral_Contact__c}" >
+                    
+                </apex:inputField>
+                 </apex:pageBlockSectionItem>
+
+                 <apex:pageBlockSectionItem rendered="{!AND(isTelemarketing,isNsrInbound)}">
+                    <apex:outputLabel value="Campaign" />
+                    <apex:inputField required="{!isNsrInbound}" value="{!defReferral.Campaign__c}" />
+                 </apex:pageBlockSectionItem>
+                 
+                
+                 <!-- Pujitha - APR0121163
+                  <apex:selectList rendered="{!isTelemarketing}" required="{!AND(isNsrInbound,nbrOfEmployees>=0,nbrOfEmployees<5)}" value="{!selectedTransferReason}" label="Transfer Reason" multiselect="false" size="1">-->
+                <!--apex:selectList rendered="{!AND(OR(isTelemarketing,isVirtualUser),isNsrInbound)}" value="{!selectedTransferReason}" label="Transfer Reason" multiselect="false" size="1">       <!-- CMFCMF -->
+                    <!--apex:selectOptions value="{!transferReasons}"/>
+                 </apex:selectList-->
+                 
+                 <apex:pageBlockSectionItem rendered="{!AND(isTelemarketing,isNsrInbound)}">
+                    <apex:outputLabel style="white-space:nowrap;" value="Recent Field Rep Activity"/>
+                    <apex:inputcheckbox label="Recent Field Rep Activity" selected="{!hasRecentActivity}" disabled="true"/>
+                 </apex:pageBlockSectionItem>
+                 
+                <!--  <apex:pageBlockSectionItem rendered="{!isTelemarketing}">
+                    <apex:outputLabel value="Multiple Locations Identified" />
+                    <apex:inputCheckbox value="{!defReferral.Potential_for_Multiple_Locations__c}" />
+                 </apex:pageBlockSectionItem>
+                 
+                 <apex:pageBlockSectionItem rendered="{!isTelemarketing}">
+                    <apex:outputLabel value="Set Appt w/ Decision Maker" />
+                    <apex:inputCheckbox value="{!defReferral.DM__c}" />
+                 </apex:pageBlockSectionItem>-->
+              </apex:pageBlockSection> 
+              
+              <!-- 
+              <apex:pageBlockSection collapsible="false" id="contactInfoSection" columns="2" title="{!IF(isStep1,'Please verify the Contact Information','Contact Information')}">
+                 <apex:inputField value="{!ctct.FirstName}" />
+                 <apex:inputField value="{!ctct.LastName}" />
+                 <apex:inputField value="{!ctct.Phone}" />
+                 <apex:inputField value="{!ctct.Email}" />
+              </apex:pageBlockSection>
+               -->
+               
+               <!-- ******************    Referring Opportunity  ************************** -->
+               
+              <apex:pageBlockSection rendered="{!createReferringOpp}" collapsible="false" columns="2" title="Referring Opportunity Information">
+                 <apex:inputField rendered="{!NOT(isStep3)}" value="{!referringOpp.LeadSource}" >
+                     <!-- line break -->
+                     <apex:outputLabel style="font-weight: bold;color: #f00;"><p>Note: Choose the Lead Source that best fits the way that you as the referring rep generated this lead. 
+                         This is not the Lead Source for the Selling Rep.</p></apex:outputLabel>
+                  </apex:inputField>
+                 <apex:outputField rendered="{!isStep3}" value="{!referringOpp.LeadSource}" />
+
+                 
+                 <apex:inputField rendered="{!NOT(isStep3)}" value="{!referringOpp.Employees_Paid_Per_Payroll__c}" />
+                 <apex:outputField rendered="{!isStep3}" value="{!referringOpp.Employees_Paid_Per_Payroll__c}" />
+        
+                 <!-- line break -->
+                 <apex:inputField rendered="{!NOT(isStep3)}" value="{!referringOpp.Level_2__c}" />
+                 <apex:outputField rendered="{!isStep3}" value="{!referringOpp.Level_2__c}" />
+    
+                 <apex:inputField rendered="{!NOT(isStep3)}" value="{!referringOpp.Referral_Contact__c}" >
+                    <apex:actionSupport event="onchange" action="{!refCtctChanged}"  />
+                </apex:inputField>
+                 <apex:outputField rendered="{!isStep3}" value="{!referringOpp.Referral_Contact__c}" />
+                 
+                 <!-- line break -->
+                  
+                 <!--APR0151864: SMB Channel Evolution BAU Start commented out-->
+                 <!--<apex:inputField rendered="{!NOT(isStep3)}" value="{!referringOpp.Client_Referral__c}" />
+                 <apex:outputField rendered="{!isStep3}" value="{!referringOpp.Client_Referral__c}" />-->
+                 <!--APR0151864: SMB Channel Evolution BAU End commented out-->
+                  
+                <!--APR0151864: SMB Channel Evolution BAU Start-->
+                <apex:inputField rendered="{!NOT(isStep3)}" value="{!referringOpp.Client_Referral__c}" >
+                    <apex:actionSupport event="onchange" action="{!refClientChanged}"  />
+                </apex:inputField>
+                <apex:outputField rendered="{!isStep3}" value="{!referringOpp.Client_Referral__c}" />
+                <!--APR0151864: SMB Channel Evolution BAU End-->
+                  
+                 <apex:inputField rendered="{!NOT(isStep3)}" value="{!referringOpp.Referral_Account__c}" />
+                 <apex:outputField rendered="{!isStep3}" value="{!referringOpp.Referral_Account__c}" />
+        
+                 <apex:inputField rendered="{!NOT(isStep3)}" value="{!referringOpp.Frequency__c}" />
+                 <apex:outputField rendered="{!isStep3}" value="{!referringOpp.Frequency__c}" />
+                 
+                 <apex:pageBlockSectionItem rendered="{!NOT(isStep3)}" >
+
+                    <apex:outputLabel value="Description"/>
+                    <apex:inputTextArea value="{!referringOpp.Description}" rows="5" cols="80" id="opp_description"/>
+                 </apex:pageBlockSectionItem>
+                 <apex:outputField rendered="{!isStep3}" value="{!referringOpp.Description}" />
+        
+              </apex:pageBlockSection>
+        
+              <!--  ********************   Referral Table ********************************* 
+                 title="{!IF(isStep1,'Select Who This '+partnerType+' Goes To',IF(isStep2,'Please verify the following',IF(isStep3,'Referral Submission Complete','')))}"
+                                    -->
+              <apex:pageBlockSection collapsible="false" id="ReferralSection" title="{!referralTableTitle}" columns="1">
+              
+                 <apex:outputPanel rendered="{!AND(isTelemarketing,isStep2)}">
+                    <apex:outputText rendered="{!defReferral.CreateSellerTask__c}" value="A task will be created for the following" />
+                    <apex:outputText rendered="{!NOT(defReferral.CreateSellerTask__c)}" value="An event will be created for {!apptDescription} for the following" />
+                 </apex:outputPanel>
+                 
+                  <div style="font-size:8px; text-align:right;">Partner Type:{!partnerType},  NSS Source:{!nssSource} </div>
+                 <apex:pageBlockTable id="ReferralTable" value="{!displayList}" var="rec">
+                    <apex:column >
+                       <apex:facet name="header">Selected</apex:facet>
+                       <apex:inputCheckbox disabled="{!NOT(isStep1)}" value="{!rec.selected}" >
+                          <apex:actionSupport event="onclick" action="{!markSelected}" rerender="ReferralBlock" status="changeSelectionStatus" />
+                       </apex:inputCheckbox>
+                    </apex:column>
+                  
+                    <apex:column rendered="{!selectedHasAncillary}">
+                       <apex:facet name="header">Ancillary?</apex:facet>
+                       <apex:inputCheckbox rendered="{!rec.selected}" disabled="{!NOT(isStep1)}" value="{!rec.isAncillary}" >
+                       </apex:inputCheckbox>
+                    </apex:column>
+                     
+                     <apex:column rendered="{!AND(isTelemarketing,NOT(isReferringRefContact))}">
+                        <apex:facet name="header">Warm Transfer</apex:facet>
+                        <apex:inputCheckbox rendered="{!rec.selected}" value="{!rec.ref.Warm_Transfer__c}">
+                          <apex:actionSupport event="onclick" action="{!warmTransferChanged}" rerender="ReferralBlock" status="changeSelectionStatus" />
+                        </apex:inputCheckbox>   
+                    </apex:column>
+        
+                    <apex:column >
+                       <apex:facet name="header">Partner Type</apex:facet>
+                       <apex:outputText style="white-space:nowrap;" rendered="{!OR(isStep2,rec.lockTitle)}" value="{!rec.displayName}"/>
+                       <!-- <apex:inputField rendered="{!AND(isStep1,NOT(rec.lockTitle))}" value="{!rec.ref.Name}"/>  -->
+                       <apex:selectList rendered="{!AND(isStep1,NOT(rec.lockTitle))}" value="{!rec.selectedPartnerType}" title="Partner Type" size="1">
+                          <apex:selectOptions value="{!partnerOptions}"/>
+                          <apex:actionSupport event="onchange" action="{!setPartnerOption}" status="changePartnerTypeStatus" rerender="ReferralSection" />
+                       </apex:selectList>
+                    </apex:column>
+                   
+                    <apex:column rendered="{!AND(isStep2,NOT(isTelemarketing),NOT(isRefExternal),NOT(isIntSell))}" >
+                       <apex:facet name="header">Comm Product(s) (select multiple products by holding down the CTRL key)</apex:facet>               
+                       <apex:selectList rendered="{!AND(isStep2,rec.selected)}" multiselect="true" value="{!rec.selectedCommProducts}" title="Select the Commission Product" size="4" id="commProductSelectField">
+                           <apex:selectOptions value="{!rec.commProductOptions}"/>
+                       </apex:selectList>
+                    </apex:column>
+                    
+                    <apex:column rendered="{!AND(isStep3,NOT(isTelemarketing),NOT(isRefExternal),NOT(isIntSell))}" >
+                        <apex:facet name="header">Commissionable Products</apex:facet>
+                        <apex:outputField value="{!rec.ref.Commission_Products__c}" />
+                    </apex:column> 
+                    <apex:column rendered="{!AND(isStep3,NOT(isTelemarketing),NOT(isRefExternal),NOT(isIntSell))}" >
+                        <apex:facet name="header">Product Referred</apex:facet>
+                        <apex:outputField value="{!rec.ref.ProductReferred__c}" />
+                    </apex:column>
+                                  
+                    <apex:column rendered="{!hasProductsByRefPartner}">
+                       <apex:facet name="header">Product</apex:facet>
+                       <apex:selectList rendered="{!AND(isStep1,rec.selected,rec.hasMultipleProducts)}" value="{!rec.ref.ProductReferred__c}" title="Select the Product" size="1" id="productSelectField">
+                          <apex:selectOptions value="{!rec.productOptions}"/>
+                       </apex:selectList>
+                       <apex:outputText rendered="{!OR(NOT(isStep1),NOT(rec.selected),rec.hasSingleProduct)}" value="{!rec.ref.ProductReferred__c}" />
+                    </apex:column>
+                    
+                    <apex:column >
+                       <apex:facet name="header">{!ctctColumnHeader}</apex:facet>
+                       <apex:selectList rendered="{!AND(isStep1,rec.selected,OR(isReferringContact,isReferringAccount))}" value="{!rec.ref.SourceContact__c}" title="Prospect-Client Contact" size="1">
+                          <apex:selectOptions value="{!ctctOptions}"/>
+                       </apex:selectList>
+                       <apex:selectList rendered="{!AND(isStep1,rec.selected,isReferringLead)}" value="{!rec.ref.SourceLead__c}" title="Prospect-Client Contact" size="1">
+                          <apex:selectOptions value="{!ctctOptions}"/>
+                       </apex:selectList>
+                       <apex:selectList rendered="{!AND(isStep1,rec.selected,isReferringRefContact)}" value="{!rec.ref.Referral_Contact__c}" title="Referral Contact" size="1">
+                          <apex:selectOptions value="{!ctctOptions}"/>
+                       </apex:selectList>
+        
+                       <apex:outputField rendered="{!OR(isStep3,AND(OR(isReferringContact,isReferringAccount),OR(AND(isStep1,OR(NOT(rec.selected))),isStep2)))}" style="white-space:nowrap;" value="{!rec.ref.SourceContact__c}" />
+                       <apex:outputField rendered="{!AND(isReferringLead,OR(AND(isStep1,OR(NOT(rec.selected))),isStep2))}" style="white-space:nowrap;" value="{!rec.ref.SourceLead__c}" />
+                       <apex:outputField rendered="{!AND(isReferringRefContact,OR(AND(isStep1,OR(NOT(rec.selected))),isStep2))}" style="white-space:nowrap;" value="{!rec.ref.Referral_Contact__c}" />
+                    </apex:column>
+        
+                    <apex:column >
+                       <apex:facet name="header">Refer To</apex:facet>
+                       <apex:inputField rendered="{!AND(isStep1,rec.referToEnterable,rec.referToUser)}" value="{!rec.ref.User__c}" >
+                          <apex:actionSupport event="onchange" action="{!changeReferTo}" rerender="ReferralBlock" status="changeSelectionStatus" />
+                       </apex:inputField>
+                       <apex:inputField rendered="{!AND(isStep1,rec.referToEnterable,rec.referToContact)}" value="{!rec.ref.Contact__c}" >
+                          <apex:actionSupport event="onchange" action="{!changeContactReferTo}" rerender="ReferralBlock" status="changeSelectionStatus" />
+                       </apex:inputField>
+                       <apex:inputField rendered="{!AND(isStep1,rec.referToEnterable,rec.referToRefContact)}" value="{!rec.ref.Referral_Contact__c}" />
+                       <apex:outputText rendered="{!rec.isOpenTerritory}" value="Open Territory" />
+                       <apex:outputText rendered="{!rec.isUnknownTerritory}" value="Unknown Territory" />
+                       <apex:outputText rendered="{!rec.referToQueue}" value="{!rec.refPartner.QueueName__c}" />
+        
+                       <apex:outputField rendered="{!AND(OR(AND(isStep1,NOT(rec.referToEnterable)),isStep2,isStep3),rec.referToUser)}" style="white-space:nowrap;" value="{!rec.ref.User__c}" />
+                       <apex:outputField rendered="{!AND(OR(AND(isStep1,NOT(rec.referToEnterable)),isStep2,isStep3),rec.referToContact)}" style="white-space:nowrap;" value="{!rec.ref.Contact__c}" />
+                       <apex:outputField rendered="{!AND(OR(AND(isStep1,NOT(rec.referToEnterable)),isStep2,isStep3),rec.referToRefContact)}" style="white-space:nowrap;" value="{!rec.ref.Referral_Contact__c}" />
+                       <!--<apex:outputText rendered="{!rec.ref.AssignedToDSA__c}" value="(DSA)" />-->
+                        <apex:outputText rendered="{!rec.ref.AssignedToDSA__c}" value="(DSM)" />
+                       <apex:outputText rendered="{!rec.refUserIsVirtual}" value="(Virtual Sales)" />
+                       <apex:outputText rendered="{!rec.refUserIsRSR}" value="(RSR)" />
+                       <apex:outputText rendered="{!rec.refUserIsPEOC}" value="(PEO Centric)" />
+                       <apex:outputText rendered="{!AND(NOT(rec.referToQueue),rec.hasQueueName)}" value="({!rec.refPartner.QueueName__c})" />
+                    </apex:column>
+                    
+                    <apex:column rendered="{!AND(OR(isStep2,isStep3),showCompanyName)}" >
+                       <apex:facet name="header">Refer To Account</apex:facet>
+                       <apex:outputField value="{!rec.refCtct.Referral_Account__c}" />
+                    </apex:column>
+                    
+                    <apex:column rendered="{!OR(isStep2,isStep3)}">
+                       <apex:facet name="header">Referral Generated</apex:facet>
+                       <apex:outputText value="{!rec.referralType}" />
+                    </apex:column>
+        
+                    <apex:column rendered="{!isStep3}">
+                       <apex:facet name="header">Submission Status</apex:facet>
+                       <apex:outputField value="{!rec.ref.ReferralNotes__c}" />
+                    </apex:column>
+        
+                    <apex:column rendered="{!OR(isStep1,isStep2)}">
+                       <apex:facet name="header">Notes</apex:facet>
+                       <apex:inputTextArea rendered="{!AND(isStep1,rec.lockTitle,rec.selected)}" rows="2" cols="80" value="{!rec.ref.Notes__c}" />
+                       <apex:outputField rendered="{!NOT(isStep1)}" value="{!rec.ref.Notes__c}" />
+                    </apex:column>
+                    
+                 </apex:pageBlockTable>
+                 <apex:commandLink id="moreRefPartners" rendered="{!AND(isStep1,hasExtendedList,hasMoreRefPartners)}" action="{!changeRefPartnerDisplay}" value="Show All Partners>>" rerender="ReferralSection" immediate="true"/>
+                 <apex:commandLink id="lessRefPartners" rendered="{!AND(isStep1,hasExtendedList,NOT(hasMoreRefPartners))}" action="{!changeRefPartnerDisplay}" value="Show Less>>" rerender="ReferralSection" immediate="true"/>
+                 
+                 <apex:outputPanel rendered="{!hasOpenTerritory}">
+                    <apex:outputText value="An Open Territory will be assigned to the DSA of that district." />
+                    <br/>
+                 </apex:outputPanel>                  
+                                      
+                 <apex:pageBlockSectionItem rendered="{!AND(isStep1,isTelemarketing)}">
+                    <apex:outputLabel value="{!$Label.NSS_Products_of_Interest_Label}" />
+                    <apex:outputPanel >
+                       <apex:inputField rendered="{!isReferringLead}" value="{!primaryLead.Products__c}" />
+                       <apex:inputField rendered="{!OR(isReferringContact, isReferringAccount)}" value="{!ctct.Products__c}" />
+                    </apex:outputPanel>
+                 </apex:pageBlockSectionItem>
+               <!-- Removing per Jessica Hellbusch Lightning case - 30022784  
+                 <apex:outputPanel rendered="{!AND(isStep1,NOT(isTelemarketing))}">
+                    <apex:commandButton value="Add More Referrals" action="{!addMore}" rerender="ReferralSection"/>
+                    <br/>
+                 </apex:outputPanel>
+-->
+                 <apex:outputPanel >
+                 <apex:actionStatus startText="Setting Partner Type..." id="changePartnerTypeStatus"/>
+                 <apex:actionStatus startText="Changing Selections..." id="changeSelectionStatus"/>
+                 </apex:outputPanel>
+                 
+        
+              </apex:pageBlockSection>
+        
+              <!-- ************************  Calendar Section *********************************** -->
+              <apex:pageBlockSection rendered="{!AND(isStep1,allowActivity,NOT(isIntSell))}" columns="2" id="taskSelectionSection">
+                <!--  need to get rid of this one
+                 <apex:pageBlockSectionItem rendered="false">
+                    <apex:outputLabel value="This is a Task" />
+                    <apex:inputCheckbox value="{!defReferral.CreateSellerTask__c}" >
+                       <apex:actionSupport event="onclick" rerender="calendarSection,taskSelectionSection" action="{!changeReferTo}" />
+                    </apex:inputCheckbox>
+                 </apex:pageBlockSectionItem>
+                  -->
+
+                 <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Create Seller Activity? " />
+                    <apex:outputPanel >
+                      <apex:selectList rendered="{!NOT(isWarmTransfer)}" value="{!activityOption}" size="1" title="Create Seller Activity?" id="sellerActivityField">
+                         <apex:selectOptions value="{!activityOptions}"/>
+                         <apex:actionSupport event="onchange" rerender="calendarSection,taskSelectionSection" action="{!changeReferTo}" status="changeActivityStatus" />
+                      </apex:selectList>
+                      <apex:outputText rendered="{!isWarmTransfer}" value="{!activityOption}" />
+                      <apex:actionStatus startText="Changing Selections..." id="changeActivityStatus"/>
+                    </apex:outputPanel>
+                  </apex:pageBlockSectionItem>
+                  
+                  
+                  
+                 <apex:pageBlockSectionItem rendered="{!AND(allowActivity, defReferral.CreateSellerTask__c)}">
+                  <apex:outputLabel value="Activity Date" />
+                    <apex:inputField value="{!defReferral.ActivityDate__c}" id="taskDateField" />
+                 </apex:pageBlockSectionItem>
+        
+                 <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Number of Employees"/>
+                    <apex:outputText value="{!nbrOfEmployees}" />
+                 </apex:pageBlockSectionItem>
+                  
+                 <apex:inputField value="{!defReferral.EmailReminderOptOut__c}" />
+                  
+                 <apex:pageBlockSectionItem >
+                     <apex:outputLabel value="Set Appt w/Decision Maker" />
+                    <apex:inputCheckbox value="{!dm}" />
+                 </apex:pageBlockSectionItem>
+    
+                 <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Multiple Locations Identified" />
+                    <apex:inputCheckbox value="{!multipleLocs}" />
+                 </apex:pageBlockSectionItem>
+                  
+              </apex:pageBlockSection>
+
+              
+              <apex:pageBlockSection rendered="{!AND(isStep1,allowActivity)}" columns="1" id="calendarSection">
+                 <apex:outputPanel rendered="{!creatingEvent}" id="calendarPanel">
+                    <apex:outputLabel value="Meeting Date"/> &nbsp;
+                    <apex:inputField value="{!defReferral.ActivityDate__c}" id="meetingDateField" /> &nbsp;&nbsp;
+              
+                    <apex:outputLabel value="Meeting Time"/> &nbsp;
+                    <apex:selectList value="{!selectedTime}" title="Select the Meeting Start Time" size="1" id="meetingStartTimeField">
+                       <apex:selectOptions value="{!timeOptions}"/>
+                    </apex:selectList>
+                    &nbsp;
+                    <apex:outputText value="All times are in the {!defReferral.TimeZoneAbbrev__c} Time Zone" />
+                    <br/><br/>
+                 </apex:outputPanel>
+                 <apex:outputPanel rendered="{!AND(creatingEvent,hasCalendar)}">
+                    <apex:commandLink value="<-- Previous Week" action="{!gotoPrevWeek}" rerender="ReferralBlock" status="changeCalendarDateStatus"/>
+                    &nbsp;
+                    Week of {!week.mondayDateOnly}
+                    &nbsp;
+                    <apex:commandLink value="Next Week -->" action="{!gotoNextWeek}" rerender="ReferralBlock" status="changeCalendarDateStatus"/>
+                    &nbsp;
+                    <apex:actionStatus startText="Changing calendar dates..." id="changeCalendarDateStatus"/>
+                    
+        
+                    <br/><br/>
+                    <c:RepCalendar calDay="{!week.dayMonday}" />
+                    <br/>
+                    <c:RepCalendar calDay="{!week.dayTuesday}" />
+                    <br/>
+                    <c:RepCalendar calDay="{!week.dayWednesday}" />
+                    <br/>
+                    <c:RepCalendar calDay="{!week.dayThursday}" />
+                    <br/>
+                    <c:RepCalendar calDay="{!week.dayFriday}" />
+                 </apex:outputPanel>
+              
+              
+              </apex:pageBlockSection>
+           </apex:pageBlock>
+        </apex:outputPanel>
+<!-----------------------------Above this lines is the desktop Visualforce page. Below it is the Salesforce1 Bootstrap-SF1 Page---------------------->
+        <apex:outputPanel id="SF1" rendered="{!$User.UIThemeDisplayed == 'Theme4t'}">
+            <apex:stylesheet value="{!URLFOR($Resource.Salesforce1Bootstrap, 'bootstrap-sf1-010-beta15/dist/css/bootstrap-namespaced.css')}"/>
+            <apex:includeScript value="{!URLFOR($Resource.jQuery_Mobile,'jquery-1.11.2.min.js')}"/>
+            <meta name="viewport" content="width=device-width, user-scalable=no" />
+            <script>
+                  var found = $('span[id$=SF1]').html();
+                  console.log('Test!'+found);
+                  $(window).on('touchmove scroll', scrollHandler );
+            //$(window).on('onscroll', scrollEnd );
+                  var timer;
+                  function scrollHandler( event ){ 
+                      var $scrollingDiv = $('div[id$=scrollingDiv]');
+                      $scrollingDiv.stop().hide(); //.removeClass('shown').addClass('hidden');
+                      clearTimeout(timer);
+                      timer = window.setTimeout(scrollEnd, 1000);
+                  }
+                  function scrollEnd( event ){ 
+                      var $scrollingDiv = $('div[id$=scrollingDiv]');
+                      $scrollingDiv.fadeIn(); //removeClass('hidden').addClass('shown').slideUp().fadeIn();     
+                  }
+            </script>  
+            <style>
+                .lookupInput input{
+                    width:60%;
+                    border: none !important;
+                    background: none !important;
+                }
+                .lookupInput img {
+                    float: right;
+                }
+                .errorMsg{
+                    margin: 5px 5px 5px 5px;
+                }
+                .mobileMsg{
+                    display:none;
+                    margin: 5px 5px 5px 5px;
+                    padding: 5px 5px 5px 5px;
+                    font-weight: bold;
+                    background-color: white;
+                    border: 2px solid red;
+                    border-radius: 5px;
+                }
+                .hidden{
+                    width:100%; 
+                    position:fixed; 
+                    z-index:500; 
+                    Bottom:-250px; 
+                    right:0px; 
+                    left:0px"
+                }
+                .shown{
+                    width:100%; 
+                    position:fixed; 
+                    z-index:500; 
+                    Bottom:10px; 
+                    right:0px; 
+                    left:0px"
+                }
+
+            </style>
+            <div class="bootstrap-sf1" id="bootstrap-sf1" style="padding: 10px;">
+                <div class="page-header page-header-anchor context-contact">
+                    <h1>Paychex Referrals</h1>
+                </div>
+                <h2 class="section-head" >{!sectionHeaderSubTitle}</h2> 
+                <apex:actionStatus id="spinnerSF1">
+                    <apex:facet name="start">
+                        <apex:outputPanel id="SpinnerPanelSF1">
+                            <div id="statusSpinnerSF1">
+                                <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+                                    &nbsp;
+                                </div>
+                                <div style="position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin-top: 30% ;Text-align:center">
+                                    <div style="display: inline-block; padding: 2px; background-color: #fff; width: 125px;">
+                                        <img src="/img/loading.gif" style="float: left; margin: 8px;" />
+                                        <span style="display: inline-block; padding: 10px 0px;">Please Wait...</span>
+                                    </div>
+                                </div>
+                           </div>
+                       </apex:outputPanel>
+                    </apex:facet>
+                </apex:actionStatus>
+           <apex:outputPanel rendered="{!isError}" id="ErrorBlockSF1" >
+              <apex:outputPanel rendered="{!AND(idIsValid,NOT(isSalesRep))}" id="ErrorSelectionSectionSF1" >
+                      
+                     <div class="form-group">
+                        <label class="control-label" for="SelectSalesOrg">Do you wish to enter a referral for someone else, or are you entering it for yourself?</label>
+                        <apex:selectList styleClass="form-control"  value="{!nonRepOption}" title="Select a Sales Org" size="1" id="SelectSalesOrg">
+                           <apex:selectOptions value="{!nonRepOptions}"/>
+                           <apex:actionSupport event="onchange" action="{!nonRepOptionSelected}" status="spinnerSF1"/>
+                        </apex:selectList>
+                     </div>
+                     
+                      <apex:outputpanel rendered="{!nonRepOption=='Someone Else'}">
+                          <div class="form-group">
+                            <label class="control-label" for="SelectSalesRep">Select a Sales Rep</label>
+                            <div class="form-control">
+                                <apex:inputField required="true" value="{!tempRef.User__c}" id="SelectSalesRep"/>
+                            </div>
+                          </div>
+                      </apex:outputpanel>
+            
+                      <apex:outputpanel rendered="{!AND(nonRepOption=='Myself',hasSalesOrgOptions)}" >
+                           <div class="form-group">
+                                <label class="control-label" for="SetSalesOrg">Select a Sales Org</label>
+                                <apex:selectList styleClass="form-control" value="{!salesOrg}" title="Select a Sales Org" size="1" id="setSalesOrg">
+                                   <apex:selectOptions value="{!salesOrgOptions}"/>
+                                   <apex:actionSupport event="onchange" action="{!setSalesOrg}" status="spinnerSF1" oncomplete="bindListener();" />
+                                </apex:selectList>
+                           </div>
+                      </apex:outputpanel>
+                     
+                     <apex:commandButton rendered="{!nonRepOption=='Someone Else'}" value="Use This Rep" immediate="false" action="{!setReferralUser}" status="spinnerSF1" />
+                     
+                     <apex:commandButton rendered="{!NOT(isPopup)}" value="Cancel" immediate="true" action="{!cancel}" />
+                     <apex:commandButton rendered="{!isPopup}" value="Cancel" onClick="window.top.close(); return false;" />
+               </apex:outputPanel>
+           </apex:outputPanel>
+           
+                   
+
+           <!-- *******************   Main block to select partners we are referring to ************************ -->
+           <apex:outputPanel rendered="{!NOT(isError)}" id="ReferralBlockSF1" >
+               <apex:pageMessages />
+               <div id="scrollingDiv" class="shown" >
+                   <apex:panelGrid id="productButtons" style="width:100%; text-align:center;" >
+                     <apex:outputPanel >                      
+                         <apex:commandLink styleClass="btn btn-sm btn-default" status="spinnerSF1" rendered="{!NOT(isStep3)}" id="nextButtonActive" action="{!nextStep}" value="{!nextStepButtonTitle}" rerender="ReferralBlockSF1"/>
+                         <apex:commandLink styleClass="btn btn-sm btn-default" status="spinnerSF1" rendered="{!AND(NOT(isPopup),isStep3)}" id="nextButtonStep3" action="{!nextStep}" value="{!nextStepButtonTitle}" immediate="true"/>
+                         <apex:commandLink styleClass="btn btn-sm btn-default" status="spinnerSF1" rendered="{!AND(NOT(isTelemarketing),isStep3)}" id="lastButtonActive" action="{!nextStepOpty}" value="Complete-Return to My Opportunity" immediate="true"/>
+                         <apex:commandLink styleClass="btn btn-sm btn-default" status="spinnerSF1" rendered="{!isStep2}" id="prevButtonActive" action="{!previousStep}" value="Previous" rerender="ReferralBlockSF1"/>
+                         <apex:commandLink styleClass="btn btn-sm btn-default" status="spinnerSF1" rendered="{!AND(isPopup,isStep3)}" value="Complete-Close Window" onClick="window.top.close(); return false;" />                 
+                         <apex:commandLink styleClass="btn btn-sm btn-default" status="spinnerSF1" rendered="{!AND(NOT(isPopup),NOT(isStep3))}" value="Cancel" immediate="true" action="{!cancel}" />
+                         <apex:commandLink styleClass="btn btn-sm btn-default" status="spinnerSF1" rendered="{!AND(NOT(isStep3),isPopup)}" value="Cancel" onClick="window.top.close(); return false;" /> 
+                         <apex:commandLink rendered="{!AND(isStep1,NOT(isTelemarketing))}" styleClass="btn btn-sm btn-default" value="Add More Referrals" action="{!addMore}" rerender="ReferralSection" status="spinnerSF1" />
+                     </apex:outputPanel>
+                  </apex:panelGrid>
+              </div>
+              <!-- **************   Referral Type (internal vs external) ******************************* -->
+              
+
+              <apex:outputPanel id="nssRoleSectionSf1" rendered="{!allowRoleChange}">
+                      <div class="form-group">
+                          <label class="control-label" for="roleOptionsSf1">Select your Role</label>
+                          <apex:selectList styleClass="form-control" value="{!nssSource}" size="1" id="roleOptionsSf1">
+                              <apex:selectOptions value="{!roleOptions}"/>
+                              <apex:actionSupport event="onchange" action="{!roleChanged}" status="changeRoleStatusSf1" rerender="ReferralBlock" />
+                          </apex:selectList>
+                      </div>  
+                 <apex:actionStatus startText="Changing Role..." id="changeRoleStatusSf1"/>
+              </apex:outputPanel>
+
+              
+              <apex:outputPanel id="referralTypeSection" rendered="{!showReferralOptions}">
+                 <apex:outputPanel rendered="{!NOT(isStep1)}">
+                      <div class="form-group">
+                          <label class="control-label" for="partnerType">Type of Referral</label>
+                          <div class="form-control">
+                              <apex:outputText value="{!partnerType}" id="partnerType"/>
+                          </div>
+                      </div>  
+                 </apex:outputPanel>
+                 
+                 <apex:outputPanel rendered="{!isStep1}" >
+                       <div class="form-group">
+                          <label class="control-label" for="referralOptions">Select the Type of Referral</label>
+                          <apex:selectList styleClass="form-control" value="{!partnerType}" size="1" id="referralOptions">
+                              <apex:selectOptions value="{!referralOptions}"/>
+                              <apex:actionSupport event="onchange" action="{!setReferralOption}" status="changeRefTypeStatus" rerender="ReferralBlockSF1" />
+                          </apex:selectList>
+                      </div>
+                 </apex:outputPanel>
+                 <apex:actionStatus startText="Changing Referral Type..." id="changeRefTypeStatus"/>
+              </apex:outputPanel>
+              
+              <apex:outputPanel id="referralSourceSection" rendered="{!AND(isStep1,hasReferralSource)}">
+                 <apex:outputPanel >
+                     <div class="form-group">
+                         <label class="control-label" for="referralSourceOptions">How did the lead hear about Paychex?</label>
+                         <apex:selectList styleClass="form-control" value="{!selectedReferralSourceOption}" size="1" id="referralSourceOptions">
+                             <apex:selectOptions value="{!referralSourceOptions}"/>
+                             <apex:actionSupport event="onchange" action="{!referralSourceChanged}" status="changeRefSourceOptionStatus" rerender="ReferralBlockSF1" />
+                         </apex:selectList>
+                     </div>
+                 </apex:outputPanel>
+                 <apex:actionStatus startText="Please Wait-Changing Referral Source option..." id="changeRefSourceOptionStatus"/>  
+                 <apex:outputPanel rendered="{!isTelemarketing}">
+                     <div class="form-group">
+                         <label class="control-label" for="defRefCampaign">Campaign</label>
+                         <div class="form-control">
+                             <apex:inputField required="{!isNsrInbound}" value="{!defReferral.Campaign__c}" id="defRefCampaign" />
+                         </div>
+                     </div>                     
+                 </apex:outputPanel>
+              </apex:outputPanel>
+               
+               <!-- ******************    Referring Opportunity  ************************** -->
+               
+              <apex:outputPanel rendered="{!createReferringOpp}" title="Referring Opportunity Information">
+                  <section class="section">
+                      <h2 class="section-head">
+                        Referring Opportunity Information    
+                      </h2>
+                      <hr/>
+                      <div class="form-group">
+                          <label class="control-label">LeadSource </label>                   
+                          <apex:inputField styleClass="form-control" rendered="{!NOT(isStep3)}" value="{!referringOpp.LeadSource}">
+                              <!-- line break -->
+                              <apex:outputLabel style="font-weight: bold;color: #f00;"><p>Note: Choose the Lead Source that best fits the way that you as the referring rep generated this lead. 
+                                  This is not the Lead Source for the Selling Rep.</p></apex:outputLabel>
+                          </apex:inputField>
+                          <apex:outputField styleClass="form-control" rendered="{!isStep3}" value="{!referringOpp.LeadSource}" />
+                      </div>
+                      <div class="form-group">
+                          <label class="control-label">Employees Paid Per Payroll </label>
+                          <apex:inputField styleClass="form-control" rendered="{!NOT(isStep3)}" value="{!referringOpp.Employees_Paid_Per_Payroll__c}" />
+                          <apex:outputField styleClass="form-control" rendered="{!isStep3}" value="{!referringOpp.Employees_Paid_Per_Payroll__c}" />
+                      </div> 
+                      <!-- line break -->
+                      <div class="form-group">
+                          <label class="control-label">Level 2 </label>
+                          <div id="selectList">
+                              <apex:inputField styleClass="form-control" rendered="{!NOT(isStep3)}" value="{!referringOpp.Level_2__c}" />
+                              <apex:outputField styleClass="form-control" rendered="{!isStep3}" value="{!referringOpp.Level_2__c}" />
+                          </div>
+                      </div> 
+                      <div class="form-group">
+                          <label class="control-label">Referral Contact </label>
+                          <div class="form-control">
+                              <apex:inputField rendered="{!NOT(isStep3)}" value="{!referringOpp.Referral_Contact__c}" />
+                              <apex:outputField rendered="{!isStep3}" value="{!referringOpp.Referral_Contact__c}" />
+                          </div>
+                      </div>         
+                      <!-- line break -->
+                      <div class="form-group">
+                          <label class="control-label">Client Referral </label>
+                          <div class="form-control">
+                              <apex:inputField rendered="{!NOT(isStep3)}" value="{!referringOpp.Client_Referral__c}" />
+                              <apex:outputField rendered="{!isStep3}" value="{!referringOpp.Client_Referral__c}" />
+                          </div>
+                      </div>                   
+                      <div class="form-group">
+                          <label class="control-label">Referral Account </label>
+                          <div class="form-control">
+                              <apex:inputField rendered="{!NOT(isStep3)}" value="{!referringOpp.Referral_Account__c}" />
+                              <apex:outputField rendered="{!isStep3}" value="{!referringOpp.Referral_Account__c}" />
+                          </div>
+                      </div>                 
+                      <div class="form-group">
+                          <label class="control-label">Description </label>
+                          <apex:inputTextArea styleClass="form-control" rendered="{!NOT(isStep3)}" value="{!referringOpp.Description}"/>
+                          <apex:outputField styleClass="form-control" rendered="{!isStep3}" value="{!referringOpp.Description}" />
+                      </div>
+                    </section>
+                  <script>
+                  // Mutation object
+                  var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+                  
+                  // Defining observer 
+                  var observer = new MutationObserver(function(mutations) { 
+                      // If the myListClass was removed from the list - re-assign it
+                      if(!jQuery('#selectList select').first().hasClass('form-control')){
+                          jQuery('#selectList select').first().addClass('form-control');
+                      }
+                      if($('.errorMsg').length){
+                          //$('.mobileMsg').html($('.errorMsg:first').text()).show();
+                        $('.errorMsg').parent().css( "border-color", "red" ).addClass('redBorder');
+                        $('.errorMsg').parents('.card,.container').css( "border-color", "red" ).addClass('redBorder');
+                      }
+                      else{
+                          //$('.mobileMsg').empty().hide();
+                        $('.redBorder').css( "border-color", "black" ).removeClass('redBorder');
+                      }
+                  });
+                  
+                  //var myNode = document.querySelector('#selectList'); 
+                  var config = { attributes: true, childList: true, subtree: true};
+
+                  // Assigning observer to the dependent picklist
+                  observer.observe($('#selectList')[0], config);
+                  
+                  // Assigning observer to errorMsg class
+                  observer.observe($('.errorMsg')[0], config);
+                  
+                  </script> 
+        
+              </apex:outputPanel>
+
+              <apex:outputPanel id="ReferralSection" title="{!referralTableTitle}">
+                  <section>
+                      <h2>{!referralTableTitle}</h2> 
+                      <hr/>
+                      <div style="font-size:8px; text-align:right;">Partner Type:{!partnerType},  NSS Source:{!nssSource} </div>
+                      <apex:outputPanel >
+                          <div >
+                              <apex:repeat value="{!displayList}" var="rec">
+                                  <div class="card container">
+                                      <div class="card-heading">
+                                          <apex:inputCheckbox disabled="{!NOT(isStep1)}" value="{!rec.selected}" >
+                                              <apex:actionSupport event="onclick" action="{!markSelected}" rerender="ReferralBlockSF1" status="spinnerSF1" />
+                                          </apex:inputCheckbox>
+                                      </div>
+                                      <ul class="card-detail col-xs-12" style="list-style-type:none">
+                                          <apex:outputPanel rendered="{!AND(rec.selected, selectedHasAncillary)}">
+                                              <li> 
+                                                  <div class="form-group col-xs-12">
+                                                      <label class="col-xs-6">Is Ancillary?</label>
+                                                      <apex:inputCheckbox disabled="{!NOT(isStep1)}" value="{!rec.isAncillary}" >
+                                                      </apex:inputCheckbox>
+                                                  </div>
+                                              </li>
+                                          </apex:outputPanel>
+
+                                          <apex:outputPanel rendered="{!AND(rec.selected, isTelemarketing)}">
+                                              <li> 
+                                                  <div class="form-group col-xs-12">
+                                                      <label class="col-xs-6">Warm Transfer?</label>
+                                                      <apex:inputCheckbox disabled="{!NOT(isStep1)}" value="{!rec.ref.Warm_Transfer__c}" >
+                                                         <apex:actionSupport event="onclick" action="{!warmTransferChanged}" rerender="ReferralBlockSF1" status="changeSelectionStatus" />
+                                                      </apex:inputCheckbox>
+                                                  </div>
+                                              </li>
+                                          </apex:outputPanel>
+
+                                         <apex:outputPanel >
+                                              <li>
+                                                  <div class="form-group col-xs-12">
+                                                      <label class="col-xs-5" >Partner Type</label>
+                                                      <apex:outputText styleClass="col-xs-7" rendered="{!OR(isStep2,rec.lockTitle)}" value="{!rec.displayName}" />
+                                                      <apex:selectList styleClass="form-control" rendered="{!AND(isStep1,NOT(rec.lockTitle))}" value="{!rec.selectedPartnerType}" size="1">
+                                                          <apex:selectOptions value="{!partnerOptions}"/>
+                                                          <apex:actionSupport event="onchange" action="{!setPartnerOption}" status="spinnerSF1" rerender="ReferralSection" />
+                                                      </apex:selectList>
+                                                  </div>
+                                              </li>
+                                          </apex:outputPanel>
+                                          <apex:outputPanel rendered="{!AND(isStep3,NOT(isTelemarketing),NOT(isRefExternal))}" >
+                                              <li>
+                                                  <div class="form-group col-xs-12">
+                                                      <label class="col-xs-5">Commissionable Products</label>
+                                                      <div class="col-xs-7">
+                                                        <apex:outputField styleClass="col-xs-7" value="{!rec.ref.Commission_Products__c}" />
+                                                      </div>
+                                                  </div>
+                                              </li>
+                                          </apex:outputPanel>
+                                          <apex:outputPanel rendered="{!AND(isStep3,NOT(isTelemarketing),NOT(isRefExternal))}">
+                                              <li>
+                                                  <div class="form-group col-xs-12">
+                                                      <label class="col-xs-5">Product Referred</label>
+                                                      <div class="col-xs-7">
+                                                        <apex:outputField value="{!rec.ref.ProductReferred__c}"/>
+                                                      </div>
+                                                  </div>
+                                              </li>
+                                          </apex:outputPanel>
+                                          <apex:outputPanel rendered="{!hasProductsByRefPartner}">
+                                              <li>
+                                                  <div class="form-group col-xs-12">
+                                                      <label class="col-xs-5">Product</label>
+                                                      <apex:selectList styleClass="form-control" rendered="{!AND(isStep1,rec.selected,rec.hasMultipleProducts)}" value="{!rec.ref.ProductReferred__c}" size="1" id="productSelectField">
+                                                          <apex:selectOptions value="{!rec.productOptions}"/>
+                                                      </apex:selectList>
+                                                      <apex:outputText styleClass="col-xs-7" rendered="{!OR(NOT(isStep1),NOT(rec.selected),rec.hasSingleProduct)}" value="{!rec.ref.ProductReferred__c}" />
+                                                  </div>
+                                              </li>
+                                          </apex:outputPanel>
+                                          <apex:outputPanel >
+                                              <li>
+                                                  <div class="form-group col-xs-12">
+                                                      <label class="col-xs-5">P-C Contact</label>
+                                                      <apex:selectList styleClass="form-control" rendered="{!AND(isStep1,rec.selected,OR(isReferringContact,isReferringAccount))}" value="{!rec.ref.SourceContact__c}" size="1">
+                                                          <apex:selectOptions value="{!ctctOptions}"/>
+                                                      </apex:selectList>
+                                                      <apex:selectList styleClass="form-control" rendered="{!AND(isStep1,rec.selected,isReferringLead)}" value="{!rec.ref.SourceLead__c}" size="1">
+                                                          <apex:selectOptions value="{!ctctOptions}"/>
+                                                      </apex:selectList>
+                                                      <apex:selectList styleClass="form-control" rendered="{!AND(isStep1,rec.selected,isReferringRefContact)}" value="{!rec.ref.Referral_Contact__c}" size="1">
+                                                          <apex:selectOptions value="{!ctctOptions}"/>
+                                                      </apex:selectList>
+                                                      <div class="col-xs-7">
+                                                          <apex:outputField rendered="{!OR(isStep3,AND(OR(isReferringContact,isReferringAccount),OR(AND(isStep1,OR(NOT(rec.selected))),isStep2)))}" style="white-space:normal;" value="{!rec.ref.SourceContact__c}" />
+                                                          <apex:outputField rendered="{!AND(isReferringLead,OR(AND(isStep1,OR(NOT(rec.selected))),isStep2))}" style="white-space:normal;" value="{!rec.ref.SourceLead__c}" />
+                                                          <apex:outputField rendered="{!AND(isReferringRefContact,OR(AND(isStep1,OR(NOT(rec.selected))),isStep2))}" style="white-space:normal;" value="{!rec.ref.Referral_Contact__c}" />
+                                                      </div>
+                                                  </div>
+                                              </li>
+                                          </apex:outputPanel>
+                                          <apex:outputPanel >
+                                              <li>
+                                                  <div class="form-group col-xs-12">
+                                                      <label class="col-xs-5">Refer To</label>
+                                                      <apex:outputPanel >
+                                                          <div class="col-xs-7">
+                                                              <apex:outputText rendered="{!rec.isOpenTerritory}" value="Open Territory"  />
+                                                              <apex:outputText rendered="{!rec.isUnknownTerritory}" value="Unknown Territory" />
+                                                              <!--<apex:outputText rendered="{!rec.ref.AssignedToDSA__c}" value="(DSA) " />-->
+                                                              <apex:outputText rendered="{!rec.ref.AssignedToDSA__c}" value="(DSM) " />
+                                                              <apex:outputText rendered="{!rec.refUserIsVirtual}" value="(Virtual Sales)" />
+                                                              <apex:outputField rendered="{!AND(OR(AND(isStep1,NOT(rec.referToEnterable)),isStep2,isStep3),rec.referToUser)}" style="white-space:normal;" value="{!rec.ref.User__c}" />
+                                                              <apex:outputField rendered="{!AND(OR(AND(isStep1,NOT(rec.referToEnterable)),isStep2,isStep3),rec.referToContact)}" style="white-space:normal;" value="{!rec.ref.Contact__c}" />
+                                                              <apex:outputField rendered="{!AND(OR(AND(isStep1,NOT(rec.referToEnterable)),isStep2,isStep3),rec.referToRefContact)}" style="white-space:normal;" value="{!rec.ref.Referral_Contact__c}" />
+                                                          </div>
+                                                      </apex:outputPanel>
+                                                      <apex:outputPanel rendered="{!AND(isStep1,rec.referToEnterable,rec.referToUser)}">
+                                                          <br/><br/>
+                                                          <div class="form-control">
+                                                              <apex:inputField value="{!rec.ref.User__c}" >
+                                                                  <apex:actionSupport event="onchange" action="{!changeReferTo}" rerender="ReferralBlockSF1" status="spinnerSF1" />
+                                                              </apex:inputField>
+                                                          </div>
+                                                          <br/><br/><br/><br/>
+                                                      </apex:outputPanel>
+                                                      <apex:outputPanel rendered="{!AND(isStep1,rec.referToEnterable,rec.referToContact)}">
+                                                          <br/><br/>
+                                                          <div class="form-control">
+                                                              <apex:inputField value="{!rec.ref.Contact__c}" >
+                                                                  <apex:actionSupport event="onchange" action="{!changeContactReferTo}" rerender="ReferralBlockSF1" status="spinnerSF1" />
+                                                              </apex:inputField>
+                                                          </div>
+                                                          <br/><br/><br/><br/>
+                                                      </apex:outputPanel>    
+                                                      <apex:outputPanel rendered="{!AND(isStep1,rec.referToEnterable,rec.referToRefContact)}" >   
+                                                          <br/><br/>
+                                                          <div class="form-control">
+                                                              <apex:inputField value="{!rec.ref.Referral_Contact__c}" />
+                                                          </div>
+                                                          <br/><br/><br/><br/>
+                                                      </apex:outputPanel>
+                                                  </div>
+                                              </li>
+                                          </apex:outputPanel>
+                                          <apex:outputPanel rendered="{!AND(OR(isStep2,isStep3),showCompanyName)}">
+                                              <li>
+                                                  <div class="form-group col-xs-12">
+                                                      <label class="col-xs-5">Refer To Account</label>
+                                                      <div class="col-xs-7">
+                                                        <apex:outputField value="{!rec.refCtct.Referral_Account__c}" />
+                                                      </div>
+                                                  </div>
+                                              </li>
+                                          </apex:outputPanel>
+                                          <apex:outputPanel rendered="{!OR(isStep2,isStep3)}">
+                                              <li>
+                                                  <div class="form-group col-xs-12">
+                                                      <label class="col-xs-5">Referral Generated</label>
+                                                      <div class="col-xs-7">
+                                                        <apex:outputText value="{!rec.referralType}" />
+                                                      </div>
+                                                  </div>
+                                              </li>
+                                          </apex:outputPanel>
+                                          <apex:outputPanel rendered="{!isStep3}">
+                                              <li>
+                                                  <div class="form-group col-xs-12">
+                                                      <label class="col-xs-5">Submission Status</label>
+                                                      <div class="col-xs-7">
+                                                        <apex:outputField value="{!rec.ref.ReferralNotes__c}" />
+                                                      </div>
+                                                  </div>
+                                              </li>
+                                          </apex:outputPanel>
+                                          <apex:outputPanel rendered="{!OR(isStep1,isStep2)}">
+                                              <li>
+                                                  <div class="form-group col-xs-12">
+                                                      <label class="col-xs-5">Notes</label>
+                                                      <apex:inputTextArea styleClass="form-control" rendered="{!AND(isStep1,rec.lockTitle,rec.selected)}" rows="2" cols="80" value="{!rec.ref.Notes__c}" />
+                                                      <div class="col-xs-7" style="white-space:normal;">
+                                                        <apex:outputField rendered="{!NOT(isStep1)}" value="{!rec.ref.Notes__c}" />
+                                                      </div>
+                                                  </div>
+                                              </li>
+                                          </apex:outputPanel>
+                                          <apex:outputPanel rendered="{!AND(isStep2,NOT(isTelemarketing),NOT(isRefExternal))}">
+                                              <li>
+                                                  <div class="form-group col-xs-12">
+                                                      <label class="col-xs-5">Comm Product(s)</label>
+                                                      <apex:selectList styleClass="form-control" style="border-color:green" rendered="{!AND(isStep2,rec.selected)}"
+                                                                       multiselect="true"
+                                                                       value="{!rec.selectedCommProducts}"
+                                                                       title="Select the Commission Product" size="4">
+                                                          <apex:selectOptions value="{!rec.commProductOptions}"/>
+                                                      </apex:selectList>
+                                                  </div>
+                                              </li>
+                                          </apex:outputPanel>
+                                      </ul>
+                                  </div>        
+                              </apex:repeat>
+                          </div>
+                      </apex:outputPanel>
+                      
+                      <apex:commandLink id="moreRefPartners" rendered="{!AND(isStep1,hasExtendedList,hasMoreRefPartners)}" status="spinnerSF1" action="{!changeRefPartnerDisplay}" value="Show All Partners>>" rerender="ReferralSectionSF1"/>
+                      <apex:commandLink id="lessRefPartners" rendered="{!AND(isStep1,hasExtendedList,NOT(hasMoreRefPartners))}" status="spinnerSF1" action="{!changeRefPartnerDisplay}" value="Show Less>>" rerender="ReferralSectionSF1"/>
+                      
+                      <apex:outputPanel rendered="{!hasOpenTerritory}">
+                          <apex:outputText value="An Open Territory will be assigned to the DSA of that district." />
+                          <br/>
+                      </apex:outputPanel>
+                      <br/>
+                  </section>
+              </apex:outputPanel>
+            </apex:outputPanel>
+          </div>                  
+        </apex:outputPanel>           
+      </apex:outputPanel>
+    </apex:outputPanel>
+    </apex:actionRegion>
+   <apex:outputPanel id="attachPanel" rendered="{!NOT(isMobile)}" >
+        <apex:outputPanel id="attachPanelInner" style="{!IF(attachShow,'visibility: visible','visibility: hidden')}">
+            <apex:pageBlock id="attachBlock" title="Add Attachment" >
+                <apex:pageBlockButtons location="Top">
+                    <apex:commandButton action="{!NextStep}" value="Attach and Submit Referral(s)"/>
+                </apex:pageBlockButtons>
+                <apex:pageblockSection columns="1">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Add Attachment" for="attachment"/>
+                        <apex:inputfile accept="application/pdf" value="{!attachbody}" id="attachment" filename="{!attachname}"/>
+                    </apex:pageBlockSectionItem>
+                </apex:pageblockSection>
+            </apex:pageBlock>
+        </apex:outputPanel>
+    </apex:outputPanel>
+  </apex:form>
+    
+</apex:component>

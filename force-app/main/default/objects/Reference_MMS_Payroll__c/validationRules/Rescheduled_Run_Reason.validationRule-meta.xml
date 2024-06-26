@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Rescheduled_Run_Reason</fullName>
+    <active>true</active>
+    <description>When &quot;Original Proposed Run Date&quot; is populated, make the &quot;Rescheduled Run Reason&quot; required.</description>
+    <errorConditionFormula>AND
+(NOT(ISBLANK( Original_Proposed_Run_Date__c )),
+ISPICKVAL( Rescheduled_Run_Reason__c,&quot;&quot;)
+)</errorConditionFormula>
+    <errorDisplayField>Rescheduled_Run_Reason__c</errorDisplayField>
+    <errorMessage>Please enter a value in Rescheduled Run Reason field</errorMessage>
+</ValidationRule>

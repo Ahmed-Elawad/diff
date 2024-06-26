@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pending_POP_Tasks__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>IF(NOT (ISBLANK ( Term_Transfer_Stopped__c )) , &quot;Term/Transfer Stopped&quot;&amp;BR()&amp; 
+( 
+IF(ISPICKVAL( NPR_CPR_Resolution__c , &quot;Client Saved - Keeping Payroll&quot;), &quot;Client Saved - Keeping Payroll&quot;&amp;BR(),&quot;&quot;)&amp; 
+
+IF(ISPICKVAL( NPR_CPR_Resolution__c , &quot;Client Saved - Set Up Non Payroll&quot;), &quot;Client Saved - Set Up Non Payroll&quot;&amp;BR(),&quot;&quot;)&amp; 
+
+IF( Flag_Notes_as_Important__c ==True, &quot;See Termination Milestone Notes&quot;&amp;BR(), &quot;&quot;) 
+
+) 
+, 
+( 
+IF( ISPICKVAL( Discrepancy__c , &quot;Yes&quot;) &amp;&amp; ISBLANK( Discrepancy_Closed_Date__c ) , &quot;Unresolved Paperwork Discrepancy&quot;&amp;BR(), &quot;&quot;) &amp; 
+IF( Effective_Date_of_Termination__c &gt; Today(), &quot;Future Effective Date&quot;&amp;BR(), &quot;&quot;) &amp; 
+IF(NOT (ISBLANK ( Date_NPR_Callout_Sent_to_CPR__c )) &amp;&amp; ISBLANK( Retention_Call_Completed__c ) , &quot;CPR NPR Callout&quot;&amp;BR(), &quot;&quot;) &amp; 
+IF(ISPICKVAL( NPR_CPR_Resolution__c , &quot;Client Saved - Keeping Payroll&quot;), &quot;Client Saved - Keeping Payroll&quot;&amp;BR(),&quot;&quot;)&amp; 
+IF( Flag_Notes_as_Important__c ==True, &quot;See Termination Milestone Notes&quot;&amp;BR(), &quot;&quot;)&amp; 
+IF(ISPICKVAL( NPR_CPR_Resolution__c , &quot;Client Saved - Set Up Non Payroll&quot;), &quot;Client Saved - Set Up Non Payroll&quot;&amp;BR(),&quot;&quot;) 
+) 
+)</formula>
+    <label>Pending POP Tasks</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>My_SOAR_Leads</fullName>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>OPPORTUNITY.CLOSE_DATE</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>SOAR_referral_products__c</columns>
+    <columns>OPPORTUNITY.CREATED_DATE</columns>
+    <columns>Employees_Paid_Per_Payroll__c</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>OPPORTUNITY.LEAD_SOURCE</field>
+        <operation>contains</operation>
+        <value>SOAR</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.STAGE_NAME</field>
+        <operation>notContain</operation>
+        <value>Sold,Disqualified,Rescinded</value>
+    </filters>
+    <label>My SOAR Leads</label>
+    <sharedTo>
+        <group>CORE</group>
+        <group>ExpenseWire_Sales_Team</group>
+        <group>HNBF</group>
+        <group>HRSSales</group>
+        <group>Icon_Sales</group>
+        <group>MMS</group>
+        <group>SalesTraining</group>
+        <group>Sales_Strategy_Team</group>
+        <group>Virtual_Sales</group>
+    </sharedTo>
+</ListView>

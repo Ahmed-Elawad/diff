@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Second_Attempt_48_hours</fullName>
+    <booleanFilter>1 AND ((2 AND 3) OR (4 AND 5))</booleanFilter>
+    <columns>Date_for_Follow_Up__c</columns>
+    <columns>NAME</columns>
+    <columns>Current_Step__c</columns>
+    <columns>OWNER.FIRST_NAME</columns>
+    <columns>Branch_Client_Number__c</columns>
+    <columns>Contact_Email__c</columns>
+    <columns>Contact_Name__c</columns>
+    <columns>Contact_Phone_Number__c</columns>
+    <columns>Total_Annual_Revenue__c</columns>
+    <columns>LAST_ACTIVITY</columns>
+    <columns>Case_Type__c</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>equals</operation>
+        <value>First Attempt made</value>
+    </filters>
+    <filters>
+        <field>LAST_ACTIVITY</field>
+        <operation>equals</operation>
+        <value>THIS_WEEK</value>
+    </filters>
+    <filters>
+        <field>LAST_ACTIVITY</field>
+        <operation>lessThan</operation>
+        <value>LAST_N_DAYS:1</value>
+    </filters>
+    <filters>
+        <field>LAST_ACTIVITY</field>
+        <operation>equals</operation>
+        <value>LAST_WEEK</value>
+    </filters>
+    <filters>
+        <field>LAST_ACTIVITY</field>
+        <operation>lessThan</operation>
+        <value>LAST_N_DAYS:3</value>
+    </filters>
+    <label>Second Attempt- 48 hours</label>
+    <sharedTo>
+        <roleAndSubordinatesInternal>Client_Retention_Specialist</roleAndSubordinatesInternal>
+        <roleAndSubordinatesInternal>Client_Retention_Supervisor</roleAndSubordinatesInternal>
+    </sharedTo>
+</ListView>

@@ -1,0 +1,86 @@
+<template>
+    <lightning-spinner if:true={displaySpinner} size="large">
+    </lightning-spinner>
+    <lightning-datatable
+        key-field="id"
+        data={tableData}
+        columns={columns} 
+        hide-checkbox-column
+        onrowaction={handleRowAction}
+        sorted-by={sortBy}
+        sorted-direction={sortDirection}
+        onsort={handleSorting}
+    >
+    </lightning-datatable>
+    <!-- <c-l-w-c-lookup-custom-datatable-type
+        key-field="id"
+        data={tableData}
+        columns={columns} 
+        hide-checkbox-column
+        onrowaction={handleRowAction}
+    >
+    </c-l-w-c-lookup-custom-datatable-type> -->
+    <template if:true={displayVerification}>
+        
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+              <div class="slds-modal__header">
+                <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Update CPA Full Name</h1>
+              </div>
+              <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="height: 350px;">
+                <!-- <lightning-record-edit-form object-api-name="Account" record-id={accountId} onsuccess={handleVerificationSuccess} onsubmit={handleSubmit}>
+                    <lightning-input-field
+                        field-name="CPA_Name_Ref__c"
+                    ></lightning-input-field>
+                    <div class="slds-m-top_x-large slds-align_absolute-center">
+                        <lightning-button
+                            label="Cancel"
+                            onclick={handleVerificationCancel}
+                            class="slds-p-around_small"
+                        >
+                        </lightning-button>
+                        <lightning-button
+                            id="submit"
+                            type="submit"
+                            label="Update record"
+                            class="slds-p-around_small"
+                            variant="brand"
+                        >
+                        </lightning-button>
+                    </div>
+                </lightning-record-edit-form> -->
+                <div if:true={isLoading} class="exampleHolder slds-is-relative slds-spinner_container" style="height: 5px; position:relative">
+                    <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                </div>
+                <c-custom-lookup-l-w-c obj-name="Referral_Contact__c" search-placeholder="Search CPA" icon-name="standard:contact" onlookupselected={handleCPAFullNameChange} filter={filter}>
+                </c-custom-lookup-l-w-c>
+                <div class="slds-grid slds-gutters slds-wrap slds-var-m-around_medium">
+                    <div class="slds-col slds-size_2-of-3">
+                    <span  style="font-size: 1rem;font-weight: 500;float:left;">   {clientName}</span> 
+                    </div>
+                    <div class="slds-col slds-size_1-of-3">
+                        <lightning-button class="" style="float:right" variant="brand" label="Remove CPA" title="Remove CPA" onclick={handleRemoveCPA}></lightning-button>
+
+                    </div>
+                </div>
+
+              </div>
+              <div class="slds-modal__footer">
+                <lightning-button
+                    label="Cancel"
+                    onclick={handleVerificationCancel} class="slds-m-right_medium"
+                >
+                </lightning-button>
+
+                <lightning-button
+                    label="Save"
+                    variant="brand"
+                    onclick={handleVerificationSave}
+                >
+                </lightning-button>
+              </div>
+            </div>
+          </section>
+          <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+</template>

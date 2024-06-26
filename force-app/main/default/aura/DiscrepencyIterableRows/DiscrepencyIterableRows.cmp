@@ -1,0 +1,84 @@
+<aura:component controller="CommunitySummaryController" implements="forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable,lightning:utilityItem,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:appHostable" access="global">
+    
+    <aura:attribute name='discrepencyId' type='Id' />
+    <aura:attribute name='peoChecklist' type='PEO_Onboarding_Checklist__c' />
+    <aura:attribute name='parentChecklist' type='PEO_Onboarding_Checklist__c' />
+    <aura:attribute name='type' type='String' />
+    <aura:attribute name='subType' type='String' />
+    <aura:attribute name='docId' type='Id' />
+    <aura:attribute name='communityUser' type='boolean' />
+    <aura:attribute name='additionalInfo' type='String' />
+    <aura:attribute name='comment' type='String' />
+    <aura:attribute name='discRecId' type='Id' />
+    <aura:attribute name='discRec' type='PEO_Onboarding_Document_Discrepency__c' />
+    <aura:attribute name='isDocument' type='Boolean' />
+    <!-- Added by Bharat to open doc and discrepancy in new subtab-->
+    <lightning:workspaceAPI aura:id="DiscrepancyWorkspace"/>
+    
+        <tr class="slds-hint-parent">
+            <aura:if isTrue='{!!v.communityUser}'>
+                <td role="gridcell" class="slds-cell-wrap" data-label="disc_url">
+                    <a href="" onclick="{!c.openDiscRecTab}" class="uiOutputURL">{!v.discrepencyId}</a>  
+                </td>
+            </aura:if>
+            <td role="gridcell" class="slds-cell-wrap" data-label="dics_type">
+                {!v.type}
+            </td>
+            <td role="gridcell" class="slds-cell-wrap" data-label="disc_subtype">
+                {!v.subType}  
+            </td>
+          <!--  <aura:if isTrue='{! and(!v.communityUser, v.isDocument) }'>
+                <td role="gridcell" class="slds-cell-wrap" data-label="doc_url">
+                    <a href="" onclick="{!c.openDocTab}" class="uiOutputURL">{!v.docId}</a>  
+                </td>
+                 
+                
+            </aura:if> -->
+            <aura:if isTrue='{! v.parentChecklist.Discrepancy_Communication_Method__c}'>
+                <aura:if isTrue= '{!!v.communityUser}'>
+                    <td>
+                        <lightning:textArea disabled='true' 
+                                            maxlength="255"
+                                            aura:id='additionalComment' 
+                                            value='{!v.additionalInfo}' />
+                    </td>
+                </aura:if>
+                <aura:set attribute="else">
+                    <td>
+                        <lightning:textArea disabled='true' 
+                                            maxlength="255"
+                                            aura:id='additionalComment' 
+                                            value='{!v.additionalInfo}' />
+                    </td>
+                </aura:set>
+            </aura:if>
+            <!-- <td>
+            <lightning:textArea disabled='true' 
+                                maxlength="255"
+                                aura:id='additionalComment' 
+                                value='{!v.additionalInfo}' />
+        </td> -->
+            
+            <td>
+                <aura:if isTrue='{!!v.communityUser}'>  <!--SFDC-15863-->
+                    <lightning:textArea disabled='false' 
+                                        aura:id='prospectComment' 
+                                        value='{!v.comment}'
+                                        maxlength="255"/>
+                </aura:if>
+              
+            </td>
+            <aura:if isTrue='{!!v.communityUser}'>  
+                <td role="gridcell" class="slds-cell-wrap" data-label="prospect_saveButton">
+                    <lightning:button class="slds-m-top_small" 
+                                      variant="brand" 
+                                      type="Submit" 
+                                      name="Save" 
+                                      label="Save" 
+                                      onclick="{!c.saveComment}" />
+                </td>
+            </aura:if>
+    </tr>
+    
+    
+</aura:component>

@@ -1,0 +1,100 @@
+<template>
+    <template if:true={showModal}>
+        <c-modal onclosedialog={handleDialogClose}>
+            <span slot="header">{header}</span>
+            <slot>
+            <div if:true={isContact}>
+                <!-- <lightning-quick-action-panel header="Edit Fields Action"> -->
+                   
+
+                     <lightning-record-edit-form record-id={recordId} record-type-id={contactRecordTypeId} object-api-name="Contact" onsuccess={handleSuccess} onsubmit={handleConSub}
+                       >
+                    
+                        <div class="slds-grid slds-p-left_x-small slds-wrap">
+                            <div class="slds-col slds-size_1-of-2 slds-m-bottom_x-small"> 
+                                <div class="slds-grid  slds-m-right_x-small">
+                                <div class=" slds-form-element__label slds-no-flex slds-size_2-of-6 slds-m-top_large">
+                                    Record Type
+                                </div>
+                                <div class=" slds-size_4-of-6">
+                                    <lightning-combobox
+                                    name="RecordType"                                
+                                    value={contactRecordTypeId}
+                                    placeholder="Select Recordtype"
+                                    options={conOptions}
+                                    onchange={handleChangeConRectyp} ></lightning-combobox>                                
+                                </div> 
+                            </div>
+                            </div>
+                             <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="AccountId" value={accountRecordPassId} >
+                                </lightning-input-field>                                                              
+                            </div> 
+                        
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="FirstName">
+                                </lightning-input-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="LastName" >
+                                </lightning-input-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="Title" >
+                                </lightning-input-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="Email" >
+                                </lightning-input-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="Phone" >
+                                </lightning-input-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="Profiled__c" >
+                                </lightning-input-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="Decision_Maker__c" >
+                                </lightning-input-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="Influencer__c" >
+                                </lightning-input-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="LinkedIn_Profile__c">
+                                </lightning-input-field>
+                            </div>                           
+                        </div> 
+                        <!-- <div class="slds-grid slds-p-left_x-small slds-wrap">
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-button variant="brand" type="submit" name="update" label="Update">
+                                </lightning-button>
+                            </div>
+                        </div> -->
+                    </lightning-record-edit-form>                        
+                <!-- </lightning-quick-action-panel> -->
+            </div>
+            <div if:false={isContact}>
+                <lightning-record-form
+                                class="record-form"
+                                record-id={recordId}
+                                object-api-name={sobjectApiName}
+                                layout-type="Full" 
+                                columns="2"
+                                density="compact"
+                                mode="edit"                                
+                                onsuccess={handleSuccess}>
+                </lightning-record-form>
+            </div>
+            </slot>
+        
+            <span slot="footer">
+                <lightning-button variant="neutral" label="Cancel" title="Cancel" onclick={handleClose} ></lightning-button>
+                <lightning-button variant="brand" label="Save" title="Save" onclick={handleSave} class="slds-m-left_x-small"></lightning-button>
+            </span>
+        </c-modal>
+    </template>
+</template>

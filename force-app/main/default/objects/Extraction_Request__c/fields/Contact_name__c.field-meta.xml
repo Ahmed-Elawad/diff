@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Contact_name__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <deleteConstraint>Restrict</deleteConstraint>
+    <description>Required Field
+Picklist Field
+Allows reps to select from contacts that already exist (Contacts object housed on Prospect Client)
+Picking name should also populate the email address</description>
+    <label>Contact name</label>
+    <lookupFilter>
+        <active>true</active>
+        <filterItems>
+            <field>Contact.Account.Id</field>
+            <operation>equals</operation>
+            <valueField>$Source.Account__c</valueField>
+        </filterItems>
+        <isOptional>false</isOptional>
+    </lookupFilter>
+    <referenceTo>Contact</referenceTo>
+    <relationshipLabel>Extraction Requests</relationshipLabel>
+    <relationshipName>Extraction_Requests</relationshipName>
+    <required>true</required>
+    <securityClassification>Internal</securityClassification>
+    <trackFeedHistory>true</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRS_Hold_Out_Exp_Required</fullName>
+    <active>true</active>
+    <description>when users select the HRS Hold Out checkbox they must supply an expiration date unless the permanent hold out description is Strategic Account Team</description>
+    <errorConditionFormula>AND(
+
+	NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)),
+	HRS_Hold_Out__c = true,
+ISBLANK( HRS_Hold_Out_Expiration__c ), ISPICKVAL( HRS_Permanent_Hold_Out_Description__c, &quot;&quot;),
+ 	NOT ISPICKVAL(Permanent_Hold_Out_Description__c, &quot;Strategic Account Team&quot;) 
+)</errorConditionFormula>
+    <errorDisplayField>HRS_Hold_Out__c</errorDisplayField>
+    <errorMessage>**** You are required to set the HRS Hold out Expiration date when checking the Hold out checkbox ****</errorMessage>
+</ValidationRule>

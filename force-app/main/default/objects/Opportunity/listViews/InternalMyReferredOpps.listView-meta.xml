@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>InternalMyReferredOpps</fullName>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>Internal_Referral__c</columns>
+    <columns>OPPORTUNITY.AMOUNT</columns>
+    <columns>OPPORTUNITY.CLOSE_DATE</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>OPPORTUNITY.CREATED_DATE</columns>
+    <columns>OPPORTUNITY.LEAD_SOURCE</columns>
+    <columns>Referral_To__c</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>OPPORTUNITY.STAGE_NAME</field>
+        <operation>contains</operation>
+        <value>Referred,Approved,Rejected,Referred Not Sold</value>
+    </filters>
+    <filters>
+        <field>Referral__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <filters>
+        <field>Referral_To__c</field>
+        <operation>notEqual</operation>
+        <value>Stromberg,Taleo,Payworks</value>
+    </filters>
+    <label>(Internal) My Referred Opps</label>
+    <sharedTo>
+        <group>CORE</group>
+        <group>MMS</group>
+    </sharedTo>
+</ListView>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Service_Support_401k_Originator_Email</fullName>
+    <active>true</active>
+    <description>When email response is yes, originator email must be completed</description>
+    <errorConditionFormula>AND(RecordType.Name = &apos;Service Support 401k/S125 Case&apos;, ISPICKVAL( Email_Response__c ,&quot;Yes&quot;), ISBLANK(Originator_Email_Address__c),  NOT(BEGINS( $Profile.Name , &quot;System Administrator&quot;) ))</errorConditionFormula>
+    <errorMessage>If email response is marked yes you must enter the originators email address</errorMessage>
+</ValidationRule>

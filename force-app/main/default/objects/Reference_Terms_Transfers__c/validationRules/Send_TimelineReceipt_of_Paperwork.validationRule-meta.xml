@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Send_TimelineReceipt_of_Paperwork</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND 
+( 
+NOT(ISBLANK(Send_Timeline_Receipt_of_Paperwork__c))&amp;&amp; 
+ISBLANK(Timeline_Sent_by_Rep__c), 
+ISBLANK( Suggested_Blackout_Date__c)|| 
+ISBLANK( Estimated_Week_of_Liquidation__c )|| 
+ISPICKVAL(SDBA_Instructions_Included__c,&quot;&quot; ) 
+)</errorConditionFormula>
+    <errorMessage>Following fields are required &quot;Suggested Blackout Date&quot;, &quot;Estimated Week of Liquidation&quot;, and &quot;SDBA Instructions Included&quot; if &quot;Send Timeline/Receipt of Paperwork&quot; has value.</errorMessage>
+</ValidationRule>

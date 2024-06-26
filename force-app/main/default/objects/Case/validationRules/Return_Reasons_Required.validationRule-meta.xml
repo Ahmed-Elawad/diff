@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Return_Reasons_Required</fullName>
+    <active>true</active>
+    <description>Return Reasons required if Return Reason Category is selected</description>
+    <errorConditionFormula>AND(NOT(BEGINS( $Profile.Name,&apos;System Admin&apos;)),NOT(ISBLANK(TEXT(Project_Training_Issue_Reason__c ))),ISBLANK(TEXT(Return_Reasons__c )))</errorConditionFormula>
+    <errorDisplayField>Return_Reasons__c</errorDisplayField>
+    <errorMessage>Return Reasons are required if the Return Reason Category is selected</errorMessage>
+</ValidationRule>

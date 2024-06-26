@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Copy_of_Wells_Fargo_No_Sales</fullName>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>Contact_Name_TAA__c</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>OPPORTUNITY.LAST_ACTIVITY</columns>
+    <columns>OPPORTUNITY.LEAD_SOURCE</columns>
+    <columns>OPPORTUNITY.CLOSE_DATE</columns>
+    <columns>Employees_Paid_Per_Payroll__c</columns>
+    <columns>Active_Employees__c</columns>
+    <columns>W2__c</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>Reason_Not_Sold__c</columns>
+    <columns>Reason_Rescinded__c</columns>
+    <filterScope>MyTerritory</filterScope>
+    <filters>
+        <field>OPPORTUNITY.STAGE_NAME</field>
+        <operation>equals</operation>
+        <value>Not Sold,Rejected,Rescinded,Referred Not Sold</value>
+    </filters>
+    <filters>
+        <field>Reason_Not_Sold__c</field>
+        <operation>notEqual</operation>
+        <value>Already engaged with prospect,Duplicate Opportunity,Employee Inquiry,Fraud,SOAR Bad Lead</value>
+    </filters>
+    <label>No Sales</label>
+    <sharedTo>
+        <group>CORE</group>
+    </sharedTo>
+</ListView>

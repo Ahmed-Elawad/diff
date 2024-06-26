@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PEO_ALL_741</fullName>
+    <booleanFilter>(1 AND 2 AND 3 AND 4 and 6) or (1 and 3 and 4 and 5 and 6)</booleanFilter>
+    <columns>NAME</columns>
+    <columns>Prospect_Client_Number__c</columns>
+    <columns>OWNER.ALIAS</columns>
+    <columns>Status__c</columns>
+    <columns>Tax_Agency__c</columns>
+    <columns>Tax_Type__c</columns>
+    <columns>CREATEDBY_USER.ALIAS</columns>
+    <columns>UPDATEDBY_USER</columns>
+    <columns>LAST_UPDATE</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_PAC__c.Reference_PAC_Record_Type</value>
+    </filters>
+    <filters>
+        <field>Prospect_Client_Number__c</field>
+        <operation>contains</operation>
+        <value>741-</value>
+    </filters>
+    <filters>
+        <field>Paychex_PEO_Issue__c</field>
+        <operation>notEqual</operation>
+        <value>Yes,No</value>
+    </filters>
+    <filters>
+        <field>CREATED_DATE</field>
+        <operation>greaterThan</operation>
+        <value>7/27/2018 12:00 AM</value>
+    </filters>
+    <filters>
+        <field>Submission_Notes__c</field>
+        <operation>contains</operation>
+        <value>PEO</value>
+    </filters>
+    <filters>
+        <field>Client_Contact_Email__c</field>
+        <operation>notContain</operation>
+        <value>PACMailTest@paychex.onmicrosoft.com</value>
+    </filters>
+    <label>PEO - ALL 741, NO PEO mark, after 7/27</label>
+    <sharedTo>
+        <roleAndSubordinates>Operating_Risk_and_Risk_Review_Manager</roleAndSubordinates>
+    </sharedTo>
+</ListView>

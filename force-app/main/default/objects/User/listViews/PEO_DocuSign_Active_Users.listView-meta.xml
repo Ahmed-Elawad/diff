@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PEO_DocuSign_Active_Users</fullName>
+    <columns>FULL_NAME</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <columns>CORE.USERS.USERNAME</columns>
+    <columns>dsfs__DSProSFUsername__c</columns>
+    <columns>CORE.USER_ROLE.NAME</columns>
+    <columns>CORE.USERS.ACTIVE</columns>
+    <columns>CORE.PROFILE.NAME</columns>
+    <columns>MANAGER</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>dsfs__DSProSFUsername__c</field>
+        <operation>notEqual</operation>
+        <value>null</value>
+    </filters>
+    <filters>
+        <field>CORE.USERS.ACTIVE</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <filters>
+        <field>Sales_Org__c</field>
+        <operation>equals</operation>
+        <value>PEO</value>
+    </filters>
+    <filters>
+        <field>District__c</field>
+        <operation>equals</operation>
+        <value>101,102,103,104</value>
+    </filters>
+    <label>PEO DocuSign Active Users</label>
+    <sharedTo>
+        <role>PEO_Director</role>
+    </sharedTo>
+</ListView>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Agency_IC_must_be_populated</fullName>
+    <active>true</active>
+    <description>In order for onboarding status set to pending the agency IC must be populated</description>
+    <errorConditionFormula>AND 
+( 
+RecordType.Id = &quot;0120g000000l3qD&quot;, 
+NOT (ISBLANK ( Onboarding_Status_Set_to_Pending__c )), 
+ISBLANK ( Agency_Implementation_Coordinator__c ) 
+)</errorConditionFormula>
+    <errorDisplayField>Agency_Implementation_Coordinator__c</errorDisplayField>
+    <errorMessage>You need to have a value in the Agency Implementation Coordinator field</errorMessage>
+</ValidationRule>

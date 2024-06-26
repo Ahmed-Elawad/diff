@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SecondaryLeadSource__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>IF (NOT(ISBLANK(PartnerDetail__c ))
+    , PartnerDetail__r.SecondaryLeadSource__c 
+    , IF (NOT(ISBLANK( Referral_Account__c ))
+          , IF (NOT(ISBLANK( Referral_Account__r.Parent_Referral_Account__c ))
+                 , Referral_Account__r.Parent_Referral_Account__r.SecondaryLeadSource__c
+                 , Referral_Account__r.SecondaryLeadSource__c 
+            )
+          ,&quot;&quot;)
+ )</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Secondary Lead Source</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

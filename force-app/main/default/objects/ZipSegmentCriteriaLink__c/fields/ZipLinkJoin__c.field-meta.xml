@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ZipLinkJoin__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <inlineHelpText>Is this linked to another join record (so they&apos;ll both be evaluated together)?</inlineHelpText>
+    <label>Zip Link Join</label>
+    <lookupFilter>
+        <active>true</active>
+        <errorMessage>The links have to be linked to the same zip segment</errorMessage>
+        <filterItems>
+            <field>$Source.ZipSegment__c</field>
+            <operation>equals</operation>
+            <valueField>$Source.ZipSegment__c</valueField>
+        </filterItems>
+        <isOptional>false</isOptional>
+    </lookupFilter>
+    <referenceTo>ZipSegmentCriteriaLink__c</referenceTo>
+    <relationshipLabel>Zip Segment Criteria Links</relationshipLabel>
+    <relationshipName>ZipSegmentCriteriaLinksOr</relationshipName>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

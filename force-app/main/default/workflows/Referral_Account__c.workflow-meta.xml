@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>CPA_Profiled_Update</fullName>
+        <description>updates the CPA Field Updated Tracker field when a CPA Profiled Field is updated</description>
+        <field>CPA_Field_Updated_Tracker__c</field>
+        <formula>TODAY()</formula>
+        <name>CPA Profiled Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_Acct_Check_To_be_Merged</fullName>
+        <description>checks the to be merged field</description>
+        <field>To_Be_Merged_Merged__c</field>
+        <literalValue>1</literalValue>
+        <name>Ref Acct: Check To be Merged</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_Acct_Clear_Merge_Name</fullName>
+        <description>clears the value in Merge Name field</description>
+        <field>Merge_Name__c</field>
+        <name>Ref Acct: Clear Merge Name</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_Acct_Clear_Merge_Requested_Date</fullName>
+        <description>clears the merge requested date</description>
+        <field>Merge_Request_Date__c</field>
+        <name>Ref Acct: Clear Merge Requested Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_Acct_Clear_to_Be_Merged</fullName>
+        <description>clears to be merged checkbox</description>
+        <field>To_Be_Merged_Merged__c</field>
+        <literalValue>0</literalValue>
+        <name>Ref Acct: Clear to Be Merged</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_Acct_Create_Merge_Request_Date</fullName>
+        <description>populates todays date when a merge name is input</description>
+        <field>Merge_Request_Date__c</field>
+        <formula>today()</formula>
+        <name>Ref Acct: Create Merge Request Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Set_Profiled_Date</fullName>
+        <description>Set the Profiled Date field to Today</description>
+        <field>Profiled_Date__c</field>
+        <formula>TODAY()</formula>
+        <name>Set Profiled Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>CPA Profile Field Updated</fullName>
+        <actions>
+            <name>CPA_Profiled_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <description>updates the CPA Field Updated Tracker field on the referral account when a profiled field is updated.</description>
+        <formula>ISCHANGED(Profiled_Date__c) ||  
+NOT(ISPICKVAL(Number_of_Business_Clients_with_EEs__c,&quot;&quot;))||
+NOT(ISPICKVAL(Number_of_Clients_with_50_Ees__c,&quot;&quot;))||
+NOT(ISPICKVAL(Number_of_Owner_Only_Clients__c,&quot;&quot;))||
+ISCHANGED(Acquisition_Discussion__c) ||  
+NOT(ISBLANK(Who_Is_Referred_for_Payroll_HCM__c))||
+NOT(ISPICKVAL(Number_of_Payrolls_the_Firm_Processes__c,&quot;&quot;))||
+NOT(ISBLANK(Types_of_Payrolls_Processed__c))||
+ISCHANGED(Software_Used_to_Process_Payrolls__c)||
+ISCHANGED(Software_Renewal_Date__c)||
+ISCHANGED(Does_Firm_Receive_HR_Questions__c)||
+INCLUDES(Types_of_Benefit_Questions__c, &quot;401K&quot;)||
+INCLUDES(Types_of_Benefit_Questions__c, &quot;H&amp;B&quot;)||
+INCLUDES(Types_of_Benefit_Questions__c, &quot;Commuter Benefits&quot;)||
+INCLUDES(Types_of_Benefit_Questions__c, &quot;Insurance&quot;)||
+INCLUDES(Types_of_Benefit_Questions__c, &quot;Does not Receive Benefits Questions&quot;)|| 
+NOT(ISPICKVAL(Vendor_Recommendation_Based_On__c,&quot;&quot;))||
+NOT(ISPICKVAL(Does_Firm_Refer_Benefit_Opportunities__c,&quot;&quot;))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ref Acct%3A Clear Merge Field After Merge</fullName>
+        <actions>
+            <name>Ref_Acct_Clear_Merge_Name</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Ref_Acct_Clear_Merge_Requested_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Ref_Acct_Clear_to_Be_Merged</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <description>after merge clear merge fields</description>
+        <formula>AND(  To_Be_Merged_Merged__c , (LOWER(RIGHT( Merge_Name__c , 8)) = &quot;primary1&quot; ) || (LOWER(RIGHT( Merge_Name__c , 8)) = &quot;sfdcapi1&quot; ))</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ref Acct%3A Clear Out Old Merge Info</fullName>
+        <active>false</active>
+        <criteriaItems>
+            <field>Referral_Account__c.Merge_Name__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>After 9 days, clear out outstanding Merge fields</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Ref_Acct_Clear_Merge_Name</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <actions>
+                <name>Ref_Acct_Clear_Merge_Requested_Date</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <actions>
+                <name>Ref_Acct_Clear_to_Be_Merged</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <timeLength>5</timeLength>
+            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+    <rules>
+        <fullName>Ref Acct%3A Merge Requested Date</fullName>
+        <actions>
+            <name>Ref_Acct_Create_Merge_Request_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Referral_Account__c.Merge_Name__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>User.ProfileId</field>
+            <operation>notEqual</operation>
+            <value>System Administrator</value>
+        </criteriaItems>
+        <description>Set merge date once a merge name is input</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ref Acct%3A To Be Merged</fullName>
+        <actions>
+            <name>Ref_Acct_Check_To_be_Merged</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <description>Checks to be merged when Merge Name is entered on a non surviving record</description>
+        <formula>AND( LEN( Merge_Name__c ) &lt;&gt; 0, (LOWER(RIGHT( Merge_Name__c , 8))&lt;&gt;&quot;primary1&quot; ) &amp;&amp; (LOWER(RIGHT( Merge_Name__c , 8))&lt;&gt;&quot;sfdcapi1&quot; ))</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Referral Account Populate Profiled Date</fullName>
+        <actions>
+            <name>Set_Profiled_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <description>Populate the Profiled Date with TODAY whenever the listed fields are changed</description>
+        <formula>OR(
+ISCHANGED( Number_of_Business_Clients_with_EEs__c ),
+ISCHANGED( Number_of_Clients_with_50_Ees__c ),
+ISCHANGED( Number_of_Payrolls_the_Firm_Processes__c ),
+ISCHANGED( Number_of_Owner_Only_Clients__c ),
+ISCHANGED( Who_Is_Referred_for_Payroll_HCM__c ),
+ISCHANGED( Does_Firm_Receive_HR_Questions__c ),
+ISCHANGED( Types_of_Benefit_Questions__c ),
+ISCHANGED( Power_of_Paychex_Firm_Presentation__c )
+)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

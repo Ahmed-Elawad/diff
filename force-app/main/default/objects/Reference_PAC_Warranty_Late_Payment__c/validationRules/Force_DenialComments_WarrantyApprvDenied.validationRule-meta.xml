@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_DenialComments_WarrantyApprvDenied</fullName>
+    <active>true</active>
+    <description>Force users to populate the Denial Comments field, when the Denied picklist value is chosen for the Warranty Approved? field.</description>
+    <errorConditionFormula>AND( 
+(LEN(Denial_Comments__c) = 0), 
+(ISPICKVAL(Warranty_Approved__c, &apos;Denied&apos;)),
+($Profile.Name &lt;&gt;&quot;System Administrator&quot;)
+)</errorConditionFormula>
+    <errorDisplayField>Denial_Comments__c</errorDisplayField>
+    <errorMessage>You must enter a Denial Comment, when the Warranty Approved? = &quot;Denied&quot;.</errorMessage>
+</ValidationRule>

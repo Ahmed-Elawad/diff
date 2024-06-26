@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>GL_Waiting_on_User_Name</fullName>
+    <columns>NAME</columns>
+    <columns>Branch__c</columns>
+    <columns>Branch_Client_ID__c</columns>
+    <columns>Date_Opened__c</columns>
+    <columns>Follow_Up_Date__c</columns>
+    <columns>OWNER.ALIAS</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>OWNER.ALIAS</field>
+        <operation>equals</operation>
+        <value>GL Waiting On User Name</value>
+    </filters>
+    <filters>
+        <field>Appt_Set_Status__c</field>
+        <operation>notEqual</operation>
+        <value>No Response from Branch</value>
+    </filters>
+    <filters>
+        <field>GL_Status__c</field>
+        <operation>notEqual</operation>
+        <value>Solved,Cancelled,Client Unresponsive</value>
+    </filters>
+    <filters>
+        <field>Message_Attempts__c</field>
+        <operation>equals</operation>
+        <value>Attempt 1</value>
+    </filters>
+    <label>GL:  Missing Username Needs 2nd Contact</label>
+    <sharedTo>
+        <group>POLGLSpecialist</group>
+    </sharedTo>
+</ListView>

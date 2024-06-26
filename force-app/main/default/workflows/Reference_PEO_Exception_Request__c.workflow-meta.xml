@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Populate_Resolution_Date</fullName>
+        <description>If the field Exception Request Status = Approved or Denied then put the resolution date in</description>
+        <field>Resolution_Date__c</field>
+        <formula>TODAY()</formula>
+        <name>Populate Resolution Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Remove_Resolution_Date</fullName>
+        <description>If the field Exception Request Status does not equal Approved or Denied then remove the resolution date</description>
+        <field>Resolution_Date__c</field>
+        <name>Remove Resolution Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Populate Exception Resolution Date</fullName>
+        <actions>
+            <name>Populate_Resolution_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Exception_Request__c.Exception_Request_Status__c</field>
+            <operation>equals</operation>
+            <value>Approved,Denied,Approved with Exceptions (see notes below)</value>
+        </criteriaItems>
+        <description>If the field Exception Request Status = Approved or Denied then put the resolution date in</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Remove Exception Resolution Date</fullName>
+        <actions>
+            <name>Remove_Resolution_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_Exception_Request__c.Exception_Request_Status__c</field>
+            <operation>notEqual</operation>
+            <value>Approved,Denied,Approved with Exceptions (see notes below)</value>
+        </criteriaItems>
+        <description>If the field Exception Request Status does not equal Approved or Denied then remove the resolution date</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

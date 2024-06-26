@@ -1,0 +1,22 @@
+<aura:component description="BannerBusinessType">
+    <aura:attribute name="referralBusinessType" type="String" />
+
+    <aura:attribute name="imageName" type="String" />
+    <aura:attribute name="color" type="String" />
+
+    <aura:handler name="change" value="{!v.referralBusinessType}" action="{!c.doInit}" />
+
+    <div class="box" title="Open Cases">
+        <div class="banner-header slds-align_absolute-center">
+            <h4 class="slds-item_label slds-text-color_weak slds-truncate slds-text-align_center">Referral Business Type</h4>
+        </div>
+        <div class="banner-body">
+            <div class="slds-item_detail slds-truncate slds-align_absolute-center column" title="Business Type">
+                <aura:if isTrue="{!v.imageName}">
+                    <img src="{!$Resource.BannerIcons + '/LightningIcons/' + v.imageName + '.png'}" />
+                </aura:if>
+                <span>{!v.referralBusinessType}</span>
+            </div>
+        </div>
+    </div>
+</aura:component>

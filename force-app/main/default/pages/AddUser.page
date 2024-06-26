@@ -1,0 +1,281 @@
+<!-- A wizard to assist in the creation of Users.
+
+  History
+  -------
+  11/10/2012 Dan Carmen   Created 
+  01/22/2013 Dan Carmen   Changes to allow Temporary Emps/Reactivations
+  12/27/2017 Dan Carmen   Ability to create a new user if existing inactive one.
+  01/28/2022 Carrie Marciano Added comment to be shown on reactivate of SF User that has Oracle_CPQ__c = True
+  06/01/2023 Carrie Marciano FY24 Transfer User options (originally done by Bindu)
+  01/05/2024 Dan Carmen      Changes to use users with New User Profile  
+
+ -->
+<apex:page controller="AddUserController"
+           tabStyle="Add_User__tab"
+           showHeader="true">
+
+  <apex:image rendered="{!isGuestUser}" url="{!$Resource.Chatter_Logo}"/>
+
+  <apex:form >
+    <apex:sectionHeader title="{!IF(isQueryForm,'Request New User','Setup New User')}" />
+     <apex:pageBlock rendered="{!isQueryForm}" id="AddUserBlock">
+        <apex:pageMessages />
+        
+        <!-- <apex:outputText value="{!$Api.Partner_Server_URL_240}"/>  -->
+        <apex:outputText style="color:BLUE; font-weight: bold; white-space:nowrap;" value="This will submit a request for a Salesforce {!IF(isGuestUser,'Chatter Free','')} User to be created." />
+        <br/>
+        
+        <apex:pageBlockSection columns="1">
+           <apex:inputField rendered="{!isGuestUser}" required="true" value="{!newNur.Requestor_Email__c}" /> 
+           <apex:inputField rendered="{!isGuestUser}" value="{!newNur.NewUserTheSameAsRequestor__c}" />
+           <apex:inputField required="{!NOT(isGuestUser)}" value="{!newNur.New_User_Email__c}" />
+           <!-- 
+          <apex:inputField rendered="{!NOT(isGuestUser)}" required="true" value="{!newNur.Request_Type__c}" />
+           -->
+           <apex:outputText rendered="{!isGuestUser}" value="Your request will be processed within 24 hours. You will receive an email when it is complete." />
+
+          <CENTER>
+           <apex:outputPanel >
+           <apex:commandButton rendered="{!isGuestUser}" value="Submit Request" action="{!submitRequest}" rerender="AddUserBlock"/>
+           <apex:commandButton rendered="{!NOT(isGuestUser)}" value="Search" action="{!searchForEmployee}"  rerender="AddUserBlock"/>
+           </apex:outputPanel>
+           </CENTER>
+        </apex:pageBlockSection>
+ 
+       
+        <apex:pageBlockSection rendered="{!foundContact != null}" title="Paychex Contact Information matching the Email">
+           <apex:outputField value="{!foundContact.Name}" />
+           <apex:outputField value="{!foundContact.Email}" />
+
+           <apex:outputField value="{!foundContact.HR_Person_Id__c}" />
+           <apex:outputField value="{!foundContact.Title}" />
+
+           <apex:outputField value="{!foundContact.Paychex_Cost_Center__c}" />
+           <apex:outputField value="{!foundContact.Department}" />
+
+           <apex:outputField value="{!foundContact.Hire_Date__c}" />
+           <apex:outputField value="{!foundContact.Supervisor__c}" />
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection rendered="{!hasUserMatches}" title="User records matching {!userMatchTitle}" columns="1">
+           <apex:pageBlockTable id="userMatchTable" value="{!allUserMatches}" var="rec" cellPadding="2" border="1">
+
+            <apex:column value="{!rec.IsActive}" />
+            
+            <apex:column >
+               <apex:facet name="header">Name</apex:facet>
+               <apex:outputField style="white-space:nowrap;" value="{!rec.Name}" />
+            </apex:column>
+            
+            <apex:column >
+               <apex:facet name="header">Username</apex:facet>
+               <apex:outputField value="{!rec.Username}" />
+            </apex:column>
+            
+            <!-- 
+            <apex:column >
+               <apex:facet name="header">Email</apex:facet>
+               <apex:outputField value="{!rec.Email}" />
+            </apex:column>
+             -->
+             
+            <apex:column >
+               <apex:facet name="header">Person Id</apex:facet>
+               <apex:outputField value="{!rec.HR_Person_Id__c}" />
+            </apex:column>
+            
+            <apex:column >
+               <apex:facet name="header">Cost Center</apex:facet>
+               <apex:outputField value="{!rec.Cost_Center__c}" /> 
+            </apex:column>
+            
+            <apex:column rendered="{!isSystemAdmin}">
+               <apex:facet name="header">Profile Name</apex:facet>
+               <apex:outputField style="white-space:nowrap;" value="{!rec.Profile.Name}" />
+            </apex:column>
+            
+            <apex:column >
+               <apex:facet name="header">Role Name</apex:facet>
+               <apex:outputField style="white-space:nowrap;" value="{!rec.UserRole.Name}" />
+            </apex:column>
+            <!-- 
+            <apex:column >
+               <apex:facet name="header">Manager Name</apex:facet>
+               <apex:outputField value="{!rec.Manager.Name}" />
+            </apex:column>
+             -->
+            <apex:column >
+               <apex:facet name="header">Last Login Date</apex:facet>
+               <apex:outputField value="{!rec.LastLoginDate}" />
+            </apex:column>
+            
+            <!-- 
+            <apex:column >
+               <apex:facet name="header">User Type</apex:facet>
+               <apex:outputField value="{!rec.UserType}" />
+            </apex:column>
+             -->
+         </apex:pageBlockTable>
+      </apex:pageBlockSection>
+
+      <br/>
+      
+        <apex:pageBlockSection id="standardUserSection" rendered="{!AND(newNur.New_User_Email__c != null,activeUser == null,inActiveUser == null, foundContact != null)}" columns="1">
+           <apex:pageBlockSectionItem >
+              <apex:outputLabel value="Are you creating a Salesforce User?"/>
+              <apex:selectRadio value="{!requestType}" layout="lineDirection">
+                 <apex:selectOption itemValue="Y_Chatter" itemLabel="Yes-Chatter Free"/>
+                 <apex:selectOption itemValue="Y_Standard" itemLabel="Yes-Standard User"/>
+                 <apex:selectOption itemValue="Y_Read_Only" itemLabel="Yes-Read Only"/>
+                 <apex:selectOption itemValue="N" itemLabel="No"/>
+                 <apex:actionSupport event="onclick" action="{!setRequestType}" rerender="AddUserBlock" />
+              </apex:selectRadio>
+           </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+
+        <apex:pageBlockSection id="tempSectionQuestion" rendered="{!AND(NOT(hasOpenRequest),newNur.New_User_Email__c != null,activeUser == null,inActiveUser == null, foundContact == null)}" columns="1">
+           <apex:outputText style="color:BLUE; font-weight: bold; white-space:nowrap;" value="A Paychex Employee Contact record could not be found." />
+
+           <apex:pageBlockSectionItem >
+              <apex:outputLabel value="Is this a temporary employee?"/>
+              <apex:selectRadio value="{!requestType}" layout="lineDirection">
+                 <apex:selectOption itemValue="Y_Temp_Chatter" itemLabel="Yes-Chatter Free"/>
+                 <apex:selectOption itemValue="Y_Temp_Standard" itemLabel="Yes-Standard User"/>
+                 <apex:selectOption itemValue="Y_Temp_Read_Only" itemLabel="Yes-Read Only"/>
+                 <apex:selectOption itemValue="N" itemLabel="No"/>
+                 <apex:actionSupport event="onclick" action="{!setRequestType}" rerender="AddUserBlock" />
+              </apex:selectRadio>
+           </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+
+        <apex:pageBlockSection rendered="{!activeUserIsChatterFree}" columns="1" >
+           
+           <apex:outputText style="color:BLUE; font-weight: bold; white-space:nowrap;" value="This is currently a Chatter Free User." />
+           <apex:pageBlockSectionItem >
+              <apex:outputLabel value="Are you upgrading to a full Salesforce License?"/>
+              <apex:selectRadio value="{!requestType}" layout="lineDirection">
+                 <apex:selectOption itemValue="Y_Standard" itemLabel="Yes-Standard User"/>
+                 <apex:selectOption itemValue="Y_Read_Only" itemLabel="Yes-Read Only"/>
+                 <apex:selectOption itemValue="N" itemLabel="No"/>
+                 <apex:actionSupport event="onclick" action="{!setRequestType}" rerender="AddUserBlock" />
+              </apex:selectRadio>
+           </apex:pageBlockSectionItem>
+           <!-- 
+           <CENTER>
+           <apex:outputPanel rendered="{!isChatterFreeRequest}">
+              <apex:commandButton rendered="{!isSystemAdmin}" value="Create Chatter Free User" action="{!addNewUser}" />
+              <apex:commandButton value="Save Request" action="{!saveRequest}" />
+           </apex:outputPanel>
+           </CENTER>
+            -->
+        </apex:pageBlockSection>
+
+        <apex:pageBlockSection rendered="{!activeUserIsNewUser}" columns="1" >
+           
+           <apex:outputText style="color:BLUE; font-weight: bold; white-space:nowrap;" value="This is a New User Profile." />
+           <apex:pageBlockSectionItem >
+              <apex:outputLabel value="Are you upgrading to a full Salesforce License?"/>
+              <apex:selectRadio value="{!requestType}" layout="lineDirection">
+                 <apex:selectOption itemValue="Y_Standard" itemLabel="Yes-Standard User"/>
+                 <apex:selectOption itemValue="Y_Read_Only" itemLabel="Yes-Read Only"/>
+                 <apex:selectOption itemValue="N" itemLabel="No"/>
+                 <apex:actionSupport event="onclick" action="{!setRequestType}" rerender="AddUserBlock" />
+              </apex:selectRadio>
+           </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+
+        <apex:pageBlockSection rendered="{!inActiveUser != null}" columns="1" >
+           
+           <apex:outputText style="color:BLUE; font-weight: bold; white-space:nowrap;" value="The matching User record is not Active." />
+           <apex:pageBlockSectionItem >
+              <apex:outputLabel value="Are you reactivating this User?"/>
+              <apex:selectRadio value="{!requestType}" layout="lineDirection">
+                 <apex:selectOption itemValue="Y_Reactivate" itemLabel="Yes"/>
+                 <!-- 
+                 <apex:selectOption itemValue="N" itemLabel="No"/>
+                  -->
+                 <apex:selectOption itemValue="Y_Standard" itemLabel="No-New Standard User"/>
+                 <apex:selectOption itemValue="Y_Read_Only" itemLabel="No-New Read Only"/>
+                 <apex:selectOption itemValue="Y_Chatter" itemLabel="No-New Chatter Free"/>
+                 <apex:actionSupport event="onclick" action="{!setRequestType}" rerender="AddUserBlock" />
+              </apex:selectRadio>
+           </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+
+        
+        <!-- ************  prompt for basic user information  ******************* -->
+        <apex:pageBlockSection rendered="{!newNur.Temporary_Employee__c}" columns="1" >
+           <apex:inputField required="false" value="{!newNur.FirstName__c}" />
+           <apex:inputField required="false" value="{!newNur.LastName__c}" />
+           <apex:inputField required="false" value="{!newNur.Manager__c}" />
+           <apex:inputField required="false" value="{!newNur.Cost_Center__c}" />
+           <apex:inputField required="false" value="{!newNur.User__r.Sales_Org__c}" />
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection rendered="{!promptForAdditionalInfo}" id="additionalInfoSection" columns="1">
+           <apex:pageBlockSectionItem rendered="{!AND(NOT(newNur.Temporary_Employee__c),newNur.Request_Type__c = 'Reactivate')}"> 
+           </apex:pageBlockSectionItem>
+            
+           <apex:pageBlockSectionItem rendered="{!NOT(newNur.Temporary_Employee__c)}">
+              <apex:outputLabel value="Verify the Cost Center for the User record"/>
+              <apex:inputField required="false" value="{!newNur.Cost_Center__c}" />
+           </apex:pageBlockSectionItem>
+
+           <apex:pageBlockSectionItem rendered="{!NOT(newNur.Temporary_Employee__c)}">
+              <apex:outputLabel value="Verify the Sales Org for the User record"/>
+              <apex:inputField required="false" value="{!newNur.User__r.Sales_Org__c}" />
+           </apex:pageBlockSectionItem>
+           <apex:inputField value="{!newNur.TRR__c}" />
+           
+           <apex:outputText rendered="{!getMirrorUserInfo}" style="color:BLUE; font-weight: bold;" value="Is there a user in the same position (Profile and Role) as the user you want to create?" />
+           <apex:inputField rendered="{!getMirrorUserInfo}" value="{!newNur.User_to_Mirror__c}" /> 
+           <apex:outputText rendered="{!getMirrorUserInfo}" style="color:BLUE; font-weight: bold;" value="If there is not a user, can you provide the Profile and Role of the new user or enter details in Notes (max 255 chars)?" />
+           <apex:inputField required="false" value="{!newNur.Profile__c}" />
+           <apex:inputField required="false" value="{!newNur.Role__c}" />  
+           <apex:outputText rendered="{!AND(isReactivateRequest,newNur.Reactivate_CPQ__c)}" style="color:RED; font-weight: bold;" value="**CPQ User - license reactivation request will be submitted once user is active**"/>
+           <apex:outputText rendered="{!isReactivateRequest}" style="color:BLUE; font-weight: bold;" value="If you have any more information on this reactivation enter it here (max 255 chars)." />
+           <apex:pageBlockSectionItem > 
+              <apex:outputLabel value="Notes"/>
+              <apex:inputTextarea id="newUserDesc" value="{!newNur.Notes__c}" cols="80" rows="3"/>
+           </apex:pageBlockSectionItem>
+           <apex:outputText style="color:BLUE; font-weight: bold;" value="If you want public groups and queues to be copied, select below check box." />
+           <apex:pageBlockSectionItem > 
+            <apex:inputCheckbox id="checkboxId" value="{!newNur.Copy_public_Groups_and_Queues__c}"></apex:inputCheckbox>  
+         </apex:pageBlockSectionItem>
+           <!-- 
+           <apex:outputPanel >
+              <apex:commandButton rendered="{!isSystemAdmin}" value="Create User" action="{!submitRequestCreateUser}" />
+              <apex:commandButton value="Submit Request" action="{!submitRequest}" />
+           </apex:outputPanel>
+            -->
+        </apex:pageBlockSection>
+
+        <apex:pageBlockSection rendered="{!displaySubmitButton}" columns="1">
+           <CENTER>
+           <apex:outputPanel >
+              <apex:commandButton value="Submit Request" action="{!submitRequest}" />
+              <apex:commandButton rendered="{!isSystemAdmin}" value="Manage Request" action="{!submitRequestCreateUser}" />
+              <apex:commandButton rendered="{!AND(isChatterFreeRequest,isSystemAdmin)}" value="Create Chatter Free User" action="{!addNewUser}" />
+           </apex:outputPanel>
+           </CENTER>
+        </apex:pageBlockSection>
+
+        <apex:pageBlockSection rendered="{!NOT(canWeProceed)}" id="cannotProceedSection" >
+           <apex:outputText rendered="{!activeUser != null}" style="color:BLUE; font-weight: bold;" value="An active User was found - a New User Request cannot be submitted!" />
+           <apex:outputText rendered="{!activeUser == null}" style="color:BLUE; font-weight: bold;" value="Cannot proceed with New User Request!" />
+
+        </apex:pageBlockSection>
+     </apex:pageBlock>
+     
+     <!-- 
+   <apex:pageBlock rendered="{!NOT(isQueryForm)}" id="SetupUserBlock">
+        <apex:pageMessages />
+
+     <c:NewUserRequestCreate newNur="{!newNur}"  />
+    
+   </apex:pageBlock>
+ -->
+  </apex:form>
+</apex:page>

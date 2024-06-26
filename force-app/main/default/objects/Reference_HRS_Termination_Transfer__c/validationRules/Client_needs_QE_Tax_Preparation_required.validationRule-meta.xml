@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Client_needs_QE_Tax_Preparation_required</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND
+(
+ISPICKVAL( Is_this_a_QE_YE_Month__c, &quot;Yes&quot;),
+ISPICKVAL(Client_needs_QE_Tax_Preparation__c,&quot;&quot;)||
+ISPICKVAL( Client_Needs_YE_Tax_Preparation1__c ,&quot;&quot;)
+
+
+)</errorConditionFormula>
+    <errorMessage>Client needs QE Tax Preparation?” and “Client needs YE Tax Preparation? are required</errorMessage>
+</ValidationRule>

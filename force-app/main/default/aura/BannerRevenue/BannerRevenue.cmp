@@ -1,0 +1,17 @@
+<aura:component description="BannerRevenue">
+    <aura:attribute name="revenue" type="Object" />
+    <aura:attribute name="formattedRevenue" type="String" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler name="change" value="{!v.revenue}" action="{!c.updateRevenue}" />
+
+    <div class="box" title="Net Revenue">
+        <div class="banner-header slds-align_absolute-center">
+            <h4 class="slds-item_label slds-text-color_weak slds-truncate slds-text-align_center">Revenue</h4>
+        </div>
+        <div class="banner-body column">
+            <img src="{!$Resource.BannerIcons + '/LightningIcons/moneybag.png'}" />
+            <div>${!v.formattedRevenue}</div>
+        </div>
+    </div>
+</aura:component>

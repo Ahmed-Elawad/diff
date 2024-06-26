@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Service_Location_and_MMS_Oppty</fullName>
+    <active>true</active>
+    <description>If you do not have Payroll Units you cannot select a service location</description>
+    <errorConditionFormula>ISPICKVAL(StageName,&apos;Sold&apos;)&amp;&amp;ISBLANK( Payroll_Units__c) &amp;&amp;
+NOT(ISBLANK(TEXT( Service_Location__c)))&amp;&amp;
+$RecordType.Id =&quot;012300000000hQQ&quot;</errorConditionFormula>
+    <errorMessage>You cannot select a service location if you do not have Payroll Units</errorMessage>
+</ValidationRule>

@@ -1,0 +1,1968 @@
+<!-- IndustrySpecific -->
+<aura:component controller="CommunityIndustrySpecificController" implements="force:appHostable,flexipage:availableForAllPageTypes" access="global" >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/> 
+    
+    <!-- auto save -->
+    <aura:registerEvent name='autoSave' type='c:CommunityFormsAutoSave' />
+    <aura:attribute name='autoSaveRecords' type='map' />
+    <aura:attribute name='saveAction' type='Object' />
+    <!-- public attribute -->
+    <aura:attribute name="IndustrySpecific" type="WC_Questionnaire_Industry_Specific__c"/>
+    <aura:attribute name="IndustryType" type="String" />
+    <aura:attribute name="IndustryTypeId" type="String" />
+    <aura:attribute name="parentRecId" type="Id"/>
+    <aura:attribute name="PEOChecklist" type="Object"/>
+    <aura:attribute name="parentAccount" type="Account"/>
+    <aura:attribute name="PolicyPeriods" type="Policy_Period__c[]"/>
+    <aura:attribute name="answersChanged" type="Boolean" default="false"/>
+    <aura:attribute name="policyPeriodChanged" type="Boolean" default="false"/>
+    <aura:attribute name="readOnly" type="Boolean" default="true" />
+    <aura:attribute name="readOnlyString" type="String" default="" />    
+    <aura:attribute name='radioGroupOptionsarm' type='List' default="[{'label': 'Armed', 'value':'Armed'},{'label':'Unarmed','value':'Unarmed'}]" />
+    <aura:attribute name='radioGroupShifts' type='List' default="[{'label': 'Standard', 'value':'Standard'},{'label':'Multiple','value':'Multiple'}]" />
+    <aura:attribute name='radioGroupOptions' type='List' default="[{'label': 'Yes', 'value':'Yes'},{'label':'No','value':'No'}]" />
+    <aura:attribute name='radioGroupEmps' type='List' default="[{'label': 'Employed', 'value':'Employed'},{'label':'Contracted','value':'Contracted'}]" />
+    <aura:attribute name='radioGroupOptionsApplianceSales' type='List' default="[{'label': 'Only Sell Appliances', 'value':'Only Sell Appliances'},{'label':'Only Install Appliances','value':'Only Install Appliances'},{'label':'Both Sell and Install Appliances','value':'Both Sell and Install Appliances'},{'label':'Neither sells nor installs Appliances','value':'Neither sells nor installs Appliances'}]" />
+    <aura:attribute name='radioOptionsSold' type='List' default="[{'label': 'Storefront', 'value':'Storefront'},{'label':'Internet','value':'Internet'},{'label':'Both','value':'Both'}]" />
+    <aura:attribute name='radioGroupSites' type='List' default="[{'label': 'Single', 'value':'Single'},{'label':'Multiple','value':'Multiple'}]" />
+    
+    <aura:attribute name="actionName" type="string" default="Next" />
+    <aura:attribute name='communityUser' type='boolean' />
+    <aura:attribute name="allAccounts" type="Account[]" />
+    <aura:attribute name='user' type='User' />
+    <aura:attribute name="loadingSpin" type="Boolean" default="true" />
+    
+    <!-- new attributes for parent containment of all records -->
+    <aura:attribute name='industryStruct' type='Object' />
+    <aura:attribute name='industryName' type='String' />
+    <aura:attribute name='ContractIndustryLabel' type='String' />
+    <aura:attribute name='formSubmitted' type='boolean' default='false' />
+    <aura:attribute name='buttonLabel' type='String' />
+    <aura:attribute name='errMsg' type='String' />
+    
+    <!-- tab navigation attributes -->
+    <aura:attribute name='parentTabs' type='String[]' />
+    <aura:attribute name='activeParent' type='String' />
+    <aura:attribute name='wcCompTabs' type='String[]' />
+    <aura:attribute name='activeWcCompTab' type='String' />
+    
+    <!-- reference to save functionality -->
+    <aura:attribute name='saveFunc' type='Object' />
+    
+    <!--Attributes for Naics specific questions -->
+    <aura:attribute name='naicsInfo' type='String[]' />
+    <aura:attribute name="displayRestaurantSpecific" type="Boolean" default="false"/>
+    
+    <aura:attribute name='relatedFieldList' type='String[]' />
+    
+    <aura:attribute name="showErrorMsg" type="Boolean" default="false"/>
+    
+    <!-- public attribute -->
+    <aura:if isTrue="{!v.loadingSpin}">
+        <lightning:spinner alternativeText="Loading" />
+    </aura:if>
+    <aura:if isTrue="{!v.IndustryType==null}">
+        <h2>There no match with the NAICS code for this Account, please correct the value on Account.</h2>
+        
+        <aura:set attribute="else">
+            <aura:if isTrue="{!greaterthan(v.readOnlyString.length, 1)}">
+                <div style="width:100%">
+                    <ui:message title="Evaluation Status" severity="info" closable="false" >
+                        {!v.readOnlyString}
+                    </ui:message>
+                </div>
+            </aura:if>
+            <lightning:tabset aura:id="tabs" variant="scoped">
+                <aura:if isTrue="{!v.IndustryType=='Doctors_Offices'}">
+                    <lightning:tab label="Doctors' Office" title="Doctors_Offices" aura:id="Doctors_Offices" id="Doctors_Offices">
+                        <lightning:layout multipleRows="true">
+                            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">                               
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" name='Is_doctors_office_located_in_hospital__c'
+                                                      label="Is the doctor’s office located in a hospital?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Is_doctors_office_located_in_hospital__c}"
+                                                      />
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" name='Do_you_provide_services_in_hospitals__c'
+                                                      label="Do you go into hospitals to provide services?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      
+                                                      value="{!v.IndustrySpecific.Do_you_provide_services_in_hospitals__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Do_you_provide_services_in_hospitals__c=='Yes'}" >
+                                    <lightning:input aura:id="isqQue"
+                                                     name="if_yes_how_often__c"
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                     label="If yes, how often" 
+                                                     value="{!v.IndustrySpecific.if_yes_how_often__c}" />
+                                </aura:if>
+                                
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" name='Are_surgeries_performed_at_the_office__c'
+                                                      label="Are any surgical procedures performed at the doctor’s office?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      
+                                                      value="{!v.IndustrySpecific.Are_surgeries_performed_at_the_office__c}"
+                                                      />
+                            </lightning:layoutItem>
+                            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" name='Are_overnight_accommodations_provided__c'
+                                                      label="Are overnight accommodations provided?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      
+                                                      value="{!v.IndustrySpecific.Are_overnight_accommodations_provided__c}"
+                                                      />
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" name='Any_mobile_services_like_MRI_performed__c'
+                                                      label="Are there any mobile services performed (i.e. mobile x-ray, mobile MRI, house calls, etc.)?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      
+                                                      value="{!v.IndustrySpecific.Any_mobile_services_like_MRI_performed__c}"
+                                                      />
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" name='Are_any_24_hour_services_offered__c'
+                                                      label="Are any 24 hour services offered?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      
+                                                      value="{!v.IndustrySpecific.Are_any_24_hour_services_offered__c}"
+                                                      />
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" name='Do_you_provide_emergency_urgent_care__c'
+                                                      label="Does your facility provide emergency/urgent care? "
+                                                      options="{!v.radioGroupOptions}"
+                                                      
+                                                      value="{!v.IndustrySpecific.Do_you_provide_emergency_urgent_care__c}"
+                                                      />
+                            </lightning:layoutItem>
+                            
+                        </lightning:layout>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType == 'Physical_Distribution_Logistics_Consulting_Services'}">
+                    <lightning:tab label="Physical Distribution Logistics Consulting Services" title="Physical Distribution Logistics Consulting Services" 
+                                   aura:id="physicalDistributionLogisticsConsultingServices" id="PhysicalDistributionLogisticsConsultingServices">
+                        <lightning:layout multipleRows="true">
+                            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:radioGroup aura:id='isqQue'
+                                                      disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Have_job_related_duties_outside_office__c'
+                                                      label="Do any of your employees have job-related duties outside the office?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Have_job_related_duties_outside_office__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Have_job_related_duties_outside_office__c == 'Yes'}" >
+                                    <lightning:input aura:id='isqQue'
+                                                     name='Provide_description_of_those_duties__c'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                     label="Provide description of those duties" 
+                                                     maxlength="255"
+                                                     value="{!v.IndustrySpecific.Provide_description_of_those_duties__c}" />
+                                </aura:if>
+                                <lightning:radioGroup aura:id='isqQue'
+                                                      disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Do_you_own_and_or_operate_a_warehouse__c'
+                                                      label="Do you own and/or operate a warehouse?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Do_you_own_and_or_operate_a_warehouse__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Do_you_own_and_or_operate_a_warehouse__c == 'Yes'}" >
+                                    <lightning:input aura:id='isqQue'
+                                                     name='How_many_warehouses__c'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                     label="How many warehouses?" 
+                                                     type='number'
+                                                     value="{!v.IndustrySpecific.How_many_warehouses__c}" />
+                                    <lightning:input aura:id='isqQue'
+                                                     name='Provide_the_warehouse_location_address__c'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                     label="Provide the warehouse location address(es)." 
+                                                     maxlength="255"
+                                                     value="{!v.IndustrySpecific.Provide_the_warehouse_location_address__c}" />
+                                    <lightning:input aura:id='isqQue'
+                                                     name='What_type_of_products_are_stored__c'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                     label="What type(s) of products are stored? " 
+                                                     maxlength="255"
+                                                     value="{!v.IndustrySpecific.What_type_of_products_are_stored__c}" />
+                                </aura:if>
+                                <lightning:radioGroup aura:id='isqQue'
+                                                      disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Emp_deliver_goods_for_business_purpose__c'
+                                                      label="Do you have employees who drive/deliver goods for business purposes?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Emp_deliver_goods_for_business_purpose__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Emp_deliver_goods_for_business_purpose__c == 'Yes'}" >
+                                    <lightning:input aura:id='isqQue'
+                                                     name='How_many_drivers__c'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                     label="How many drivers?" 
+                                                     type='number'
+                                                     value="{!v.IndustrySpecific.How_many_drivers__c}" />
+                                    <lightning:input aura:id='isqQue'
+                                                     name='What_products_are_being_delivered_picked__c'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                     label="What products are being delivered/picked-up?" 
+                                                     maxlength="255"
+                                                     value="{!v.IndustrySpecific.What_products_are_being_delivered_picked__c}" />
+                                </aura:if>
+                                <lightning:radioGroup aura:id='isqQue'
+                                                      disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Hire_trucking_subcont_independnt_trucker__c'
+                                                      label="Do you hire any trucking subcontractors/any independent truckers?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Hire_trucking_subcont_independnt_trucker__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Hire_trucking_subcont_independnt_trucker__c == 'Yes'}" >
+                                    <lightning:input aura:id='isqQue'
+                                                     name='How_many_are_hired_in_an_average_month__c'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                     label="How many are hired in an average month? " 
+                                                     type='number'
+                                                     value="{!v.IndustrySpecific.How_many_are_hired_in_an_average_month__c}" />
+                                    <lightning:radioGroup aura:id='isqQue'
+                                                          disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                          name='Are_COIs_obtained_and_maintained__c'
+                                                          label="Are COIs obtained and maintained?"
+                                                          options="{!v.radioGroupOptions}"
+                                                          value="{!v.IndustrySpecific.Are_COIs_obtained_and_maintained__c}"
+                                                          />
+                                    <aura:if isTrue="{!v.IndustrySpecific.Are_COIs_obtained_and_maintained__c == 'No'}" >
+                                        <lightning:radioGroup aura:id='isqQue'
+                                                              disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                              name='Cust_arrng_their_own_trucking_deliveries__c'
+                                                              label="Do any of your customers arrange their own trucking/delivery services?"
+                                                              options="{!v.radioGroupOptions}"
+                                                              value="{!v.IndustrySpecific.Cust_arrng_their_own_trucking_deliveries__c}"
+                                                              />
+                                    </aura:if>
+                                </aura:if>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:radioGroup aura:id='isqQue'
+                                                      disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Offer_bnfits_to_drvrs_clsfied_as_1099s__c'
+                                                      label="Do you offer any benefits to drivers who you classify as 1099s/Subcontractors (i.e., 401k, paid time off, medical, dental, vision, life insurance, etc.)?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Offer_bnfits_to_drvrs_clsfied_as_1099s__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Offer_bnfits_to_drvrs_clsfied_as_1099s__c == 'Yes'}" >
+                                    <lightning:input aura:id='isqQue'
+                                                     name='What_specific_benefits_are_offered__c'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                     label="What specific benefits are offered?" 
+                                                     maxlength="255"
+                                                     value="{!v.IndustrySpecific.What_specific_benefits_are_offered__c}" />
+                                </aura:if>
+                                <lightning:radioGroup aura:id='isqQue'
+                                                      disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Any_interchange_of_workers__c'
+                                                      label="Is there any interchange of workers between your company and any of the companies that are providing warehousing and/or trucking services?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Any_interchange_of_workers__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Any_interchange_of_workers__c == 'Yes'}" >
+                                    <lightning:input aura:id='isqQue'
+                                                     name='How_many_employees__c'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                     label="How many employees?" 
+                                                     type='number'
+                                                     value="{!v.IndustrySpecific.How_many_employees__c}" />
+                                    <lightning:input aura:id='isqQue'
+                                                     name='What_specific_job_duties__c'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                     label="What specific job duties?" 
+                                                     maxlength="255"
+                                                     value="{!v.IndustrySpecific.What_specific_job_duties__c}" />
+                                    <lightning:input aura:id='isqQue'
+                                                     name='Interchange_between_which_companies__c'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                     label="Interchange between which companies?" 
+                                                     maxlength="255"
+                                                     value="{!v.IndustrySpecific.Interchange_between_which_companies__c}" />
+                                </aura:if>
+                                <lightning:radioGroup aura:id='isqQue'
+                                                      disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Is_there_common_ownership_btw_Companies__c'
+                                                      label="Is there common ownership between your company and any of the companies that are providing warehousing and/or trucking services?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Is_there_common_ownership_btw_Companies__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Is_there_common_ownership_btw_Companies__c == 'Yes'}" >
+                                    <lightning:input aura:id='isqQue'
+                                                     name='Which_entities__c'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                     label="Which entities?" 
+                                                     maxlength="255"
+                                                     value="{!v.IndustrySpecific.Which_entities__c}" />
+                                </aura:if>
+                                <lightning:radioGroup aura:id='isqQue'
+                                                      disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Have_an_office_at_the_same_address_loc__c'
+                                                      label="Do you have an office at the same address/location of a company that is providing warehousing and/or trucking services?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Have_an_office_at_the_same_address_loc__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Have_an_office_at_the_same_address_loc__c == 'Yes'}" >
+                                    <lightning:input aura:id='isqQue'
+                                                     name='What_is_the_address_location__c'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                     label="What is the address/location and the name of the company?" 
+                                                     maxlength="255"
+                                                     value="{!v.IndustrySpecific.What_is_the_address_location__c}" />
+                                </aura:if>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </lightning:tab>
+                    
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='NY_Exposure'}">
+                    <lightning:tab label="NY Exposure" title="NY_Exposure" aura:id="NY_Exposure" id="NY_Exposure">
+                          <lightning:layout multipleRows="true">
+                            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="12"  padding="around-small">
+                            	 <lightning:radioGroup aura:id='isqQue'
+                                                      disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Do_all_employees_work_at_one_site__c'
+                                                      label="Do all employees work in one location?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Do_all_employees_work_at_one_site__c}"
+                                                      />
+                                 <aura:if isTrue="{!v.IndustrySpecific.Do_all_employees_work_at_one_site__c=='No'}" >
+                                      <lightning:input aura:id='isqQue'
+                                                 name='Address_for_each_Employee__c'
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                 label="Please provide the address for each, and the number of employees working at each site" 
+                                                 value="{!v.IndustrySpecific.Address_for_each_Employee__c}" />
+                                </aura:if>
+                                 <lightning:radioGroup aura:id='isqQue'
+                                                      disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Employees_work_Standard_Multiple_Shifts__c'
+                                                      label="Do all employees work standard business hours, or are there multiple shifts?"
+                                                      options="{!v.radioGroupShifts}"
+                                                      value="{!v.IndustrySpecific.Employees_work_Standard_Multiple_Shifts__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Employees_work_Standard_Multiple_Shifts__c=='Multiple'}" >
+                                      <lightning:input aura:id='isqQue'
+                                                 name='Number_Of_Employees_Working_Each_Shift__c'
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                 label="Please provide the number of employees working each shift and confirm a manager / supervisor is on site during all operational hours" 
+                                                 value="{!v.IndustrySpecific.Number_Of_Employees_Working_Each_Shift__c}" />
+                                </aura:if>
+                            </lightning:layoutItem> 
+                        </lightning:layout>
+                    </lightning:tab>
+                </aura:if>
+                
+                <aura:if isTrue="{!v.IndustryType=='Home_Health'}">
+                    <lightning:tab label="Home Health" title="Home_Health" aura:id="Home_Health" id="Home_Health">
+                        <lightning:layout multipleRows="true">
+                            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:input aura:id='isqQue'
+                                                 name='No_of_patients_caregivers_visit_in_24hr__c'
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                 label="How many patients will care givers visit in a day?" 
+                                                 type='number'
+                                                 value="{!v.IndustrySpecific.No_of_patients_caregivers_visit_in_24hr__c}" />
+                                <lightning:input aura:id='isqQue'
+                                                 name='What_is_the_age_range_of_the_clients__c'
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                 label="What is the age range of the clients / patients?" 
+                                                 value="{!v.IndustrySpecific.What_is_the_age_range_of_the_clients__c}" />
+                                <lightning:radioGroup aura:id='isqQue'
+                                                      disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Will_a_manager_visit_before_sending_aid__c'
+                                                      label="Will a supervisor or manager visit the client’s home before sending an aide? "
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Will_a_manager_visit_before_sending_aid__c}"
+                                                      />
+                                <lightning:radioGroup aura:id='isqQue'
+                                                      disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Will_an_aide_take_the_client_to_errands__c'
+                                                      label="Will the aide take the client to do errands such as Doctor’s visits, grocery shopping, beauty salon, etc.?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Will_an_aide_take_the_client_to_errands__c}"
+                                                      />
+                                <lightning:radioGroup aura:id='isqQue'
+                                                      disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Any_medical_services_provided_at_home__c'
+                                                      label="Any medical services provide at client’s home? "
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Any_medical_services_provided_at_home__c}"
+                                                      />
+                            <!--    <lightning:input aura:id='Are_clients_ambulatory_or_bed_ridden__c'
+                                                 name='Are_clients_ambulatory_or_bed_ridden__c'
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 label="Are clients ambulatory or bed-ridden?" 
+                                                 value="{!v.IndustrySpecific.Are_clients_ambulatory_or_bed_ridden__c}" />
+                              -->
+                                <span style="padding-left:1rem; font-size: 16px;">What percentage of clients are:   </span> 
+                                <div style="padding-left:2rem !important">
+                                <lightning:input aura:id='isqQue'
+                                                 name='Percentage_of_ambulatory_residents__c'
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 label=" Ambulatory %"  type='number' max='100'
+                                                 value="{!v.IndustrySpecific.Percentage_of_ambulatory_residents__c}" />
+                                
+                                 <lightning:input aura:id='isqQue'
+                                                 name='Percentage_of_bed_ridden_residents__c'
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 label=" Non-Ambulatory %"  type='number' max='100'
+                                                 value="{!v.IndustrySpecific.Percentage_of_bed_ridden_residents__c}" />
+                                </div>
+                                <!--lightning:input aura:id='If_both_please_provide_percent_of_each__c'
+                                                 name='If_both_please_provide_percent_of_each__c'
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 label="If both, please provide percentage of each" 
+                                                 value="{!v.IndustrySpecific.If_both_please_provide_percent_of_each__c}" /-->
+                                
+                                 <lightning:input aura:id='isqQue'
+                                                 name='Safety_precautions_before_aides_visit__c'
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 label="What safety precautions, procedures are in place for when an aide visits a client?" 
+                                                 value="{!v.IndustrySpecific.Safety_precautions_before_aides_visit__c}" />
+                                
+                                <!--lightning:input aura:id='Percent_of_caregivers_fulltime_partime__c'
+                                                 name='Percent_of_caregivers_fulltime_partime__c'
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 label="What percentage of care givers full time (full five days / week) and part time?" 
+                                                 value="{!v.IndustrySpecific.Percent_of_caregivers_fulltime_partime__c}" /-->
+                              
+                            </lightning:layoutItem>
+                            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <!-- <lightning:radioGroup aura:id='Any_min_autoinsurance_for_your_employees__c'
+                                                      disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Any_min_autoinsurance_for_your_employees__c'
+                                                      label="Are there minimum auto insurance requirements in place for your employees?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Any_min_autoinsurance_for_your_employees__c}"
+                                                      />
+                                <lightning:radioGroup aura:id='Any_Hired_Non_Owned_auto_insurance__c'
+                                                      disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Any_Hired_Non_Owned_auto_insurance__c'
+                                                      label="Do you carry a Hired / Non-Owned auto policy in place? "
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Any_Hired_Non_Owned_auto_insurance__c}"
+                                                      />	-->
+                                  <lightning:radioGroup aura:id='isqQue'
+                                                      disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Any_system_to_monitor_caregivers_work__c'
+                                                      label="Is there any sort of call-in system, GPS or tracking of the care givers to ensure they are doing only work activities and not personal errands? "
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Any_system_to_monitor_caregivers_work__c	}"
+                                                      />
+                                <lightning:radioGroup aura:id='isqQue'
+                                                      disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Does_any_caregiver_provide_24hrs_care__c'
+                                                      label="Do any of the care givers provide 24 hour care?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Does_any_caregiver_provide_24hrs_care__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Does_any_caregiver_provide_24hrs_care__c=='Yes'}" >
+                                    <lightning:input aura:id='isqQue'
+                                                     name='if_yes_how_many_clients__c'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                     label="If yes, how many clients?" 
+                                                     type='number'
+                                                     value="{!v.IndustrySpecific.if_yes_how_many_clients__c}" />
+                                    <lightning:input aura:id='isqQue'
+                                                     name='if_yes_are_there_multiple_care_givers__c'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                     label="If yes, are there multiple care givers?" 
+                                                     value="{!v.IndustrySpecific.if_yes_are_there_multiple_care_givers__c}" />
+                                    <lightning:input aura:id='isqQue'
+                                                     name='if_yes_what_are_the_typical_shift_hrs__c'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                     label="If yes, what are the typical shift hours?" 
+                                                     value="{!v.IndustrySpecific.if_yes_what_are_the_typical_shift_hrs__c}" />
+                                </aura:if>
+                                <lightning:radioGroup aura:id='isqQue'
+                                                      disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Do_any_live_on_site_with_clients__c'
+                                                      label="Do any live on site with clients?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Do_any_live_on_site_with_clients__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Do_any_live_on_site_with_clients__c=='Yes'}" >
+                                    <lightning:input aura:id='isqQue'
+                                                     name='if_yes_how_many__c'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                     label="If yes, how many?" 
+                                                     type='number'
+                                                     value="{!v.IndustrySpecific.if_yes_how_many__c}" />
+                                </aura:if>  
+                                <lightning:input  aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                     name='Percentage_memory_related_special_needs__c'
+                                                     label='What percentage of clients have memory-related, special needs concerns?'
+                                                     type='Number'
+                                                     min='0'
+                                                     fieldLevelHelp='Please enter a number'
+                                                     value="{!v.IndustrySpecific.Percentage_memory_related_special_needs__c}" />
+                            </lightning:layoutItem>
+                            
+                        </lightning:layout>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Hotels'}">
+                    <lightning:tab label="Hotels" title="Hotels" aura:id="Hotels" id="Hotels">
+                        <lightning:layout multipleRows="true">
+                            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                           <!--     <aura:if isTrue="{!v.displayRestaurantSpecific== true}">
+                                    <lightning:radioGroup disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                          aura:id='Guests_allowed_in_property__c'
+                                                          label='Are guests currently allowed in the property?'
+                                                          name="Guests_allowed_in_property__c"
+                                                          options="{!v.radioGroupOptions}"
+                                                          value="{!v.IndustrySpecific.Guests_allowed_in_property__c}"/> 
+                                    <aura:if isTrue="{!v.IndustrySpecific.Guests_allowed_in_property__c == 'Yes'}">
+                                        <lightning:radioGroup disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                              aura:id='guest_screening_upon_check_in__c'
+                                                              label='Are there any types of guest screening upon check-in?'
+                                                              name="guest_screening_upon_check_in__c"
+                                                              options="{!v.radioGroupOptions}"
+                                                              value="{!v.IndustrySpecific.guest_screening_upon_check_in__c}"/> 
+                                        <lightning:radioGroup disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                              aura:id='additional_testing_throughout_stay__c'
+                                                              label='Any additional testing done throughout the stay?'
+                                                              name="additional_testing_throughout_stay__c"
+                                                              options="{!v.radioGroupOptions}"
+                                                              value="{!v.IndustrySpecific.additional_testing_throughout_stay__c}"/> 
+                                    </aura:if>
+                                    <lightning:radioGroup disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                          aura:id='Amenities_open_to_the_public__c'
+                                                          label='Are all amenities open to the public (pool, weight room, spa, restaurant, shuttle buses, etc.)?'
+                                                          name="Amenities_open_to_the_public__c"
+                                                          options="{!v.radioGroupOptions}"
+                                                          value="{!v.IndustrySpecific.Amenities_open_to_the_public__c}"/> 
+                                    <aura:if isTrue="{!v.IndustrySpecific.Amenities_open_to_the_public__c == 'Yes'}">
+                                        <lightning:textarea aura:id="Additional_cleaning_controls_public__c"
+                                                            name="Additional_cleaning_controls_public__c" 
+                                                            Id='Additional_cleaning_controls_public__c'
+                                                            label="What additional cleaning controls have been put in place in these areas?" 
+                                                            value="{!v.IndustrySpecific.Additional_cleaning_controls_public__c}"
+                                                            disabled='{!v.readOnly}' onchange="{!c.handleChange}" />
+                                    </aura:if>
+                                    <lightning:radioGroup disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                          aura:id='Addtnl_ctrls_gst_clng_rooms__c'
+                                                          label="Any additional controls put in place for employees cleaning guests' rooms?"
+                                                          name="Addtnl_ctrls_gst_clng_rooms__c"
+                                                          options="{!v.radioGroupOptions}"
+                                                          value="{!v.IndustrySpecific.Addtnl_ctrls_gst_clng_rooms__c}"/> 
+                                    <aura:if isTrue="{!v.IndustrySpecific.Addtnl_ctrls_gst_clng_rooms__c == 'Yes'}">
+                                        <lightning:textarea aura:id="Additional_cleaning_controls_gst_rooms__c"
+                                                            name="Additional_cleaning_controls_gst_rooms__c" 
+                                                            Id='Additional_cleaning_controls_gst_rooms__c'
+                                                            label="What additional cleaning controls have been put in place in these areas?" 
+                                                            value="{!v.IndustrySpecific.Additional_cleaning_controls_gst_rooms__c}"
+                                                            disabled='{!v.readOnly}' onchange="{!c.handleChange}" />
+                                    </aura:if>
+                                    <lightning:radioGroup disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                          aura:id='New_ctrls_for_deliveries_to_properties__c'
+                                                          label="Any new controls in place for deliveries made to the property?"
+                                                          name="New_ctrls_for_deliveries_to_properties__c"
+                                                          options="{!v.radioGroupOptions}"
+                                                          value="{!v.IndustrySpecific.New_ctrls_for_deliveries_to_properties__c}"/> 
+                                    <aura:if isTrue="{!v.IndustrySpecific.New_ctrls_for_deliveries_to_properties__c == 'Yes'}">
+                                        <lightning:textarea aura:id="Addtnl_ctrls_in_place_delivery__c"
+                                                            name="Addtnl_ctrls_in_place_delivery__c" 
+                                                            Id='Addtnl_ctrls_in_place_delivery__c'
+                                                            label="What additional controls have been put in place in these areas?" 
+                                                            value="{!v.IndustrySpecific.Addtnl_ctrls_in_place_delivery__c}"
+                                                            disabled='{!v.readOnly}' onchange="{!c.handleChange}" />
+                                    </aura:if>
+                                </aura:if> --> 
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Any_restaurant_bar_on_the_premises__c'
+                                                      label="Is there a restaurant or bar on the premises?"
+                                                      options="{!v.radioGroupOptions}"                                                      
+                                                      value="{!v.IndustrySpecific.Any_restaurant_bar_on_the_premises__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Any_restaurant_bar_on_the_premises__c=='Yes'}" >
+                                    <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                     name='if_yes_does_your_entity_operate_it__c'
+                                                     label="If yes, does the entity operate this restaurant or does someone else?"
+                                                     value="{!v.IndustrySpecific.if_yes_does_your_entity_operate_it__c}" />
+                                </aura:if>
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                      name='Does_the_hotel_offer_water_activities__c'
+                                                      label="Does the hotel offer water activities (i.e. boat rentals, skiing, charter fishing, etc.)?"
+                                                      options="{!v.radioGroupOptions}"                                                      
+                                                      value="{!v.IndustrySpecific.Does_the_hotel_offer_water_activities__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Does_the_hotel_offer_water_activities__c=='Yes'}" >
+                                    <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                     label="If yes, please describe activities" 
+                                                     name='if_yes_please_describe_the_activities__c'
+                                                     value="{!v.IndustrySpecific.if_yes_please_describe_the_activities__c}" />
+                                </aura:if>   
+                                
+                                <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 label="Who is responsible for the landscape/maintenance work at the hotel?" 
+                                                 name='Who_is_responsible_for_maintenance_work__c'
+                                                 value="{!v.IndustrySpecific.Who_is_responsible_for_maintenance_work__c}" /> 
+                                
+                               
+                            </lightning:layoutItem>
+                            
+                            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='any_concessionaires_operating_the_hotel__c'
+                                                      label="Are there any concessionaires or independent contractors operating on the premises?"
+                                                      options="{!v.radioGroupOptions}"                                                      
+                                                      value="{!v.IndustrySpecific.any_concessionaires_operating_the_hotel__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.any_concessionaires_operating_the_hotel__c=='Yes'}" >
+                                    <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                     label="If yes, what kind?" 
+                                                     name='if_yes_what_kind__c'
+                                                     value="{!v.IndustrySpecific.if_yes_what_kind__c}" />
+                                </aura:if>                              
+                                
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                      name='Any_laundry_facility_in_the_premises__c'
+                                                      label="Do you have a laundry facility on the premises?"
+                                                      options="{!v.radioGroupOptions}"                                                  
+                                                      value="{!v.IndustrySpecific.Any_laundry_facility_in_the_premises__c}"
+                                                      />
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Do_you_provide_transportation_for_guests__c'
+                                                      label="Do you provide transportation for guests going to and from airports, restaurants, etc.?"
+                                                      options="{!v.radioGroupOptions}"                                                      
+                                                      value="{!v.IndustrySpecific.Do_you_provide_transportation_for_guests__c}"
+                                                      />
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Are_valet_services_provided__c'
+                                                      label="Are valet services provided?  "
+                                                      options="{!v.radioGroupOptions}"                                                      
+                                                      value="{!v.IndustrySpecific.Are_valet_services_provided__c}"
+                                                      />
+                                 <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Any_golf_course_owned_operated_by_hotel__c'
+                                                      label="Is there a golf course that is owned and operated by the hotel?"
+                                                      options="{!v.radioGroupOptions}"                                                      
+                                                      value="{!v.IndustrySpecific.Any_golf_course_owned_operated_by_hotel__c}"
+                                                      />
+                            </lightning:layoutItem>                            
+                        </lightning:layout>                        
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Manufacturing'}">
+                    <lightning:tab label="Manufacturing" title="Manufacturing" aura:id="Manufacturing" id="Manufacturing">
+                        <lightning:layout multipleRows="true">
+                            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:input aura:id='isqQue' name="What_are_the_type_of_products_you_mfg__c"
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 label="What type of products do you manufacture?" 
+                                                 maxlength="250"
+                                                 value="{!v.IndustrySpecific.What_are_the_type_of_products_you_mfg__c}"
+                                                 />
+                                <!--<ui:inputTextArea disabled='{!v.readOnly}' 
+                                                  label="What is the process you follow to mfg?" 
+                                                  value="{!v.IndustrySpecific.What_processes_do_you_follow_to_mfg__c}" />-->
+                                <!--<lightning:textArea 
+                                                    disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                    name='What_processes_do_you_follow_to_mfg__c'
+                                                    label="What is the process you follow to mfg?"
+                                                    value="{!v.IndustrySpecific.What_processes_do_you_follow_to_mfg__c}" />	-->
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                      name='Are_all_machines_properly_guarded__c'
+                                                      label="Are all machines properly guarded? "
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Are_all_machines_properly_guarded__c}" />
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                      name='Is_there_storage_warehousing_for_goods__c'
+                                                      label="Do you provide any storage / warehousing of goods?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Is_there_storage_warehousing_for_goods__c}" />
+                            </lightning:layoutItem>
+                            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                      name='Do_you_use_forklifts__c'
+                                                      label="Do you use forklifts? "
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Do_you_use_forklifts__c}" />
+                                <aura:if isTrue="{!v.IndustrySpecific.Do_you_use_forklifts__c=='Yes'}">
+                                    <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                          name='if_yes_are_employees_trained_certified__c'
+                                                          label="If yes, are employees trained and certified?"
+                                                          options="{!v.radioGroupOptions}"
+                                                          value="{!v.IndustrySpecific.if_yes_are_employees_trained_certified__c}" />
+                                </aura:if>
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Any_installation_of_parts_manufactured__c'
+                                                      label="Any installation of parts manufactured?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Any_installation_of_parts_manufactured__c	}" />
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                      name='Any_delivery_of_goods_by_employees__c'
+                                                      label="Any delivery of goods by employees?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Any_delivery_of_goods_by_employees__c}" />
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Restaurants'}">
+                    <lightning:tab label="Restaurants" title="Restaurants" aura:id="Restaurants" id="Restaurants">
+                        <lightning:layout multipleRows="true">
+                          <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:input aura:id="isqQue"
+                                                 disabled='{!v.readOnly}' 
+                                                 name='What_are_the_hours_of_operation__c'
+                                                 label="What are the hours of operation?"
+                                                 onchange='{!c.handleChange}'
+                                                 value="{!v.IndustrySpecific.What_are_the_hours_of_operation__c}"
+                                                 required="true"/>
+                                <lightning:input aura:id="isqQue"
+                                                 disabled='{!v.readOnly}' 
+                                                 name='What_type_of_restaurant_are_you__c'
+                                                 label="What type of restaurant are you? For example: Wait staffed, fast food, bar food"
+                                                 onchange='{!c.handleChange}'
+                                                 value="{!v.IndustrySpecific.What_type_of_restaurant_are_you__c}"
+                                                 required="true"/>' 
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" name='Is_there_a_drive_thru__c'
+                                                      label="Is there a drive-thru?  "
+                                                      options="{!v.radioGroupOptions}"
+                                                      
+                                                      value="{!v.IndustrySpecific.Is_there_a_drive_thru__c}"
+                                                      />
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" name='Is_alcohol_served__c'
+                                                      label="Is alcohol served?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      
+                                                      value="{!v.IndustrySpecific.Is_alcohol_served__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Is_alcohol_served__c=='Yes'}" >
+                                    <lightning:input aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" name='if_yes_of_receipts_related_to_alcohol__c'
+                                                     label="If yes, what % of the total receipts are alcohol related? " 
+                                                     
+                                                     value="{!v.IndustrySpecific.if_yes_of_receipts_related_to_alcohol__c}" />
+                                </aura:if>
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" name='Do_you_offer_live_entertainment__c'
+                                                      label="Do you offer live entertainment? "
+                                                      options="{!v.radioGroupOptions}"
+                                                      
+                                                      value="{!v.IndustrySpecific.Do_you_offer_live_entertainment__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Do_you_offer_live_entertainment__c=='Yes'}" >
+                                    <lightning:input aura:id="isqQue" 
+                                                     name= "if_yes_what_type_of_entertainment__c" 
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                     label="If yes, what type of entertainment? " 
+                                                     value="{!v.IndustrySpecific.if_yes_what_type_of_entertainment__c}" />
+                                </aura:if>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" name='Do_you_utilize_bouncers__c'
+                                                      label="Do you utilize bouncers? "
+                                                      options="{!v.radioGroupOptions}"
+                                                      
+                                                      value="{!v.IndustrySpecific.Do_you_utilize_bouncers__c}"
+                                                      />
+                                
+                                <aura:if isTrue="{!v.IndustrySpecific.Do_you_utilize_bouncers__c=='Yes'}">
+                                    <!--<lightning:input disabled='{!v.readOnly}' onchange="{!c.handleChange}" label="If yes, are they employees or contracted out through a security service?" value="{!v.IndustrySpecific.if_yes_are_they_employees_contracted__c}" />-->
+                                	<lightning:input aura:id="isqQue"
+                                                     disabled='{!v.readOnly}' 
+                                                     name='if_yes_are_they_employees_contracted__c'
+                                                     label="If yes, are they employees or contracted out through a security service?"
+                                                     onchange='{!c.handleChange}'
+                                                     value="{!v.IndustrySpecific.if_yes_are_they_employees_contracted__c}"
+                                                     required="true"/>
+                                </aura:if>
+                                
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" name='Do_you_provide_catering_services__c'
+                                                      label="Do you provide catering services? "
+                                                      options="{!v.radioGroupOptions}"
+                                                      
+                                                      value="{!v.IndustrySpecific.Do_you_provide_catering_services__c}"
+                                                      />
+                                
+                                
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" name='Any_delivery_services_by_employees__c'
+                                                      label="Are delivery services provided by employees?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      
+                                                      value="{!v.IndustrySpecific.Any_delivery_services_by_employees__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Any_delivery_services_by_employees__c=='Yes'}">
+                                    <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" name='if_yes_do_you_monitor_motor_vehicle__c'
+                                                          label="If yes, are motor vehicle records monitored?	"
+                                                          options="{!v.radioGroupOptions}"
+                                                          
+                                                          value="{!v.IndustrySpecific.if_yes_do_you_monitor_motor_vehicle__c}"
+                                                          />
+                                    <lightning:input aura:id="isqQue"
+                                                     disabled='{!v.readOnly}' 
+                                                     type='Number'
+                                                     name='if_yes_how_many_drivers_delivery_EEs__c'
+                                                     label="If yes, how many drivers/delivery EEs?"
+                                                     onchange='{!c.handleChange}'
+                                                     value="{!v.IndustrySpecific.if_yes_how_many_drivers_delivery_EEs__c}"
+                                                     required="true"/>
+                                    
+                                    <lightning:input aura:id="isqQue"
+                                                     disabled='{!v.readOnly}' 
+                                                     name='if_yes_what_is_the_radius_for_delivery__c'
+                                                     label="If yes, what is your radius for delivery?  "
+                                                     onchange='{!c.handleChange}'
+                                                     value="{!v.IndustrySpecific.if_yes_what_is_the_radius_for_delivery__c}"
+                                                     required="true"/>
+                                    <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" name='if_yes_any_time_guarantees_on_delivery__c'
+                                                          label="If yes, do you have any time guarantees on delivery?"
+                                                          options="{!v.radioGroupOptions}"
+                                                          
+                                                          value="{!v.IndustrySpecific.if_yes_any_time_guarantees_on_delivery__c}"
+                                                          />              
+                                </aura:if>
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" name='Are_delivery_services_provided_by_others__c'
+                                                      label="Are delivery services provided by others (e.g., Uber Eats™, Grubhub®, DoorDash®, etc.)?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      
+                                                      value="{!v.IndustrySpecific.Are_delivery_services_provided_by_others__c}"
+                                                      />
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" name='Do_you_provide_valet_services__c'
+                                                      label="Are valet services provided?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      
+                                                      value="{!v.IndustrySpecific.Do_you_provide_valet_services__c}"
+                                                      />
+                                
+                            </lightning:layoutItem>
+                            
+                        </lightning:layout>
+                        
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Retail_Wholesale'}">
+                    <lightning:tab label="Retail/Wholesale" title="Retail/Wholesale" aura:id="Retail_Wholesale" id="Retail">
+                        <lightning:layout multipleRows="true">
+                           <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">                               
+                                
+                                <lightning:radioGroup aura:id="isqQue"
+                                                      disabled='{!v.readOnly}'  name='How_are_items_sold__c'
+                                                      label="How are items sold?  Storefront, Internet, Both"
+                                                      options="{!v.radioOptionsSold}"
+                                                      onchange='{!c.handleChange}'
+                                                      value="{!v.IndustrySpecific.How_are_items_sold__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.How_are_items_sold__c=='Both'}" >
+                                    <lightning:input aura:id="isqQue" name= "If_both_of_internet_based_sales__c" disabled='{!v.readOnly}' onchange="{!c.handleChange}" label="If both, what % of total sales are internet based? " value="{!v.IndustrySpecific.If_both_of_internet_based_sales__c}" />
+                                </aura:if>
+                                
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" name='Any_warehouse_for_products_you_sell__c'
+                                                      label="Do you have a warehouse or storage area for the product you are selling? "
+                                                      options="{!v.radioGroupOptions}"
+                                                      
+                                                      value="{!v.IndustrySpecific.Any_warehouse_for_products_you_sell__c}"
+                                                      />
+                                
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Do_you_own_the_merchandise_you_sell__c'
+                                                      label="Do you own the merchandise you are selling?  "
+                                                      options="{!v.radioGroupOptions}"                                                      
+                                                      value="{!v.IndustrySpecific.Do_you_own_the_merchandise_you_sell__c}"
+                                                      />
+                                <lightning:input aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 label="How are your items delivered to your customers? " 
+                                                 name="How_are_items_delivered_to_your_customer__c" 
+                                                 value="{!v.IndustrySpecific.How_are_items_delivered_to_your_customer__c}" />
+                                
+                            </lightning:layoutItem>
+                           <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" name='Are_clerical_employees_removed__c'
+                                                      label="Are all the clerical employees completely removed, by four full walls from both the sales floor and the warehouse?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      
+                                                      value="{!v.IndustrySpecific.Are_clerical_employees_removed__c}"
+                                                      />
+                                
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" name='Any_assembly_manufacturing_of_products__c'
+                                                      label="Is there any assembly or manufacturing of products?  "
+                                                      options="{!v.radioGroupOptions}"
+                                                      
+                                                      value="{!v.IndustrySpecific.Any_assembly_manufacturing_of_products__c}"
+                                                      />
+                                
+                                <aura:if isTrue="{!v.IndustrySpecific.Any_assembly_manufacturing_of_products__c=='Yes'}">
+                                    <!--<ui:inputTextArea name="if_yes_please_describe_the_mfg_process__c" disabled='{!v.readOnly}' label="If yes, please provide a description of the manufacturing process." value="{!v.IndustrySpecific.if_yes_please_describe_the_mfg_process__c}" />-->
+                                    <lightning:textArea aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                        name='if_yes_please_describe_the_mfg_process__c'
+                                                        label="If yes, please provide a description of the manufacturing process." 
+                                                        value="{!v.IndustrySpecific.if_yes_please_describe_the_mfg_process__c}" />
+                                </aura:if>
+                                
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" name='any_installation_of_products__c'
+                                                      label="Is there any installation of products being sold by your company? "
+                                                      options="{!v.radioGroupOptions}"
+                                                      
+                                                      value="{!v.IndustrySpecific.any_installation_of_products__c}"
+                                                      />
+                                
+                                
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" name='do_employees_travel_to_visit_suppliers__c'
+                                                      label="If goods are manufactured in other countries, do employees ever travel to visit the facilities / suppliers?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      
+                                                      value="{!v.IndustrySpecific.do_employees_travel_to_visit_suppliers__c	}"
+                                                      />
+                                
+                            </lightning:layoutItem>
+                            
+                        </lightning:layout>
+                        
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Auto_Dealership'}">
+                    <lightning:tab label="Auto Dealership" title="Auto Dealership" aura:id="Auto_Dealership" id="Auto_Dealership">
+                        <lightning:layout >
+                            <lightning:layoutItem size="12"  padding="around-small">
+                                <c:PEOUWIndustrySpecificAutoDealerQuestions aura:id='childISQ' autoIndustryRec='{!v.IndustrySpecific}'
+                                                                            disableEdit='{!v.readOnly}' 
+                                                                            parentAccount = '{!v.parentAccount}'
+                                                                            allAccounts = '{!v.allAccounts}'/>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Auto_Service_Repair_Autobody_Collision_Paint_Shop'}">
+                    <lightning:tab label="Auto Service/Repair/Autobody Collision/Paint Shop" title="Auto Service/Repair/Autobody Collision/Paint Shop" aura:id="Auto_Service_Repair_Autobody_Collision_Paint_Shop" id="Auto_Service_Repair_Autobody_Collision_Paint_Shop">
+                        <c:PEOUWIndustrySpecificAutoServiceQuestions aura:id='childISQ' serviceIndustryRec='{!v.IndustrySpecific}' 
+                                                                     dontAllowChanges='{!v.readOnly}'
+                                                                     parentAccount = '{!v.parentAccount}'
+                                                                     allAccounts = '{!v.allAccounts}'/> 
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Auto_Truck_Rental'}">
+                    <lightning:tab label="Auto/Truck Rental" title="Auto/Truck Rental" aura:id="Auto_Truck_Rental" id="Auto_Truck_Rental">
+                        <c:PEOUWIndustrySpecificAutoRentalQuestions aura:id='childISQ' rentalindustryRec='{!v.IndustrySpecific}' 
+                                                                    dontAllowChanges='{!v.readOnly}'
+                                                                    parentAccount = '{!v.parentAccount}'
+                                                                    allAccounts = '{!v.allAccounts}'/>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Not_for_Profit'}">
+                    <lightning:tab label="Not For Profit" title="Not For Profit" aura:id="Not_For_Profit" id="Not_For_Profit">
+                        <lightning:layout>
+                            <lightning:layoutItem size="12"  padding="around-small">
+                                <c:PEOUWIndustrySpecificNotForProfitQuestions aura:id='childISQ' notForProfitIndustryRec='{!v.IndustrySpecific}'
+                                                                              disableEdit='{!v.readOnly}' 
+                                                                              parentAccount = '{!v.parentAccount}'
+                                                                              allAccounts = '{!v.allAccounts}'/>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Banks'}">
+                    <lightning:tab label="Banks" title="Banks" aura:id="Banks" id="Banks">
+                       <lightning:layout multipleRows="true">
+        					<lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Are_there_any_guards__c'
+                                                      label="Are there any guards?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Are_there_any_guards__c}"
+                                                      />
+						<aura:if isTrue="{!v.IndustrySpecific.Are_there_any_guards__c=='Yes'}">                                
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Are_guards_employees_or_contracted_out__c'
+                                                      label="Are the guards employees or contracted out?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Are_guards_employees_or_contracted_out__c}"
+                                                      />
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 name='Are_guards_armed_or_unarmed__c'
+                                                 label="Are guards armed or unarmed?"
+                                                 options="{!v.radioGroupOptionsarm}"
+                                                 value="{!v.IndustrySpecific.Are_guards_armed_or_unarmed__c}"
+                                                 />
+                            </aura:if>
+                            </lightning:layoutItem>
+                           
+                            	<lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Do_you_have_Robbery_Training__c'
+                                                      label="Do you have Robbery Training?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Do_you_have_Robbery_Training__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Do_you_have_Robbery_Training__c=='Yes'}">
+                                    <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                          name='Has_set_opening_closing_procedures__c'
+                                                          label="Do you have Set Opening / Closing procedures?"
+                                                          options="{!v.radioGroupOptions}"
+                                                          value="{!v.IndustrySpecific.Has_set_opening_closing_procedures__c}"
+                                                          />
+                                </aura:if>
+                                <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Has_safe_vault_safety_deposit_on_site__c'
+                                                      label="Is there a safe / vault / safety deposit viewing rooms on site?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Has_safe_vault_safety_deposit_on_site__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Has_safe_vault_safety_deposit_on_site__c=='Yes'}">
+                                    <lightning:radioGroup aura:id="isqQue" disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                          name='Safe_vault_protocols_to_avoid_lock_ins__c'
+                                                          label="Are specific protocols in place to ensure no one is locked inside?"
+                                                          options="{!v.radioGroupOptions}"
+                                                          value="{!v.IndustrySpecific.Safe_vault_protocols_to_avoid_lock_ins__c}"
+                                                          />
+                                </aura:if>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </lightning:tab>
+                </aura:if>
+                
+                <aura:if isTrue="{!v.IndustryType=='Commercial_Janitorial_Services'}">
+                    <lightning:tab label="Commercial Janitorial Services" title="Commercial Janitorial Services" 
+                    aura:id="Commercial_Janitorial_Services" id="Commercial_Janitorial_Services">
+                       <lightning:layout multipleRows="true">
+                        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                        <lightning:input aura:id='isqQue'
+                                                 name='What_services_are_subcontracted__c'
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                 label="Please provide full list of services provided outside the buildings (i.e. pressure washing; window washing; emptying of garbage cans; raking / removal of leaves; clearing sidewalks / parking lots of debris and snow, etc..)" 
+                                                 value="{!v.IndustrySpecific.What_services_are_subcontracted__c}" />
+                            
+                        <lightning:input aura:id='isqQue'
+                                        name='What_are_the_hours_of_operation__c'
+                                        disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                        label="What is the typical shift schedule / hours employees work?" 
+                                        value="{!v.IndustrySpecific.What_are_the_hours_of_operation__c}" />
+                    
+                        <lightning:radioGroup aura:id='isqQue'
+                                            disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                            name='Any_work_in_residential_homes__c'
+                                            label="Any work in residential homes?"
+                                            options="{!v.radioGroupOptions}"
+                                            value="{!v.IndustrySpecific.Any_work_in_residential_homes__c}"
+                                                />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                            
+                            <lightning:radioGroup aura:id='isqQue'
+                                            disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                            name='Employees_work_at_one_multi_Sites__c'
+                                            label="Will employees work at one location or go to multiple locations throughout their shift? "
+                                            options="{!v.radioGroupSites}"
+                                            value="{!v.IndustrySpecific.Employees_work_at_one_multi_Sites__c}"
+                                            />
+                        <aura:if isTrue="{!v.IndustrySpecific.Employees_work_at_one_multi_Sites__c=='Multiple'}" >
+                            <lightning:radioGroup aura:id='isqQue'
+                                            disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                            name='Will_employees_drive_together__c'
+                                            label="Will employees drive together?"
+                                            options="{!v.radioGroupOptions}"
+                                            value="{!v.IndustrySpecific.Will_employees_drive_together__c}"
+                                            />
+                            <lightning:input aura:id='isqQue'
+                                            disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                            name='Max_emp_count_allowed_in_vehicle__c'
+                                            label="What would be the max # of employees in a vehicle at one time?"
+                                            type='number'
+                                            value="{!v.IndustrySpecific.Max_emp_count_allowed_in_vehicle__c}"
+                                            />
+                        </aura:if>
+                            <lightning:input aura:id='isqQue'
+                                                disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                name='Number_Of_Employees_Working_Each_Shift__c'
+                                                label="How many employees work at each site during the shift?"
+                                                value="{!v.IndustrySpecific.Number_Of_Employees_Working_Each_Shift__c}"
+                                                />
+                            <lightning:input aura:id='isqQue'
+                                                disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                name='Any_special_cleaning__c'
+                                                label="Are cleaning supplies left at each site, or do employees take them from place to place?"
+                                            value="{!v.IndustrySpecific.Any_special_cleaning__c}"
+                                        />
+                        </lightning:layoutItem>
+                        </lightning:layout>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Contractors_Construction_Service_Traders_including_Plumbing_HVAC_Electrician'}">
+                    <lightning:tab label="Contractors/Construction/Service Traders including Plumbing/HVAC/Electrician" 
+                                   title="Contractors/Construction/Service Traders including Plumbing/HVAC/Electrician"
+                                   aura:id="Contractors_Construction_Service_Traders_including_Plumbing_HVAC_Electrician" 
+                                   id="Contractors_Construction_Service_Traders_including_Plumbing_HVAC_Electrician">
+                        <c:PEOUWIndustrySpecificContractorsQuestions aura:id='childISQ' contractorIndustryRec='{!v.IndustrySpecific}'
+                                                                     dontAllowChanges='{!v.readOnly}'
+                                                                     naicsInfo = '{!v.naicsInfo}'
+                                                                     parentAccount = '{!v.parentAccount}'
+                                                                     allAccounts = '{!v.allAccounts}'
+                                                                     showErrorMsg = "{!v.showErrorMsg}"/>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Delivery_Trucking_exposure'}">
+                    <lightning:tab label="Delivery Trucking exposure" title="Delivery Trucking exposure" aura:id="Delivery_Trucking_exposure" id="Delivery_Trucking_exposure">
+                        <lightning:layout>
+                            <lightning:layoutItem size="12"  padding="around-small">
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Tools_Equip_weight_restriction_for_EE__c'
+                                                      label="Is there a weight restriction any one EE may/would lift (lbs)?   E.G.  Tools, equipment, materials"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Tools_Equip_weight_restriction_for_EE__c}"
+                                                      />
+                           
+                                <lightning:input aura:id='isqQue'
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 name='List_any_mechanical_lifting_devices_used__c'
+                                                 label="List any mechanical lifting devices used:"
+                                                 value="{!v.IndustrySpecific.List_any_mechanical_lifting_devices_used__c}"
+                                                 />
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' 
+                                                      onchange="{!c.handleChange}" 
+                                                      name='Are_MVRs_and_employee_references_checked__c'
+                                                      label="Are MVRs and employee references checked?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Are_MVRs_and_employee_references_checked__c}"
+                                                      />
+                                 <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' 
+                                                      onchange="{!c.handleChange}" 
+                                                      name='Is_pre_hire_drug_testing_required__c'
+                                                      label="Is pre-hire drug testing required?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Is_pre_hire_drug_testing_required__c}"
+                                                      />
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Property_Management'}">
+                    <lightning:tab label="Property Management" title="Property Management" aura:id="Property_Management" id="Property_Management">
+                        <c:PEOUWIndustrySpecificPropertyManagementQuestions aura:id='childISQ' propertyMngmntRec='{!v.IndustrySpecific}'
+                                                                            dontAllowChanges='{!v.readOnly}'
+                                                                            parentAccount = '{!v.parentAccount}'
+                                                                            allAccounts = '{!v.allAccounts}'/>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Fencing_Contractors'}">
+                    <lightning:tab label="Fencing Contractors" title="Fencing Contractors" aura:id="Fencing_Contractors" id="Fencing_Contractors">
+                        <lightning:layout multipleRows="true">
+                            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+								<lightning:input aura:id='isqQue'
+                                                 disabled='{!v.readOnly}'
+                                                 onchange="{!c.handleChange}" 
+                                                 name='Fencing_tools_used_during_installation__c'
+                                                 label="What tools are used during installation (backhoes, augers, shovels)?"
+                                                 value="{!v.IndustrySpecific.Fencing_tools_used_during_installation__c}"
+                                                 />                                
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Any_fencing_roadside_work__c'
+                                                      label='Any roadside work?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Any_fencing_roadside_work__c}"
+                                                      />
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Any_seawall_work__c'
+                                                      label='Any seawall work?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Any_seawall_work__c}"
+                                                      />
+                            </lightning:layoutItem>
+                           <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Any_fencing_erosion_controls_work__c'
+                                                      label='Any erosion controls work?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Any_fencing_erosion_controls_work__c}"
+                                                      />
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Other_fencing_services_provided__c'
+                                                      label='Any other services provided such as decks, pergolas, storage sheds, etc?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Other_fencing_services_provided__c}"
+                                                      />
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Furniture'}">
+                    <lightning:tab label="Furniture" title="Furniture" aura:id="Furniture" id="Furniture">
+                        <lightning:layout multipleRows="true">
+                           <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Do_you_use_forklifts_furniture__c'
+                                                      label='Do you use forklifts?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Do_you_use_forklifts_furniture__c}" />
+                                <aura:if isTrue="{!v.IndustrySpecific.Do_you_use_forklifts_furniture__c=='Yes'}">
+                                    <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                          name='Forklift_operators_trained_and_certified__c'
+                                                          label='Are the forklift operators trained and certified?'
+                                                          options="{!v.radioGroupOptions}"
+                                                          value="{!v.IndustrySpecific.Forklift_operators_trained_and_certified__c}" />
+                                </aura:if>
+                                <lightning:input aura:id='isqQue'
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                 type='Number'
+                                                 min='0'
+                                                 name='Max_height_merch_is_stored_in_feet__c'
+                                                 label='What is the maximum height merchandise is stored (feet)?'
+                                                 value="{!v.IndustrySpecific.Max_height_merch_is_stored_in_feet__c}" />
+                            </lightning:layoutItem>                           
+                             
+                            
+                            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Max_weight_restriction_for_one_EE__c'
+                                                      label='Is there a weight restriction any one EE may/would lift (lbs)?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Max_weight_restriction_for_one_EE__c}" />
+                                <aura:if isTrue="{!v.IndustrySpecific.Max_weight_restriction_for_one_EE__c=='Yes'}">
+                                <lightning:input aura:id='isqQue'
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                 type='Number'
+                                                 min='0'
+                                                 name='Max_furniture_weight_EE_can_lift__c'
+                                                 label='What is the maximum weight?'
+                                                 value="{!v.IndustrySpecific.Max_furniture_weight_EE_can_lift__c}" />
+                                </aura:if>
+                            </lightning:layoutItem>
+                            <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Has_appliances_and_installs_appliances__c'
+                                                      label='Do you sell appliances and if so, the employees handle the installations?'
+                                                      options="{!v.radioGroupOptionsApplianceSales}"
+                                                      value="{!v.IndustrySpecific.Has_appliances_and_installs_appliances__c}" />
+                        </lightning:layout>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='School_Day_care'}">
+                    <lightning:tab label="School/Day care" title="School/Day care" aura:id="School_Day_care" id="School_Day_care">
+                        <lightning:layout multipleRows="true">
+                           <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Any_non_professional_employees__c'
+                                                      label='Are there any non-professional employees (i.e. drivers, cooks, janitorial, groundskeepers, etc.)?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Any_non_professional_employees__c}"
+                                                      />
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Is_there_any_transportation_of_children__c'
+                                                      label='Is there any transportation of children (i.e. field trips, pickup or drop offs, etc.)?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Is_there_any_transportation_of_children__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Is_there_any_transportation_of_children__c=='Yes'}">
+                                    <lightning:input aura:id='isqQue'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                     type='Number'
+                                                     min='0'
+                                                     name='What_is_the_radius_of_travel_in_miles__c'
+                                                     label='What is the radius of travel in miles?'
+                                                     value="{!v.IndustrySpecific.What_is_the_radius_of_travel_in_miles__c}"
+                                                     />
+                                    <lightning:input aura:id='isqQue'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"	
+                                                     name='What_type_of_vehicles_are_used__c'
+                                                     label='What type of vehicles are used?'
+                                                     value="{!v.IndustrySpecific.What_type_of_vehicles_are_used__c}"
+                                                     />
+                                    <lightning:input aura:id='isqQue'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                     type='Number'
+                                                     min='0'
+                                                     name='How_many_vehicles_are_there__c'
+                                                     label='How many vehicles are there?'
+                                                     value="{!v.IndustrySpecific.How_many_vehicles_are_there__c}"
+                                                     />
+                                </aura:if>
+                               
+                               <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Do_you_have_volunteers_daycare__c'
+                                                      label='Do you have volunteers?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Do_you_have_volunteers_daycare__c}"
+                                                      />
+                               <aura:if isTrue="{!v.IndustrySpecific.Do_you_have_volunteers_daycare__c=='Yes'}">
+                                    <lightning:input aura:id='isqQue'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                     type='Number'
+                                                     min='0'
+                                                     name='How_many_volunteers__c'
+                                                     label='How many volunteers?'
+                                                     value="{!v.IndustrySpecific.How_many_volunteers__c}"
+                                                     />
+                                  
+                                   
+                               </aura:if>	
+                               	
+                                <lightning:input aura:id='isqQue'
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}"	
+                                                 name='What_are_the_age_groups_of_children__c'
+                                                 label='What are the age groups of the children attending the daycare?'
+                                                 value="{!v.IndustrySpecific.What_are_the_age_groups_of_children__c}"
+                                                 />
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Are_there_structured_classes_or_subjects__c'
+                                                      label='Are there any structured classes or subjects taught?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Are_there_structured_classes_or_subjects__c}"
+                                                      />
+                                <lightning:input aura:id='isqQue'
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}"	
+                                                 name='What_grades_are_taught_if_applicable__c'
+                                                 label='What grades are taught, if applicable?'
+                                                 value="{!v.IndustrySpecific.What_grades_are_taught_if_applicable__c}"
+                                                 />
+                            </lightning:layoutItem>
+                           <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Do_you_take_the_kids_on_field_trips__c'
+                                                      label='Do you take the kids on field trips?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Do_you_take_the_kids_on_field_trips__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Do_you_take_the_kids_on_field_trips__c=='Yes'}">
+                                    <lightning:input aura:id='isqQue'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                     type='Number'
+                                                     min='0'
+                                                     name='Number_of_field_trips_per_year__c'
+                                                     label='Please provide an Average of how many per year?'
+                                                     value="{!v.IndustrySpecific.Number_of_field_trips_per_year__c}"
+                                                     />
+                                    <lightning:input aura:id='isqQue'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                     type='Number'
+                                                     min='0'
+                                                     name='Raduis_round_trip_for_longest_field_trip__c'
+                                                     label='What is the radius of travel round trip in miles for the longest trip?'
+                                                     value="{!v.IndustrySpecific.Raduis_round_trip_for_longest_field_trip__c}"
+                                                     />
+                                </aura:if>
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Is_there_a_kitchen_that_provides_lunches__c'
+                                                      label='Is there a kitchen that provides lunches?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Is_there_a_kitchen_that_provides_lunches__c}"
+                                                      />
+                                <lightning:input aura:id='isqQue'
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}"	
+                                                 name='What_is_the_teacher_student_ratio__c'
+                                                 label='What is the teacher / student ratio?'
+                                                 value="{!v.IndustrySpecific.What_is_the_teacher_student_ratio__c}"
+                                                 />
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Has_special_needs_behav_concern_stndts__c'
+                                                      label='Do any students have special needs or behavioral concerns?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Has_special_needs_behav_concern_stndts__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Has_special_needs_behav_concern_stndts__c=='Yes'}">
+                                    <lightning:input aura:id='isqQue'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"	
+                                                     name='Controls_in_place_for_employee_safety__c'
+                                                     label='What additional controls are in place for employee safety?'
+                                                     value="{!v.IndustrySpecific.Controls_in_place_for_employee_safety__c}"
+                                                     />
+                                    <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                          name='Protocols_in_place_for_outbursts__c'
+                                                          label='Are protocols / procedures / training in place to handle the needs in case of any outbursts by the children?'
+                                                          options="{!v.radioGroupOptions}"
+                                                          value="{!v.IndustrySpecific.Protocols_in_place_for_outbursts__c}"
+                                                          />
+                                </aura:if>
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Emp_eligible_for_state_sponsor_benefit__c'
+                                                      label='Are any employees eligible for state sponsored benefits (retirement, etc.)?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Emp_eligible_for_state_sponsor_benefit__c}"
+                                                      />
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Warehouse_Storage'}">
+                    <lightning:tab label="Warehouse/Storage" title="Warehouse/Storage" aura:id="Warehouse_Storage" id="Warehouse_Storage">
+                        <lightning:layout multipleRows="true">
+                         <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:input aura:id='isqQue'
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}"	
+                                                 name='Type_of_merchandise_storing_warehousing__c'
+                                                 label='What type of merchandise are you warehousing/storing?'
+                                                 value="{!v.IndustrySpecific.Type_of_merchandise_storing_warehousing__c}"
+                                                 />
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Do_you_own_merchandise_being_stored__c'
+                                                      label='Do you own the merchandise you are warehousing/storing?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Do_you_own_merchandise_being_stored__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Do_you_own_merchandise_being_stored__c=='No'}">
+                                    <lightning:input aura:id='isqQue'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"	
+                                                     name='Typical_duration_products_are_housed__c'
+                                                     label='Is there a typical duration the products are housed before being moved/shipped out?'
+                                                     value="{!v.IndustrySpecific.Typical_duration_products_are_housed__c}"
+                                                     />
+                                </aura:if>
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Do_you_have_any_drivers_or_delivery__c'
+                                                      label='Do you have any drivers or delivery?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Do_you_have_any_drivers_or_delivery__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Do_you_have_any_drivers_or_delivery__c=='Yes'}">
+                                    <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                          name='Delivers_to_airport_rail_station_port__c'
+                                                          label='Do you deliver to an airport, rail station or port?'
+                                                          options="{!v.radioGroupOptions}"
+                                                          value="{!v.IndustrySpecific.Delivers_to_airport_rail_station_port__c}"
+                                                          />
+                                </aura:if>
+                                
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Do_you_use_forklifts_warehouse__c'
+                                                      label='Do you use forklifts?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Do_you_use_forklifts_warehouse__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Do_you_use_forklifts_warehouse__c=='Yes'}">
+                                    <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                          name='Warehouse_forklift_ops_trained__c'
+                                                          label='Are the forklift operators trained and certified?'
+                                                          options="{!v.radioGroupOptions}"
+                                                          value="{!v.IndustrySpecific.Warehouse_forklift_ops_trained__c}"
+                                                          />
+                                </aura:if>
+                                <lightning:input aura:id='isqQue'
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                 type='Number'
+                                                 min='0'
+                                                 name='Max_height_merchandise_stored_in_feet__c'
+                                                 label='What is the maximum height merchandise is stored (feet)?'
+                                                 value="{!v.IndustrySpecific.Max_height_merchandise_stored_in_feet__c}"
+                                                 />
+                            </lightning:layoutItem>
+                          <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:input aura:id='isqQue'
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}"	
+                                                 name='How_do_employees_reach_merchandise__c'
+                                                 label='How do employees reach these items?  E.G.  Ladders, lifts, forklifts, etc.'
+                                                 value="{!v.IndustrySpecific.How_do_employees_reach_merchandise__c}"
+                                                 />
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Warehouse_has_lb_restriction_for_lifting__c'
+                                                      label='Is there a weight restriction any one EE may/would lift (lbs)?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Warehouse_has_lb_restriction_for_lifting__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Warehouse_has_lb_restriction_for_lifting__c=='Yes'}">
+                                    <lightning:input aura:id='isqQue'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"
+                                                     type='Number'
+                                                     min='0'
+                                                     name='Max_weight_for_warehouse_emp_lift__c'
+                                                     label='What is the maximum weight?'
+                                                     value="{!v.IndustrySpecific.Max_weight_for_warehouse_emp_lift__c}"
+                                                     />
+                                </aura:if>
+                                <lightning:input aura:id='isqQue'
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}"	
+                                                 name='Other_methods_of_moving_goods_in_storage__c'
+                                                 label='What (if any) other methods of moving goods around the facility are used (mounted cranes, conveyor belts, automated/robotic movement, etc.)'
+                                                 value="{!v.IndustrySpecific.Other_methods_of_moving_goods_in_storage__c}"
+                                                 />
+                                <lightning:input aura:id='isqQue'
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}"	
+                                                 name='Operations_run_in_shifts_or_stnd_bus_hrs__c'
+                                                 label='Does facility operate standard business hours or in shifts 24 hours / day?'
+                                                 value="{!v.IndustrySpecific.Operations_run_in_shifts_or_stnd_bus_hrs__c}"
+                                                 />
+                                <lightning:radioGroup aura:id='isqQue'
+                                                 disabled='{!v.readOnly}' onchange="{!c.handleChange}"	
+                                                 name='Risk_at_airport_rail_station_or_port__c'
+                                                 label='Is risk located at an airport, rail station or port?'
+                                                 options="{!v.radioGroupOptions}"
+                                                 value="{!v.IndustrySpecific.Risk_at_airport_rail_station_or_port__c}"
+                                                 />
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Risk_stores_or_delivers_hazardous_matts__c'
+                                                      label='Does risk store or deliver any hazardous materials?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Risk_stores_or_delivers_hazardous_matts__c}"
+                                                      />
+                                <aura:if isTrue="{!v.IndustrySpecific.Risk_stores_or_delivers_hazardous_matts__c=='Yes'}">
+                                    <lightning:input aura:id='isqQue'
+                                                     disabled='{!v.readOnly}' onchange="{!c.handleChange}"	
+                                                     name='Special_controls_for_hazardous_matts__c'
+                                                     label='What special controls are in place?'
+                                                     value="{!v.IndustrySpecific.Special_controls_for_hazardous_matts__c}"
+                                                     />
+                                    <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                          name='Are_MSDS_on_site__c'
+                                                          label='Are MSDS (Material Safety Data Sheets) on site?'
+                                                          options="{!v.radioGroupOptions}"
+                                                          value="{!v.IndustrySpecific.Are_MSDS_on_site__c}"
+                                                          />
+                                </aura:if>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Garment_Industry'}">
+                    <lightning:tab label="Garment Industry" title="Garment Industry" aura:id="Garment_Industry" id="Garment_Industry">
+                        <c:PEOUWIndustrySpecificGarmentIndustryQuestions aura:id='childISQ' garmentIndRec='{!v.IndustrySpecific}'
+                                                                         disableEdit='{!v.readOnly}' 
+                                                                         parentAccount = '{!v.parentAccount}'
+                                                                         allAccounts = '{!v.allAccounts}'/>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Gas_Stations_with_convenience_Stores_or_Grocery_Stores'}">
+                    <lightning:tab label="Gas Stations with Convenience Stores or Grocery Stores" title="Gas Stations with Convenience Stores or Grocery Stores" aura:id="Gas_Stations_with_convenience_Stores_or_Grocery_Stores" id="Gas_Stations_with_convenience_Stores_or_Grocery_Stores">
+                        <c:PEOUWIndustrySpecificGasStationQuestions aura:id='childISQ' gasIndRec='{!v.IndustrySpecific}'
+                                                                    disableEdit='{!v.readOnly}' 
+                                                                    parentAccount = '{!v.parentAccount}'
+                                                                    allAccounts = '{!v.allAccounts}'/>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Jewelry_Store'}">
+                    <lightning:tab label="Jewelry Store" title="Jewelry Store" aura:id="Jewelry_Store" id="Jewelry_Store">
+                        <lightning:layout multipleRows="true">
+       						 <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Do_you_have_any_guards_jewlery_store__c'
+                                                      label='Do you have any guards?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Do_you_have_any_guards_jewlery_store__c}" />
+                                <aura:if isTrue="{!v.IndustrySpecific.Do_you_have_any_guards_jewlery_store__c=='Yes'}">
+                                    <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                     name='Are_guards_employed_or_contracted_out__c'
+                                                     label='Are these your employees or contracted?'
+                                                     options="{!v.radioGroupEmps}"
+                                                     value="{!v.IndustrySpecific.Are_guards_employed_or_contracted_out__c}" />
+                                    <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                          name='Are_guards_armed_or_unarmed__c'
+                                                          label='Armed or unarmed?'
+                                                          options="{!v.radioGroupOptionsarm}"
+                                                          value="{!v.IndustrySpecific.Are_guards_armed_or_unarmed__c}" />
+                                </aura:if>
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Has_buzzer_or_other_entry_security__c'
+                                                      label='Do you have a buzzer or other entry security in place?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Has_buzzer_or_other_entry_security__c}" />
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Has_max_for_cust_in_jewlery_store__c'
+                                                      label='Is there a maximum number of customers allowed in store at any one time?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Has_max_for_cust_in_jewlery_store__c}" />
+                            </lightning:layoutItem>
+                           <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Do_you_have_robbery_training_jewlery__c'
+                                                      label='Do you have robbery training?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Do_you_have_robbery_training_jewlery__c}" />
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Has_set_opening_or_closing_procedures__c'
+                                                      label="Do you have Set Opening / Closing procedures?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Has_set_opening_or_closing_procedures__c}" />
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Do_you_have_safety_deposit_boxes__c'
+                                                      label="Do you have safety deposit boxes and/or a safe/vault on site?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Do_you_have_safety_deposit_boxes__c}" />
+                               <aura:if isTrue="{!v.IndustrySpecific.Do_you_have_safety_deposit_boxes__c=='Yes'}">
+                               <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Has_controls_to_avoid_lock_ins_at_store__c'
+                                                      label="Do you have controls in place to ensure no one is locked inside?"
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Has_controls_to_avoid_lock_ins_at_store__c}" />
+                               </aura:if>
+                                <!-- <lightning:radioGroup disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Is_there_a_safe_vault_on_site__c'
+                                                      label='Is there a safe / vault on site?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Is_there_a_safe_vault_on_site__c}" /> -->
+                               <!-- <aura:if isTrue="{!v.IndustrySpecific.Is_there_a_safe_vault_on_site__c=='Yes'}"> 
+                                    <lightning:radioGroup disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                          name='Safe_has_protocols_to_avoid_lock_ins__c'
+                                                          label='Are specific protocols in place to ensure no one is locked inside?'
+                                                          options="{!v.radioGroupOptions}"
+                                                          value="{!v.IndustrySpecific.Safe_has_protocols_to_avoid_lock_ins__c}" />
+                                </aura:if> -->
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Golf_Country_Club'}">
+                    <lightning:tab label="Golf/Country Club" title="Golf/Country Club" aura:id="Golf_Country_Club" id="Golf_Country_Club">
+                        <c:PEOUWIndustrySpecificGolfClubQuestions aura:id='childISQ' golfIndRec="{!v.IndustrySpecific}"
+                                                                  disableEdit='{!v.readOnly}'
+                                                                  parentAccount = '{!v.parentAccount}'
+                                                                  allAccounts = '{!v.allAccounts}'/>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Marinas'}">
+                    <lightning:tab label="Marinas" title="Marinas" aura:id="Marinas" id="Marinas">
+                        <lightning:layout multipleRows="true">
+                            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Do_employees_take_boats_out_on_water__c'
+                                                      label='Do employees take boats out on water (ferry or sea trials)'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Do_employees_take_boats_out_on_water__c}" />
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Do_you_repair_boats__c'
+                                                      label='Do you repair boats?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Do_you_repair_boats__c}" />
+                                <aura:if isTrue="{!v.IndustrySpecific.Do_you_repair_boats__c=='Yes'}">
+                                    <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                     name='What_are_the_lengths_of_the_vessels_ft__c'
+                                                     label="What are the lengths of the vessels (ft)?"
+                                                     value="{!v.IndustrySpecific.What_are_the_lengths_of_the_vessels_ft__c}" />
+                                </aura:if>
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Do_you_haul_boats_in_and_out_of_the_wate__c'
+                                                      label='Do you launch boats into the water and retrieve boats out of the water?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Do_you_haul_boats_in_and_out_of_the_wate__c}" />
+                            <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                     name='Percentage_of_storage_is_wet_out_water__c'
+                                                     label="What percentage of storage is wet storage (in the water) and what percentage of storage is out of the water?"
+                                                     value="{!v.IndustrySpecific.Percentage_of_storage_is_wet_out_water__c}" />
+                            
+                            </lightning:layoutItem>
+        			<lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Do_you_have_a_fuel_dock__c'
+                                                      label='Do you have a fuel dock?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Do_you_have_a_fuel_dock__c}" />
+                                <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 name='What_is_the_average_number_of_boats_dock__c'
+                                                 type='Number'
+                                                 min='0'
+                                                 fieldLevelHelp='Please enter a number'
+                                                 label="What is the average number of boats docked at the marina?"
+                                                 value="{!v.IndustrySpecific.What_is_the_average_number_of_boats_dock__c}" />
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='If_yacht_club_is_marina_open_to_public__c'
+                                                      label='If a yacht club, is the marina open to the general public?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.If_yacht_club_is_marina_open_to_public__c}" />
+                                <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 name='Do_you_employ_any_divers_hull_cleaners__c'
+                                                 label="Do you employ any divers/hull cleaners?"
+                                                 value="{!v.IndustrySpecific.Do_you_employ_any_divers_hull_cleaners__c}" />
+                            
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Do_you_use_forklifts__c'
+                                                      label='If dry storage is available, are forklifts used?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Do_you_use_forklifts__c}" />
+                                
+                           		<lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Any_employees_climb_the_storage_racks__c'
+                                                      label='Do any employees climb the storage racks?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Any_employees_climb_the_storage_racks__c}" />
+                            
+                            
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Landscapers'}">
+                    <lightning:tab label="Landscapers" title="Landscapers" aura:id="Landscapers" id="Landscapers">
+                       <lightning:layout multipleRows="true">
+      					  <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Performs_landscaping_or_design_install__c'
+                                                      label='Do you perform new landscape design/installation and existing lawn maintenance?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Performs_landscaping_or_design_install__c}" />
+                                <aura:if isTrue="{!v.IndustrySpecific.Performs_landscaping_or_design_install__c=='Yes'}">
+                                    <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                     name='Percent_of_landscape_design_work__c'
+                                                     label='Percent of landscape design work'
+                                                     type='Number'
+                                                     min='0'
+                                                     fieldLevelHelp='Please enter a number'
+                                                     value="{!v.IndustrySpecific.Percent_of_landscape_design_work__c}" />
+                                    <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                     name='Percent_of_landscape_install_work__c'
+                                                     label='Percent of landscape install work'
+                                                     type='Number'
+                                                     min='0'
+                                                     fieldLevelHelp='Please enter a number'
+                                                     value="{!v.IndustrySpecific.Percent_of_landscape_install_work__c}" />
+                                    <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                     name='Percentage_of_lawn_maintenance__c'
+                                                     label='Percentage of lawn maintenance'
+                                                     type='Number'
+                                                     min='0'
+                                                     fieldLevelHelp='Please enter a number'
+                                                     value="{!v.IndustrySpecific.Percentage_of_lawn_maintenance__c}" />
+									<lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 name='Do_you_have_dedicated_crews_just_for_eac__c'
+                                                 label='Do you have dedicated crews just for each type?'
+                                                 value="{!v.IndustrySpecific.Do_you_have_dedicated_crews_just_for_eac__c}" />                                
+                              </aura:if>
+                                  <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Do_you_do_any_tree_work__c'
+                                                      label='Do you do any tree work?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Do_you_do_any_tree_work__c}" />
+                                <aura:if isTrue="{!v.IndustrySpecific.Do_you_do_any_tree_work__c=='Yes'}">
+                                    <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                     name='Percentage_of_tree_work_done__c'
+                                                     label='What is the % of your work attributable to this?'
+                                                     type='Number'
+                                                     min='0'
+                                                     fieldLevelHelp='Please enter a number'
+                                                     value="{!v.IndustrySpecific.Percentage_of_tree_work_done__c}" />
+                                    <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                     name='Max_height_for_trimming_trees__c'
+                                                     label='What is the max height they will be trimming trees from?'
+                                                     value="{!v.IndustrySpecific.Max_height_for_trimming_trees__c}" />
+                                    <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                     name='Work_on_ground_with_poles_saws__c'
+                                                     label='Work from ground with pole saws or from lifts/ladders?'
+                                                     value="{!v.IndustrySpecific.Work_on_ground_with_poles_saws__c}" />
+                                </aura:if>
+                            <!--    <lightning:radioGroup disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Do_you_perform_landscape_and_lawn_maint__c'
+                                                      label='Do you perform landscape and lawn maintenance?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Do_you_perform_landscape_and_lawn_maint__c}" />
+                                <aura:if isTrue="{!v.IndustrySpecific.Do_you_perform_landscape_and_lawn_maint__c=='Yes'}">
+                                    <lightning:input disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                     name='Percent_of_landscape_maintenance__c'
+                                                     label='Percent of landscape maintenance'
+                                                     type='Number'
+                                                     min='0'
+                                                     fieldLevelHelp='Please enter a number'
+                                                     value="{!v.IndustrySpecific.Percent_of_landscape_maintenance__c}" />
+                                    <lightning:input disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                     name='Percentage_of_lawn_maintenance__c'
+                                                     label='Percentage of lawn maintenance'
+                                                     type='Number'
+                                                     min='0'
+                                                     fieldLevelHelp='Please enter a number'
+                                                     value="{!v.IndustrySpecific.Percentage_of_lawn_maintenance__c}" />
+                                    <lightning:input disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                     name='Has_dedicated_crews_for_maintenance_work__c'
+                                                     label='Do you have dedicated crews for maintenance work?'
+                                                     value="{!v.IndustrySpecific.Has_dedicated_crews_for_maintenance_work__c}" />
+                                </aura:if>		-->
+                               <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Any_emp_ride_on_back_of_trucks__c'
+                                                      label='Do any of your employees ever ride in the back of trucks?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Any_emp_ride_on_back_of_trucks__c}" />
+                              
+                              
+                            </lightning:layoutItem>
+                           <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                              
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Has_weight_restriction_EE_lfit_landscape__c'
+                                                      label='Is there a weight restriction any one EE may/would lift (lbs)?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Has_weight_restriction_EE_lfit_landscape__c}" />
+                                <aura:if isTrue="{!v.IndustrySpecific.Has_weight_restriction_EE_lfit_landscape__c=='Yes'}">
+                                    <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                     name='Max_weight_for_EE_lifting_landscapers__c'
+                                                     label='What is the maximum weight?'
+                                                     value="{!v.IndustrySpecific.Max_weight_for_EE_lifting_landscapers__c}" />
+                                </aura:if>
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Checks_with_local_orgs_before_digging__c'
+                                                      label='Do you check with utility companies and the appropriate national and local organizations before conducting any digging?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Checks_with_local_orgs_before_digging__c}" />
+                               
+                               <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                     name='What_is_the_maximum_height_exposure__c'
+                                                     label='What is the maximum height exposure?'
+                                                     value="{!v.IndustrySpecific.What_is_the_maximum_height_exposure__c}"/>
+
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Do_you_apply_pesticides__c'
+                                                      label='Do you apply pesticides?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Do_you_apply_pesticides__c}" />
+                                <aura:if isTrue="{!v.IndustrySpecific.Do_you_apply_pesticides__c=='Yes'}">
+                                    <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                     name='Which_ones_do_you_use_most_often__c'
+                                                     label='Which ones do you use most often?'
+                                                     value="{!v.IndustrySpecific.Which_ones_do_you_use_most_often__c}" />
+                                    <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                     name='Are_used_pesticides_restricted_use__c'
+                                                     label='Are any of them designated “restricted use” substances?'
+                                                     value="{!v.IndustrySpecific.Are_used_pesticides_restricted_use__c}" />
+                                </aura:if>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Moving_Companies'}">
+                    <lightning:tab label="Moving Companies" title="Moving Companies" aura:id="Moving_Companies" id="Moving_Companies">
+                        <lightning:layout multipleRows="true">
+                            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 name='Do_you_move_local_or_long_distance__c'
+                                                 label='Do you move local or long distance?'
+                                                 value="{!v.IndustrySpecific.Do_you_move_local_or_long_distance__c}" />
+                                
+                                <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 name='What_is_the_max_radius_of_travel__c'
+                                                 label='What is the max radius of travel?'
+                                                 value="{!v.IndustrySpecific.What_is_the_max_radius_of_travel__c}" />
+                                
+                                <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 name='What_types_of_trucks_trailers_do_you_use__c'
+                                                 label='What types of trucks/trailers do you use?  E.G.  Vans, box trucks, tractor trailers'
+                                                 value="{!v.IndustrySpecific.What_types_of_trucks_trailers_do_you_use__c}" />
+                            </lightning:layoutItem>
+                            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 name='How_many_trucks_trailers__c'
+                                                 label='How many trucks/trailers?'
+                                                 type='number'
+                                                 fieldLevelHelp='Please enter a number'
+                                                 value="{!v.IndustrySpecific.How_many_trucks_trailers__c}" />
+                                <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 name='Will_there_be_any_overnight_stays__c'
+                                                 label='Will there be any overnight stays?'
+                                                 value="{!v.IndustrySpecific.Will_there_be_any_overnight_stays__c}" />
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Veterinary_services_State_National'}">
+                    <lightning:tab label="Veterinary services (State National)" title="Veterinary services (State National)" aura:id="Veterinary_services_State_National" id="Veterinary_services_State_National">
+                       <lightning:layout multipleRows="true">
+                        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 name='Do_they_see_any_exotic_animals__c'
+                                                 label='Do they see any exotic animals?'
+                                                 value="{!v.IndustrySpecific.Do_they_see_any_exotic_animals__c}" />
+                                <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 name='Do_you_see_treat_large_animals__c'
+                                                 label='Do you see/treat large animals (horses, cattle, etc)?'
+                                                 value="{!v.IndustrySpecific.Do_you_see_treat_large_animals__c}" />
+                                <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 name='Do_you_do_house_calls__c'
+                                                 label='Do you do house calls?'
+                                                 value="{!v.IndustrySpecific.Do_you_do_house_calls__c}" />
+                            </lightning:layoutItem>
+                             <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Vet_has_weight_restriction_for_emp_lift__c'
+                                                      label='Is there a weight restriction any one EE may/would lift (lbs)?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Vet_has_weight_restriction_for_emp_lift__c}" />
+                                <aura:if isTrue="{!v.IndustrySpecific.Vet_has_weight_restriction_for_emp_lift__c=='Yes'}">
+                                    <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                     name='Vet_Max_weight_for_emp_lifting__c'
+                                                     label='What is the maximum weight?'
+                                                     value="{!v.IndustrySpecific.Vet_Max_weight_for_emp_lifting__c}" />
+                                </aura:if>
+                                <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 name='Do_you_use_muzzles__c'
+                                                 label='Do you use muzzles?'
+                                                 value="{!v.IndustrySpecific.Do_you_use_muzzles__c}" />
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </lightning:tab>
+                </aura:if>
+                <aura:if isTrue="{!v.IndustryType=='Assisted_Living_Facility'}">
+                     <lightning:layout multipleRows="true">
+                        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                            <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                             name='What_is_the_age_range_of_the_residents__c'
+                                             label='What is the age range of the residents?'
+                                             value="{!v.IndustrySpecific.What_is_the_age_range_of_the_residents__c}" />
+                            <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                             name='Percentage_of_ambulatory_residents__c'
+                                             label='Percentage of residents who are ambulatory'
+                                             value="{!v.IndustrySpecific.Percentage_of_ambulatory_residents__c}" 
+                                             type='number' max='100'/>
+                            <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                             name='Percentage_of_bed_ridden_residents__c'
+                                             label='Percentage of residents who are bed-ridden'
+                                             value="{!v.IndustrySpecific.Percentage_of_bed_ridden_residents__c}" 
+                                             type='number' max='100'/>
+                            <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                  name='Does_risk_provide_a_Continuum_of_Care__c'
+                                                  label='Does risk provide a ‘Continuum of Care’ at the same facility?'
+                                                  options="{!v.radioGroupOptions}"
+                                                  value="{!v.IndustrySpecific.Does_risk_provide_a_Continuum_of_Care__c}" />
+                            <lightning:textArea aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                name='Training_in_place_for_combative_resident__c'
+                                                label='What specific training is in place for handling combative residents?'
+                                                value="{!v.IndustrySpecific.Training_in_place_for_combative_resident__c}" 
+                                                maxlength='1000' />
+                            <lightning:textArea aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                name='Lifting_training_and_aids_controls__c'
+                                                label='What specific lifting training and lifting aids / controls are in place?'
+                                                value="{!v.IndustrySpecific.Lifting_training_and_aids_controls__c}" 
+                                                maxlength='1000' />
+                            <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                  name='Emps_provide_transport_svc_for_residents__c'
+                                                  label='Do employees provide transportation services for residents?'
+                                                  options="{!v.radioGroupOptions}"
+                                                  value="{!v.IndustrySpecific.Emps_provide_transport_svc_for_residents__c}" />
+                        </lightning:layoutItem>
+                         <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+                            <lightning:textArea aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                name='Additional_controls_PPE_Tests_for_emps__c'
+                                                label='What additional controls/PPE/Testing, etc. have you put in place for each employee?'
+                                                value="{!v.IndustrySpecific.Additional_controls_PPE_Tests_for_emps__c}" 
+                                                maxlength='1000' />
+                            <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                  name='Currently_accepting_new_residents__c'
+                                                  label='Are you currently accepting any new residents?'
+                                                  options="{!v.radioGroupOptions}"
+                                                  value="{!v.IndustrySpecific.Currently_accepting_new_residents__c}" />
+                            <aura:if isTrue="{!v.IndustrySpecific.Currently_accepting_new_residents__c =='Yes'}" >
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='Any_pre_screening_tests_being_done__c'
+                                                      label='Any pre-screening tests being done?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.Any_pre_screening_tests_being_done__c}" />
+                            </aura:if>
+                            <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                  name='Guests_currently_allowed_in_facility__c'
+                                                  label='Are guests currently allowed in the facility?'
+                                                  options="{!v.radioGroupOptions}"
+                                                  value="{!v.IndustrySpecific.Guests_currently_allowed_in_facility__c}" />
+                            <aura:if isTrue="{!v.IndustrySpecific.Guests_currently_allowed_in_facility__c =='Yes'}" >
+                                <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                      name='guest_screening_upon_check_in__c'
+                                                      label='Any screening done before being allowed into the facility?'
+                                                      options="{!v.radioGroupOptions}"
+                                                      value="{!v.IndustrySpecific.guest_screening_upon_check_in__c}" />
+                            </aura:if>
+                            <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                  name='A_patient_resident_tested_for_Covid__c'
+                                                  label='Any patients/residents tested positive for COVID-19?'
+                                                  options="{!v.radioGroupOptions}"
+                                                  value="{!v.IndustrySpecific.A_patient_resident_tested_for_Covid__c}" />
+                            <aura:if isTrue="{!v.IndustrySpecific.A_patient_resident_tested_for_Covid__c =='Yes'}" >
+                                <lightning:input aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                 name='How_many_residents_patients_are_COVID__c'
+                                                 label='How many?'
+                                                 value="{!v.IndustrySpecific.How_many_residents_patients_are_COVID__c}" 
+                                                 type='number'/>
+                            </aura:if>
+                            <lightning:radioGroup aura:id='isqQue' disabled='{!v.readOnly}' onchange="{!c.handleChange}" 
+                                                  name='Controls_in_place_for_facility_delivery__c'
+                                                  label='Any new controls in place for deliveries made to the facility?'
+                                                  options="{!v.radioGroupOptions}"
+                                                  value="{!v.IndustrySpecific.Controls_in_place_for_facility_delivery__c}" />
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                </aura:if>
+            </lightning:tabset>
+            
+            <c:communityFormNavButtons tabNameList='{!v.parentTabs}' 
+                                       currentPos='{!v.activeParent}' 
+                                       allPossibleParents='{!v.wcCompTabs}'
+                                       activeParent='{!v.activeWcCompTab}'
+                                       parentTabsetUsesIteration='True'
+                                       saveFunc='{!v.saveFunc}' />
+           
+        </aura:set>
+    </aura:if>
+</aura:component>

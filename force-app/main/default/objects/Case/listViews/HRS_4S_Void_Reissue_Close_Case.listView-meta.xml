@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRS_4S_Void_Reissue_Close_Case</fullName>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>NAME</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>CASES.PRIORITY</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <columns>Current_Step__c</columns>
+    <filterScope>Queue</filterScope>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.Terminations_and_Transfers</value>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Solved,Solved - Call Disconnected,Completed</value>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>equals</operation>
+        <value>Complete - New Check Approved</value>
+    </filters>
+    <label>HRS 4S Void/Reissue - Close Case</label>
+    <queue>HRS_4S_Void_Reissue</queue>
+    <sharedTo>
+        <role>HRS_4S_LDPS_Representative_I</role>
+        <role>HRS_4S_LDPS_Representative_II</role>
+        <role>HRS_4S_LDPS_Supervisor_I</role>
+        <role>HRS_4S_LDPS_Supervisor_II</role>
+    </sharedTo>
+</ListView>

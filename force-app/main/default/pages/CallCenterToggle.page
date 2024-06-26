@@ -1,0 +1,47 @@
+<!--
+History 
+---------------------
+08/21/2018 Josh Cartwright Created 
+-->
+
+<apex:page controller="CallCenterToggleController">
+ 
+<apex:form >    
+    
+    <apex:sectionHeader title="Dialer Selector"/>
+ 
+    <apex:pageBlock rendered="{!NOT(saveSuccessful)}">
+		<apex:outputLabel value="Hi {!runningUser.Name} your current Call Center is {!if(callCenterName!=null,callCenterName, "Blank")}" /> 
+  
+        <apex:outputLabel value="Select Dialer" /> 
+        <apex:outputPanel >
+       		<apex:pageBlockSection > 
+                <apex:selectList value="{!callCenterId}" size="1" >
+                    <apex:selectOptions value="{!getCS}" /> 
+                </apex:selectList>                                     
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection >
+            	<apex:commandButton value="Save" action="{!saveCS}"/>
+            
+            </apex:pageBlockSection>
+             </apex:outputPanel>
+        </apex:pageBlock>	
+    
+        <apex:pageBlock rendered="{!saveSuccessful}">    
+    	<apex:outputPanel >
+
+            <apex:pageBlockSection >
+                Your Call Center has been updated! 
+            
+            </apex:pageBlockSection>
+       
+        </apex:outputPanel>
+	</apex:pageBlock>
+
+    
+ </apex:form>  
+    
+    
+    
+</apex:page>

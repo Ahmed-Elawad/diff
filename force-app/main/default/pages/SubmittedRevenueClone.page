@@ -1,0 +1,83 @@
+<!-- VF Page SubmittedRevenueClone
+ * History
+ * -------
+ * 10/02/2019   Brandon Vidro Created
+ * 01/24/2023	Shilpa Govindarajulu	APR0143403 - Updated to add Select All line items checkbox
+-->
+<apex:page controller="SubmittedRevenueCloneController" showHeader="true" sidebar="true" docType="html-5.0" lightningStylesheets="true">
+    <apex:includeScript value="/support/console/42.0/integration.js"/>
+    <apex:stylesheet value="{!URLFOR($Resource.CloneOpportunity, 'CloneOpportunity.css')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CloneOpportunity,'CloneOpportunity.js')}"/>
+    <script type="text/javascript">
+    	function selectAllCheckboxes(obj,receivedInputID){
+            var inputCheckBox = document.getElementsByTagName("input");                  
+            for(var i=0; i<inputCheckBox.length; i++){          
+                if(inputCheckBox[i].id.indexOf(receivedInputID)!=-1){                                     
+                    inputCheckBox[i].checked = obj.checked;
+                }
+            }
+        }
+    </script>
+    <apex:form id="submitted-revenue-form">
+        <apex:pageMessages />
+        <div id="statusSpinner">
+            <div class="spinner-background" >
+                &nbsp;
+            </div>
+            <div class="spinner-container">
+                <div class="spinner-box">
+                    <img src="/img/loading.gif" class="spinner-gif" />
+                    <span class="spinner-text" style="">Cloning Opportunities...</span>
+                </div>
+            </div>
+        </div>
+        <apex:pageBlock rendered="{!showSection1}" title="Submitted Revenue Clone" id="pbRevClone">
+        	<apex:OutputPanel >
+                <apex:pageBlockTable value="{!wrapOppLineItems}" var="oli">
+                    <apex:column >
+						<apex:facet name="header">
+							<apex:inputCheckbox onclick="selectAllCheckboxes(this,'inputCheckId')"/>
+						</apex:facet>
+						<apex:inputCheckbox value="{!oli.selected}" id="inputCheckId"/>
+					</apex:column>
+                    <apex:column value="{!oli.oppLineItem.Product2.Name}"/>
+                    <apex:column headerValue="Revenue on Submit Eligible?">
+                        <apex:inputCheckbox value="{!oli.hasRevOnSubmit}" id="inputId"/>
+                    </apex:column>
+                    <apex:column headerValue="Run Effective Date">
+                        <apex:input type="date" value="{!oli.closeDate}" onchange="processSelected(this.value)"/>
+                    </apex:column>
+                </apex:pageBlockTable>
+                <apex:actionFunction action="{!processSelected}" name="processSelected" rerender="pbRevClone" >
+                	<apex:param name="strCloseDateName" value=""/>
+            	</apex:actionFunction>
+            </apex:OutputPanel>
+        </apex:pageBlock>
+        <apex:pageBlock rendered="{!showSection2}" title="Cloned Opportunites Preview">
+                <apex:pageBlockTable value="{!oppWraps}" var="o">
+                    <apex:column >
+                        <apex:inputField value="{!o.oppty.Name}"/>
+                    </apex:column>
+                    <apex:column value="{!o.oppty.StageName}"/>
+                    <apex:column headerValue="Revenue On Submit Eligible?">
+                        <apex:inputCheckbox value="{!o.hasRevOnSubmitOpp}" disabled="true" />
+                    </apex:column>
+                    <apex:column value="{!o.oppty.CloseDate}"/>
+                    <apex:column headerValue="Payroll Unit?">
+                        <apex:inputCheckbox value="{!o.oppty.Payroll_Unit__c}" />
+                    </apex:column>
+                    <apex:column headerValue="Child Unit?">
+                        <apex:inputCheckbox value="{!o.oppty.Child_Unit__c}" />
+                    </apex:column>
+                    <apex:column headerValue="Opportunity Type">
+                    	<apex:inputField value="{!o.oppty.OpportunityType__c}"/>
+                    </apex:column>
+                </apex:pageBlockTable>
+        </apex:pageBlock>
+        <div align="center" >
+            <apex:commandButton rendered="{!showSection2}" value="Clone Opportunities" action="{!cloneOpportunity}" onclick="showLoadingIcon();" oncomplete="hideLoadingIcon();"/>
+            <apex:commandButton rendered="{!showSection1}" value="Preview Opportunity Clones" action="{!previewOpportunityClones}" />
+            <apex:commandButton action="{!cancel}" value="Cancel" immediate="true"/>
+        </div>
+    </apex:form>
+</apex:page>

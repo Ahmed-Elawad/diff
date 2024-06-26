@@ -1,0 +1,63 @@
+<aura:component controller="IntegratedSellingController"> 
+	<!--passed in from IntegratedSelling.cmp-->
+    <aura:attribute name="accountId" type="Id" required="true" />
+	
+    <aura:attribute name="Acct" type="Account" />
+	<aura:attribute name="Opportunities" type="Opportunity" />
+	<aura:attribute name="Columns" type="List" />
+    <aura:attribute name="selectedRowsCount" type="Integer" default="0"/>
+    <aura:attribute name="maxRowSelection" type="Integer" default="2"/>
+    <aura:attribute name="selectedRowsList" type="List" />
+    <aura:attribute name="loaded" type="Boolean" default="true" />
+    <aura:attribute name="error" type="Boolean" default="false" />
+    <aura:attribute name="errorMessage" type="String"/>
+    
+    <!--this is the set up for when this component is loaded-->
+    <aura:handler name="init" value="{!this}" action="{!c.setUpForAccount}" /> 
+    
+    <!--a lightning data service is used to load, create, edit and delete a record w/o needing Apex
+    	force:recordData is simply a way to get information, it does not display information.
+		recordId = the current record
+		fields = specify the fields to request
+		targetFields is populated with a simplified view of the loaded record
+       	For example, for the Name field, v.targetRecord.fields.Name.value = v.targetFields.Name.
+	-->
+   		<!--used just to get the Account Name-->
+		<force:recordData aura:id="accountRecord"
+                          recordId="{!v.accountId}" 
+                          fields="Name"
+                  		  targetFields="{!v.Acct}"
+                  	      layoutType="FULL"/>
+    
+    <aura:if isTrue="{!v.error }">
+        <div class="slds-notify slds-notify--toast slds-theme--error">
+        	<span class="slds-assistive-text">Error</span>
+            <div>
+            	<lightning:icon iconName="utility:error" alternativeText="error" variant="bare"/>
+            </div>
+            <div class="slds-col slds-align-middle" style="padding-left: .75rem">
+            	<h2 class="slds-text-heading_small">{!v.errorMessage}</h2>
+            </div>
+        </div>
+    </aura:if>
+   
+    <aura:if isTrue="{!v.loaded }">
+        <lightning:card iconName="standard:opportunity" title="{! 'Opportunities for ' + v.Acct.Name}">
+            <lightning:datatable data="{!v.Opportunities}"
+                                  columns="{!v.Columns}"
+                                  keyField="Id" 
+                                  maxRowSelection="{!v.maxRowSelection}"
+                                  onrowselection="{!c.updateSelected}"
+                                 hideCheckboxColumn="false"/>
+            
+                <lightning:button disabled="{!v.error}" label="Link" variant="brand" onclick="{!c.handleSelected}"/>
+        </lightning:card>
+                
+        <aura:set attribute="else">
+            <div class="spinnerHolder">
+            	<lightning:spinner alternativeText="Loading" />
+            </div>
+        </aura:set>
+    </aura:if>
+
+</aura:component>

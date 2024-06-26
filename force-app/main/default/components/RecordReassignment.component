@@ -1,0 +1,41 @@
+<!--   
+ * Reassigns stuff.  Accept sObject?
+ *
+ * History
+ * -------
+ * 04/13/2017 Jacob Hinds        Created
+ *
+-->
+<apex:component controller="RecordReassignmentController" allowDml="true">
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pageMessages />
+            <apex:pageBlockSection rendered="{!multipleReferrals}" title="What Record Do You Want to Reassign?" columns="1">
+                <apex:pageblocktable id="wrapTable" value="{!wraps}" var="wrap">
+                    <apex:column headerValue="Use This One">
+                        <apex:inputCheckbox value="{!wrap.selected}">
+                            <apex:actionSupport event="onchange" rerender="wrapTable" action="{!storeSelectedReferral}"/>
+                        </apex:inputCheckbox>
+                    </apex:column>
+                    <apex:column headerValue="Referral Name">
+                        <apex:outputLink value="{!URLFOR($Action.Referral__c.View, wrap.ref.Id)}">{!wrap.ref.Name}</apex:outputLink>
+                    </apex:column>
+                    <apex:column value="{!wrap.ref.Referral_Type__c}" />
+                    <apex:column value="{!wrap.ref.CreatedDate}" />
+                    <apex:column value="{!wrap.ref.OwnerId}" />
+                </apex:pageblocktable>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Who do you want to Reassign To?" columns="1">
+                <apex:selectList value="{!selectedQueue}" label="Queue" multiselect="false" size="1">
+                    <apex:selectOptions value="{!queueOptions}"/>
+                </apex:selectList>
+                <apex:inputField id="User" label="User" value="{!selectedUser.Referring_User__c}"/>
+                <apex:selectList value="{!selectedTransferReason}" label="Transfer Reason" multiselect="false" size="1">
+                    <apex:selectOptions value="{!transferReasons}"/>
+                 </apex:selectList>
+                <apex:commandButton action="{!save}" value="Change Owner"/>
+		  		<apex:commandButton action="{!cancel}" value="Cancel"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:component>

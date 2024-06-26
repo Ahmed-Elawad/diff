@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRE_FollowUpNeeded_when_FollowUpComplete</fullName>
+    <active>true</active>
+    <description>Force update of the Follow Up Needed field before the Follow Up Completed field can be checked.</description>
+    <errorConditionFormula>AND(
+( Follow_Up_Completed__c = TRUE ),
+( Follow_Up_Needed__c = FALSE ),
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)))
+)</errorConditionFormula>
+    <errorDisplayField>Follow_Up_Needed__c</errorDisplayField>
+    <errorMessage>&apos;Follow Up Needed&apos; must be entered before &apos;Follow Up Completed&apos; can be checked.</errorMessage>
+</ValidationRule>

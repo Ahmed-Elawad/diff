@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CANCELS_Valuation_Sent_Audit_Needed</fullName>
+    <columns>NAME</columns>
+    <columns>SunGard_Number__c</columns>
+    <columns>Prospect_Client_Name__c</columns>
+    <columns>BIS_ID__c</columns>
+    <columns>Valuation_Report_Sent__c</columns>
+    <columns>X401k_Plan_Asset_Transfer_Completed__c</columns>
+    <columns>Plan_Liquidation_Complete_Date__c</columns>
+    <columns>Wire_Sent__c</columns>
+    <columns>Trade_Confirmation_Amount__c</columns>
+    <columns>Valuation_Sent_Audit_Date__c</columns>
+    <columns>Valuation_Sent_Audit_By__c</columns>
+    <columns>X401k_Plan_Asset_Transfer_Notes__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_Terms_Transfers__c.X401k_Transfer</value>
+    </filters>
+    <filters>
+        <field>Trade_Confirmation_Amount__c</field>
+        <operation>greaterOrEqual</operation>
+        <value>1000000</value>
+    </filters>
+    <filters>
+        <field>Valuation_Report_Sent__c</field>
+        <operation>greaterThan</operation>
+        <value>1/1/2024</value>
+    </filters>
+    <filters>
+        <field>Valuation_Sent_Audit_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <label>CANCELS: Valuation Sent Audit Needed</label>
+    <sharedTo>
+        <role>HRS4SClientRetentionRepresentative</role>
+        <role>HRS_4S_Client_Retention_Supervisor</role>
+        <role>HRS_4S_LDPS_Representative_II</role>
+    </sharedTo>
+</ListView>

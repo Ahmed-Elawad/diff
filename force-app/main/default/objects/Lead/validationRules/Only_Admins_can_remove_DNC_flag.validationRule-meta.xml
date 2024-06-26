@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Only_Admins_can_remove_DNC_flag</fullName>
+    <active>true</active>
+    <description>Only a System Administrator can uncheck a Do Not Contact</description>
+    <errorConditionFormula>AND( 
+ISCHANGED( DoNotCall), 
+DoNotCall = False, 
+NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)) )</errorConditionFormula>
+    <errorMessage>Only a System Administrator can uncheck a Do Not Contact</errorMessage>
+</ValidationRule>

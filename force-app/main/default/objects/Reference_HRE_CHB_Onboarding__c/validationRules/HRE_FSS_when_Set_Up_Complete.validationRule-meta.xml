@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRE_FSS_when_Set_Up_Complete</fullName>
+    <active>true</active>
+    <description>Force update of the FSS field when the Set Up Complete field has been checked.</description>
+    <errorConditionFormula>AND(
+( Set_Up_Complete__c = TRUE ),
+( ISBLANK(FSS__c) ),
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)))
+)</errorConditionFormula>
+    <errorDisplayField>FSS__c</errorDisplayField>
+    <errorMessage>FSS must be entered before &apos;Set up Complete&apos; can be checked.</errorMessage>
+</ValidationRule>

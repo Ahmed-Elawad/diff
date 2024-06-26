@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Must_populate_Load_Holds_Cleared</fullName>
+    <active>false</active>
+    <description>In order to enter a date in Sent to WC Underwriting, Load Holds Complete must have a date populated. Record Type ID used because this object is maxed out for object relationships. Can&apos;t get to the RT Name.</description>
+    <errorConditionFormula>AND(  RecordTypeId = &apos;012700000001jeX&apos; || RecordTypeId=&quot;0120g000000l3qD&quot;
+, NOT(ISBLANK(Sent_to_WC_Underwriting__c ))
+, NOT(Previously_Sent_to_Underwriting__c)
+, ISBLANK(Load_Holds_Cleared__c ))</errorConditionFormula>
+    <errorMessage>Load Holds Cleared must have a date to be able to populate Sent to WC Underwriting.</errorMessage>
+</ValidationRule>

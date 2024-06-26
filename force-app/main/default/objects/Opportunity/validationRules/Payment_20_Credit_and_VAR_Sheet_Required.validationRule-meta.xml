@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Payment_20_Credit_and_VAR_Sheet_Required</fullName>
+    <active>true</active>
+    <description>Payment Processing Reps are required to Enter a Yes or No value in the $20 Credit on Payroll &amp; Integration VAR Sheet Required fields when an Opportunity is marked as Sold or better</description>
+    <errorConditionFormula>NOT(BEGINS($Profile.Name, &apos;System Admin&apos;))
+&amp;&amp;
+( RecordType.Name = &quot;Payment Processing Opportunity&quot; ||
+RecordType.Name = &quot;Payment Processing (DSA) Opportunity&quot; )
+&amp;&amp;
+Probability &gt;= 0.80
+&amp;&amp;
+$User.Sales_Division__c = &quot;Virtual Merchant Services&quot;
+&amp;&amp;
+( ISBLANK( TEXT(X20_Credit_on_Payroll__c) ) ||
+ISBLANK( TEXT(Integration_VAR_Sheet_Required__c) ) )</errorConditionFormula>
+    <errorMessage>You are required to select a Yes or No value in the $20 Credit on Payroll and Integration VAR Sheet Required field</errorMessage>
+</ValidationRule>

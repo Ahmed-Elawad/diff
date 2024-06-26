@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Conversion_Assets_Required</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(OR(CONTAINS($User.Job_Name__c, &apos;Sales Rep&apos;), $User.ProfileName__c == &apos;HRS Sales Administration - SB&apos;,
+$User.ProfileName__c == &apos;HRS Sales Manager - SB&apos;) ,
+RecordType.DeveloperName ==&apos;HRS401kOpportunityRecordType&apos;,
+ISNULL(Conversion_Assets__c),
+AND(NOT(ISPICKVAL( StageName ,&quot;Gained Access&quot;)),NOT(ISPICKVAL( StageName ,&quot;Qualified&quot;))),
+ISPICKVAL( OpportunityType__c , &apos;Conversion&apos;)
+)</errorConditionFormula>
+    <errorMessage>Conversion Assets are required on all Conversion Opportunities. Please update the Conversion Assets field in order to save your changes.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,18 @@
+<apex:page standardController="Reference_ES_Preview_to_Flex_Needs__c" extensions="ReferenceESPreviewToFlexNeeds">
+	<apex:form >
+		<apex:pageBlock id="table">
+		<apex:pageMessages id="theMessages" />
+			<apex:pageBlockTable value="{!getNeeds}" var="rcd" width="100%" >
+				<apex:column value="{!rcd.Name}" id="name" style="white-space:nowrap;"/>
+				<apex:column value="{!rcd.Description__c}" id="description" />
+				<apex:column value="{!rcd.Availability__c}" id="availability" style="white-space:nowrap;"/>
+			</apex:pageBlockTable>
+			<apex:commandButton action="{!Beginning}" title="Beginning" value="<<" disabled="{!disablePrevious}" reRender="table"/>
+	        <apex:commandButton action="{!Previous}" title="Previous" value="<" disabled="{!disablePrevious}" reRender="table"/>
+	        <apex:outputLabel value="{!currentCount} - {!pageSize} of {!totalSize}"/>       
+	        <apex:commandButton action="{!Next}" title="Next" value=">" disabled="{!disableNext}" reRender="table"/>
+	        <apex:commandButton action="{!End}" title="End" value=">>" disabled="{!disableNext}" reRender="table"/>
+        
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>

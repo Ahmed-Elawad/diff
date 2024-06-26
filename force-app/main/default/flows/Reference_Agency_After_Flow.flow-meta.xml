@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Chatter_will_need_to_be_sent_to_the_NC_Rep_Assigned_NC_Supervisor</name>
+        <label>Chatter will need to be sent to the NC Rep Assigned, NC Supervisor</label>
+        <locationX>242</locationX>
+        <locationY>384</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <elementReference>ChatterMessageForReferenceAgencyCurrentStepUpdate</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>58.0</apiVersion>
+    <decisions>
+        <name>Reference_Agency_is_put_into_Current_Step_NC_Pending_Flock_ATC</name>
+        <label>Reference Agency is put into Current Step &quot;NC Pending: Flock ATC&quot;</label>
+        <locationX>374</locationX>
+        <locationY>276</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Reference_Agency_is_put_into_Current_Step_NC_Pending_Flock_ATC_Label</name>
+            <conditionLogic>1 AND 2 AND 3</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Current_Step__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>NC Pending: Flock ATC</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Prospect_Client_Name__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.NC_Rep_Assigned__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Chatter_will_need_to_be_sent_to_the_NC_Rep_Assigned_NC_Supervisor</targetReference>
+            </connector>
+            <label>Reference Agency is put into Current Step &quot;NC Pending: Flock ATC&quot; Label</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <interviewLabel>Reference Agency After Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Reference Agency After Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <object>Reference_HNBF__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <name>Reference_Agency_is_put_into_Current_Step</name>
+            <connector>
+                <targetReference>Reference_Agency_is_put_into_Current_Step_NC_Pending_Flock_ATC</targetReference>
+            </connector>
+            <label>Test Reference Agency is put into Current Step</label>
+            <offsetNumber>24</offsetNumber>
+            <offsetUnit>Hours</offsetUnit>
+            <recordField>Current_Step_Last_Modified__c</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Obsolete</status>
+    <textTemplates>
+        <name>ChatterMessageForReferenceAgencyCurrentStepUpdate</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>@[{!$Record.NC_Rep_Assigned__c}] @[{!$Record.NC_Rep_Assigned__r.Manager.FirstName} {!$Record.NC_Rep_Assigned__r.Manager.LastName}] Please add the ATC product indicator for @[{!$Record.Case_Number__r.Account.Name}]</text>
+    </textTemplates>
+</Flow>

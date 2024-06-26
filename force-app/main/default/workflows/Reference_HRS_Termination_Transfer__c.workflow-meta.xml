@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>HRS_Terms_Trans_Comment_Clear</fullName>
+        <description>Clears the comments field</description>
+        <field>Comments__c</field>
+        <name>HRS Terms/Trans Comment Clear</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>HRS_Terms_Trans_Comment_Move</fullName>
+        <description>Moves the comments from the comments field to the log field</description>
+        <field>Comments_Log__c</field>
+        <formula>upper( $User.FirstName ) &amp; &quot; &quot; &amp; upper( $User.LastName )&amp; &quot; (&quot; &amp; text(month(today())) &amp; &quot;/&quot;&amp; text(day(today())) &amp; &quot;/&quot;&amp; text(year(today()))&amp; &quot; &quot; &amp;Text(CASE(VALUE(MID(TEXT( Now() ) , 12, 2)) , 0, 20, 1, 21, 2, 22,3, 23,4, 0,5, 1,6, 2,7, 3,8, 4,9, 5,10, 6,11, 7,12, 8,13, 9,14,10,15, 11,16, 12,17, 13,18, 14,19, 15,20, 16,21, 17,22, 18,23, 19, 24)) 
+&amp; &quot;:&quot; &amp; MID(TEXT( Now() ) , 15, 2) &amp; &quot;)&quot; &amp; BR() &amp; &quot;- &quot; &amp; Comments__c &amp; BR() &amp; BR() &amp; Comments_Log__c</formula>
+        <name>HRS Terms/Trans Comment Move</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_BR_Clt_Number</fullName>
+        <field>Initial_Br_Clt_Number__c</field>
+        <formula>Case_Lookup__r.Account.AccountNumber</formula>
+        <name>Populate BR/Clt Number</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_HRS_Term_Trans_Date_Status_Updated</fullName>
+        <description>Updates the Date Status Updated field on Ref HRS Terms/Transfers when the case status gets updated.</description>
+        <field>Date_Status_Updated__c</field>
+        <formula>Today()</formula>
+        <name>Ref HRS Term/Trans Date Status Updated</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_HRS_Term_Trans_set_Initial_TYPE</fullName>
+        <description>Populate the Initial TYPE field on Ref HRS Terms/Transfers when the record is created.</description>
+        <field>Initial_TYPE__c</field>
+        <formula>TEXT(Case_Lookup__r.Account.Type)</formula>
+        <name>Ref HRS Term/Trans set Initial TYPE</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>HRS Terms%2FTransfers Comment Tool</fullName>
+        <actions>
+            <name>HRS_Terms_Trans_Comment_Clear</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>HRS_Terms_Trans_Comment_Move</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_HRS_Termination_Transfer__c.Comments__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>Provides a comment log for the comments field</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Populate Initial BR%2FClt Number</fullName>
+        <actions>
+            <name>Populate_BR_Clt_Number</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Populates Initial BR/Clt Number on creation</description>
+        <formula>NOT(ISBLANK( Case_Lookup__r.Account.AccountNumber ))</formula>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ref HRS Term%2FTrans Date Status Updated</fullName>
+        <actions>
+            <name>Ref_HRS_Term_Trans_Date_Status_Updated</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Updates the Date Status Updated when the status is updated on Reference HRS Terms/Transfer.</description>
+        <formula>AND( Case_Status__c &lt;&gt; &apos;New&apos;, Date_Status_Updated__c = null)</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ref HRS Term%2FTransfer Populate Initial TYPE</fullName>
+        <actions>
+            <name>Ref_HRS_Term_Trans_set_Initial_TYPE</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Populate Initial TYPE field on Ref HRS Terms/Transfers when the record is created.</description>
+        <formula>NOT(ISPICKVAL(Case_Lookup__r.Account.Type, &apos;&apos;))</formula>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+</Workflow>

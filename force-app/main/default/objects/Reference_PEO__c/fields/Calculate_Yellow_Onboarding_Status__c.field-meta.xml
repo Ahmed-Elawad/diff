@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Calculate_Yellow_Onboarding_Status__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>This is a calculation to determine if the status should be red or green. It is used, along with &quot;Calculate RedGreen Onboarding Status&quot;, in the Up-to-date Onboarding Overall Status formula field calculation.
+It is not on any page layout and it is only available to System Admin. The Up-to-date Onboarding Overall Status formula field is for PEO Web Based Onboarding Record Type.</description>
+    <externalId>false</externalId>
+    <formula>IF(
+OR(
+ISBLANK(Client_Shell_Creation__c)&amp;&amp; Client_Shell_Creation_Target__c=TODAY(),
+ISBLANK(IPM_Assigned__c)&amp;&amp;IPM_Assigned_Target__c=TODAY(),
+ISBLANK(Benefits_NCS_Assigned__c)&amp;&amp; Benefits_NCS_Assigned_Target__c=TODAY(),
+ISBLANK(Payroll_NCS_Assigned__c) &amp;&amp; Payroll_NCS_assigned_Target__c=TODAY(),
+ISBLANK(Onbrdg_Spreadsheet_Rec__c) &amp;&amp; Onbrdg_Spreadsheet_Rec_Target__c=TODAY(),
+
+ISBLANK(Load_Holds_Cleared__c)&amp;&amp; Load_Holds_Cleared_Target__c=TODAY(),
+ISBLANK(WC_Underwriting_Review_Complete__c)&amp;&amp; WC_Underwriting_Review_Target__c=TODAY(),
+ISBLANK(Complete_Payroll_Shell__c)&amp;&amp; Complete_Payroll_Shell_Target__c=TODAY(),
+ISBLANK(Benefits_ER_Contribution_Loaded__c)&amp;&amp; Benefits_ER_Contribution_Loaded_Target__c=TODAY(),
+ISBLANK(Onbrdg_Spsheet_Review_and_EE_Load__c)&amp;&amp; Onbrdg_Spsheet_Review_and_EE_Load_Target__c=TODAY(),
+
+ISBLANK(Onboarding_Open_Date_Confirmd__c)&amp;&amp; Set_to_Pending_Ob_Date_Confirmd_Target__c=TODAY(),
+ISBLANK(Onboarding_Open__c)&amp;&amp; Onboarding_Open_Target__c=TODAY(),
+
+ISBLANK(Benefit_Enrollment_Close__c) &amp;&amp; Benefit_Enrollment_Close_Target__c=TODAY(),
+ISBLANK(NEP_Close__c) &amp;&amp;NEP_Close_Target__c=TODAY(),
+
+ISBLANK(Onboarding_Complete__c)&amp;&amp;Onboarding_Complete_Target__c=TODAY(),
+ISBLANK(Final_Medical_Approval_Milestone__c)&amp;&amp;Final_Medical_Approval_Target_Milestone__c=TODAY(),
+ISBLANK(HRIS_Approved_Pass_to_New_Biz__c) &amp;&amp; HRIS_Approved_Target_Pass_to_New_Biz__c=TODAY(),
+ISBLANK(Prior_Wages_Rcvd__c) &amp;&amp; Prior_Wages_Rcvd_Target__c=TODAY(),
+ISBLANK(EE_Verification_and_QC__c) &amp;&amp; EE_Verification_and_QC_Target__c=TODAY(),
+
+ISBLANK(Management_Hold_Removed_Date__c) &amp;&amp;Management_Hold_Target__c=TODAY(),
+ISBLANK(Ready_to_Process_Payroll2__c) &amp;&amp; Ready_to_Process_Payroll_Target__c=TODAY(),
+ISBLANK(Actual_Payroll_Process__c) &amp;&amp; Actual_Payroll_Process_Target__c=TODAY()
+)
+, 1,0)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Calculate Yellow Onboarding Status</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

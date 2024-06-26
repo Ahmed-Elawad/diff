@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Loan_Update_Type</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name, &quot;System Admin&quot;)),
+OR($Profile.Name = &quot;2008-09 HRS 4S Operations&quot;,$Profile.Name = &quot;2008-09 HRS 4S Operations B&quot;,$Profile.Name =&quot;2008-09 HRS 4S Service Manager&quot;),
+
+RecordType.Name = &quot;HRS 4S Manual Trade&quot;) &amp;&amp;
+
+
+if(
+OR(ISPICKVAL (Type_of_Request__c,&apos;Sungard Loan Update&apos;), ISPICKVAL (Type_of_Request__c,&apos;Trade Loan Payment&apos;))&amp;&amp; ISPICKVAL(Loan_Update_Type__c,&apos;&apos;), true, false
+)</errorConditionFormula>
+    <errorMessage>Loan Update Type is required</errorMessage>
+</ValidationRule>

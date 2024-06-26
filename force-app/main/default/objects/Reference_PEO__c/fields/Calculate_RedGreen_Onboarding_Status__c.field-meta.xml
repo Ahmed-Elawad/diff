@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Calculate_RedGreen_Onboarding_Status__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>This is a calculation to determine if the status should be red or green. It is used, along with &quot;Calculate Yellow Onboarding Status&quot;, in the Up-to-date Onboarding Overall Status formula field calculation.
+It is not on any page layout and it is only available to System Admin. The Up-to-date Onboarding Overall Status formula field is for PEO Web Based Onboarding Record Type.</description>
+    <externalId>false</externalId>
+    <formula>If(!ISBLANK(Client_Shell_Creation__c)|| Client_Shell_Creation_Target__c&gt;=TODAY(),0,100)+
+If(!ISBLANK(IPM_Assigned__c) ||IPM_Assigned_Target__c&gt;=TODAY(),0,100)+
+If(!ISBLANK(Benefits_NCS_Assigned__c)||Benefits_NCS_Assigned_Target__c&gt;=TODAY(),0,100)+
+If(!ISBLANK(Payroll_NCS_Assigned__c) || Payroll_NCS_assigned_Target__c&gt;=TODAY(),0,100)+
+If(!ISBLANK(Onbrdg_Spreadsheet_Rec__c) || Onbrdg_Spreadsheet_Rec_Target__c&gt;=TODAY(),0,100)+
+
+If(!ISBLANK(Load_Holds_Cleared__c) || Load_Holds_Cleared_Target__c&gt;=TODAY(),0,100)+
+If(!ISBLANK(WC_Underwriting_Review_Complete__c) || WC_Underwriting_Review_Target__c&gt;=TODAY(),0,100)+
+If(!ISBLANK(Complete_Payroll_Shell__c) || Complete_Payroll_Shell_Target__c&gt;=TODAY(),0,100)+
+If(!ISBLANK(Benefits_ER_Contribution_Loaded__c) || Benefits_ER_Contribution_Loaded_Target__c&gt;=TODAY(),0,100)+
+If(!ISBLANK(Onbrdg_Spsheet_Review_and_EE_Load__c) || Onbrdg_Spsheet_Review_and_EE_Load_Target__c&gt;=TODAY(),0,100)+
+
+If(!ISBLANK(Onboarding_Open_Date_Confirmd__c) || Set_to_Pending_Ob_Date_Confirmd_Target__c&gt;=TODAY(),0,100)+
+If(!ISBLANK(Onboarding_Open__c) || Onboarding_Open_Target__c&gt;=TODAY(),0,100)+
+If(!ISBLANK(Benefit_Enrollment_Close__c) || Benefit_Enrollment_Close_Target__c&gt;=TODAY(),0,100)+
+If(!ISBLANK(NEP_Close__c) || NEP_Close_Target__c&gt;=TODAY(),0,100)+
+
+If(!ISBLANK(Onboarding_Complete__c) || Onboarding_Complete_Target__c&gt;=TODAY(),0,100)+
+If(!ISBLANK(Final_Medical_Approval_Milestone__c) || Final_Medical_Approval_Target_Milestone__c&gt;=TODAY(),0,100)+
+If(!ISBLANK(HRIS_Approved_Pass_to_New_Biz__c) || HRIS_Approved_Target_Pass_to_New_Biz__c&gt;=TODAY(),0,100)+
+If(!ISBLANK(Prior_Wages_Rcvd__c) || Prior_Wages_Rcvd_Target__c&gt;=TODAY(),0,100)+
+If(!ISBLANK(EE_Verification_and_QC__c) || EE_Verification_and_QC_Target__c&gt;=TODAY(),0,100)+
+
+If(!ISBLANK(Management_Hold_Removed_Date__c) || Management_Hold_Target__c&gt;=TODAY(),0,100)+
+If(!ISBLANK(Ready_to_Process_Payroll2__c) || Ready_to_Process_Payroll_Target__c&gt;=TODAY(),0,100)+
+If(!ISBLANK(Actual_Payroll_Process__c) || Actual_Payroll_Process_Target__c&gt;=TODAY(),0,100)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Calculate RedGreen Onboarding Status</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

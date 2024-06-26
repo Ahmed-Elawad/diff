@@ -1,0 +1,48 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes" access="global" >
+    
+     <!-- auto save -->
+    <aura:registerEvent name='autoSave' type='c:CommunityFormsAutoSave' />
+    <aura:attribute name='autoSaveRecords' type='map' />
+    
+    <aura:attribute name='rentalindustryRec' type='Object' />
+    <aura:attribute name='radioGroupOptions' type='List' default="[{'label': 'Yes', 'value':'Yes'},{'label':'No','value':'No'}]" />
+    <aura:attribute name='radioOptionsSold' type='List' default="[{'label': 'Storefront', 'value':'Storefront'},{'label':'Internet','value':'Internet'},{'label':'Both','value':'Both'}]" />
+    <aura:attribute name="dontAllowChanges" type="Boolean" default="true" />
+    <aura:attribute name="parentAccount" type="Account"/>
+    <aura:attribute name="allAccounts" type="Account[]" />
+    <lightning:layout>
+        <!-- left side of layout questions -->
+        <lightning:layoutItem size="6"  padding="around-small">
+            <lightning:radioGroup disabled='{!v.dontAllowChanges}' 
+                                  name='Is_rental_desk_located_in_an_airport__c'
+                                  label="Is rental desk located in an airport?"
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.rentalindustryRec.Is_rental_desk_located_in_an_airport__c}"
+                                  required="true"/>
+            
+            
+            <!--<lightning:input disabled='{!v.dontAllowChanges}' 
+                             name='Shifts_and_hours_desk_is_open__c'
+                             label="What are the hours the desk is open?  What are the shifts?"
+                             value="{!v.rentalindustryRec.Shifts_and_hours_desk_is_open__c}"
+                             onchange='{!c.handleChange}'
+                             required="true"/> -->
+            
+            <lightning:radioGroup disabled='{!v.dontAllowChanges}' 
+                                  name='Offers_client_pickup_and_delivery__c'
+                                  label="Do you offer a pickup and delivery service to its clients?"
+                                  options="{!v.radioGroupOptions}"
+                                  value="{!v.rentalindustryRec.Offers_client_pickup_and_delivery__c}"
+                                  required="true"/>
+            <lightning:radioGroup disabled='{!v.dontAllowChanges}' 
+                                  name='On_site_washing_refilling_or_repairs__c'
+                                  label="Do you have a refilling station, car wash, or car repair station at any of your locations?"
+                                  options="{!v.radioGroupOptions}"
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.rentalindustryRec.On_site_washing_refilling_or_repairs__c}"
+                                  required="true"/>
+        </lightning:layoutItem>
+       
+    </lightning:layout>
+</aura:component>

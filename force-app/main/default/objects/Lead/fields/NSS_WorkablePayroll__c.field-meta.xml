@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NSS_WorkablePayroll__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <formula>AND(DoNotCall=false
+,ISPICKVAL(Status,&quot;Disqualified&quot;)=false
+,ISPICKVAL(Hold_Out_Reason__c,&apos;Bank Referral&apos;) = false
+,ISPICKVAL(LeadSource,&apos;Referral-Bank Referral&apos;) = false
+,Referral_Contact__r.Has_Sensitivity_Payroll__c = false
+,ISPICKVAL(Hold_Out_Reason__c,&apos;Ecommerce&apos;) = false
+/*,DuplicatePhone_Pay__c = false */
+,Workable_Override__c = FALSE
+,In_Cadence__c=FALSE
+,(ISBLANK(amp_dev__Referral__c) &amp;&amp; NOT(ISPICKVAL( Hold_Out_Reason__c , &apos;Paychex Referral Network&apos;)))
+,AND(NOT(CONTAINS(&quot;NY:New York:New york:Newyork:ny::NEw York:NEWYORK:new york:Ny:NewYork:new York:NEW YORK&quot;, State)))
+)</formula>
+    <inlineHelpText>Is this workable by the Payroll (Core or MMS) group in NSS?</inlineHelpText>
+    <label>NSS Workable-Payroll</label>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

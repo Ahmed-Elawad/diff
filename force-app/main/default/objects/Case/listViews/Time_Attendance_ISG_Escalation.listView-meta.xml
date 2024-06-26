@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Time_Attendance_ISG_Escalation</fullName>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>CONTACT.FIRST_NAME</columns>
+    <columns>CONTACT.ACCOUNT</columns>
+    <columns>CASES.RECORDTYPE</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>CASES.LAST_UPDATE</columns>
+    <columns>UPDATEDBY_USER.ALIAS</columns>
+    <filterScope>Queue</filterScope>
+    <filters>
+        <field>CASES.CLOSED</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <label>Time Attendance ISG Escalation</label>
+    <queue>TimeAttendanceISGEscalation</queue>
+    <sharedTo>
+        <group>HRO_TSS_Team</group>
+        <group>STM_Enhancement_Queue_Group</group>
+        <role>TimeAttendanceLevel2SupportRep</role>
+        <role>TimeAttendanceManager</role>
+        <role>TimeAttendanceSupervisorAS</role>
+        <role>TimeAttendanceSupervisorInbound</role>
+        <role>TimeAttendanceSupervisorLevel2</role>
+        <role>TimeAttendanceSupervisorOperations</role>
+        <role>TimeAttendanceSupervisorOutbound</role>
+    </sharedTo>
+</ListView>

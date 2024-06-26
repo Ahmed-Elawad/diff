@@ -1,0 +1,22 @@
+<!--* 
+ *  RecentlyViewedTimeZone Page.
+ *   
+ * History
+ * -------
+ * 06/16/2016 Justin Stouffer Created
+ *-->
+
+<apex:page controller="RecentlyViewedTimeZoneController" >
+    <apex:outputPanel rendered="{!okToDisplay}">
+        <apex:outputLink value="/{!cntct.accountid}" target="_blank">{!cntct.account.name}:<br/>
+                                                                                         ({!timeZoneAbbrv}-{!timeZoneName})<br/>
+                                                                                          Difference: {!timeZoneOffset} Hours</apex:outputLink>
+        <apex:form >
+            <apex:actionPoller interval="45" action="{!checkLocalTime}" reRender="Time"/>
+            <apex:outputText id="Time" value="Local Time: {!localTime}"/>
+        </apex:form>
+    </apex:outputPanel>
+    <apex:outputText rendered="{!not(okToDisplay)}">Unable to retrieve Time Zone.<br/>
+        If available, Time Zone information for the Prospect-Client related to the Contact that you have most recently viewed will display here.</apex:outputText>
+	
+</apex:page>

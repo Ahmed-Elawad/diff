@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_NoticeCount_0_IRSNoticeReceived_No</fullName>
+    <active>true</active>
+    <description>If a value of &quot;No&quot; is selected for the IRS Notice Received field, a user is required to select a value equal to 0 in the Notice Count field</description>
+    <errorConditionFormula>AND(
+ ( (RecordType.Name = &apos;Reference ESR Dedicated Service Record Type&apos;) || (RecordType.Name = &apos;Reference Benetrac ESR Dedicated Service Record Type&apos;) ),
+ ( NOT(ISPICKVAL(Notice_Count__c, &quot;0&quot;)) ),
+ ISPICKVAL(IRS_Notice_Received__c, &quot;No&quot;)
+)</errorConditionFormula>
+    <errorDisplayField>Notice_Count__c</errorDisplayField>
+    <errorMessage>You must enter a Notice Count value equal to 0 if IRS Notice Received equals &quot;No&quot;.</errorMessage>
+</ValidationRule>

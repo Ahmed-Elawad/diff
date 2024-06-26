@@ -1,0 +1,51 @@
+<aura:component>
+    <aura:attribute type="String" name="recordId" />   
+    <aura:attribute type="String" name="objectType" />
+    <aura:attribute name="openInsights" type="Object[]" />
+    <aura:attribute type="String" name="Contact" />
+    <aura:attribute type="String" name="Lead" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/> 
+    <div class="banner-container">
+        <aura:if isTrue="{!v.Contact}" >
+            <div class="slds-align_absolute-center" style=" font-size:10px"><i>All data based on the contact's activity in the past 90 days </i></div>  
+        </aura:if>
+        <aura:if isTrue="{!v.Lead}" >
+            <div class="slds-align_absolute-center" style=" font-size:10px"><i>All data based on the lead's activity in the past 90 days </i></div>  
+        </aura:if>
+        <br/>
+        <div class="slds-grid slds-gutters">
+            
+            <div class="slds-col">
+                <div class="box" title="Marketing Sales Insights"> 
+                    <c:webVisits recordId="{!v.recordId}" objectApiName="{!v.objectType}"></c:webVisits> 
+                </div>
+            </div>
+            <div class="slds-col">
+                <div class="box" title="Marketing Sales Insights"> 
+                    <c:buyerJourney recordId="{!v.recordId}" objectApiName="{!v.objectType}"></c:buyerJourney>
+                </div>
+            </div>
+            <div class="slds-col">
+                <div class="box" title="Marketing Sales Insights"> 
+                    <c:possibleInterest recordId="{!v.recordId}" objectApiName="{!v.objectType}"></c:possibleInterest> 
+                </div>
+            </div>
+            <aura:if isTrue="{!v.Contact}" >
+                <div class="slds-col">
+                    <div class="box" title="Marketing Sales Insights"> 
+                        <c:latestCampaign recordId="{!v.recordId}" objectApiName="{!v.objectType}"></c:latestCampaign> 
+                    </div>
+                </div>
+            </aura:if>
+            <aura:if isTrue="{!v.Lead}" >
+                <div class="slds-col">
+                    <div class="box" title="Marketing Sales Insights"> 
+                        <c:leadLatestCampaign recordId="{!v.recordId}" objectApiName="{!v.objectType}"></c:leadLatestCampaign> 
+                    </div>
+                </div>
+            </aura:if>
+        </div>
+    </div>
+
+</aura:component>

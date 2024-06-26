@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Future_Renewal_Date_Required</fullName>
+    <active>true</active>
+    <description>A P&amp;C Rep is required to enter the policy Renewal Date in the Renewal Date field when the Status of the Opportunity is changed to IEUP. The Renewal Date cannot be more than 18 months in the future.</description>
+    <errorConditionFormula>AND(
+OR($RecordType.Name=&apos;PC Opportunity DSA Record Type&apos;,
+$RecordType.Name=&apos;PC Opportunity Record Type&apos;), 
+NOT(CONTAINS($UserRole.Name, &apos;System Administrator&apos;)),
+ISPICKVAL(StageName,&apos;IEUP&apos;),
+ISNULL(Renewal_Date__c)|| Renewal_Date__c&gt; TODAY()+545
+)</errorConditionFormula>
+    <errorMessage>A Status of IEUP is only used for Future Renewals. When selecting IEUP, you are required to enter the Renewal Date in the Renewal Date field. The Renewal Date cannot be more than 18 months in the future.</errorMessage>
+</ValidationRule>

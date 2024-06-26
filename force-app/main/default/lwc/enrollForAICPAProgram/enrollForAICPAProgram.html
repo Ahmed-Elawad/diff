@@ -1,0 +1,131 @@
+<template>
+  <div if:true={isLoad}>
+    <lightning-spinner
+      alternative-text="Loading..."
+      variant="brand"
+      size="large"
+    >
+    </lightning-spinner>
+  </div>
+  
+  <!-- <div if:false={isLoad} class="slds-is-relative"> -->
+  <lightning-quick-action-panel header="Edit Referral Contact">
+    <div class="slds-text-title slds-text-align_center slds-p-around_x-small">
+      You must provide either AICPA Member Number OR State CPA License Number in order
+      to enroll CPA in AICPA Program
+    </div>
+    <lightning-record-edit-form
+      data-id="f1"
+      record-id={recordId}
+      object-api-name="Referral_Contact__c"
+      onsuccess={onF1Success}
+    >
+
+      <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_1-of-2">
+          <lightning-input-field field-name="First_Name__c" required="true" value={v}>
+          </lightning-input-field>
+        </div>
+        <div class="slds-col slds-size_1-of-2">
+          <lightning-input-field field-name="Last_Name__c" required="true">
+          </lightning-input-field>
+        </div>
+        <div class="slds-col slds-size_1-of-2">
+          <lightning-input-field field-name="Email__c" required="true"> </lightning-input-field>
+        </div>
+        <div class="slds-col slds-size_1-of-2">
+          <lightning-input-field field-name="Phone__c" required="true"> </lightning-input-field>
+        </div>
+        <div class="slds-col slds-size_1-of-2">
+          <lightning-input-field data-id="idAICPMN" field-name="AICPA_Member_Number__c" >
+          </lightning-input-field>
+        </div>
+        <div class="slds-col slds-size_1-of-2">
+          <lightning-input-field data-id="idStatCPALN" field-name="State_CPA_License_Number__c" >
+          </lightning-input-field>
+        </div>
+        <div class="slds-col slds-size_1-of-2">
+          <lightning-input-field
+            field-name="How_did_CPA_1st_learn_about_this_Program__c" required="true"
+          >
+          </lightning-input-field>
+        </div>
+        <div class="slds-col slds-size_1-of-2 slds-hidden">
+          <lightning-input-field
+            field-name="AICPA_Enrolled__c" value="Y"
+          >
+          </lightning-input-field>
+        </div>
+        <div class="slds-col slds-size_1-of-2 slds-hidden ">
+          <lightning-input-field
+            field-name="AICPA_Enrolled_Date__c" value={todaydateVal}
+          >
+          </lightning-input-field>
+        </div>
+      </div>
+    </lightning-record-edit-form>
+
+    <lightning-record-edit-form
+      data-id="f2"
+      record-id={RefAccountId}
+      object-api-name="Referral_Account__c"
+      onsuccess={refreshPage}
+    >
+      <lightning-messages> </lightning-messages>
+
+      <div class="slds-grid slds-wrap">
+        <div if:true={RefAccountManagedByChannel} class="slds-text-title slds-text-align_center slds-p-around_x-small">
+          This is managed by Channel Account, Please submit a Sales Help Request to update the address if needed.
+        </div>
+        <div class="slds-col slds-size_1-of-2">
+          <lightning-input-field field-name="Name" required="true"  disabled={RefAccountManagedByChannel}> </lightning-input-field>
+        </div>
+        <div class="slds-col slds-size_1-of-2">
+          <lightning-input-field field-name="Street_Address_1__c" required="true" disabled={RefAccountManagedByChannel}>
+          </lightning-input-field>
+        </div>
+        <div class="slds-col slds-size_1-of-2">
+          <lightning-input-field field-name="Street_Address_2__c" disabled={RefAccountManagedByChannel}>
+          </lightning-input-field>
+        </div>
+        <div class="slds-col slds-size_1-of-2">
+          <lightning-input-field field-name="City__c" required="true"  disabled={RefAccountManagedByChannel}> </lightning-input-field>
+        </div>
+        <div class="slds-col slds-size_1-of-2">
+          <lightning-input-field field-name="State_Province__c"  disabled={RefAccountManagedByChannel} required="true"> </lightning-input-field>
+        </div>
+        <div class="slds-col slds-size_1-of-2">
+          <lightning-input-field field-name="Zip_Postal_Code__c"  disabled={RefAccountManagedByChannel} required="true">
+          </lightning-input-field>
+        </div>
+      </div>
+    </lightning-record-edit-form>
+    <br />
+    <br />
+
+    <div class="slds-grid slds-wrap slds-clearfix">
+      <div class="slds-col slds-size_1-of-2">
+        <lightning-button
+          flexibility="auto"
+          padding="horizontal-small"
+          class="slds-float_right"
+          onclick={singleOnSubmitMethod}
+          label="Submit"
+          variant="Brand"
+        >
+        </lightning-button>
+      </div>
+      <div class="slds-col slds-size_1-of-2">
+        <lightning-button
+          flexibility="auto"
+          padding="horizontal-small"
+          class="slds-float_left slds-p-left_medium"
+          onclick={closeAction}
+          label="Cancel"
+        >
+        </lightning-button>
+      </div>
+    </div>
+  </lightning-quick-action-panel>
+  <!-- </div> -->
+</template>

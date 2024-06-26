@@ -1,0 +1,69 @@
+<apex:page standardController="Opportunity" extensions="OpportunityController" lightningStylesheets="true" >   
+    <style>
+        .invisible{
+        
+        }
+    </style>
+        
+        <apex:outputPanel id="errmsg">
+           <apex:pageMessages />
+        </apex:outputPanel>
+        <apex:form rendered="{!OR(NOT(showPage),LEFT(Opportunity.NSS_Source__c,7) != 'Inbound')}">
+            <apex:pageBlock >
+                <apex:outputText rendered="{!LEFT(Opportunity.NSS_Source__c,7) = 'Inbound'}">
+                    <b>This opportunity has already been accepted.</b>
+                </apex:outputText>
+                <apex:outputText rendered="{!LEFT(Opportunity.NSS_Source__c,7) != 'Inbound'}">
+                    This function is required for <b>NSS and Oasis Inbound opportunities only.</b>  
+                </apex:outputText>
+            </apex:pageBlock>
+        </apex:form>
+        <apex:form rendered="{!AND(showPage,LEFT(Opportunity.NSS_Source__c,7) = 'Inbound')}">
+           
+            <apex:pageBlock >
+              
+                <apex:pageBlockSection id="thePBSection" columns="2">
+                    <apex:outputField value="{!Opportunity.Name}" rendered="false"/>
+                    <apex:outputField value="{!Opportunity.stageName}" rendered="false"/>
+                    <apex:pageBlockSectionItem />
+                    <apex:inputField value="{!Opportunity.stageName}" styleClass="invisible"/>
+                    <apex:commandButton value="Approve/Reject" action="{!approve}" rendered="{!NOT(rejected)}"/>
+                    <!--<apex:pageBlockSectionItem rendered="{!rejected}"/>
+                    <apex:commandButton value="Reject" action="{!reject}" rendered="{!NOT(rejected)}"/> -->
+                    <apex:commandButton id="submit_rejection" value="Submit Rejection" action="{!save}" rendered="{!rejected}" styleClass="btnDisabled"/>
+                    <apex:pageBlockSectionItem rendered="{!rejected}"/>
+                    <apex:selectList id="Reason" size="1" value="{!Status}" rendered="{!rejected}" onchange="toggleSubmitRejection()">
+                        <apex:selectOption itemValue="" itemLabel="--None--"/>
+                        <apex:selectOption itemValue="Duplicate Opportunity" itemLabel="Duplicate Opportunity"/>
+                        <apex:selectOption itemValue="Recently engaged with prospect" itemLabel="Recently engaged with prospect"/>
+                    </apex:selectList>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+            
+            <apex:outputField value="{!Opportunity.Referral_Partner_Stage__c}" rendered="false"/>
+            
+        </apex:form>
+    
+   <script>
+        var tr = getTRParent(document.getElementsByClassName("invisible")[0]);
+        console.log(tr);
+        tr.style.display = "none";
+    
+        function getTRParent(elem){
+            if(elem.tagName == 'TR') return elem;
+            if(elem.parentElement == null) return null;
+            return getTRParent(elem.parentElement);
+        }
+    
+        function toggleSubmitRejection(){
+            console.log('toggle button');
+            var select = document.querySelector('[id$="Reason"]');
+            var btn = document.querySelector('[id$="submit_rejection"]');
+            if( (select.value == "" && btn.classList.value.indexOf('btnDisabled') < 0) ||
+                (select.value != "" && btn.classList.value.indexOf('btnDisabled') >= 0) ){
+                btn.classList.toggle('btnDisabled');
+            }
+        }
+        
+    </script>
+</apex:page>

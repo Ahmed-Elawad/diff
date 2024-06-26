@@ -1,0 +1,111 @@
+<!--
+  @description       : 
+  @author            : Austin Barthel
+  @group             : Cloud Coach
+  @last modified on  : 07-18-2023
+  @last modified by  : Austin Barthel
+-->
+<template>
+	<!-- sldsValidatorIgnoreNextLine -->
+	<lightning-quick-action-panel header={header}>
+		<lightning-spinner alternative-text="Loading" size="large" if:true={showSpinner}
+			variant="brand"></lightning-spinner>
+		<div if:false={showSpinner}>
+			<!-- <lightning-button class="slds-grid slds-grid_align-end" icon-name="utility:refresh" label="Refresh" onclick={refreshData}></lightning-button> -->
+			<div class="slds-m-around_medium" >
+				<lightning-input class="slds-m-bottom_small" if:false={projectExists} type="text" name="projectName" label="Project Name"
+				placeholder="enter new project name... " onchange={projectNameChangeHandler}
+				max-length="80"></lightning-input>
+				<lightning-input
+					type="date"
+					name="startDate"
+					label="Enter a Start date"
+					value={startDate}
+					onchange={startDateChangeHandler}
+				></lightning-input>
+				<hr />
+			</div>
+			<lightning-tabset>
+				<lightning-tab label="All">
+					<template for:each={insertingProducts} for:item="product">
+						<c-cc_-product-phase-card
+							key={product.fieldApi}
+							product-name={product.fieldLabel}
+							phase-name={product.phaseName}
+							variant="insert"
+						></c-cc_-product-phase-card>
+					</template>
+					<template for:each={deletingProducts} for:item="product" >
+						<c-cc_-product-phase-card
+							key={product.fieldApi}
+							product-name={product.fieldLabel}
+							phase-name={product.phaseName}
+							variant="delete"
+						></c-cc_-product-phase-card>
+					</template>
+					<template for:each={existingProducts} for:item="product" >
+						<c-cc_-product-phase-card
+							key={product.fieldApi}
+							product-name={product.fieldLabel}
+							phase-name={product.phaseName}
+							variant="existing"
+						></c-cc_-product-phase-card>
+					</template>
+					<template for:each={ignoringProducts} for:item="product" >
+						<c-cc_-product-phase-card
+							key={product.fieldApi}
+							product-name={product.fieldLabel}
+							phase-name={product.phaseName}
+							variant="ignore"
+						></c-cc_-product-phase-card>
+					</template>
+				</lightning-tab>
+				<lightning-tab if:true={showInsertingProducts} label="Insert">
+					<template for:each={insertingProducts} for:item="product">
+						<c-cc_-product-phase-card
+							key={product.fieldApi}
+							product-name={product.fieldLabel}
+							phase-name={product.phaseName}
+							variant="insert"
+						></c-cc_-product-phase-card>
+					</template>
+				</lightning-tab>
+				<lightning-tab if:true={showDeletingProducts} label="Delete">
+					<template for:each={deletingProducts} for:item="product" >
+						<c-cc_-product-phase-card
+							key={product.fieldApi}
+							product-name={product.fieldLabel}
+							phase-name={product.phaseName}
+							variant="delete"
+						></c-cc_-product-phase-card>
+					</template>
+				</lightning-tab>
+				<lightning-tab if:true={showExistingProducts} label="Already Exist">
+					<template for:each={existingProducts} for:item="product" >
+						<c-cc_-product-phase-card
+							key={product.fieldApi}
+							product-name={product.fieldLabel}
+							phase-name={product.phaseName}
+							variant="existing"
+						></c-cc_-product-phase-card>
+					</template>
+				</lightning-tab>
+				<lightning-tab if:true={showIgnoringProducts} label="Not Applicable">
+					<template for:each={ignoringProducts} for:item="product" >
+						<c-cc_-product-phase-card
+							key={product.fieldApi}
+							product-name={product.fieldLabel}
+							phase-name={product.phaseName}
+							variant="ignore"
+						></c-cc_-product-phase-card>
+					</template>
+				</lightning-tab>
+			</lightning-tabset>
+		</div>
+		<div slot="footer">
+			<lightning-button variant="neutral" label="Cancel" onclick={onCancel}></lightning-button>
+			<lightning-button variant="success" label={successLabel} onclick={onConfirm}
+			class="slds-m-left_x-small"></lightning-button>
+		</div>
+	</lightning-quick-action-panel>
+</template>

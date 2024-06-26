@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Schedule_Indicator_Required</fullName>
+    <active>true</active>
+    <description>Make selection a price schedule required for Core Sales Reps</description>
+    <errorConditionFormula>AND(
+           Profile.Name =&quot;Core Sales&quot;,ISPICKVAL(  Schedule_Indicator__c ,&quot;&quot; )
+         )</errorConditionFormula>
+    <errorDisplayField>Schedule_Indicator__c</errorDisplayField>
+    <errorMessage>**** You must select a price schedule ****</errorMessage>
+</ValidationRule>

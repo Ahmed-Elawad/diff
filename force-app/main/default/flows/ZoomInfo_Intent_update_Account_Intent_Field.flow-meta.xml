@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>58.0</apiVersion>
+    <decisions>
+        <name>Find_ZoomInfo_intent_records_to_update_account_Intent_field</name>
+        <label>Find ZoomInfo intent records to update account Intent field</label>
+        <locationX>182</locationX>
+        <locationY>323</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Update_date_Intent_to_yes</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.DOZISF__Account__r.Intent__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Yes</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Intent_field_to_yes_on_the_prospect_client_object</targetReference>
+            </connector>
+            <label>Update date Intent to yes</label>
+        </rules>
+    </decisions>
+    <description>When a client has an Intent record in the ZoomInfo Intent object, it will set the Intent__c to Yes in the prospect client record</description>
+    <environments>Default</environments>
+    <interviewLabel>ZoomInfo Intent update Account Intent Field {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>ZoomInfo Intent update Account Intent Field</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <description>update the field Intent to yes on the prospect client record</description>
+        <name>Update_Intent_field_to_yes_on_the_prospect_client_object</name>
+        <label>Update Intent field to yes on the prospect client object</label>
+        <locationX>50</locationX>
+        <locationY>431</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.DOZISF__Account__r.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Intent__c</field>
+            <value>
+                <stringValue>Yes</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Account</object>
+    </recordUpdates>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Find_ZoomInfo_intent_records_to_update_account_Intent_field</targetReference>
+        </connector>
+        <object>DOZISF__ZoomInfo_Intent__c</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

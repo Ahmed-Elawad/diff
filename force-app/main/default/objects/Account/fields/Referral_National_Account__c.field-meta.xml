@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Referral_National_Account__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>The Franchise National Account referral account.
+relabeled per case#21097844</description>
+    <inlineHelpText>The formerly Franchise National Account referral account.</inlineHelpText>
+    <label>Strategic Account Partner</label>
+    <lookupFilter>
+        <active>true</active>
+        <booleanFilter>1 OR 2</booleanFilter>
+        <filterItems>
+            <field>Referral_Account__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Sales Channel Referral Account Record Type</value>
+        </filterItems>
+        <filterItems>
+            <field>Referral_Account__c.Referral_Source_Business_Type__c</field>
+            <operation>equals</operation>
+            <value>Strategic Account, Strategic Accountant Firm</value>
+        </filterItems>
+        <infoMessage>Only Referral Accounts that are Strategic Accounts will be displayed.</infoMessage>
+        <isOptional>true</isOptional>
+    </lookupFilter>
+    <referenceTo>Referral_Account__c</referenceTo>
+    <relationshipLabel>Prospect-Clients</relationshipLabel>
+    <relationshipName>Accounts</relationshipName>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackFeedHistory>true</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <type>Lookup</type>
+</CustomField>

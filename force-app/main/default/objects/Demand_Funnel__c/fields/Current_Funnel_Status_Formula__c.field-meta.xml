@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Current_Funnel_Status_Formula__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>IF( NOT(ISBLANK(Opportunity__c)) &amp;&amp; Opportunity__r.IsClosed &amp;&amp; Opportunity__r.IsWon, &apos;8 - Closed Won&apos;,
+IF( NOT(ISBLANK(Opportunity__c)) &amp;&amp; Opportunity__r.IsClosed, &apos;9 - Closed Lost&apos;,
+IF( Current_Funnel_Status__c = &apos;Suspect&apos;, &apos;1 - Suspect&apos;,
+IF( Current_Funnel_Status__c = &apos;Inquiry&apos;, &apos;2 - Inquiry&apos;,
+IF( Current_Funnel_Status__c = &apos;MQL&apos;, &apos;3 - MQL&apos;,
+IF( Current_Funnel_Status__c = &apos;TAL&apos;, &apos;4 - TAL&apos;,
+IF( Current_Funnel_Status__c = &apos;TQO&apos;, &apos;5 - TQO&apos;,
+IF( Current_Funnel_Status__c = &apos;SAO&apos;, &apos;6 - SAO&apos;,
+IF( Current_Funnel_Status__c = &apos;SQO&apos;, &apos;7 - SQO&apos;,
+IF( Current_Funnel_Status__c = &apos;Recycle&apos;, &apos;10 - Recycled&apos;,
+IF( Current_Funnel_Status__c = &apos;Reject&apos;, &apos;11 - Rejected&apos;,&apos;&apos;)))))))))))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Current Funnel Status</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

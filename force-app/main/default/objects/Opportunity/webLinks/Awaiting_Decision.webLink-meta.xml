@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Awaiting_Decision</fullName>
+    <availability>online</availability>
+    <displayType>button</displayType>
+    <linkType>javascript</linkType>
+    <masterLabel>Awaiting Decision</masterLabel>
+    <openType>onClickJavaScript</openType>
+    <protected>false</protected>
+    <url>{!REQUIRESCRIPT(&quot;/soap/ajax/8.0/connection.js&quot;)} 
+
+var connection = sforce.connection; 
+var Opportunity = new sforce.SObject(&quot;Opportunity&quot;); 
+
+if (Opportunity != &quot;Awaiting Decision&quot;) 
+
+{ 
+
+var opp = new sforce.SObject(&quot;Opportunity&quot;); 
+opp.Id = &quot;{!Opportunity.Id}&quot;; 
+opp.StageName = (&quot;Awaiting Decision&quot;); 
+connection.update([opp]); 
+window.top.location.href = window.top.location.href; 
+window.parent.location.replace(&apos;/00T/e?&amp;who_id={!Contact.Id}&amp;what_id={!Opportunity.Id}&amp;tsk4={!Today}&amp;tsk10=Call&amp;tsk5=Call {!Opportunity.Name}&amp;00N50000001HEKm={!Opportunity.LeadSource}&apos;); 
+} 
+else 
+{ 
+alert(&quot;Error&quot;); 
+}</url>
+</WebLink>

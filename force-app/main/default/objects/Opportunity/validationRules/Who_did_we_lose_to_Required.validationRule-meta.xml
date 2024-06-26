@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Who_did_we_lose_to_Required</fullName>
+    <active>true</active>
+    <description>Makes Who did we lose to? Required when an opportunity is saved with &quot;Lost&quot; or &quot;No Decision&quot;</description>
+    <errorConditionFormula>AND(
+NOT(BEGINS($Profile.Name, &quot;System Admin&quot;)),
+NOT(CONTAINS($Profile.Name,&apos;Sales Admin&apos;)),
+NOT(CONTAINS($Profile.Name, &apos;MMS Sales ZSA - SB&apos;)),
+NOT(CONTAINS($Profile.Name,&apos;MMS Sales DSA - SB&apos;)),
+ISCHANGED(StageName),
+ISPICKVAL(Who_did_we_lose_to__c,&quot;&quot;),
+OR(RecordType.DeveloperName = &apos;MMSOpportunityRecordType&apos;,
+RecordType.DeveloperName=&apos;CoreOpportunityRecordType&apos;,
+RecordType.DeveloperName=&apos;Prism_PEO_Opportunity_Record_Type&apos;,
+RecordType.DeveloperName=&apos;PEO_Opportunity_Record_Type&apos;,
+RecordType.DeveloperName=&apos;Virtual_Sales&apos;
+
+
+),
+OR(ISPICKVAL(StageName ,&quot;Lost&quot;),ISPICKVAL(StageName ,&quot;No Decision&quot;)))</errorConditionFormula>
+    <errorDisplayField>Who_did_we_lose_to__c</errorDisplayField>
+    <errorMessage>Who did we lose to? is required when the opportunity is Lost, No Decision or Disqualified.</errorMessage>
+</ValidationRule>

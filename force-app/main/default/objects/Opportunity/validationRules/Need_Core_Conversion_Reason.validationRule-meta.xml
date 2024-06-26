@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Need_Core_Conversion_Reason</fullName>
+    <active>true</active>
+    <description>When Opp is a Core Conversion, then a Reason is needed</description>
+    <errorConditionFormula>AND(
+
+ISPICKVAL( LeadSource , &quot;Transfer - Core to MMS&quot;) , $Profile.Name  &lt;&gt; &quot;System Administrator&quot;, 
+LEN(Core_Conversion_Reason__c)  = 0)</errorConditionFormula>
+    <errorDisplayField>Core_Conversion_Reason__c</errorDisplayField>
+    <errorMessage>When Lead Source is Transfer - Core to MMS then you need to input a Conversion Reason</errorMessage>
+</ValidationRule>

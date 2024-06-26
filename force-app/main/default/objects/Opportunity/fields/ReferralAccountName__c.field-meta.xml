@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ReferralAccountName__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>if (NOT(ISBLANK(Referral_Account__r.Name)) &amp;&amp;  CONTAINS(Referral_Account__r.Name, &quot;Huntington Bank&quot;) 
+    ,&quot;Huntington Bank&quot;
+  ,if (NOT(ISBLANK(Referral_Account__r.Name)) &amp;&amp;  CONTAINS(Referral_Account__r.Name, &quot;Keybank&quot;) 
+    ,&quot;Keybank&quot;, 
+  IF ( NOT(ISBLANK(Referral_Contact__r.Flex_Online_Account_Username__c)) &amp;&amp;  CONTAINS(Referral_Contact__r.Flex_Online_Account_Username__c, &quot;-ACCT&quot;), &quot;Accountant&quot;, Referral_Account__r.Name)))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>The name of the Referral Account linked to the Opportunity</inlineHelpText>
+    <label>Referral Account Name</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

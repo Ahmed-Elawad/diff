@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Calculated_Revenue__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <formula>IF( ISPICKVAL(Policy_Type__c, &quot;Medical&quot;) ,((Total_of_COBRA_EE_s_Confirmed__c + Total_of_EE_s_Actively_Enrolled__c) * Rev_Per_App__c),Total_of_EE_s_Actively_Enrolled__c * Rev_Per_App__c)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>If Policy Type is Medical then Total # of EEs Actively Enrolled plus Total # of COBRA EEs * Price.  Any other Policy Type is just Total # of EEs Actively Enrolled * Price.</inlineHelpText>
+    <label>Calculated Revenue</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Currency</type>
+</CustomField>

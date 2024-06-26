@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Days_Graduated__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>#Days graduated after Benefit appt</description>
+    <externalId>false</externalId>
+    <formula>If(ISNULL(Graduated_Date__c), 
+
+(today() - datevalue(Benefits_Imported_Date__c) - 2*( floor((today() - DATE(1985, 6, 24))/7) - floor((datevalue(Benefits_Imported_Date__c) - DATE(1985, 6, 24))/7))), 
+
+(datevalue(Graduated_Date__c) - datevalue(Benefits_Imported_Date__c) - 2*( floor((datevalue(Graduated_Date__c) - DATE(1985, 6, 24))/7) - floor((datevalue(Benefits_Imported_Date__c) - DATE(1985, 6, 24))/7))))</formula>
+    <label>#Days Graduated</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

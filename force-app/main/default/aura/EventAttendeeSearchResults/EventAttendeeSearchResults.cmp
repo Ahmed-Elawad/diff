@@ -1,0 +1,28 @@
+<aura:component description="EventAttendeeSearchResults">
+    <aura:attribute name="activeUsers" type="Contact[]" default="[]" />
+
+    <aura:registerEvent name="attendeeSelected" type="c:EventAttendeeAddEvent" />
+
+    <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+        <thead>
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Title</th>
+            <th>Phone</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody>
+        <aura:iteration var="selectedUser" items="{!v.activeUsers}">
+            <tr>
+                <td><lightning:buttonIcon iconName="utility:add" value="{!selectedUser}" variant="bare" onclick="{!c.selectUser}" class="green-icon" /></td>
+                <td>{!selectedUser.Name}</td>
+                <td>{!selectedUser.Title}</td>
+                <td>{!selectedUser.Phone}</td>
+                <td>{!selectedUser.Email}</td>
+            </tr>
+        </aura:iteration>
+        </tbody>
+    </table>
+</aura:component>

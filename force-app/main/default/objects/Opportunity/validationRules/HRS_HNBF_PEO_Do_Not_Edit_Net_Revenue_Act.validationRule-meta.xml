@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRS_HNBF_PEO_Do_Not_Edit_Net_Revenue_Act</fullName>
+    <active>false</active>
+    <description>You may not change the revenue if the opportunity has been submitted to the DSA or FSS</description>
+    <errorConditionFormula>AND( 
+OR ( 
+BEGINS($Profile.Name,&apos;HRS 401(k) Sales&apos;), 
+BEGINS($Profile.Name,&apos;HNBF Sales Rep&apos;), 
+BEGINS($Profile.Name,&apos;HRS PEO Centric Sales&apos;), 
+BEGINS($Profile.Name,&apos;HRS PEO-ASO Sales&apos;)), 
+OR( 
+$RecordType.Name = &apos;ASO Opportunity FSS Record Type&apos;, 
+$RecordType.Name = &apos;PEO Opportunity FSS Record Type&apos;, 
+$RecordType.Name = &apos;HNBF Opportunity DSA Record Type&apos;, 
+$RecordType.Name = &apos;HRS 401(k) Opportunity FSS Record Type&apos;), 
+ISCHANGED( Amount ))</errorConditionFormula>
+    <errorDisplayField>Amount</errorDisplayField>
+    <errorMessage>You may not change the revenue if the opportunity has been submitted to the DSA or FSS</errorMessage>
+</ValidationRule>

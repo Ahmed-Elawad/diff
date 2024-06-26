@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CANCELS_401k_Transfers</fullName>
+    <columns>NAME</columns>
+    <columns>Prospect_Client_Name__c</columns>
+    <columns>BIS_ID__c</columns>
+    <columns>SunGard_Number__c</columns>
+    <columns>New_Recordkeeper__c</columns>
+    <columns>Other_Recordkeeper_Name__c</columns>
+    <columns>Date_Paperwork_Received__c</columns>
+    <columns>Last_Check_Date__c</columns>
+    <columns>Estimated_Week_of_Liquidation__c</columns>
+    <columns>Current_Step__c</columns>
+    <columns>Pending_Transfer_Tasks__c</columns>
+    <columns>X401k_Plan_Asset_Transfer_Notes__c</columns>
+    <columns>Discrepancy_Email_Sent_to_Client__c</columns>
+    <columns>Sent_to_CAM_Rep__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_Terms_Transfers__c.X401k_Transfer</value>
+    </filters>
+    <filters>
+        <field>X401k_Plan_Asset_Transfer_Completed__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Date_Paperwork_Received__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Term_Transfer_Stopped__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>notEqual</operation>
+        <value>Closed – Paperwork Discrepancy Never Resolved</value>
+    </filters>
+    <label>CANCELS: 401k Transfers</label>
+    <sharedTo>
+        <role>HRS4SCPRRepresentative</role>
+        <role>HRS4SCPRSupervisor</role>
+        <role>HRS4SClientChangesRepresentativeI</role>
+        <role>HRS4SClientChangesSupervisorI</role>
+        <role>HRS4SClientRetentionRepresentative</role>
+        <role>HRS_4S_Client_Retention_Supervisor</role>
+        <role>HRS_4S_Client_Support_Supervisor</role>
+    </sharedTo>
+</ListView>

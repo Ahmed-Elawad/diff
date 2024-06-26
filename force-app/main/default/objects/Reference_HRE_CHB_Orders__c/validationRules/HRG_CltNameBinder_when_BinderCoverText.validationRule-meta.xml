@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRG_CltNameBinder_when_BinderCoverText</fullName>
+    <active>true</active>
+    <description>B14 - if  Binder Cover Option value = Text, then the  Client Name to be Printed on Binder  field must NOT be Null</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;Handbook HR Solutions Order Record Type&quot;), 
+(ISPICKVAL(Art__c, &apos;Text&apos;) ), 
+( (ISBLANK(Client_Name_to_be_Printed_on_Binder__c)) || (ISNULL(Client_Name_to_be_Printed_on_Binder__c)) ), 
+(Historical_Order_Indicator__c = 0), 
+(NOT(BEGINS($Profile.Name,&quot;HR Essentials&quot;))), 
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))) 
+)</errorConditionFormula>
+    <errorDisplayField>Client_Name_to_be_Printed_on_Binder__c</errorDisplayField>
+    <errorMessage>You must enter a Client Name to be Printed on Binder value when selecting the Binder Cover Option value of &apos;Text&apos;.</errorMessage>
+</ValidationRule>

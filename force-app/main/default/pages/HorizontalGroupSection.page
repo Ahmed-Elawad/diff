@@ -1,0 +1,138 @@
+<apex:page ><!-- showHeader="false" sidebar="false" cache="false" contentType="text/xml" controller="HorizontalGroupController">
+    <block>
+        <table table-layout="fixed" width="100%" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid">
+            <table-body>
+                <table-row border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid">
+                    <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid"  padding-left="3">
+                        <block text-align="left" font-weight="bold" font-size="9">
+                            <apex:outputText value="Company"></apex:outputText>
+                        </block>
+                    </table-cell>
+                    <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid"  padding-left="3">
+                        <block text-align="left" font-weight="bold" font-size="9">
+                            <apex:outputText value="Description"></apex:outputText>
+                        </block>
+                    </table-cell>
+                    <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid"  padding-left="3" padding-right="3">
+                        <block text-align="left" font-weight="bold" font-size="9">
+                            <apex:outputText value="Per Pay Period Fees"></apex:outputText>
+                        </block>
+                    </table-cell>
+                    <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid"  padding-left="3" padding-right="3">
+                        <block text-align="left" font-weight="bold" font-size="9">
+                            <apex:outputText value="Monthly Fees"></apex:outputText>
+                        </block>
+                    </table-cell>
+                    <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid"  padding-left="3" padding-right="3">
+                        <block text-align="left" font-weight="bold" font-size="9">
+                            <apex:outputText value="Annual Fees"></apex:outputText>
+                        </block>
+                    </table-cell>
+                    <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid"  padding-left="3" padding-right="3">
+                        <block text-align="left" font-weight="bold" font-size="9">
+                            <apex:outputText value="One-time Fees"></apex:outputText>
+                        </block>
+                    </table-cell>
+                    <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid"  padding-left="3" padding-right="3">
+                        <block text-align="left" font-weight="bold" font-size="9">
+                            <apex:outputText value="Annualized Total"></apex:outputText>
+                        </block>
+                    </table-cell>
+                </table-row>
+                <apex:repeat var="qlg" value="{!quoteLineGroups}">
+                    <table-row>
+                        <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid"  padding-left="3">
+                            <block text-align="left" font-size="9">
+                                <apex:outputText value="{!qlg.AccountName}"></apex:outputText>
+                            </block>
+                        </table-cell>
+                        <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid"  padding-left="3">
+                            <block text-align="left" font-size="9">
+                                <apex:outputText value="{!qlg.GroupName}"></apex:outputText>
+                            </block>
+                        </table-cell>
+                        <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid" padding-right="3">
+                            <block text-align="right" font-size="9">
+                            <apex:outputText value="{0, number, currency}">
+                                <apex:param value="{!qlg.PerPayFees}"/>
+                            </apex:outputText>
+                            </block>
+                        </table-cell>
+                        <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid" padding-right="3">
+                            <block text-align="right" font-size="9">
+                            <apex:outputText value="{0, number, currency}">
+                                <apex:param value="{!qlg.MonthlyFees}"/>
+                            </apex:outputText>
+                            </block>
+                        </table-cell>
+                        <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid" padding-right="3">
+                            <block text-align="right" font-size="9">
+                            <apex:outputText value="{0, number, currency}">
+                                <apex:param value="{!qlg.AnnualFees}"/>
+                            </apex:outputText>
+                            </block>
+                        </table-cell>
+                        <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid" padding-right="3">
+                            <block text-align="right" font-size="9">
+                            <apex:outputText value="{0, number, currency}">
+                                <apex:param value="{!qlg.OneTimeFees}"/>
+                            </apex:outputText>
+                            </block>
+                        </table-cell>
+                        <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid" padding-right="3">
+                            <block text-align="right" font-size="9">
+                            <apex:outputText value="{0, number, currency}">
+                                <apex:param value="{!qlg.AnnualizedFees}"/>
+                            </apex:outputText>
+                            </block>
+                        </table-cell>
+                    </table-row>
+                </apex:repeat>
+                <table-row border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid">
+                    <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid"  padding-left="3">
+                        <block text-align="left" font-weight="bold" font-size="9">
+                            <apex:outputText value="Totals"></apex:outputText>
+                        </block>
+                    </table-cell>
+                    <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid"  padding-left="3">
+                        <block text-align="left" font-weight="bold" font-size="9">
+                            <apex:outputText value=""></apex:outputText>
+                        </block>
+                    </table-cell>
+                    <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid"  padding-left="3" padding-right="3">
+                        <block text-align="right" font-weight="bold" font-size="9">
+                            <apex:outputText value="{0, number, currency}">
+                                <apex:param value=""/>
+                            </apex:outputText>
+                        </block>
+                    </table-cell>
+                    <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid"  padding-left="3" padding-right="3">
+                        <block text-align="right" font-weight="bold" font-size="9">
+                            <apex:outputText value="{0, number, currency}">
+                                <apex:param value="{!Monthly}"/>
+                            </apex:outputText>
+                        </block>
+                    </table-cell><table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid"  padding-left="3" padding-right="3">
+                        <block text-align="right" font-weight="bold" font-size="9">
+                            <apex:outputText value="{0, number, currency}">
+                                <apex:param value="{!Annual}"/>
+                            </apex:outputText>
+                        </block>
+                    </table-cell><table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid"  padding-left="3" padding-right="3">
+                        <block text-align="right" font-weight="bold" font-size="9">
+                            <apex:outputText value="{0, number, currency}">
+                                <apex:param value="{!OneTime}"/>
+                            </apex:outputText>
+                        </block>
+                    </table-cell><table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid"  padding-left="3" padding-right="3">
+                        <block text-align="right" font-weight="bold" font-size="9">
+                            <apex:outputText value="{0, number, currency}">
+                                <apex:param value="{!grandTotal}"/>
+                            </apex:outputText>
+                        </block>
+                    </table-cell>
+                </table-row>
+            </table-body>
+        </table>
+    </block>-->
+</apex:page>

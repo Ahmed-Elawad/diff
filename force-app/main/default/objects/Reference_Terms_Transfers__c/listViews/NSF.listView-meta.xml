@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NSF</fullName>
+    <columns>NAME</columns>
+    <columns>Current_Step__c</columns>
+    <columns>Case_Age_Excluding_Weekends__c</columns>
+    <columns>S125_NSF_Status__c</columns>
+    <columns>X401k_NSF_Status__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_Terms_Transfers__c.NSF</value>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>notEqual</operation>
+        <value>NSF Closed</value>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>notEqual</operation>
+        <value>Closed - NSF Unresolved</value>
+    </filters>
+    <label>NSF</label>
+    <sharedTo>
+        <roleAndSubordinates>HRS4SClientRetentionRepresentative</roleAndSubordinates>
+        <roleAndSubordinates>HRS_4S_Client_Retention_Supervisor</roleAndSubordinates>
+    </sharedTo>
+</ListView>

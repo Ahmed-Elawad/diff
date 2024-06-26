@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Time_Attendance_Reload_OS</fullName>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>Branch_Client_ID__c</columns>
+    <columns>NAME</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>CASES.PRIORITY</columns>
+    <columns>CASES.CREATED_DATE_DATE_ONLY</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <filterScope>Queue</filterScope>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Closed,Closed - APR Created,Closed - Duplicate,Closed - First Call Resolution</value>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Solved</value>
+    </filters>
+    <filters>
+        <field>Branch_Client_ID__c</field>
+        <operation>notContain</operation>
+        <value>944-,940-,942-,943-</value>
+    </filters>
+    <label>Time Attendance Reload - OS</label>
+    <queue>Time_Attendance_Reload</queue>
+    <sharedTo>
+        <group>Kristin_Buffer</group>
+        <role>MPSC_NBCER_Specialist</role>
+        <role>MPSC_NBCER_Supervisor</role>
+        <role>OnlineServicesElectronicServicesSpecialistI</role>
+        <role>TimeAttendanceBilling</role>
+        <role>TimeAttendanceSupervisorAS</role>
+    </sharedTo>
+</ListView>

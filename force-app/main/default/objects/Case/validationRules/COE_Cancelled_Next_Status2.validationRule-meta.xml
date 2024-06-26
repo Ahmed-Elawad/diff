@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>COE_Cancelled_Next_Status2</fullName>
+    <active>true</active>
+    <description>COE cases Cancelled Due to Lack of Response status can not be changed</description>
+    <errorConditionFormula>NOT(BEGINS( $Profile.Name ,&apos;System Admin&apos;)) &amp;&amp; ISPICKVAL(PRIORVALUE(Status), 
+&quot;Cancelled Due to Lack of Response&quot;)  &amp;&amp;  
+OR( $RecordType.Name =&quot;COE Enhancement Submission Case Record Type&quot;,
+        $RecordType.Name =&quot;COE Issue Submission Case Record Type&quot;,
+        $RecordType.Name =&quot;COE Question Submission Case Record Type&quot;,
+        $RecordType.Name =&quot;COE Submission Case Record Type&quot;)</errorConditionFormula>
+    <errorDisplayField>Status</errorDisplayField>
+    <errorMessage>**** The status of this case may not be changed ****</errorMessage>
+</ValidationRule>

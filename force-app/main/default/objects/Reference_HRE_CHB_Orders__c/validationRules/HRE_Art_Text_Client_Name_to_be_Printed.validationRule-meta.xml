@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRE_Art_Text_Client_Name_to_be_Printed</fullName>
+    <active>true</active>
+    <description>Force update of the Client_Name_to_be_Printed_on_Binder field when the &apos;Text&apos; picklist value of the Binder Cover Option/Art__c field has been chosen.</description>
+    <errorConditionFormula>AND(
+( ISPICKVAL(Art__c,&quot;Text&quot;) ),
+ISBLANK(Client_Name_to_be_Printed_on_Binder__c),
+(Historical_Order_Indicator__c = 0),
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)))
+)</errorConditionFormula>
+    <errorDisplayField>Client_Name_to_be_Printed_on_Binder__c</errorDisplayField>
+    <errorMessage>You must update the Client Name to be Printed on Binder field if you choose the &apos;Text&apos; value for the Binder Cover Option field.</errorMessage>
+</ValidationRule>

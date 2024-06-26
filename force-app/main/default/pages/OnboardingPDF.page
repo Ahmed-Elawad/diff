@@ -1,0 +1,451 @@
+<!-- ASO Onboarding Summary PDF used in SharePoint by Operations
+ * History
+ * -------
+ * 12/10/2016   Jermaine Stukes     Created
+ * 01/10/2018   Cindy Freeman       added Spanish translation indicator
+ * 02/12/2018   Jermaine Stukes     Added Handbook Contact Name
+ * 07/01/2019   Jermaine Stukes     Added Doc Desk
+ * 10/07/2019   Matt Fritschi       Added Paychex Promise product
+   03/16/2023   Jaipal              Added new fields to this page as per: APR0150123
+
+
+-->
+<apex:page controller="OnboardingPDFController" renderAs="PDF">
+    <apex:form >
+        <apex:actionRegion id="ASO_Summary" rendered="{!IF(onboardingRecord.OnboardingType__c =='HR Solutions', 'true', 'false')}">
+            <h1 style="font-size:17px;">Onboarding ASO Client Profile Summary</h1>
+            <body>
+                <apex:panelGrid columns="2" border="1" cellpadding="7px">
+                    <apex:outputLabel for="owner" value="Opportunity Owner:"/>
+                    <apex:outputText id="owner" value="{!onboardingOpp.Owner.Name}"/>
+                    <apex:outputLabel for="repId" value="Owner Rep Id:"/>
+                    <apex:outputText id="repId" value="{!onboardingRecord.RepNumber__c}"/>
+                    <apex:outputLabel for="saleType" value="Sale Type:"/>
+                    <apex:outputText id="saleType" value="{!onboardingRecord.Product__c}"/>
+                    <apex:outputLabel for="clientType" value="Client Type:"/>
+                    <apex:outputText id="clientType" value="{!onboardingRecord.New_Existing__c}"/>
+                    <apex:outputLabel for="Name" value="Company Name:"/>
+                    <apex:outputText id="Name" value="{!onboardingOpp.Account.Name}"/>
+                    <apex:actionRegion rendered="{!onboardingRecord.Multi_ID__c}">
+                        <apex:outputLabel for="totalEE1" value="Total Number of Employees:"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!onboardingRecord.Multi_ID__c}">
+                        <apex:outputText id="totalEE1" value="{!onboardingRecord.Total_Num_EE__c}"/>
+                    </apex:actionRegion>
+                    <apex:outputLabel for="numEE" value="Employees Paid Per Payroll:"/>
+                    <apex:outputText id="numEE" value="{!onboardingOpp.Employees_Paid_Per_Payroll__c}"/>
+                    <apex:outputLabel for="empheadstatus" value="Employee Headcount Status:"/>
+                    <apex:outputText id="empheadstatus" value="{!onboardingRecord.Employee_Headcount_Status__c}"/>
+                    <apex:actionRegion rendered="{!displayMPSC}">
+                        <apex:outputLabel for="mpsc" value="Multi Product Service Center:"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayMPSC}">
+                        <apex:outputText id="mpsc" value="{!onboardingRecord.MultiProdServiceCenter__c}"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayBranch}">
+                        <apex:outputLabel for="branch1" value="Branch Number:"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayBranch}">
+                        <apex:outputText id="branch1" value="{!onboardingRecord.Branch_Number__c}"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayExist}">
+                        <apex:outputLabel for="newBranch1" value="New Branch Number:"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayExist}">
+                        <apex:outputText id="newBranch1" value="{!onboardingRecord.New_Branch__c}"/>
+                    </apex:actionRegion>
+                    <apex:outputLabel for="clientNum" value="Client Number:"/>
+                    <apex:outputText id="clientNum" value="{!onboardingRecord.Client_Number__c}"/>
+                    <apex:outputLabel for="multibillop" value="Is Client a part of Multi-ID Billing Group:"/>
+                    <apex:outputText id="multibillop" value="{!onboardingRecord.MultiBillingOption__c}"/>
+                    <apex:outputLabel for="numids" value="Number of IDs:"/>
+                    <apex:outputText id="numids" value="{!onboardingRecord.NumMultiIds__c}"/>
+                    <apex:outputLabel for="clientcmpid" value="Client Company IDs:"/>
+                    <apex:outputText id="clientcmpid" value="{!onboardingRecord.Client_Company_IDs__c}"/>
+                    <apex:actionRegion rendered="{!displayFlex}">
+                        <apex:outputLabel for="MultiBill" value="Bank Account Preference:"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayFlex}">
+                        <apex:outputText id="MultiBill" value="{!onboardingRecord.Flex_Multi_Debit__c}"/>
+                    </apex:actionRegion>
+                    <apex:outputLabel for="businessStructure" value="Business Structure:"/>
+                    <apex:outputText id="businessStructure" value="{!onboardingRecord.Business_Structure__c}"/>
+                    <apex:outputLabel for="Scorp" value="Is the company filing an S corp election?:"/>
+                    <apex:outputText id="Scorp" value="{!onboardingRecord.Taxed_as_S_Corp__c}"/>
+                    <apex:outputLabel for="Industry" value="Industry:"/>
+                    <apex:outputText id="Industry" value="{!onboardingRecord.Industry__c}"/>
+                    <apex:outputLabel for="oppID" value="Opportunity:"/>
+                    <apex:outputText id="oppID" value="{!onboardingOpp.Name}"/>
+                    <apex:outputLabel for="fedID" value="Federal ID:"/>
+                    <apex:outputText id="fedID" value="{!onboardingOpp.Account.Federal_ID_Number__c}"/>
+                    
+                    <apex:outputLabel for="address" value="Billing Address:"/>
+                    <apex:outputText id="address" value="{!onboardingOpp.Account.BillingStreet}"/>
+                    <apex:outputLabel for="city" value="Billing City:"/>
+                    <apex:outputText id="city" value="{!onboardingOpp.Account.BillingCity}"/>
+                    <apex:outputLabel for="state" value="Billing State:"/>
+                    <apex:outputText id="state" value="{!onboardingOpp.Account.BillingState}"/>
+                    <apex:outputLabel for="zip" value="Billing Zip:"/>
+                    <apex:outputText id="zip" value="{!onboardingOpp.Account.BillingPostalCode}"/>
+                    <apex:outputLabel for="fssName" value="Field Support Specialist:"/>
+                    <apex:outputText id="fssName" value="{!onboardingRecord.FSS_Name__c}"/>
+                    <apex:outputLabel for="HRG" value="HR Generalist:"/>
+                    <apex:outputText id="HRG" value="{!onboardingRecord.HRG_Name__c}"/>
+                    <apex:actionRegion rendered="{!displayFlex}">
+                        <apex:outputLabel for="payRep" value="Payroll Rep:"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayFlex}">
+                        <apex:outputText id="payRep" value="{!onboardingRecord.Payroll_Rep_Name__c}"/>
+                    </apex:actionRegion>
+                    <apex:outputLabel for="repName" value="HRS Sales Rep:"/>
+                    <apex:outputText id="repName" value="{!onboardingRecord.HRS_Sales_Rep_Name__c}"/>
+                    <apex:outputLabel for="contactName" value="Company Contact Name:"/>
+                    <apex:outputText id="contactName" value="{!onboardingRecord.Company_Contact__r.Name}"/>
+                    <apex:outputLabel for="contactTitle" value="Company Contact Title:"/>
+                    <apex:outputText id="contactTitle" value="{!onboardingRecord.Company_Contact__r.Title}"/>
+                    <apex:outputLabel for="handbookContactName" value="Handbook Contact Name:"/>
+                    <apex:outputText id="handbookContactName" value="{!onboardingOpp.Handbook_Contact__r.Name}"/>
+                    <apex:outputLabel for="handbookContactEmail" value="Handbook Contact Email:"/>
+                    <apex:outputText id="handbookContactEmail" value="{!onboardingOpp.Handbook_Contact__r.Email}"/>
+                    <apex:outputLabel for="existingbook" value="Does Client have an existing handbook?:"/>
+                    <apex:outputText id="existingbook" value="{!onboardingRecord.HRE_Existing__c}"/>
+                    <apex:outputLabel for="bookformat" value="Handbook Format:"/>
+                    <apex:outputText id="bookformat" value="{!onboardingRecord.Handbook_Format__c}"/>
+                    <apex:outputLabel for="existingmanual" value="Does Client have an existing safety manual?:"/>
+                    <apex:outputText id="existingmanual" value="{!onboardingRecord.HRE_Existing_Safety_Manual__c}"/>
+                    <apex:outputLabel for="preferredMethodContact" value="Preferred Contact Method:"/>
+                    <apex:outputText id="preferredMethodContact" value="{!onboardingRecord.Preferred_Contact_Method__c}"/>
+                    <apex:outputLabel for="email" value="Client Email:"/>
+                    <apex:outputText id="email" value="{!onboardingOpp.Account.Email__c}"/>
+                    <apex:outputLabel for="phone" value="Client Telephone:"/>
+                    <apex:outputText id="phone" value="{!onboardingOpp.Account.Phone}"/>
+                    <apex:outputLabel for="ext" value="Telephone Ext:"/>
+                    <apex:outputText id="ext" value="{!onboardingOpp.Account.Phone_Ext__c}"/>
+                    <apex:outputLabel for="fax" value="Fax:"/>
+                    <apex:outputText id="fax" value="{!onboardingOpp.Account.Fax}"/>
+                    <apex:outputLabel for="bestCallTime" value="Best Time to Call:"/>
+                    <apex:outputText id="bestCallTime" value="{!onboardingRecord.Best_Call_Time__c}"/>
+                    <apex:outputLabel for="frequency" value="Payroll Frequency:"/>
+                    <apex:outputText id="frequency" value="{!onboardingOpp.Account.Frequency__c}"/>
+                    <apex:outputLabel for="runDate" value="First Run Date:"/>
+                    <apex:outputText id="runDate" value="{0,date,MM/dd/yyyy}"><apex:param value="{!onboardingRecord.Run_Date__c}" /></apex:outputText>
+                    <apex:outputLabel for="checkDate" value="First Check Date:"/>
+                    <apex:outputText id="checkDate" value="{0,date,MM/dd/yyyy}"><apex:param value="{!onboardingRecord.First_Check_Date__c}" /></apex:outputText>
+                    <apex:outputLabel for="aOfficerName" value="Authorized Officer Name:"/>
+                    <apex:outputText id="aOfficerName" value="{!onboardingRecord.Authorize_Officer__r.Name}"/>
+                    <apex:outputLabel for="aOfficerTitle" value="Authorized Officer Title:"/>
+                    <apex:outputText id="aOfficerTitle" value="{!onboardingRecord.Authorize_Officer__r.Title}"/>
+                    <apex:outputLabel for="officerphone" value="Authorized Officer's Phone:"/>
+                    <apex:outputText id="officerphone" value="{!onboardingRecord.Authorized_Officer_Phone__c}"/>
+                    <apex:outputLabel for="officeremail" value="Authorized Officer's Email:"/>
+                    <apex:outputText id="officeremail" value="{!onboardingRecord.Authorized_Officer_Email__c}"/>
+                    <apex:outputLabel for="HRasOffice" value="Is HR Contact the same as Authorized Officer?:"/>
+                    <apex:outputText id="HRasOffice" value="{!onboardingRecord.Authorized_Off_is_HR_Contact__c}"/>
+                    <apex:outputLabel for="HRctctname" value="HR Contact Name:"/>
+                    <apex:outputText id="HRctctname" value="{!onboardingRecord.HR_Contact_Name__c}"/>
+                    <apex:outputLabel for="HRctcttitle" value="HR Contact Title:"/>
+                    <apex:outputText id="HRctcttitle" value="{!onboardingRecord.HR_Contact_Title__c}"/>
+                    <apex:outputLabel for="HRctctphn" value="HR Contact Phone:"/>
+                    <apex:outputText id="HRctctphn" value="{!onboardingRecord.HR_Contact_Phone__c}"/>
+                    <apex:outputLabel for="hasPOP" value="Company currently has POP:"/>
+                    <apex:outputText id="hasPOP" value="{!onboardingOpp.Account.Any_Pop__c}"/>
+                    <apex:outputLabel for="wantPOP" value="Will company offer POP:"/>
+                    <apex:outputText id="wantPOP" value="{!onboardingRecord.POP__c}"/>
+                    <apex:actionRegion rendered="{!displayPopSelections}">
+                        <apex:outputLabel for="dental" value="Dental?:"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayPopSelections}">
+                        <apex:outputText id="dental" value="{!onboardingRecord.Dental__c}"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayPopSelections}">
+                        <apex:outputLabel for="std" value="Short Term Disability?"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayPopSelections}">
+                        <apex:outputText id="std" value="{!onboardingRecord.Short_Term_Disability__c}"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayPopSelections}">
+                        <apex:outputLabel for="vision" value="Vision?"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayPopSelections}">
+                        <apex:outputText id="vision" value="{!onboardingRecord.Vision__c}"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayPopSelections}">
+                        <apex:outputLabel for="ltd" value="Long Term Disability?"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayPopSelections}">
+                        <apex:outputText id="ltd" value="{!onboardingRecord.Long_Term_Disability__c}"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayPopSelections}">
+                        <apex:outputLabel for="gtl" value="Group Term Life?"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayPopSelections}">
+                        <apex:outputText id="gtl" value="{!onboardingRecord.Group_Term_Life__c}"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayPopSelections}">
+                        <apex:outputLabel for="coreMed" value="Core Medical?"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayPopSelections}">
+                        <apex:outputText id="coreMed" value="{!onboardingRecord.Core_Medical__c}"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayPopSelections}">
+                        <apex:outputLabel for="accDeath" value="Accidental Death?"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayPopSelections}">
+                        <apex:outputText id="accDeath" value="{!onboardingRecord.Accidental_Death__c}"/>
+                    </apex:actionRegion>
+                    <apex:outputLabel for="wantPESS" value="Will company be adding PESS:"/>
+                    <apex:outputText id="wantPESS" value="{!onboardingRecord.PESS__c}"/>
+                    <apex:actionRegion rendered="{!displayPESS}">
+                        <apex:outputLabel for="backgroundScreening" value="PESS-International Background Screening?"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayPESS}">
+                        <apex:outputText id="backgroundScreening" value="{!onboardingRecord.PESS_Background_Screening__c}"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayPESS}">
+                        <apex:outputLabel for="drugTesting" value="PESS-Drug Testing?"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayPESS}">
+                        <apex:outputText id="drugTesting" value="{!onboardingRecord.PESS_Drug_Testing__c}"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayPESS}">
+                        <apex:outputLabel for="i9Verification" value="PESS-I-9 Verification?"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayPESS}">
+                        <apex:outputText id="i9Verification" value="{!onboardingRecord.PESS_I9_Verification__c}"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayPESS}">
+                        <apex:outputLabel for="mvr" value="PESS-Motor Vehicle Report?"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayPESS}">
+                        <apex:outputText id="mvr" value="{!onboardingRecord.PESS_Motor_Vehicle_Report__c}"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayHRE}">
+                        <apex:outputLabel for="numLocations" value="Number of Locations:"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayHRE}">
+                        <apex:outputText id="numLocations" value="{!onboardingRecord.HRE_Num_of_Locations__c}"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayHRE}">
+                        <apex:outputLabel for="hreReasons" value="Reason(s) client selected HR Essentials:"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayHRE}">
+                        <apex:outputText id="hreReasons" value="{!onboardingRecord.HRE_Reason_Selected__c}"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayHRE}">
+                        <apex:outputLabel for="existingHandbooks" value="Does client have an existing handbook?"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayHRE}">
+                        <apex:outputText id="existingHandbooks" value="{!onboardingRecord.HRE_Existing__c}"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayHRE}">
+                        <apex:outputLabel for="PaychexExistingHandbooks" value="Did Paychex create existing handbook?"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayHRE}">
+                        <apex:outputText id="PaychexExistingHandbooks" value="{!onboardingRecord.HRE_Paychex_created_existing__c}"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayHRE}">
+                        <apex:outputLabel for="existingSafetyHandbooks" value="Does the client have an existing safety manual?"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayHRE}">
+                        <apex:outputText id="existingSafetyHandbooks" value="{!onboardingRecord.HRE_Existing_Safety_Manual__c}"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayHRE}">
+                        <apex:outputLabel for="paychexExistingSafetyHandbooks" value="Did Paychex create existing safety manual?"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayHRE}">
+                        <apex:outputText id="paychexExistingSafetyHandbooks" value="{!onboardingRecord.HRE_Paychex_created_existing_safety__c}"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!IF(displayHRE || displayFLEX, 'true', 'false')}">
+                        <apex:outputLabel for="spanishTranslation" value="Does Employee Handbook require Spanish translation?"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!IF(displayHRE || displayFLEX, 'true', 'false')}">
+                        <apex:outputText id="spanishTranslation" value="{!onboardingRecord.Spanish__c}"/>
+                    </apex:actionRegion>
+                    
+                    <apex:outputLabel for="hasPaychexPromise" value="Company currently has Paychex Promise:"/>
+                    <apex:outputText id="hasPaychexPromise" value="{!hasPaychexPromise}"/>
+                    
+                    <apex:outputLabel for="productsinuse" value="Other Paychex products client is currently using:"/>
+                    <apex:outputText id="productsinuse" value="{!onboardingRecord.Other_Paychex_products_in_use__c}"/>
+                    <apex:outputLabel for="howlongclient" value="How long have they been a Client?:"/>
+                    <apex:outputText id="howlongclient" value="{!onboardingRecord.How_long_a_client__c}"/>
+                    <apex:outputLabel for="processedpayroll" value="Has Paychex processed their first payroll?:"/>
+                    <apex:outputText id="processedpayroll" value="{!onboardingRecord.PayrollProcessed__c}"/>
+                    
+                    <apex:actionRegion rendered="{!displayFactors}">
+                        <apex:outputLabel for="decisionfactor1" value="Client Buying Triggers/Priorities/Decision Factors:First Choice"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayFactors}">
+                        <apex:outputText id="decisionfactor1" value="{!onboardingRecord.HRE_Decision_Factors__c}"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayFactors}">
+                        <apex:outputLabel for="decisionfactor2" value="Client Buying Triggers/Priorities/Decision Factors:Second Choice"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayFactors}">
+                        <apex:outputText id="decisionfactor2" value="{!onboardingRecord.HRE_Decision_Factors_2__c}"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayFactors}">
+                        <apex:outputLabel for="decisionfactor3" value="Client Buying Triggers/Priorities/Decision Factors:Third Choice"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayFactors}">
+                        <apex:outputText id="decisionfactor3" value="{!onboardingRecord.HRE_Decision_Factors_3__c}"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayFactorsOther}">
+                        <apex:outputLabel for="decisionfactorOther" value="Client Buying Triggers/Priorities/Decision Factors:Other Description"/>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!displayFactorsOther}">
+                        <apex:outputText id="decisionfactorOther" value="{!onboardingRecord.Decision_Factors_Other__c}"/>
+                    </apex:actionRegion>
+                    <apex:outputLabel for="Notes" value="Notes:"/>
+                    <apex:outputText id="Notes" value="{!onboardingOpp.Description}"/>
+                </apex:panelGrid>
+            </body>
+        </apex:actionRegion>
+        <apex:actionRegion id="DocDesk_Summary" rendered="{!IF(onboardingRecord.OnboardingType__c =='Doc Desk', 'true', 'false')}">
+            <h1 style="font-size:17px;">Client Profile Summary</h1>
+            <body>
+                <apex:panelGrid >
+                    <apex:outputLabel value="Client Information"/>
+                </apex:panelGrid>
+                <apex:panelGrid columns="2" border="1" cellpadding="7px">
+                    <apex:outputLabel for="ddName" value="Company Name:"/>
+                    <apex:outputText id="ddName" value="{!onboardingOpp.Account.Name}"/>
+                    <apex:outputLabel for="ddowner" value="Opportunity Owner:"/>
+                    <apex:outputText id="ddowner" value="{!onboardingOpp.Owner.Name}"/>
+                    <apex:outputLabel for="ddrepId" value="Owner Rep Id:"/>
+                    <apex:outputText id="ddrepId" value="{!onboardingRecord.RepNumber__c}"/>
+                    <apex:outputLabel for="ddaddress" value="Billing Address:"/>
+                    <apex:outputText id="ddaddress" value="{!onboardingOpp.Account.BillingStreet}"/>
+                    <apex:outputLabel for="ddcity" value="Billing City:"/>
+                    <apex:outputText id="ddcity" value="{!onboardingOpp.Account.BillingCity}"/>
+                    <apex:outputLabel for="ddstate" value="Billing State:"/>
+                    <apex:outputText id="ddstate" value="{!onboardingOpp.Account.BillingState}"/>
+                    <apex:outputLabel for="ddzip" value="Billing Zip:"/>
+                    <apex:outputText id="ddzip" value="{!onboardingOpp.Account.BillingPostalCode}"/>
+                    <apex:outputLabel for="ddfedID" value="Federal ID:"/>
+                    <apex:outputText id="ddfedID" value="{!onboardingOpp.Account.Federal_ID_Number__c}"/>
+                    <apex:outputLabel for="ddphone" value="Client Telephone:"/>
+                    <apex:outputText id="ddphone" value="{!onboardingOpp.Account.Phone}"/>
+                    <apex:outputLabel for="ddext" value="Telephone Ext:"/>
+                    <apex:outputText id="ddext" value="{!onboardingOpp.Account.Phone_Ext__c}"/>
+                    <apex:outputLabel for="ddfax" value="Fax:"/>
+                    <apex:outputText id="ddfax" value="{!onboardingOpp.Account.Fax}"/>
+                    <apex:outputLabel for="sipmipm" value="SIPM/IPM:"/>
+                    <apex:outputText id="sipmipm" value="{!onboardingOpp.Account.MMS_MAM_NAM__r.FirstName} {!onboardingOpp.Account.MMS_MAM_NAM__r.LastName}"/>
+                    <apex:outputLabel for="numEE2" value="Checks per pay period:"/>
+                    <apex:outputText id="numEE2" value="{!onboardingOpp.Employees_Paid_Per_Payroll__c}"/>
+                    <apex:outputLabel for="numEE3" value="Number of employees to load:"/>
+                    <apex:outputText id="numEE3" value="{!onboardingRecord.EmpsToLoad__c}"/>
+                    <apex:outputLabel for="ddsaleType" value="Type of Industry:"/>
+                    <apex:outputText id="ddsaleType" value="{!onboardingOpp.Account.Industry}"/>
+                    <apex:outputLabel for="productInfo" value="PRODUCT INFORMATION"/>
+                    <apex:outputText id="productInfo" value=""/>
+                    <apex:outputLabel for="frequency2" value="Payroll Frequency:"/>
+                    <apex:outputText id="frequency2" value="{!onboardingOpp.Frequency__c}"/>
+                    <apex:outputLabel for="productPackages" value="Packages Selected:"/>
+                    <apex:outputText id="productPackages" value="{!productPackageList}"/>
+                    <apex:outputLabel for="productList" value="Products Selected:"/>
+                    <apex:outputText id="productList" value="{!productList}"/>
+                    <apex:outputLabel for="rc" value="ReadyChex?"/>
+                    <apex:outputText id="rc" value="{!onboardingRecord.ReadyChex__c}"/>
+                    <apex:outputLabel for="gl" value="GL?"/>
+                    <apex:outputText id="gl" value="{!onboardingRecord.GL__c}"/>
+                    <apex:outputLabel for="wc" value="Workers Compensation?"/>
+                    <apex:outputText id="wc" value="{!onboardingRecord.Workers_Compensation__c}"/>
+                    <apex:outputLabel for="skylight" value="Skylight?"/>
+                    <apex:outputText id="skylight" value="{!onboardingRecord.Skylight__c}"/>
+                    <apex:outputLabel for="flextimeInfo" value="FLEXTIME INFORMATION"/>
+                    <apex:outputText id="flextimeInfo" value=""/>
+                    <apex:outputLabel for="flextimeDate" value="FlexTime Implementation Date:"/>
+                    <apex:outputText id="flextimeDate" value="{0,date,MM/dd/yyyy}"><apex:param value="{!onboardingRecord.Flextime_Date__c}" /></apex:outputText>
+                    <apex:outputLabel for="flextimeTAA" value="Add to existing TAA?"/>
+                    <apex:outputText id="flextimeTAA" value="{!onboardingRecord.Flextime_TAA__c}"/>
+                    <apex:outputLabel for="numFlextimeId" value="How many FlexTime Id's?"/>
+                    <apex:outputText id="numFlextimeId" value="{!onboardingRecord.NumFlexId__c}"/>
+                    <apex:outputLabel for="flextimeClock" value="Will Client be using time clocks?"/>
+                    <apex:outputText id="flextimeClock" value="{!onboardingRecord.Flextime_Timeclock__c}"/>
+                    <apex:outputLabel for="esrInfo" value="ESR INFORMATION"/>
+                    <apex:outputText id="esrInfo" value=""/>
+                    <apex:outputLabel for="ESR1" value="Is the client categorized as an educational institution?"/>
+                    <apex:outputText id="ESR1" value="{!onboardingRecord.ESR_educationInstitution__c}"/>
+                    <apex:outputLabel for="ESR2" value="Is the client offering a self insured plan?"/>
+                    <apex:outputText id="ESR2" value="{!onboardingRecord.ESR_selfInsuredPlan__c}"/>
+                    <apex:outputLabel for="ESR3" value="Does the client have union employees?"/>
+                    <apex:outputText id="ESR3" value="{!onboardingRecord.ESR_UnionEmps__c}"/>
+                    <apex:outputLabel for="ESR4" value="Prior year medical renewal datee:"/>
+                    <apex:outputText id="ESR4" value="{0,date,MM/dd/yyyy}"><apex:param value="{!onboardingRecord.ESR_PriorMedRenewalDate__c}" /></apex:outputText>
+                    <apex:outputLabel for="paychexInfo" value="PAYCHEX INFORMATION"/>
+                    <apex:outputText id="paychexInfo" value=""/>
+                    <apex:outputLabel for="irsAddy" value="Delivery address same as IRS address?"/>
+                    <apex:outputText id="irsAddy" value="{!onboardingRecord.IrsIsDelivery__c}"/>
+                    <apex:outputLabel for="irsAddy2" value="IRS address:"/>
+                    <apex:outputText id="irsAddy2" value="{!onboardingRecord.Irs_Address__c}"/>
+                    <apex:outputLabel for="combo" value="Combo Client?:"/>
+                    <apex:outputText id="combo" value="{!onboardingRecord.Combo__c}"/>
+                    <apex:outputLabel for="combo2" value="Number of id's:"/>
+                    <apex:outputText id="combo2" value="{!onboardingRecord.NumComboIds__c}"/>
+                    <apex:outputLabel for="addClientRelation" value="Does client have a current/future relationship with another client?"/>
+                    <apex:outputText id="addClientRelation" value="{!onboardingRecord.RelationWithAddAccount__c}"/>
+                    <apex:outputLabel for="addClientRelation2" value="Enter prospect-client:"/>
+                    <apex:outputText id="addClientRelation2" value="{!onboardingRecord.RelatedAccountId__c}"/>
+                    <apex:outputLabel for="priorWage" value="Prior wages to be loaded"/>
+                    <apex:outputText id="priorWage" value="{!onboardingRecord.PriorWagesLoaded__c}"/>
+                    <apex:outputLabel for="preassignedNumber" value="Are you required to use a preassigned client number?"/>
+                    <apex:outputText id="preassignedNumber" value="{!onboardingRecord.PreAssignedClientNum__c}"/>
+                    <apex:outputLabel for="preassignedId" value="Preassigned Id"/>
+                    <apex:outputText id="preassignedId" value="{!onboardingRecord.PreAssignedId__c}"/>
+                    <apex:outputLabel for="promotion" value="Promotions:"/>
+                    <apex:outputText id="promotion" value="{!onboardingRecord.Promotions__c}"/>
+                    <apex:outputLabel for="sourceBusiness" value="Source of business:"/>
+                    <apex:outputText id="sourceBusiness" value="{!onboardingOpp.LeadSource}"/>
+                    <apex:outputLabel for="prevMethod" value="Previous method:"/>
+                    <apex:outputText id="prevMethod" value="{!onboardingOpp.Payroll_Current_Prior_Method__c}"/>
+                    <apex:outputLabel for="newExistingBus" value="New or existing business:"/>
+                    <apex:outputText id="newExistingBus" value="{!onboardingOpp.New_or_Existing_Business__c}"/>
+                    <apex:outputLabel for="busType" value="Business Type:"/>
+                    <apex:outputText id="busType" value="{!onboardingRecord.Business_Structure__c}"/>
+                    <apex:outputLabel for="bankDoc" value="Has client provided bank doc?"/>
+                    <apex:outputText id="bankDoc" value="{!onboardingRecord.BankDocumentation__c}"/>
+                    <apex:outputLabel for="payDelivery" value="1st payroll delivery method:"/>
+                    <apex:outputText id="payDelivery" value="{!onboardingOpp.First_Payroll_Delivery_Method__c}"/>
+                    <apex:outputLabel for="checksPerPeriod" value="Checks per pay period:"/>
+                    <apex:outputText id="checksPerPeriod" value="{!onboardingOpp.Employees_Paid_Per_Payroll__c}"/>
+                    <apex:outputLabel for="aOfficerName2" value="Authorized Officer Name:"/>
+                    <apex:outputText id="aOfficerName2" value="{!onboardingRecord.Authorize_Officer__r.Name}"/>
+                    <apex:outputLabel for="aOfficerTitle2" value="Authorized Officer Title:"/>
+                    <apex:outputText id="aOfficerTitle2" value="{!onboardingRecord.Authorize_Officer__r.Title}"/>
+                    <apex:outputLabel for="aOfficerPhone2" value="Authorized Officer Phone:"/>
+                    <apex:outputText id="aOfficerPhone2" value="{!onboardingRecord.Authorize_Officer__r.Phone}"/>
+                    <apex:outputLabel for="aOfficerEmail2" value="Authorized Officer Email:"/>
+                    <apex:outputText id="aOfficerEmail2" value="{!onboardingRecord.Authorize_Officer__r.Email}"/>
+                    <apex:outputLabel for="payContName2" value="Payroll Contact Name:"/>
+                    <apex:outputText id="payContName2" value="{!onboardingRecord.PayrollContact__r.Name}"/>
+                    <apex:outputLabel for="payContTitle2" value="Payroll Contact Title:"/>
+                    <apex:outputText id="payContTitle2" value="{!onboardingRecord.PayrollContact__r.Title}"/>
+                    <apex:outputLabel for="payContPhone2" value="Payroll Contact Phone:"/>
+                    <apex:outputText id="payContPhone2" value="{!onboardingRecord.PayrollContact__r.Phone}"/>
+                    <apex:outputLabel for="payContEmail2" value="Payroll Contact Email:"/>
+                    <apex:outputText id="payContEmail2" value="{!onboardingRecord.PayrollContact__r.Email}"/>
+                    <apex:outputLabel for="statesProcessed" value="States payroll processed in:"/>
+                    <apex:outputText id="statesProcessed" value="{!onboardingRecord.StateProcessedIn__c}"/>
+                    <apex:outputLabel for="ServiceLoc" value="Service location:"/>
+                    <apex:outputText id="ServiceLoc" value="{!onboardingOpp.Service_Location__c}"/>
+                    <apex:outputLabel for="payrollPlatform" value="Payroll Platform:"/>
+                    <apex:outputText id="payrollPlatform" value="{!onboardingOpp.Payroll_Platform__c}"/>
+                    <apex:outputLabel for="priceLock" value="Has client chosen 3 year price lock?"/>
+                    <apex:outputText id="priceLock" value="{!onboardingRecord.PriceLock3Year__c}"/>
+                    <apex:outputLabel for="discount" value="Was a discount offered?"/>
+                    <apex:outputText id="discount" value="{!onboardingRecord.DiscountOffered__c}"/>
+                    <apex:outputLabel for="Notes2" value="Notes"/>
+                    <apex:outputText id="Notes2" value="{!onboardingOpp.Description}"/>
+                    <apex:outputLabel for="endDate2" value="Period End Date:"/>
+                    <apex:outputText id="endDate2" value="{0,date,MM/dd/yyyy}"><apex:param value="{!onboardingRecord.PeriodEndDate__c}" /></apex:outputText>
+                    <apex:outputLabel for="checkDate2" value="First Check Date:"/>
+                    <apex:outputText id="checkDate2" value="{0,date,MM/dd/yyyy}"><apex:param value="{!onboardingRecord.First_Check_Date__c}" /></apex:outputText>
+                    <apex:outputLabel for="runDate2" value="First Run Date:"/>
+                    <apex:outputText id="runDate2" value="{0,date,MM/dd/yyyy}"><apex:param value="{!onboardingRecord.Run_Date__c}" /></apex:outputText>
+                </apex:panelGrid>
+            </body>
+        </apex:actionRegion>
+    </apex:form>
+</apex:page>

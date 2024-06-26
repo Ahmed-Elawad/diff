@@ -1,0 +1,36 @@
+<aura:component description="BannerDNC">
+    <aura:attribute name="contact" type="Object" />
+    
+    <div class="box" title="Do Not Contact?">
+        <div class="banner-header slds-align_absolute-center">
+            <h4 class="slds-item_label slds-text-color_weak slds-truncate slds-text-align_center">DNC</h4>
+        </div>
+        <div class="banner-body column">
+            
+            <!-- When Contact is marked as DNC and EOO is true on Contact -->
+            <aura:if isTrue="{!and(v.contact.DoNotCall, v.contact.HasOptedOutOfEmail)}">
+                <img src="{!$Resource.BannerIcons + '/LightningIcons/redandredflag.png'}" />
+                <div class="slds-item_detail slds-truncate slds-text-color_error slds-align_absolute-center" title="Do Not Call">
+                    Do Not Call or Email this Contact
+                </div>
+                <aura:set attribute="else">
+                    <aura:if isTrue="{!or(v.contact.DoNotCall, v.contact.HasOptedOutOfEmail)}">
+                        <img src="{!$Resource.BannerIcons + '/LightningIcons/redflag.png'}" />
+                        <!-- When Contact is marked as DNC but not as EOO-->
+                        <div class="slds-item_detail slds-truncate slds-text-color_error slds-align_absolute-center" title="Do Not Call">
+                            <aura:if isTrue="{!v.contact.DoNotCall}">
+                                Do Not Call this Contact
+                            </aura:if>
+                        </div>
+                        <!-- When Contact is marked as EOO but not as DNC-->
+                        <div class="slds-item_detail slds-truncate slds-text-color_error slds-align_absolute-center" title="Email Opt Out">
+                            <aura:if isTrue="{!v.contact.HasOptedOutOfEmail}">
+                                Do Not Email This Contact
+                            </aura:if>
+                        </div>
+                    </aura:if>
+                </aura:set>
+            </aura:if>
+        </div>
+    </div>
+</aura:component>

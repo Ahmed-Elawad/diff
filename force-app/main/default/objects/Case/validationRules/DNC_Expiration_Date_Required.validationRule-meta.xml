@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DNC_Expiration_Date_Required</fullName>
+    <active>true</active>
+    <description>Expiration Date is required for this type of DNC Request</description>
+    <errorConditionFormula>NOT(BEGINS($Profile.Name,&apos;System Admin&apos;))&amp;&amp; 
+OR(RecordType.Name = &apos;Sales Support Cases Record Type&apos;,RecordType.Name = &apos;Sales2Service Case&apos;) 
+&amp;&amp; 
+OR(ISPICKVAL( Reason_for_Request__c,&apos;Acquisition&apos;),ISPICKVAL( Reason_for_Request__c,&apos;Contractual Agreement from Paychex&apos;)) &amp;&amp; 
+ISPICKVAL(Sub_Type__c,&apos;Do Not Call&apos;)&amp;&amp; 
+ISBLANK( Expiration_Date__c )</errorConditionFormula>
+    <errorMessage>Expiration Date is required for this type of DNC Request</errorMessage>
+</ValidationRule>

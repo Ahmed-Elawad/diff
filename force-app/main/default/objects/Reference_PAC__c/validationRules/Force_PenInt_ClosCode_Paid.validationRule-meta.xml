@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_PenInt_ClosCode_Paid</fullName>
+    <active>true</active>
+    <description>If ‘Closure Code’ starts with ‘Paid’, Penalty &amp; Interest Paid field must equal Penalty &amp; Interest Assessed field AND the Penalty &amp; Interest Recovered field must be null or zero.</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;Reference PAC Record Type&quot; ), 
+( BEGINS(TEXT(Closure_Code__c),&apos;Paid&apos;) ),
+( ( Penalty_Interest_Paid__c &lt;&gt; Penalty_Interest_Assessed__c) || ( Penalty_Interest_Recovered__c &gt; 0.00) ),
+($Profile.Name &lt;&gt;&quot;System Administrator&quot;) 
+)</errorConditionFormula>
+    <errorDisplayField>Closure_Code__c</errorDisplayField>
+    <errorMessage>If Closure Code starts with Paid, then the Penalty &amp; Interest Paid field must equal the Penalty &amp; Interest Assessed field, and the Penalty &amp; Interest Recovered field must be null 
+or zero.</errorMessage>
+</ValidationRule>

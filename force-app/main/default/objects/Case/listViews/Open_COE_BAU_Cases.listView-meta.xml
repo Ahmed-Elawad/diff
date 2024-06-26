@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Open_COE_BAU_Cases</fullName>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>NAME</columns>
+    <columns>Sales_Org__c</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>Follow_Up_Note__c</columns>
+    <columns>Case_Created_Date1__c</columns>
+    <columns>CASES.TYPE</columns>
+    <columns>OWNER_NAME</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.COE_Submission_Case_Record_Type</value>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Cancelled,Cancelled Due to Lack of Response,Closed,Closed - Client Unresponsive,Complete,Completed</value>
+    </filters>
+    <filters>
+        <field>CASES.TYPE</field>
+        <operation>equals</operation>
+        <value>SFDC Enhancement - BAU,SFDC Enhancement - Project,SFDC Investigation - APR,SFDC post imp enhancement,SFDC post imp issue,SFDC Project Item,SFDC Research Item,SFDC Research Spike</value>
+    </filters>
+    <label>Open COE BAU Cases</label>
+</ListView>

@@ -1,0 +1,200 @@
+<aura:component controller="CSOProgressBar" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    <aura:attribute name="CSOTrackingObj" type="Object"/>
+    <aura:attribute name="progress" type="Integer"/>
+    <aura:attribute name="showDetails" type="Boolean"/>
+    <aura:attribute name="recId" type="String"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />    
+    <lightning:card>
+        <aura:if isTrue="{!v.CSOTrackingObj.isStalled}">
+            <div class="slds-text-heading_small slds-align_absolute-center slds-text-color_error">Setup progress was stalled {!v.CSOTrackingObj.latestStallDate}.</div>
+        </aura:if>
+        <div class="slds-p-around_x-small">
+            <div class="slds-text-title_bold slds-float_left">Setup Progress: {!v.progress}%</div>
+            <br/><br/>
+            <lightning:progressBar value="{!v.progress}" size="large" />
+            <br/>
+            <aura:if isTrue="{!!v.showDetails}">
+                <lightning:button variant="brand" label="Show Details" title="Show Details" disabled="{!v.showDetails}" onclick="{!c.showDetails}" />
+                <!--
+                <aura:if isTrue="{!v.CSOTrackingObj.FirstStepsCompleted==''}">
+                <lightning:button variant="brand" label="Resend Registration/Welcome Email" title="Resend Registration/Welcome Email" disabled="{!v.showDetails}" onclick="{!c.resendRegistration}" />
+                </aura:if>
+                -->
+            </aura:if>
+            <aura:if isTrue="{!v.showDetails}">
+                <lightning:button variant="brand" label="Hide Details" title="Hide Details" disabled="{!!v.showDetails}" onclick="{!c.hideDetails}" />
+            </aura:if>
+                <br/>
+            <aura:if isTrue="{!v.showDetails}">
+            <div class="slds-text-heading_small slds-align_absolute-center slds-text-color_success">Registration Email sent {!v.CSOTrackingObj.RegistrationStart}</div>
+            <div class="slds-progress slds-progress_vertical">
+                <ol class="slds-progress__list">
+                    
+                    <aura:if isTrue="{!v.CSOTrackingObj.FirstStepsCompleted!=''}">
+                        <li class="slds-progress__item slds-is-completed">
+                            <div class="slds-icon_container slds-icon-utility-success slds-icon slds-icon_x-small slds-progress__marker slds-progress__marker_icon" title="Complete">
+                                <lightning:icon iconName="utility:success" size="x-small" title="Path 1"/>
+                                <div class="slds-assistive-text">Complete</div>
+                            </div>
+                            <div class="slds-progress__item_content slds-grid slds-grid_align-spread">Flex Registration Complete/Portal Log In {!v.CSOTrackingObj.FirstStepsCompleted}</div>
+                        </li>
+                    </aura:if>
+                    <aura:if isTrue="{!v.CSOTrackingObj.FirstStepsCompleted==''}">
+                        <li class="slds-progress__item">
+                            <div class="slds-progress__marker"></div>
+                            <div class="slds-progress__item_content slds-grid slds-grid_align-spread">Flex Registration</div>
+                        </li>
+                    </aura:if>
+                    
+                    <aura:if isTrue="{!v.CSOTrackingObj.PriorPayrollCompleted!=''}">
+                        <li class="slds-progress__item slds-is-completed">
+                            <div class="slds-icon_container slds-icon-utility-success slds-icon slds-icon_x-small slds-progress__marker slds-progress__marker_icon" title="Complete">
+                                <lightning:icon iconName="utility:success" size="x-small" title="Path 1"/>
+                                <div class="slds-assistive-text">Complete</div>
+                            </div>
+                            <div class="slds-progress__item_content slds-grid slds-grid_align-spread">Prior Payroll Completed {!v.CSOTrackingObj.PriorPayrollCompleted}</div>
+                        </li>
+                    </aura:if>
+                    <aura:if isTrue="{!v.CSOTrackingObj.PriorPayrollCompleted==''}">
+                        <li class="slds-progress__item">
+                            <div class="slds-progress__marker"></div>
+                            <div class="slds-progress__item_content slds-grid slds-grid_align-spread">Prior Payroll</div>
+                        </li>
+                    </aura:if>
+                    
+                    <aura:if isTrue="{!v.CSOTrackingObj.BusinessInfoCompleted!=''}">
+                        <li class="slds-progress__item slds-is-completed">
+                            <div class="slds-icon_container slds-icon-utility-success slds-icon slds-icon_x-small slds-progress__marker slds-progress__marker_icon" title="Complete">
+                                <lightning:icon iconName="utility:success" size="x-small" title="Path 1"/>
+                                <div class="slds-assistive-text">Complete</div>
+                            </div>
+                            <div class="slds-progress__item_content slds-grid slds-grid_align-spread">Business Information Completed {!v.CSOTrackingObj.BusinessInfoCompleted}</div>
+                        </li>
+                    </aura:if>
+                    <aura:if isTrue="{!v.CSOTrackingObj.BusinessInfoCompleted==''}">
+                        <li class="slds-progress__item">
+                            <div class="slds-progress__marker"></div>
+                            <div class="slds-progress__item_content slds-grid slds-grid_align-spread">Business Information</div>
+                        </li>
+                    </aura:if>
+                    
+                    <aura:if isTrue="{!v.CSOTrackingObj.BankingInfoCompleted!=''}">
+                        <li class="slds-progress__item slds-is-completed">
+                            <div class="slds-icon_container slds-icon-utility-success slds-icon slds-icon_x-small slds-progress__marker slds-progress__marker_icon" title="Complete">
+                                <lightning:icon iconName="utility:success" size="x-small" title="Path 1"/>
+                                <div class="slds-assistive-text">Complete</div>
+                            </div>
+                            <div class="slds-progress__item_content slds-grid slds-grid_align-spread">Banking Information Completed {!v.CSOTrackingObj.BankingInfoCompleted}</div>
+                        </li>
+                    </aura:if>
+                    <aura:if isTrue="{!v.CSOTrackingObj.BankingInfoCompleted==''}">
+                        <li class="slds-progress__item">
+                            <div class="slds-progress__marker"></div>
+                            <div class="slds-progress__item_content slds-grid slds-grid_align-spread">Banking Information</div>
+                        </li>
+                    </aura:if>
+                    
+                    <aura:if isTrue="{!v.CSOTrackingObj.PayScheduleCompleted!=''}">
+                        <li class="slds-progress__item slds-is-completed">
+                            <div class="slds-icon_container slds-icon-utility-success slds-icon slds-icon_x-small slds-progress__marker slds-progress__marker_icon" title="Complete">
+                                <lightning:icon iconName="utility:success" size="x-small" title="Path 1"/>
+                                <div class="slds-assistive-text">Complete</div>
+                            </div>
+                            <div class="slds-progress__item_content slds-grid slds-grid_align-spread">Pay Schedule Completed {!v.CSOTrackingObj.PayScheduleCompleted}</div>
+                        </li>
+                    </aura:if>
+                    <aura:if isTrue="{!v.CSOTrackingObj.PayScheduleCompleted==''}">
+                        <li class="slds-progress__item">
+                            <div class="slds-progress__marker"></div>
+                            <div class="slds-progress__item_content slds-grid slds-grid_align-spread">Pay Schedule</div>
+                        </li>
+                    </aura:if>
+                    
+                    <aura:if isTrue="{!v.CSOTrackingObj.TaxInfoCompleted!=''}">
+                        <li class="slds-progress__item slds-is-completed">
+                            <div class="slds-icon_container slds-icon-utility-success slds-icon slds-icon_x-small slds-progress__marker slds-progress__marker_icon" title="Complete">
+                                <lightning:icon iconName="utility:success" size="x-small" title="Path 1"/>
+                                <div class="slds-assistive-text">Complete</div>
+                            </div>
+                            <div class="slds-progress__item_content slds-grid slds-grid_align-spread">Tax Information Completed {!v.CSOTrackingObj.TaxInfoCompleted}</div>
+                        </li>
+                    </aura:if>
+                    <aura:if isTrue="{!v.CSOTrackingObj.TaxInfoCompleted==''}">
+                        <li class="slds-progress__item">
+                            <div class="slds-progress__marker"></div>
+                            <div class="slds-progress__item_content slds-grid slds-grid_align-spread">Tax Information</div>
+                        </li>
+                    </aura:if>
+                    
+                    <aura:if isTrue="{!v.CSOTrackingObj.AddEmpsCompleted!=''}">
+                        <li class="slds-progress__item slds-is-completed">
+                            <div class="slds-icon_container slds-icon-utility-success slds-icon slds-icon_x-small slds-progress__marker slds-progress__marker_icon" title="Complete">
+                                <lightning:icon iconName="utility:success" size="x-small" title="Path 1"/>
+                                <div class="slds-assistive-text">Complete</div>
+                            </div>
+                            <div class="slds-progress__item_content slds-grid slds-grid_align-spread">Add Employees Completed {!v.CSOTrackingObj.AddEmpsCompleted}</div>
+                        </li>
+                    </aura:if>
+                    <aura:if isTrue="{!v.CSOTrackingObj.AddEmpsCompleted==''}">
+                        <li class="slds-progress__item">
+                            <div class="slds-progress__marker"></div>
+                            <div class="slds-progress__item_content slds-grid slds-grid_align-spread">Add Employees</div>
+                        </li>
+                    </aura:if>
+                    
+                    <aura:if isTrue="{!v.CSOTrackingObj.QuoteSignedDate!=''}">
+                        <li class="slds-progress__item slds-is-completed">
+                            <div class="slds-icon_container slds-icon-utility-success slds-icon slds-icon_x-small slds-progress__marker slds-progress__marker_icon" title="Complete">
+                                <lightning:icon iconName="utility:success" size="x-small" title="Path 1"/>
+                                <div class="slds-assistive-text">Complete</div>
+                            </div>
+                            <div class="slds-progress__item_content slds-grid slds-grid_align-spread">Documents MSA Received {!v.CSOTrackingObj.QuoteSignedDate}</div>
+                        </li>
+                    </aura:if>
+                    <aura:if isTrue="{!v.CSOTrackingObj.QuoteSignedDate==''}">
+                        <li class="slds-progress__item">
+                            <div class="slds-progress__marker"></div>
+                            <div class="slds-progress__item_content slds-grid slds-grid_align-spread">Documents MSA</div>
+                        </li>
+                    </aura:if>
+                    
+                    <aura:if isTrue="{!v.CSOTrackingObj.DocsCompleted!=''}">
+                        <li class="slds-progress__item slds-is-completed">
+                            <div class="slds-icon_container slds-icon-utility-success slds-icon slds-icon_x-small slds-progress__marker slds-progress__marker_icon" title="Complete">
+                                <lightning:icon iconName="utility:success" size="x-small" title="Path 1"/>
+                                <div class="slds-assistive-text">Complete</div>
+                            </div>
+                            <div class="slds-progress__item_content slds-grid slds-grid_align-spread">Documents Completed {!v.CSOTrackingObj.DocsCompleted}</div>
+                        </li>
+                    </aura:if>
+                    <aura:if isTrue="{!v.CSOTrackingObj.DocsCompleted==''}">
+                        <li class="slds-progress__item">
+                            <div class="slds-progress__marker"></div>
+                            <div class="slds-progress__item_content slds-grid slds-grid_align-spread">Documents</div>
+                        </li>
+                    </aura:if>
+                    
+                    <aura:if isTrue="{!v.CSOTrackingObj.SubmitCompleted!=''}">
+                        <li class="slds-progress__item slds-is-completed">
+                            <div class="slds-icon_container slds-icon-utility-success slds-icon slds-icon_x-small slds-progress__marker slds-progress__marker_icon" title="Complete">
+                                <lightning:icon iconName="utility:success" size="x-small" title="Path 1"/>
+                                <div class="slds-assistive-text">Complete</div>
+                            </div>
+                            <div class="slds-progress__item_content slds-grid slds-grid_align-spread">Easy Setup Completed {!v.CSOTrackingObj.SubmitCompleted}</div>
+                        </li>
+                    </aura:if>
+                    <aura:if isTrue="{!v.CSOTrackingObj.SubmitCompleted==''}">
+                        <li class="slds-progress__item">
+                            <div class="slds-progress__marker"></div>
+                            <div class="slds-progress__item_content slds-grid slds-grid_align-spread">Easy Setup Completed</div>
+                        </li>
+                    </aura:if>
+                </ol>
+                <div aria-valuemin="0" aria-valuemax="100" aria-valuenow="25" role="progressbar">
+                    <span class="slds-assistive-text">Progress: 25%</span>
+                </div>
+                </div>
+            </aura:if>
+        </div>
+    </lightning:card>
+</aura:component>

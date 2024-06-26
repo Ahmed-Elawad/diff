@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BU_Contact__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>Used to display what business units this contact has a role with
+case #29082942 added Payroll Contact Role to formula</description>
+    <externalId>false</externalId>
+    <formula>IF (NOT(ISBLANK(HRO_Contact_Role__c)),&apos;HRO,&apos;,null) &amp;&apos; &apos; &amp; IF (NOT(ISBLANK(MMS__c)),&apos;MMS,&apos;,null)&amp;&apos; &apos; &amp; IF (NOT(ISBLANK(Premier_Contact_Role__c)),&apos;Premier,&apos;,null)&amp;&apos; &apos; &amp; IF (NOT(ISBLANK(S125_Contact_Role__c)),&apos;S125,&apos;,null)&amp;&apos; &apos; &amp; IF (NOT(ISBLANK(TAA_Contact_Role__c)),&apos;TAA,&apos;,null)&amp;&apos; &apos; &amp; IF (NOT(ISBLANK(X401k_Contact_Role__c)),&apos;401k,&apos;,null)&amp;&apos; &apos; &amp; IF (NOT(ISBLANK(Safety_Contact_Role__c)),&apos;Safety,&apos;,null)&amp;&apos; &apos; &amp; IF (NOT(ISBLANK(GL_Contact_Role__c)),&apos;GL,&apos;,null)&amp; IF (NOT(ISBLANK( MSP_Contact_Role__c )),&apos;MSP,&apos;,null)&amp; IF (NOT(ISBLANK( PAO_Contact_Role__c )),&apos;PAO,&apos;,null)&amp;&apos; &apos; &amp; IF(ISPICKVAL( EW_Contact_Role__c, &quot;EW Administrator&quot;) || ISPICKVAL(EW_Contact_Role__c, &quot;Decision Maker&quot;) , &apos;EW,&apos;, null)&amp;&apos; &apos; &amp; IF (NOT(ISBLANK(HRE_Handbook_Contact_Role__c)),&apos;HRE Handbook,&apos;,null) &amp;&apos; &apos; &amp; IF (NOT(ISBLANK(ESR_Contact_Role__c)),&apos;ESR,&apos;,null) 
+&amp;&apos; &apos; &amp; IF (NOT(ISBLANK(TEXT(Payroll_Contact_Role__c))),&apos;Payroll&apos;,null)&amp;&apos; &apos; &amp; 
+IF(ISPICKVAL( HROi_Handbook_contact_role__c,&quot;HROi&quot;),&quot;HROi&quot; ,null)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>BU Contact</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

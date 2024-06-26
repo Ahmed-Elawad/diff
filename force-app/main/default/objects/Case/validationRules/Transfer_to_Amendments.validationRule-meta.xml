@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Transfer_to_Amendments</fullName>
+    <active>true</active>
+    <description>Transfer to Amendments to only allow it to be selected if the &apos;ESR Category 1&apos; dropdown is marked with &quot;Amendment&quot; or &quot;Assessment&quot;</description>
+    <errorConditionFormula>AND(OR(ISPICKVAL(  Action__c  ,&quot;Pending Amendment&quot;),
+ISPICKVAL(  Action__c  ,&quot;Transferred to Amendments&quot;)),
+NOT(OR(ISPICKVAL( ESRService__c , &quot;Amendment&quot;),
+ISPICKVAL( ESRService__c , &quot;Assessment&quot;))))</errorConditionFormula>
+    <errorMessage>Transfer to Amendments can only be selected if &apos;ESR Category 1&apos;  is marked with &quot;Amendment&quot; or &quot;Assessment&quot;</errorMessage>
+</ValidationRule>

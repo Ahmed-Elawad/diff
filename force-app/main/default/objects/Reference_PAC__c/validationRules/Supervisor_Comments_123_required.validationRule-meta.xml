@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Supervisor_Comments_123_required</fullName>
+    <active>true</active>
+    <errorConditionFormula>OR( 
+AND(ISPICKVAL(Supervisor_Agree_Disagree_1__c,&quot;Disagree&quot;) || ISPICKVAL( Supervisor_Agree_Disagree_1__c,&quot;Partially Agree&quot;), ISBLANK( Supervisor_Comments_1__c ) ), 
+
+AND(ISPICKVAL( Supervisor_Agree_Disagree_2__c,&quot;Disagree&quot;) || ISPICKVAL( Supervisor_Agree_Disagree_2__c,&quot;Partially Agree&quot;),ISBLANK(  Supervisor_comments_2__c )  ), 
+
+AND(ISPICKVAL( Supervisor_Agree_Disagree_1_2__c,&quot;Disagree&quot;) || ISPICKVAL( Supervisor_Agree_Disagree_1_2__c,&quot;Partially Agree&quot;), ISBLANK(  Supervisor_comments_3__c ) ) 
+
+
+)</errorConditionFormula>
+    <errorMessage>Supervisor Comments are required if Supervisor Agree/Disagree = ‘Disagree’ or ‘Partially Agree’</errorMessage>
+</ValidationRule>

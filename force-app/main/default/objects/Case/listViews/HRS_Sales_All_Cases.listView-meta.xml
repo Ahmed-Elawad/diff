@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRS_Sales_All_Cases</fullName>
+    <booleanFilter>1 AND 2 AND (3 OR 4 OR 5)</booleanFilter>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>CASES.REASON</columns>
+    <columns>CASES.TYPE</columns>
+    <columns>Estimated_Hours__c</columns>
+    <columns>Sales_Org__c</columns>
+    <columns>CASES.PRIORITY</columns>
+    <columns>SFDC_Object__c</columns>
+    <columns>Enterprise_Devt__c</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>Delivery_Date__c</columns>
+    <columns>Score__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Sales_Org__c</field>
+        <operation>equals</operation>
+        <value>HRS,PAS,PBS,All Sales</value>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Closed,Completed,Cancelled,Cancelled Due to Lack of Response</value>
+    </filters>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.COE_Submission_Case_Record_Type,Case.COE_Enhancement_Submission_Case_Record_Type</value>
+    </filters>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.COE_Issue_Submission_Case_Record_Type</value>
+    </filters>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.COE_Question_Submission_Case_Record_Type</value>
+    </filters>
+    <label>HRS Sales: All Open Cases</label>
+    <sharedTo>
+        <group>HRSSales</group>
+    </sharedTo>
+</ListView>

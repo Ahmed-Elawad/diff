@@ -1,0 +1,92 @@
+<aura:component >
+	<aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="objectType" type="String" />
+    <aura:attribute name="enrolledUser" type="Boolean" />
+    <aura:attribute name="loggedInUser" type="Boolean" />
+    <aura:attribute name="commUser" type="Object" />
+    <aura:attribute name="referralContactData" type="Object" />
+    <aura:attribute name="invitationExpiryDate" type="Date" />
+    <aura:attribute name="isEndDated" type="Boolean" default="false"/>
+    <aura:handler name="init" action="{!c.init}" value="{!this}" />
+
+    <div class="box" title="PEO Portal User(s)" style="height: 111px;margin-top:8px; width:350px">
+        <div class="banner-header slds-align_absolute-center">
+            <h4 class="slds-item_label slds-text-color_weak slds-truncate slds-text-align_center">Accountant Program User</h4>
+        </div>
+        <lightning:layout class="slds-grid_vertical-stretch">
+            <lightning:layoutItem size="5" padding="around-small">
+                <div style="word-wrap:break-word;">
+                <p style="font-size: 10px;"><b>CommunityUser Name</b></p>
+                <p style="font-size: 11px;">{!v.commUser.Username}</p>
+                </div>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="2" padding="around-small">
+                <lightning:icon iconName="standard:avatar" alternativeText="User" title="User" />
+            </lightning:layoutItem>
+            <lightning:layoutItem size="5" padding="around-small">
+                <div style="word-wrap:break-word;">
+                <aura:if isTrue="{!v.loggedInUser}">
+                        <p class="field-title" title="Last Login Date" style="font-size: 10px"><b>Last Login Date</b></p>
+                        <p style="font-size: 11px">
+                            <lightning:formattedDateTime value="{!v.commUser.LastLoginDate}" year="numeric" month="numeric" day="numeric" hour="2-digit"
+                                minute="2-digit" timeZone="UTC" hour12="true"/>
+                        </p>
+                        <p class="field-title" title="Enrolled Date" style="font-size: 10px"><b>Enrolled Date</b></p>
+                        <p style="font-size: 11px">
+                            <lightning:formattedDateTime value="{!v.commUser.Community_User_First_Login__c}" year="numeric" month="numeric" day="numeric" hour="2-digit"
+                                minute="2-digit" timeZone="UTC" hour12="true"/>
+                        </p>
+                    <aura:set attribute="else">
+                        <aura:if isTrue="{!v.isEndDated}">
+                                <p class="field-title" title="Invitation Expiration Date" style="font-size: 10px"><b>Invitation Expiration Date</b></p>
+                                <p style="font-size: 11px">
+                                    <lightning:formattedDateTime value="{!v.invitationExpiryDate}" year="numeric" month="numeric" day="numeric" hour="2-digit"
+                                    minute="2-digit" timeZone="UTC" hour12="true"/>
+                                </p>
+                            <aura:set attribute="else">
+                                    <p class="field-title" title="Invite Sent Date" style="font-size: 10px"><b>Invite Sent Date</b></p>
+                                    <p style="font-size: 11px">
+                                        <lightning:formattedDateTime value="{!v.commUser.Requested_Invite_Date__c}" year="numeric" month="numeric" day="numeric" hour="2-digit"
+                                        minute="2-digit"  timeZoneName="short" hour12="true"/>
+                                    </p>
+                            </aura:set>
+                        </aura:if>
+                    </aura:set>
+                </aura:if>
+                </div>
+            </lightning:layoutItem>
+        </lightning:layout>
+        <!--<div class="banner-body">-->
+            <!--
+            <div class="slds-item_detail slds-truncate slds-align_absolute-center column">
+                <lightning:icon iconName="standard:avatar" alternativeText="User" title="User" />
+                <lightning:layout >
+                    <lightning:layoutItem padding="around-small">
+                        <div class="header-column" >
+                            <p class="field-title" title="Community User Name" style="font-size: 10px">Community User Name</p>
+                            <p>{!v.commUser.Name}</p>
+                        </div>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem padding="around-small">
+                        <aura:if isTrue="{!v.loggedInUser}">
+                            <div class="header-column">
+                                <p class="field-title" title="Last Login Date">Last Login Date</p>
+                                <lightning:formattedDateTime value="{!v.commUser.LastLoginDate}" year="numeric" month="numeric" day="numeric" hour="2-digit"
+                                 minute="2-digit" timeZone="UTC" hour12="true"/>
+                            </div>
+                        <aura:set attribute="else">
+                        	<div class="header-column">
+                                <p class="field-title" title="Invite Sent Date">Invite Sent Date</p>
+                                <lightning:formattedDateTime value="{!v.commUser.Requested_Invite_Date__c}" year="numeric" month="numeric" day="numeric" hour="2-digit"
+                                 minute="2-digit" timeZone="UTC" timeZoneName="short" hour12="true"/>
+                            </div>
+                        </aura:set>
+                        </aura:if>
+                    </lightning:layoutItem>
+                </lightning:layout>
+			
+            </div>
+			-->
+        <!--</div>-->
+    </div>
+</aura:component>

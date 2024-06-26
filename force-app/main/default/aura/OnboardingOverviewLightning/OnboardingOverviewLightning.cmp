@@ -1,0 +1,104 @@
+<aura:component controller="OnboardingOverviewAuraService" implements="flexipage:availableForAllPageTypes,force:hasRecordId">
+	
+	<aura:attribute name="recordId" type="Id" />
+	<aura:attribute name="account" type="Object" />
+	<aura:attribute name="formattedDisplayFields" type="Object"/>
+	<aura:attribute name="clientActionNeeded" type="Case[]"/>
+
+	<aura:handler name="change" value="{!v.account}" action="{!c.initialize}"/>
+
+    <force:recordData aura:id="recordLoader"
+      	recordId="{!v.recordId}"
+    	fields="Level_1__c,KP_Client__c,Critical_Client_Notes__c,At_Risk__c,Potential_Risk__c,Primary_Client_Combined__c,RecordTypeId,Do_Not_Call__c,Email_Opt_Out__c"
+	    targetFields="{!v.account}"
+	    mode="VIEW"
+      />
+
+
+    <div class="slds-section slds-is-open">
+      	<h3 class="slds-section__title">
+      		<button aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action">
+   			    <lightning:icon iconName="utility:switch" size="x-small" alternativeText="Indicates switch"/>
+      			<span class="slds-truncate" title="Section Title">&nbsp;Client Overview</span>
+      		</button>
+      	</h3>
+      	<div aria-hidden="false" class="slds-section__content" id="expando-unique-id">
+
+			<div class="slds-box">
+    			<lightning:spinner aura:id="spinner" variant="brand" size="large"/>
+        
+				<div class="slds-grid slds-wrap">
+	        		<div class="col slds-p-left_large slds-p-right_large slds-p-bottom_small slds-size_1-of-3">
+    					<label class="{!'slds-form-element__label ' + if(equals(v.account.Level_1__c, true), 'blue-text', '')}" for="form-element-01">Flagship Client</label>
+    					<br/>
+	        			<ui:outputCheckbox value="{!v.account.Level_1__c}"/>
+	        			<hr/>
+					</div>
+	        		<div class="col slds-p-left_large slds-p-right_large slds-p-bottom_small slds-size_1-of-3">
+    					<label class="{!'slds-form-element__label ' + if(equals(v.account.KP_Client__c, true), 'blue-text', '')}" for="form-element-01">Client of Key Partner</label>
+    					<br/>
+	        			<ui:outputCheckbox value="{!v.account.KP_Client__c}"/>
+	        			<hr/>
+					</div>
+					<aura:if isTrue="{!not(empty(v.formattedDisplayFields.DNCEIndicator))}">
+		        		<div class="col slds-p-left_large slds-p-right_large slds-p-bottom_small slds-size_1-of-3">
+	    					<label class="slds-form-element__label" for="form-element-01">Do Not Call/Email Indicator</label>
+	    					<br/>
+		        			<ui:outputText class="red-text" value="{!v.formattedDisplayFields.DNCEIndicator}"/>
+		        			<hr/>
+						</div>
+					</aura:if>
+	        		<div class="col slds-p-left_large slds-p-right_large slds-p-bottom_small slds-size_1-of-3">
+    					<label class="slds-form-element__label" for="form-element-01">BU Primary Client</label>
+    					<br/>
+	        			<ui:outputText value="{!v.formattedDisplayFields.BUPrimaryClient}"/>
+	        			<hr/>
+					</div>
+	        		<div class="col slds-p-left_large slds-p-right_large slds-p-bottom_small slds-size_1-of-3">
+    					<label class="slds-form-element__label" for="form-element-01">At Risk</label>
+    					<br/>
+	        			<ui:outputText class="red-text" value="{!v.formattedDisplayFields.atRisk}"/>
+	        			<hr/>
+					</div>
+	        		<div class="col slds-p-left_large slds-p-right_large slds-p-bottom_small slds-size_1-of-3">
+    					<label class="slds-form-element__label" for="form-element-01">Potential Risk</label>
+    					<br/>
+	        			<ui:outputText class="orange-text" value="{!v.formattedDisplayFields.potentialRisk}"/>
+	        			<hr/>
+					</div>
+				
+
+	        		<div class="col slds-p-left_large slds-p-right_large slds-p-bottom_small slds-size_1-of-3">
+    					<label class="slds-form-element__label" for="form-element-01">Urgent Client Action Required</label>
+    					<aura:if isTrue="{!empty(v.clientActionNeeded)}">
+    						<div>&nbsp;</div>
+    					</aura:if>
+    					<aura:iteration items="{!v.clientActionNeeded}" var="action">
+    						<br/><c:CaseLinkItem caseItem="{!action}"/>
+    					</aura:iteration>
+	        			<hr/>
+					</div>
+	        		
+
+	            </div>
+
+				<lightning:recordEditForm aura:id="recordViewForm" 
+		                                  recordId="{!v.recordId}"
+		                                  recordTypeId="{!v.account.RecordTypeId}"
+		                                  objectApiName="Account"
+		                                  onsubmit="{!c.onRecordSave}"
+		                                  onsuccess="{!c.onSaveSuccess}">
+	   				<div class="slds-grid slds-wrap">
+		        		<div class="col slds-p-left_large slds-p-right_large slds-p-bottom_small slds-size_3-of-3">
+		            		<lightning:messages />
+		            		<lightning:inputField fieldName="Critical_Client_Notes__c" />
+		            	</div>
+		            	<div class="centered-buttons">
+		            		<lightning:button aura:id="submit" type="submit" label="Update record" class="slds-m-top_medium" />
+		            	</div>
+			        </div>
+		        </lightning:recordEditForm>
+	        </div>
+      	</div>
+    </div>
+</aura:component>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>QDRO_DD_Case_Required</fullName>
+    <active>true</active>
+    <description>Require the Case Look up field for distribution records</description>
+    <errorConditionFormula>(RecordType.Name = &apos;Death Distribution&apos; || 
+RecordType.Name = &apos;QDRO&apos;) &amp;&amp; ISBLANK( Case_Lookup__c )</errorConditionFormula>
+    <errorDisplayField>Case_Lookup__c</errorDisplayField>
+    <errorMessage>Case Lookup is required for Distribution records.  Create the Distribution record from the Case and this association will happen automatically</errorMessage>
+</ValidationRule>

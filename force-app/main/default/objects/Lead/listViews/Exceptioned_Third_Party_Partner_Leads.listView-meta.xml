@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Exceptioned_Third_Party_Partner_Leads</fullName>
+    <columns>FULL_NAME</columns>
+    <columns>LEAD.COMPANY</columns>
+    <columns>LEAD.STATE</columns>
+    <columns>LEAD.ZIP</columns>
+    <columns>CORE.USERS.FIRST_NAME</columns>
+    <columns>CORE.USERS.LAST_NAME</columns>
+    <columns>Hold_Out__c</columns>
+    <columns>Hold_Out_Expiration__c</columns>
+    <columns>Bank_Lead_ID__c</columns>
+    <columns>Referral_Contact__c</columns>
+    <columns>Additional_Referring_Name__c</columns>
+    <columns>Exception_Reason__c</columns>
+    <columns>Original_Lead_Detail__c</columns>
+    <columns>Date_Lead_Submitted__c</columns>
+    <columns>LEAD.STATUS</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>LEAD.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Lead.Pending_Leads</value>
+    </filters>
+    <filters>
+        <field>LEAD.LEAD_SOURCE</field>
+        <operation>notEqual</operation>
+        <value>Referral-Bank Referral</value>
+    </filters>
+    <filters>
+        <field>LEAD.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Already Contacted/Duplicate,Bad Phone,Bad Lead</value>
+    </filters>
+    <label>Exceptioned Third Party Partner Leads</label>
+</ListView>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Days_Since_Chart_of_Accts_Rec_d__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>IF 
+(ISNULL(DATEVALUE(Date_Mapping_Complete__c )), 
+(TODAY() - DATEVALUE(Date_Chart_Of_Accounts_Received__c ) - 2*( FLOOR((TODAY() - DATE(1985,6,24))/7) -FLOOR((DATEVALUE(Date_Chart_Of_Accounts_Received__c ) - DATE(1985,6,24))/7))),
+((DATEVALUE(Date_Mapping_Complete__c)) - DATEVALUE(Date_Chart_Of_Accounts_Received__c ) - 2*( FLOOR(((DATEVALUE(Date_Mapping_Complete__c) - DATE(1985,6,24))/7) - FLOOR((DATEVALUE(Date_Chart_Of_Accounts_Received__c ) - DATE(1985,6,24))/7)))))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Days Since Chart of Accts Rec&apos;d</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,99 @@
+<!-- Display NSS Inbound Activity that doesn't have a referral created against it.
+
+   History
+   -------
+   03/30/2015 Dan Carmen   Created 
+
+ -->
+<apex:page controller="NSSInboundActivity"
+           id="nssInboundActivityage">
+           
+  <apex:sectionHeader title="Inbound Activity without an Opportunity" />
+  <apex:form >
+  <apex:pageBlock id="mainBlock">
+    <apex:pageMessages />
+    
+     <apex:pageBlockSection id="PromptForUserSection" rendered="{!promptForUser}" columns="2">
+        <apex:pageBlockSectionItem rendered="{!promptForUser}">
+           <apex:outputLabel value="View As"/>
+           <apex:inputField value="{!askForUser.NSR_Name__c}" />
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem rendered="{!promptForUser}" />
+
+        <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Date to retrieve Data" />
+           <apex:inputField value="{!askForUser.Run_Submit_Date__c}" />
+        </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Call Disposition Filter" />
+           <apex:selectList value="{!selectedDispositionFilter}" title="Select a Call Disposition to Filter on" multiselect="false" size="1" id="callDispositionFilterField">
+              <apex:selectOptions value="{!callDispositionOptions}"/>
+           </apex:selectList>
+        </apex:pageBlockSectionItem>
+        
+        <apex:commandButton value="Refresh Data" action="{!queryData}" />
+     </apex:pageBlockSection>
+
+     <apex:pageBlockSection rendered="{!NOT(hasDisplayList)}">
+        <apex:outputText value="No Record Found!" />
+     </apex:pageBlockSection>
+     
+     <apex:pageBlockSection rendered="{!hasDisplayList}" columns="1">
+
+        <apex:pageBlockTable id="ActivityTable" value="{!displayList}" var="rec" styleClass="dataTable" >
+           <apex:column >
+              <apex:facet name="header">
+                 <apex:outputText styleClass="header" value="Activity Date"/>
+              </apex:facet>
+              <apex:outputField style="white-space:nowrap;" value="{!rec.tsk.ActivityDate}"/>
+           </apex:column>
+
+           <apex:column >
+              <apex:facet name="header">
+                 <apex:outputText styleClass="header" value="WhoId"/>
+              </apex:facet>
+              <apex:outputField style="white-space:nowrap;" value="{!rec.tsk.WhoId}"/>
+           </apex:column>
+
+           <apex:column >
+              <apex:facet name="header">
+                 <apex:outputText styleClass="header" value="WhatId"/>
+              </apex:facet>
+              <apex:outputField style="white-space:nowrap;" value="{!rec.tsk.WhatId}"/>
+           </apex:column>
+
+           <apex:column >
+              <apex:facet name="header">
+                 <apex:outputText styleClass="header" value="AccountId"/>
+              </apex:facet>
+              <apex:outputField style="white-space:nowrap;" value="{!rec.tsk.AccountId}"/>
+           </apex:column>
+
+           <apex:column >
+              <apex:facet name="header">
+                 <apex:outputText styleClass="header" value="Call Type"/>
+              </apex:facet>
+              <apex:outputField style="white-space:nowrap;" value="{!rec.tsk.CallType}"/>
+           </apex:column>
+
+           <apex:column >
+              <apex:facet name="header">
+                 <apex:outputText styleClass="header" value="Call Disposition"/>
+              </apex:facet>
+              <apex:outputField style="white-space:nowrap;" value="{!rec.tsk.CallDisposition}"/>
+           </apex:column>
+
+           <apex:column >
+              <apex:facet name="header">
+                 <apex:outputText styleClass="header" value="Created Date"/>
+              </apex:facet>
+              <apex:outputField style="white-space:nowrap;" value="{!rec.tsk.CreatedDate}"/>
+           </apex:column>
+
+        </apex:pageBlockTable>
+     </apex:pageBlockSection>
+     
+  </apex:pageBlock>
+  </apex:form>
+</apex:page>

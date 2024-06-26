@@ -1,0 +1,25 @@
+<!--
+History
+02/22/2021 Dan Carmen      Changed the parameter to just take the string value to display
+
+-->
+<aura:component description="BannerDoNotProspect">
+    <aura:attribute name="noProspectReason" type="String"/>
+    
+    <aura:if isTrue="{!v.noProspectReason.length>0}">
+    <div class="box" title="Do Not Prospect?">
+        <div class="banner-header slds-align_absolute-center">
+            <h4 class="slds-item_label slds-text-color_weak slds-truncate slds-text-align_center">Do Not Prospect</h4>
+        </div>
+        <div class="banner-body column">
+            <img src="{!$Resource.BannerIcons + '/LightningIcons/redflag.png'}" />
+
+            <div class="slds-text-color_error">
+                <span>
+                    <aura:unescapedHtml value = "{!v.noProspectReason}"/>
+                </span>
+            </div>
+        </div>
+    </div>
+    </aura:if>
+</aura:component>

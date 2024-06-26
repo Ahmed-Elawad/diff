@@ -1,0 +1,183 @@
+<!--
+ - Huckleberry Button Lightning Web Component.
+ - 
+ - This component handles the functionality to create
+ - P&C Quote Data Record and send the information to Huckleberry.
+ - 
+ - @changes
+ - 12-22-2023  Vinay  Created.
+-->
+<!-- sldsValidatorIgnore -->
+<template>
+  <lightning-spinner if:true={showSpinner} size="large"></lightning-spinner>
+  <template if:true={opportunity}>
+    <lightning-quick-action-panel header="PC Quote Data status">
+      <lightning-layout multiple-rows>
+        <template lwc:if={hasPermission}>
+          <lightning-layout-item
+            size="12"
+            padding="around-small"
+            class="slds-text-align_center"
+          >
+            <lightning-formatted-text
+              value="* Opportunity at Discovery stage (40%):"
+              class="slds-var-m-right_small slds-text-heading_small"
+            ></lightning-formatted-text>
+            <template lwc:if={isOpportunityAtDiscoveryStage}>
+              <lightning-icon
+                icon-name={successIcon.name}
+                size={successIcon.size}
+                title={successIcon.title}
+              ></lightning-icon>
+            </template>
+            <template lwc:else>
+              <lightning-icon
+                icon-name={warningIcon.name}
+                size={warningIcon.size}
+                title={warningIcon.title}
+              ></lightning-icon>
+            </template>
+          </lightning-layout-item>
+          <lightning-layout-item
+            size="12"
+            padding="around-small"
+            class="slds-text-align_center"
+          >
+            <lightning-formatted-text
+              value="* Opportunity of correct Recordtype:"
+              class="slds-var-m-right_small slds-text-heading_small"
+            ></lightning-formatted-text>
+            <template lwc:if={isCorrectRecordType}>
+              <lightning-icon
+                icon-name={successIcon.name}
+                size={successIcon.size}
+                title={successIcon.title}
+              ></lightning-icon>
+            </template>
+            <template lwc:else>
+              <lightning-icon
+                icon-name={warningIcon.name}
+                size={warningIcon.size}
+                title={warningIcon.title}
+              ></lightning-icon>
+            </template>
+          </lightning-layout-item>
+          <lightning-layout-item
+            size="12"
+            padding="around-small"
+            class="slds-text-align_center"
+          >
+            <lightning-formatted-text
+              value="* Opportunity does not have PC quote:"
+              class="slds-var-m-right_small slds-text-heading_small"
+            ></lightning-formatted-text>
+            <template lwc:if={hasOpptyQuote}>
+              <lightning-icon
+                icon-name={warningIcon.name}
+                size={warningIcon.size}
+                title={warningIcon.title}
+              ></lightning-icon>
+            </template>
+            <template lwc:else>
+              <lightning-icon
+                icon-name={successIcon.name}
+                size={successIcon.size}
+                title={successIcon.title}
+              ></lightning-icon>
+            </template>
+          </lightning-layout-item>
+          <lightning-layout-item
+            size="12"
+            padding="around-small"
+            class="slds-text-align_center"
+          >
+            <lightning-formatted-text
+              value="* Submitter allowed to send to Huckleberry:"
+              class="slds-var-m-right_small slds-text-heading_small"
+            ></lightning-formatted-text>
+            <template lwc:if={isPCSalesUser}>
+              <lightning-icon
+                icon-name={successIcon.name}
+                size={successIcon.size}
+                title={successIcon.title}
+              ></lightning-icon>
+            </template>
+            <template lwc:else>
+              <lightning-icon
+                icon-name={warningIcon.name}
+                size={warningIcon.size}
+                title={warningIcon.title}
+              ></lightning-icon>
+            </template>
+          </lightning-layout-item>
+          <lightning-layout-item
+            size="12"
+            padding="around-small"
+            class="slds-text-align_center"
+          >
+            <lightning-formatted-text
+              value="* PC Quote Data record created:"
+              class="slds-var-m-right_small slds-text-heading_small"
+            ></lightning-formatted-text>
+            <template lwc:if={isPCQuoteCreationSuccessful}>
+              <lightning-icon
+                icon-name={successIcon.name}
+                size={successIcon.size}
+                title={successIcon.title}
+              ></lightning-icon>
+            </template>
+            <template lwc:else>
+              <lightning-icon
+                icon-name={warningIcon.name}
+                size={warningIcon.size}
+                title={warningIcon.title}
+              ></lightning-icon>
+            </template>
+          </lightning-layout-item>
+          <lightning-layout-item
+            size="12"
+            padding="around-small"
+            class="slds-text-align_center"
+          >
+            <lightning-formatted-text
+              value="* Opportunity updated with Huckleberry quote:"
+              class="slds-var-m-right_small slds-text-heading_small"
+            ></lightning-formatted-text>
+            <template lwc:if={opportunityUpdated}>
+              <lightning-icon
+                icon-name={successIcon.name}
+                size={successIcon.size}
+                title={successIcon.title}
+              ></lightning-icon>
+            </template>
+            <template lwc:else>
+              <lightning-icon
+                icon-name={warningIcon.name}
+                size={warningIcon.size}
+                title={warningIcon.title}
+              ></lightning-icon>
+            </template>
+          </lightning-layout-item>
+        </template>
+        <template lwc:else>
+          <lightning-layout-item
+            size="12"
+            padding="around-small"
+            class="slds-text-align_center"
+          >
+            <lightning-icon
+              icon-name="standard:problem"
+              size="large"
+              title="Problem"
+            ></lightning-icon>
+            <br />
+            <lightning-formatted-text
+              value="You do not have required permission!!"
+              class="slds-text-heading_small"
+            ></lightning-formatted-text>
+          </lightning-layout-item>
+        </template>
+      </lightning-layout>
+    </lightning-quick-action-panel>
+  </template>
+</template>

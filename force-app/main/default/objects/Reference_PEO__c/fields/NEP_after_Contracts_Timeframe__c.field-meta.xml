@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NEP_after_Contracts_Timeframe__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>Number of days excluding weekends between NEP Received Date and Contract received date. If either field is blank, this field will be null</description>
+    <externalId>false</externalId>
+    <formula>If(OR(ISNULL(NEP_Received_Date__c),ISNULL(Contract_Received__c)) , NULL ,(NEP_Received_Date__c - Contract_Received__c) - 2*( floor((NEP_Received_Date__c - DATE(1985, 6, 24))/7) - floor((Contract_Received__c - DATE(1985, 6, 24))/7)))</formula>
+    <label>NEP after Contracts Timeframe</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

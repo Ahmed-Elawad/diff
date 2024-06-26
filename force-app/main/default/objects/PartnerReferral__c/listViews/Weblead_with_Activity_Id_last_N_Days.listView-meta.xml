@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Weblead_with_Activity_Id_last_N_Days</fullName>
+    <columns>NAME</columns>
+    <columns>CREATED_DATE</columns>
+    <columns>LAST_UPDATE</columns>
+    <columns>ActivityId__c</columns>
+    <columns>Company__c</columns>
+    <columns>FirstName__c</columns>
+    <columns>LastName__c</columns>
+    <columns>Referral__c</columns>
+    <columns>Campaign__c</columns>
+    <columns>Lead__c</columns>
+    <columns>Account__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CREATED_DATE</field>
+        <operation>equals</operation>
+        <value>LAST_N_DAYS:5</value>
+    </filters>
+    <filters>
+        <field>ActivityId__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Source__c</field>
+        <operation>equals</operation>
+        <value>WEBLEAD</value>
+    </filters>
+    <label>Weblead with Activity Id last N Days</label>
+</ListView>

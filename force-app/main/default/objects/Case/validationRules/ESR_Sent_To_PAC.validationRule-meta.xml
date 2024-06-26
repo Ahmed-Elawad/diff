@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ESR_Sent_To_PAC</fullName>
+    <active>true</active>
+    <description>Action must be Sent to PAC when Amendment Type is IRS Notice</description>
+    <errorConditionFormula>AND(
+NOT(ISPICKVAL(ESR_Amendment_Type__c,&apos;IRS Notice&apos;)),
+ISPICKVAL(Action__c,&apos;Sent to PAC&apos;))</errorConditionFormula>
+    <errorDisplayField>Action__c</errorDisplayField>
+    <errorMessage>Action must be Sent to PAC when Amendment Type is IRS Notice</errorMessage>
+</ValidationRule>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Required_if_All_Products_Validated_is_No</fullName>
+    <active>true</active>
+    <description>If All Products Validated = no, require a reason why.</description>
+    <errorConditionFormula>ISPICKVAL(All_Products_Validated__c, &apos;No&apos;) &amp;&amp; ISBLANK(If_No_Why__c )</errorConditionFormula>
+    <errorDisplayField>If_No_Why__c</errorDisplayField>
+    <errorMessage>Explain why all products are not validated</errorMessage>
+</ValidationRule>

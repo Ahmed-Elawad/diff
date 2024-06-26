@@ -1,0 +1,34 @@
+<!-- Mass Create tasks for Contacts.
+
+   History
+   -------
+   12/07/2011 Dan Carmen   Created 
+ -->
+<apex:page standardController="Contact" recordSetVar="records" extensions="MassCreateActivity">
+
+<apex:form >
+   <apex:pageBlock >
+      <apex:pageMessages /> 
+      <apex:pageBlockButtons >
+         <apex:commandButton rendered="{!hasRecords}" value="Save" action="{!save}"/>
+         <apex:commandButton value="Cancel" action="{!cancel}"/>
+      </apex:pageBlockButtons>
+
+    <apex:pageBlockSection columns="1">
+
+      <apex:pageBlockSectionItem >
+         <apex:outputLabel value="Select the Activity Type" />
+         <apex:selectList value="{!activityType}"
+                          title="Select a Package."
+                          size="1" >
+            <apex:selectOptions value="{!activityTypes}"/>
+            <apex:actionSupport event="onchange" action="{!changeActivity}" />
+         </apex:selectList>
+      </apex:pageBlockSectionItem>
+
+     </apex:pageBlockSection>
+      <c:MassCreateActivity rendered="{!hasRecords}" useFirstActivity="{!useFirstActivity}" taskList="{!taskList}" meetingList="{!meetingList}" activityType="{!activityType}" useWhat="{!useWhat}"  />
+
+   </apex:pageBlock>
+</apex:form>
+</apex:page>

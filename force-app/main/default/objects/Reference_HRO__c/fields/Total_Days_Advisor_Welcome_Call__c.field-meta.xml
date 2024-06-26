@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Total_Days_Advisor_Welcome_Call__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>If((isnull(Advisor_Welcome_Call_Completed_Date__c )), 
+null, 
+(Advisor_Welcome_Call_Completed_Date__c -  Client_Load_Date__c  - 2*( floor((Advisor_Welcome_Call_Completed_Date__c - DATE(1985, 6, 24))/7) - floor((Client_Load_Date__c - DATE(1985, 6, 24))/7))))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>The number of days is from the date the client was transferred to Advisor until the date the welcome call has been completed</inlineHelpText>
+    <label>Total Days Advisor Welcome Call</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

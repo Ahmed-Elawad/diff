@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>FSA_PEO_Clients</fullName>
+    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6</booleanFilter>
+    <columns>NAME</columns>
+    <columns>Account_Lookup__c</columns>
+    <columns>Branch_Client_Number__c</columns>
+    <columns>FSA_Client__c</columns>
+    <columns>FSA_Effective_Date__c</columns>
+    <columns>Benefits_Effective__c</columns>
+    <columns>NCS_Payroll_Specialist__c</columns>
+    <columns>Implementation_Project_Manager__c</columns>
+    <columns>Contractual_Specialist__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>notEqual</operation>
+        <value>Reference_PEO__c.PEO_Client_Risk_Assessment,Reference_PEO__c.PEO_Existing_Client_Onboarding</value>
+    </filters>
+    <filters>
+        <field>FSA_Client__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <filters>
+        <field>First_Check__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Turned_Over_to_Payroll__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Account_Lookup__c</field>
+        <operation>notContain</operation>
+        <value>HRO T</value>
+    </filters>
+    <filters>
+        <field>CREATED_DATE</field>
+        <operation>greaterThan</operation>
+        <value>8/1/2019 12:00 AM</value>
+    </filters>
+    <label>FSA PEO Clients</label>
+    <sharedTo>
+        <role>HRS_4S_New_Case_Rep_I</role>
+    </sharedTo>
+</ListView>

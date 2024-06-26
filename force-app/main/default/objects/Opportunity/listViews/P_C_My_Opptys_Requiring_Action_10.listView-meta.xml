@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>P_C_My_Opptys_Requiring_Action_10</fullName>
+    <columns>OPPORTUNITY.CREATED_DATE</columns>
+    <columns>NSS_Source__c</columns>
+    <columns>OPPORTUNITY.LEAD_SOURCE</columns>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>OPPORTUNITY.CLOSE_DATE</columns>
+    <columns>OPPORTUNITY.PROBABILITY</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>OPPORTUNITY.AMOUNT</columns>
+    <columns>OPPORTUNITY.LAST_ACTIVITY</columns>
+    <columns>OPPORTUNITY.NEXT_STEP</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>Referring_Employee__c</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>OPPORTUNITY.PROBABILITY</field>
+        <operation>lessOrEqual</operation>
+        <value>20</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.STAGE_NAME</field>
+        <operation>notEqual</operation>
+        <value>Not Sold,Rejected,Disqualified,Rescinded,Referred,Referred Not Sold</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.SITE</field>
+        <operation>notEqual</operation>
+        <value>Referred Sold</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Opportunity.PCWC_Opportunity_Record_Type</value>
+    </filters>
+    <label>P&amp;C My Opptys Requiring Action (10%)</label>
+    <sharedTo>
+        <roleAndSubordinates>PC_Zone_50</roleAndSubordinates>
+    </sharedTo>
+</ListView>

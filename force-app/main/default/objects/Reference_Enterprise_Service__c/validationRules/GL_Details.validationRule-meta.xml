@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>GL_Details</fullName>
+    <active>true</active>
+    <errorConditionFormula>(ISPICKVAL( GL__c , &quot;Yellow: 400 - 499&quot;) ||
+ISPICKVAL(GL__c , &quot;Red: 500 +&quot;))&amp;&amp;
+
+OR(
+ISBLANK( GL_Details__c ))</errorConditionFormula>
+    <errorDisplayField>GL_Details__c</errorDisplayField>
+    <errorMessage>GL Details is required when GL is selected as Red or Yellow</errorMessage>
+</ValidationRule>

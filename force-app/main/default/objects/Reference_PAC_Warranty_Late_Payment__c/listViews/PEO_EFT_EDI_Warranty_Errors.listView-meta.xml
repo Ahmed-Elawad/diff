@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PEO_EFT_EDI_Warranty_Errors</fullName>
+    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 and 6 and 7</booleanFilter>
+    <columns>NAME</columns>
+    <columns>Reference_PAC__c</columns>
+    <columns>Payment_Type__c</columns>
+    <columns>Payment_Requested_By__c</columns>
+    <columns>Payment_Method__c</columns>
+    <columns>Payment_Amount__c</columns>
+    <columns>Payment_Completed_By__c</columns>
+    <columns>Date_Requested__c</columns>
+    <columns>Cost_Center_Charged__c</columns>
+    <columns>Special_Comments_if_applicable__c</columns>
+    <columns>Vendor_Name__c</columns>
+    <columns>Period_Date_for_Payment__c</columns>
+    <columns>Date_Completed__c</columns>
+    <columns>Check_Date__c</columns>
+    <columns>Warranty_record_entered_Approval_Process__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_PAC_Warranty_Late_Payment__c.PAC_Warranty_Record_Type</value>
+    </filters>
+    <filters>
+        <field>Warranty_Approved__c</field>
+        <operation>notEqual</operation>
+        <value>Denied</value>
+    </filters>
+    <filters>
+        <field>Date_Completed__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Payment_Completed_By__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Payment_Method__c</field>
+        <operation>equals</operation>
+        <value>EDI,EFT,&quot;Other (Void, Daily Balance, etc)&quot;</value>
+    </filters>
+    <filters>
+        <field>Date_Cancelled__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Cost_Center_Charged__c</field>
+        <operation>contains</operation>
+        <value>6000,0684,0696</value>
+    </filters>
+    <label>ERROR - PEO EFT/EDI Warranty (chk only)</label>
+    <sharedTo>
+        <role>Operating_Risk_Manager</role>
+        <role>Operating_Risk_Supervisor_Group_A</role>
+        <role>Operating_Risk_Supervisor_Group_B</role>
+        <role>Operating_Risk_Supervisor_Group_C</role>
+        <role>Operating_Risk_Supervisor_Group_D_E</role>
+        <role>Operating_Risk_Supervisor_Service_Support</role>
+        <role>Operating_Risk_and_Risk_Review_Manager</role>
+    </sharedTo>
+</ListView>

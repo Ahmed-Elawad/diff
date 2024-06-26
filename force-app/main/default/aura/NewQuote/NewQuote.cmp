@@ -1,0 +1,74 @@
+<aura:component></aura:component> <!--controller="NewQuoteAuraService" implements="flexipage:availableForAllPageTypes,lightning:isUrlAddressable,force:appHostable">
+
+	<lightning:workspaceAPI aura:id="workspace"/>
+
+	<aura:attribute name="simpleQuote" type="SBQQ__Quote__c" default="{}"/>
+	<aura:attribute name="opportunity" type="Opportunity"/>
+	<aura:attribute name="isThisCPQUser" type="Boolean"/>
+    <aura:attribute name="picvalue" type="List"/>
+    <aura:handler name="init" value="{! this }" action="{! c.doInit }"/>
+    
+    <force:recordData aura:id="oppLoader"
+    				  recordId="{!v.pageReference.state.c__opportunityId}"
+    				  fields="Id,Name,AccountId,Pricebook2,Pricebook2Id,OwnerId,Probability,StageName" 
+                      targetFields="{!v.opportunity}"
+                      targetError="{!v.recordError}"
+                      mode="VIEW" />
+
+
+    <lightning:spinner aura:id="spinner" class="slds-hide"/>
+
+    <lightning:card title="New Quote" iconName="custom:custom19">
+
+    	<aura:set attribute="actions">
+    		<lightning:button label="Save" onclick="{!c.saveQuote}"/>
+    		<lightning:button label="Cancel" onclick="{!c.cancelNewQuote}"/>
+    	</aura:set>
+    	
+
+    	<hr style="margin: 0px;"/>
+
+
+		<div class="slds-grid slds-wrap slds-p-around_medium">
+
+			<div class="slds-size_1-of-2">
+
+        		<lightning:input aura:id="quoteField" class="slds-p-horizontal_medium slds-p-bottom_medium" label="Quote Name" value="{!v.simpleQuote.Quote_Name__c}" required="true"/>
+
+        		<lightning:input class="slds-p-horizontal_medium slds-p-bottom_medium" label="Current Per Pay Period Charges" type="number" formatter="currency" value="{!v.simpleQuote.Current_Per_Pay_Period_Charges__c}"/>
+
+        		<div class="slds-p-horizontal_medium slds-p-bottom_medium" style="font-size: .75rem;">
+	        		<ui:inputCheckbox  aura:id="quoteField" class="slds-p-horizontal_medium slds-p-bottom_medium" label="Multi ID" value="{!v.simpleQuote.Multi_ID__c}"/>
+	        	</div>
+                <aura:if isTrue="{!(v.isThisCPQUser != false) }">
+      				<lightning:select value="{!v.simpleQuote.Used_Steelbrick__c}" aura:id="quoteField" class="slds-p-horizontal_medium slds-p-bottom_medium" label="Used Steelbrick" required="true">
+                    	<option value="{!null}"> None </option>
+                        <aura:iteration items="{!v.picvalue}" var="s">
+                			<option value="{!s}">{!s}</option>             
+            			</aura:iteration> 
+        			</lightning:select>           
+               
+      				<lightning:input aura:id="quoteField" class="slds-p-horizontal_medium slds-p-bottom_medium" label="Used Steelbrick Because" value="{!v.simpleQuote.Used_Steelbrick_Because__c}" required="true"/>
+                </aura:if>     
+    		</div>
+
+			<div class="slds-size_1-of-2">
+
+				<c:CustomLookup aura:id="quoteField" class="slds-p-horizontal_medium slds-p-bottom_medium" objectAPIName="Opportunity" IconName="standard:opportunity" value="{!v.simpleQuote.SBQQ__Opportunity2__c}" selectedRecord="{!v.opportunity}" label="Opportunity" required="true"/>
+
+        		<div class="slds-p-horizontal_medium slds-p-bottom_medium" style="font-size: .75rem;">
+        			<ui:inputCheckbox class="slds-p-horizontal_medium slds-p-bottom_medium" aura:id="quoteField" label="Show Net Cost" value="{!v.simpleQuote.Show_Net_Cost__c}"/>
+        		</div>
+
+			</div>
+
+    	</div>
+
+
+    	<aura:set attribute="footer">
+    		<lightning:button label="Save" onclick="{!c.saveQuote}"/>
+    		<lightning:button label="Cancel" onclick="{!c.cancelNewQuote}"/>
+    	</aura:set>
+    </lightning:card>
+
+</aura:component>-->

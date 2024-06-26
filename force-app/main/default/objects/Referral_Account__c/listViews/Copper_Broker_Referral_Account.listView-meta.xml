@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Copper_Broker_Referral_Account</fullName>
+    <columns>NAME</columns>
+    <columns>OWNER.FIRST_NAME</columns>
+    <columns>OWNER.LAST_NAME</columns>
+    <columns>Referral_Source_Business_Type__c</columns>
+    <columns>ReferralSourceSubType__c</columns>
+    <columns>Phone__c</columns>
+    <columns>State__c</columns>
+    <columns>End_Date_Reason__c</columns>
+    <columns>RECORDTYPE</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>Referral_Source_Business_Type__c</field>
+        <operation>equals</operation>
+        <value>Broker,Broker Dealer,Broker Dealer Branch,Business Consultant,Financial Services,Full Service Agency,Health Insurance Broker,Health Ins Broker,Insurance Broker,PEO Broker,P&amp;C Broker,Property and Casualty Broker,Trusted Advisor</value>
+    </filters>
+    <filters>
+        <field>End_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Referral_Type__c</field>
+        <operation>equals</operation>
+        <value>Bronze</value>
+    </filters>
+    <filters>
+        <field>Referral_Payment_Partner_Status__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>NAME</field>
+        <operation>notContain</operation>
+        <value>Delete</value>
+    </filters>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>notEqual</operation>
+        <value>Referral_Account__c.CoreReferralSourceRecordType,Referral_Account__c.HRSReferralSourceRecordType</value>
+    </filters>
+    <label>My Bronze Brokers w/o Agreement</label>
+</ListView>

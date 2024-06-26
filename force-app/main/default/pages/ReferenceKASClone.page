@@ -1,0 +1,73 @@
+<!-- Created so the KAS team can clone the case and Reference KAS information for multi id situations.
+
+	History
+	-------
+	03/14/2018 Lynn Michels Created
+	
+-->
+
+<apex:page standardController="Reference_KAS__c" extensions="RefKASCloneController"> 
+	<apex:includeScript value="{!$Resource.jQueryJs}" />
+	<apex:includeScript value="{!$Resource.buttonsEnabledJs}" />
+	<style type="text/css">
+		.text1
+		{
+			font-weight: bold;  
+			slds-text-heading: x-small;
+		}
+		.textBox1 {
+			width: 90%;
+			padding: 5px;
+			border-radius: 5px;
+		}
+		
+	</style>
+	<apex:slds /> 
+
+		<div class ="slds-p-top_medium" >
+
+			<apex:form rendered="{!confirmClone}">
+				<p>Are you sure you want to clone this Reference KAS record and its case?</p><br />
+				<div class="slds-docked-form-footer slds-theme_info slds-theme_alert-texture"> 
+					<apex:commandButton styleClass="slds-button slds-button_success" value="Confirm Clone" action="{!cloneRecords}" />
+				</div>
+			</apex:form>
+
+
+			<apex:form rendered="{!NOT(confirmClone) && NOT(success)}" id="selectToClone">
+			<apex:actionFunction action="{!processClone}" name="jsProcessClone" />
+				<p>Select the Prospect Client and the Contact for the Cloned records.</p>
+				
+					<apex:outputPanel id="display1">
+						<apex:actionRegion >
+						<apex:pageMessages id="msg1" rendered="{!displayErrorMessage}" escape="false"/>
+							<div class="slds-p-bottom_medium">
+								<label class="text1">Prospect Client:</label><br/>
+								<apex:inputField styleClass="textBox1" value="{!clonedCase.AccountId}" /> 
+							</div>
+							<div class="slds-grid slds-wrap" style="margin-bottom:5px">
+								<div class="slds-m-bottom_small slds-p-right_xx-small slds-size_1-of-2">
+									<label class="text1">Contact:</label><br/>
+									<apex:inputField styleClass="textBox1" value="{!clonedCase.ContactId}" /> 
+								</div>
+							</div>
+						</apex:actionRegion>
+					</apex:outputPanel>
+				<div class="slds-docked-form-footer slds-theme_info slds-theme_alert-texture"> 
+					<!--apex:commandButton styleClass="slds-button slds-button_success" value="Save Cloned Records" action="{!processClone}"/-->
+<apex:commandButton value="Save Cloned Records" onclick="buttonsEnabled(false); jsProcessClone(); " status="processingStatus2"/>
+<apex:actionStatus startText="Processing..." id="processingStatus2"/>
+				
+				</div>
+			</apex:form>
+
+			
+			<apex:form rendered="{!success}">
+				<apex:pageMessages id="msg3" rendered="{!displayMessages}" escape="false"/>
+				<div class="slds-docked-form-footer slds-theme_info slds-theme_alert-texture"> 
+					<apex:commandButton styleClass="slds-button slds-button_success" value="Clone Again" action="{!cloneRecords}"/>
+				</div>
+			</apex:form>
+		</div>
+
+</apex:page>

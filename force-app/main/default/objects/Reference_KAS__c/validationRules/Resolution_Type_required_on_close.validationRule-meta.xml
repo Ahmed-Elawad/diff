@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Resolution_Type_required_on_close</fullName>
+    <active>true</active>
+    <description>To close the record, resolution type must be populated. If they populate the resolution type, they must close the recrod.</description>
+    <errorConditionFormula>(TEXT(Case_Lookup__r.Origin) = &apos;Reactive&apos;&amp;&amp; 
+ISPICKVAL(Status__c , &apos;Closed&apos;) &amp;&amp; ISPICKVAL(Resolution_type__c, &apos;&apos;)) 
+|| 
+(TEXT(Case_Lookup__r.Origin) = &apos;Reactive&apos; &amp;&amp; NOT(ISPICKVAL(Status__c , &apos;Closed&apos;)) &amp;&amp; NOT(ISPICKVAL(Resolution_type__c, &apos;&apos;)))</errorConditionFormula>
+    <errorMessage>Populate Resolution Type, then change the Status to &quot;Closed&quot;.</errorMessage>
+</ValidationRule>

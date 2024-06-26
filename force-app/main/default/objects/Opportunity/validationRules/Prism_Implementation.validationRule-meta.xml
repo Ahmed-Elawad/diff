@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prism_Implementation</fullName>
+    <active>true</active>
+    <description>You may not update the Net Revenue, Run-Effective Date or Employee Count once your prospect has moved into the Implementation stage.</description>
+    <errorConditionFormula>AND(
+OR(
+$RecordType.Name = &apos;Prism PEO Opportunity Record Type&apos;,
+$RecordType.Name = &apos;Prism PEO Opportunity FSS Record Type&apos;,
+$RecordType.Name = &apos;PEO Opportunity Record Type&apos;,
+$RecordType.Name = &apos;PEO Opportunity FSS Record Type&apos;),
+OR(
+$Profile.Name = &apos;HRS PEO Centric Sales - SB&apos;,
+$Profile.Name = &apos;HRS PEO Sales Manager&apos;),
+OR(
+ISPICKVAL(Account.CSCMContractStatus__c,&apos;Implementation&apos;),
+ISPICKVAL(Account.CSCMContractStatus__c,&apos;PendingActivation&apos;),
+ISPICKVAL(Account.CSCMContractStatus__c,&apos;Client&apos;),
+ISPICKVAL(Account.CSCMContractStatus__c,&apos;ContractPending&apos;),
+ISPICKVAL(Account.CSCMContractStatus__c,&apos;UnderContract&apos;)),
+OR(
+ISCHANGED(CloseDate),
+ISCHANGED(Amount),
+ISCHANGED(Employees_Paid_Per_Payroll__c),
+ISCHANGED(of_Employees__c)))</errorConditionFormula>
+    <errorMessage>You may not update the Net Revenue, Run-Effective Date or Employee Count once your prospect has moved into the Implementation stage.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,29 @@
+<aura:component description="BannerInitialPresentationComplete">
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="relatedPresentationEvents" type="Object" />
+
+    <aura:attribute name="showPresentationComplete" type="Boolean" default="false" />
+    <aura:attribute name="showPresentationScheduled" type="Boolean" default="false" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <aura:if isTrue="{!or(v.showPresentationComplete, v.showPresentationScheduled)}">
+        <div class="box" title="Strategic Account">            
+
+            <div class="banner-header slds-align_absolute-center">
+                <h4 class="slds-item_label slds-text-color_weak slds-truncate slds-text-align_center">Initial Presentation Complete</h4>
+            </div>
+            <div class="{!'banner-body column ' + (not(empty(v.recordId)) ? ' clickable-banner-item' : '') }" title="Open Activities" onclick="{!c.navigateToRelatedList}">
+                <aura:if isTrue="{!v.showPresentationComplete}">
+                    <img src="{!$Resource.BannerIcons + '/LightningIcons/eventcompleted.png'}" />
+                    <span>Initial Presentation Complete</span>
+                </aura:if>
+
+                <aura:if isTrue="{!and(v.showPresentationScheduled, !v.showPresentationComplete)}">
+                    <img src="{!$Resource.BannerIcons + '/LightningIcons/eventsched.png'}" />
+                    <span>Initial Presentation Scheduled</span>
+                </aura:if>
+            </div>
+        </div>
+    </aura:if>
+</aura:component>

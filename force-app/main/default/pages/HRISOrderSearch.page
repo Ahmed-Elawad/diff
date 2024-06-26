@@ -1,0 +1,137 @@
+<!--
+*	10/07/2019	Matt Fritschi		Created. 
+* 	12/04/2019  Jake Hinds			Adding limit to returned orders
+* 
+* 
+* 
+* 
+-->
+
+<apex:page docType="html-5.0" standardController="Account" extensions="HRISOrderSearchController" lightningStyleSheets="true" showHeader="false">
+    
+    <style>
+        .biggestText
+        {
+        font-size: 150% !important;
+        }
+        .activeTAA
+        {
+        font-size: 150% !important;
+        color: #00C421
+        }
+        .inactiveTAA
+        {
+        font-size: 150% !important;
+        color: #E50C00
+        }
+        .bannerText
+        {
+        font-size: 100% !important;
+        color: #E50C00
+        }
+        .biggerText
+        {
+        font-size: 125% !important;
+        text-align: center !important;
+        }
+        
+        .centeredText
+        {
+        text-align: center !important;
+        }
+    </style>
+    
+    <form rendered = "{!error}">
+        <apex:pageMessages id="shwmsg"></apex:pageMessages>
+    </form>
+    
+    
+    <!-- ********** Order Table ********** -->
+    <apex:form id="orderOutputTable" rendered="{!OrdersFound}">    
+        
+        <apex:pageBlock >
+            <apex:pageBlockSection >
+                <apex:outputText value="Company Name: {!companyName}" styleClass="biggestText"/>
+                <apex:outputText value="Branch/Client: {!branchClient}" styleClass="biggestText"/>
+                <apex:outputText value="Active TAA" styleClass="activeTAA" rendered="{!activeTAA}"/>
+                <apex:outputText value="Inactive TAA - Order Balance: {!orderBalance}" styleClass="inactiveTAA" rendered="{!NOT(activeTAA)}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>  
+        
+        <apex:pageBlock title="HRIS Orders">
+            <apex:pageBlockSection columns="1" showHeader="false">
+                <apex:pageBlockTable value="{!ordersList}" var="ord">
+                    
+                    <apex:column headerValue="Order Date" headerClass="biggerText" style="text-align: center; vertical-align: middle"><apex:outputText escape="false" value="{!ord.orderDate}" /></apex:column>
+                    <apex:column headerValue="Order Number" headerClass="biggerText" style="text-align: center; vertical-align: middle"><apex:outputText escape="false" value="{!ord.orderNumber}" /></apex:column>
+                    
+                    <apex:column headerValue="Shipping Info" headerClass="biggerText" style="text-align: center; vertical-align: middle">
+                        <apex:pageBlock rendered="{!ord.trackingInfo.size>0}">
+                            <apex:pageBlockTable value="{!ord.trackingInfo}" var="track">
+                                <apex:column headerValue="Shipping Method" headerClass="centeredText"><apex:outputText escape="false" value="{!track.shipMethod}" /></apex:column>
+                                <apex:column headerValue="Tracking Number" headerClass="centeredText"><apex:outputText escape="false" value="{!track.trackNum}" /></apex:column>
+                            </apex:pageBlockTable>
+                        </apex:pageBlock>
+                    </apex:column>
+                    
+                    <apex:column headerValue="Items" headerClass="biggerText" style="text-align: center; vertical-align: middle">
+                        <apex:pageBlock >
+                            <apex:pageBlockTable value="{!ord.equipList}" var="ordEquip">
+                                <apex:column headerValue="Serial Number" headerClass="centeredText"><apex:outputText escape="false" value="{!ordEquip.serialNumber}" /></apex:column>
+                                <apex:column headerValue="Order QTY" headerClass="centeredText"><apex:outputText escape="false" value="{!ordEquip.orderQuantity}" /></apex:column>
+                                <apex:column headerValue="Item Number" headerClass="centeredText"><apex:outputText escape="false" value="{!ordEquip.itemNumber}" /></apex:column>
+                                <apex:column headerValue="Description" headerClass="centeredText"><apex:outputText escape="false" value="{!ordEquip.itemDescription}" /></apex:column>
+                            </apex:pageBlockTable>
+                        </apex:pageBlock>
+                    </apex:column>
+                    
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+    
+    <!-- ********** Returned Equipment Table ********** -->
+    <apex:form id="returnedOutputTable" rendered="{!ReturnedFound}">    
+        
+        <apex:pageBlock title="Returned Equipment/Software">
+            <apex:outputLabel rendered="{!returnedEquipList.size==1000}" styleClass="bannerText">Only the Most Recent 1000 Records Will Appear</apex:outputLabel>
+            <apex:pageBlockSection columns="1" showHeader="false">
+                <apex:pageBlockTable value="{!returnedEquipList}" var="equipment">
+                    
+                    <apex:column headerValue="Order Date" headerClass="biggerText" style="text-align: center; vertical-align: middle"><apex:outputText escape="false" value="{!equipment.orderDate}" /></apex:column>
+                    <apex:column headerValue="Order Number" headerClass="biggerText" style="text-align: center; vertical-align: middle"><apex:outputText escape="false" value="{!equipment.orderNumber}" /></apex:column>
+                    <apex:column headerValue="Serial Number" headerClass="biggerText" style="text-align: center; vertical-align: middle"><apex:outputText escape="false" value="{!equipment.serialNumber}" /></apex:column>
+                    <apex:column headerValue="RMA QTY" headerClass="biggerText" style="text-align: center; vertical-align: middle"><apex:outputText escape="false" value="{!equipment.rmaQuantity}" /></apex:column>
+                    <apex:column headerValue="Item Number" headerClass="biggerText" style="text-align: center; vertical-align: middle"><apex:outputText escape="false" value="{!equipment.itemNumber}" /></apex:column>
+                    <apex:column headerValue="Description" headerClass="biggerText" style="text-align: center; vertical-align: middle"><apex:outputText escape="false" value="{!equipment.itemDescription}" /></apex:column>
+                    <apex:column headerValue="Return Date" headerClass="biggerText" style="text-align: center; vertical-align: middle"><apex:outputText escape="false" value="{!equipment.returnDate}" /></apex:column>
+                    
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+    
+    <!-- ********** AMA/PIA Table ********** -->
+    <apex:form id="AMAPIAOutputTable" rendered="{!AMAPIAFound}">    
+        
+        <apex:pageBlock title="AMA/PIA Information">
+            <apex:pageBlockSection columns="1" showHeader="false">
+                <apex:pageBlockTable value="{!AMAPIAList}" var="amapia">
+                    
+                    <apex:column headerValue="Order Date" headerClass="biggerText" style="text-align: center; vertical-align: middle"><apex:outputText escape="false" value="{!amapia.orderDate}" /></apex:column>
+                    <apex:column headerValue="Order Number" headerClass="biggerText" style="text-align: center; vertical-align: middle"><apex:outputText escape="false" value="{!amapia.orderNumber}" /></apex:column>
+                    <apex:column headerValue="Order Quantity" headerClass="biggerText" style="text-align: center; vertical-align: middle"><apex:outputText escape="false" value="{!amapia.orderQuantity}" /></apex:column>
+                    <apex:column headerValue="Item Number" headerClass="biggerText" style="text-align: center; vertical-align: middle"><apex:outputText escape="false" value="{!amapia.itemNumber}" /></apex:column>
+                    <apex:column headerValue="Description" headerClass="biggerText" style="text-align: center; vertical-align: middle"><apex:outputText escape="false" value="{!amapia.itemDescription}" /></apex:column>
+                    <apex:column headerValue="Start Date" headerClass="biggerText" style="text-align: center; vertical-align: middle"><apex:outputText escape="false" value="{!amapia.startDate}" /></apex:column>
+                    <apex:column headerValue="End Date" headerClass="biggerText" style="text-align: center; vertical-align: middle"><apex:outputText escape="false" value="{!amapia.endDate}" /></apex:column>
+                    <apex:column headerValue="Order Balance" headerClass="biggerText" style="text-align: center; vertical-align: middle"><apex:outputText escape="false" value="{!amapia.orderBalance}" /></apex:column>
+                    
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+    
+    <!-- ********** Apex Page End ********** -->
+    
+</apex:page>

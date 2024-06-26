@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssignmentRules xmlns="http://soap.sforce.com/2006/04/metadata">
+    <assignmentRule>
+        <fullName>Lead Assignment</fullName>
+        <active>true</active>
+        <ruleEntry>
+            <assignedTo>TaleoQueue</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.CreatedById</field>
+                <operation>equals</operation>
+                <value>SFDC Data</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Lead.Referral_From__c</field>
+                <operation>equals</operation>
+                <value>Taleo</value>
+            </criteriaItems>
+            <template>AutoresponseEmailTemplate/LeadsNewassignmentnotificationTaleoQueue</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>PayworksQueue</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.CreatedById</field>
+                <operation>equals</operation>
+                <value>SFDC DATA</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Lead.Referral_From__c</field>
+                <operation>equals</operation>
+                <value>Payworks</value>
+            </criteriaItems>
+            <template>AutoresponseEmailTemplate/LeadsNewassignmentnotificationPayworksQueue</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>ExpenseWire_Sales_Queue</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.CreatedById</field>
+                <operation>equals</operation>
+                <value>SFDC Data</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Lead.Mkt_Site_Client_s_Request__c</field>
+                <operation>contains</operation>
+                <value>EW</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Lead.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>MMS Lead Record Type</value>
+            </criteriaItems>
+        </ruleEntry>
+        <ruleEntry/>
+    </assignmentRule>
+</AssignmentRules>

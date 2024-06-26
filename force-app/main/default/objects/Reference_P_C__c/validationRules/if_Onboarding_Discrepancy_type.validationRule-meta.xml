@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>if_Onboarding_Discrepancy_type</fullName>
+    <active>true</active>
+    <description>When Discrepancy type &quot;Onboarding Discrepancy&quot; is selected then the following fields are also required: Onboarding Discrepancy Category, Onboarding Discrepancy Reason</description>
+    <errorConditionFormula>AND(RecordType.Name =&apos;P&amp;C Discrepancy&apos;, 
+ISPICKVAL(Discrepancy_Type__c ,&apos;Onboarding Discrepancy&apos;), 
+OR( ISPICKVAL( Onboarding_Discrepancy_Category__c ,&apos;&apos;) , 
+ISPICKVAL( Onboarding_Discrepancy_Reason__c ,&apos;&apos;) ))</errorConditionFormula>
+    <errorMessage>You must populate Onboarding Discrepancy Category and Onboarding Discrepancy Reason.</errorMessage>
+</ValidationRule>

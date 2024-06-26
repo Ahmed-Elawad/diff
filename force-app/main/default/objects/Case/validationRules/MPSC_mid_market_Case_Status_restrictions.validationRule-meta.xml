@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MPSC_mid_market_Case_Status_restrictions</fullName>
+    <active>true</active>
+    <description>Implemented as part of &quot;SFDC-27130&quot; user story</description>
+    <errorConditionFormula>AND(
+ RecordType.DeveloperName ==&quot;Multi_Product_Service_Case&quot;,
+ NOT(ISNEW()),
+ ISCHANGED( Status ),
+ $Profile.Name==&quot;Mid-Market Service Profile&quot;,
+ NOT(ISPICKVAL(Type, &quot;Service Help&quot;)),
+ NOT($Permission.Mid_Market_Supervisor_Status_Change_Access), 
+  NOT(
+   AND(
+    ISPICKVAL(PRIORVALUE(Status), &quot;New&quot;),
+    ISPICKVAL(Status, &quot;Cancelled&quot;)
+   )
+  ),
+  NOT(
+   AND(
+    ISPICKVAL(PRIORVALUE(Status), &quot;Denied&quot;),
+    ISPICKVAL(Status, &quot;New&quot;)
+   )
+  )  
+
+)</errorConditionFormula>
+    <errorMessage>You do not have access to change Case to this status since it can only set by the system</errorMessage>
+</ValidationRule>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Terminations_HR_Solutions</fullName>
+    <columns>NAME</columns>
+    <columns>Premier_Effective_Date__c</columns>
+    <columns>Termination_or_Transfer__c</columns>
+    <columns>Client_Support_Assigned_To__c</columns>
+    <columns>Approved_Date__c</columns>
+    <columns>BIS_ID__c</columns>
+    <columns>Branch_Client_Number__c</columns>
+    <columns>Code_Lost_Date__c</columns>
+    <columns>CSS_Approved__c</columns>
+    <columns>Primary_Tier_1_Reasons__c</columns>
+    <columns>Primary_Tier_2_Reasons__c</columns>
+    <columns>Primary_Tier_3_Reasons__c</columns>
+    <columns>Client_IDs_to_be_Coded_Lost__c</columns>
+    <columns>Case_Owner__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CSS_Approved__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <filters>
+        <field>Cltspt_Cancel_Complete_Date__c</field>
+        <operation>notEqual</operation>
+        <value>LAST_N_DAYS:2000</value>
+    </filters>
+    <filters>
+        <field>Termination_or_Transfer__c</field>
+        <operation>equals</operation>
+        <value>Termination</value>
+    </filters>
+    <filters>
+        <field>Approved_Date__c</field>
+        <operation>greaterThan</operation>
+        <value>12/1/2019</value>
+    </filters>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_HRS_Termination_Transfer__c.Reference_HRS_Termination_Transfer</value>
+    </filters>
+    <label>Terminations - HR Solutions</label>
+</ListView>

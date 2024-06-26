@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Penalty_Interest_Assessed_required</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( 
+ISPICKVAL(Ticket_Type__c, &quot;Balance Due Notice (includes Estimated/Proposed Assessments)&quot;),
+
+ISBLANK(Penalty_Interest_Assessed__c),
+NOT(BEGINS(Text(Closure_Code__c),&quot;Withdrawn&quot;)),
+BEGINS(TEXT( Status__c ), &quot;Closed&quot;) 
+)
+
+/* || 
+AND( 
+ISBLANK(Penalty_Interest_Assessed__c), OR(Owner:Queue.QueueName =&apos;PAC Group Follow-up Calls&apos;, 
+NOT BEGINS(Text(Closure_Code__c),&quot;Withdrawn&quot;),
+Owner:Queue.QueueName =&apos;PAC Group D - Follow-up Calls&apos; 
+) 
+)*/</errorConditionFormula>
+    <errorDisplayField>Penalty_Interest_Assessed__c</errorDisplayField>
+    <errorMessage>Please enter all required fields : 
+Penalty_Interest_Assessed__c</errorMessage>
+</ValidationRule>

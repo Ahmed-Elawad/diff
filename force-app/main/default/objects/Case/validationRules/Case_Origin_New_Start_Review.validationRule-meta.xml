@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Case_Origin_New_Start_Review</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND ( 
+ISPICKVAL( Origin , &quot;New Start Review&quot;) , 
+
+ISBLANK(TEXT(Status)), 
+
+ISBLANK(TEXT(ACT_Category_1__c)), 
+
+ISBLANK(TEXT(ACT_Category_2__c )), 
+
+ISBLANK(Account.Name) , 
+
+ISBLANK(TEXT(Service_Location__c)), 
+
+ISBLANK(Referral_Account__c) , 
+
+ISBLANK(Referral_Contact__c) , 
+
+ISBLANK(Subject) , 
+
+ISBLANK(Description) 
+
+)</errorConditionFormula>
+    <errorMessage>Please fill the below fields as Case Origin = New Start Review : 
+
+Status 
+ACT Category 1 
+ACT Category 2 
+Prospect-Client Name 
+Service Location 
+Referral Account 
+Referral Contact 
+Subject 
+Description</errorMessage>
+</ValidationRule>

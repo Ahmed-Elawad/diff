@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Fields_required_before_closing_the_case</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND 
+( 
+RecordTypeId=&quot;0120g000000l3kj&quot;, 
+ISPICKVAL (Status, &quot;Solved&quot;), 
+ISBLANK ( Status_Description__c ), 
+Initial_Client_Contact_Completed__c = FALSE 
+
+)</errorConditionFormula>
+    <errorMessage>&quot;Status Description&quot;, &quot;Initial Client Contact Completed?&quot; are required before closing case.</errorMessage>
+</ValidationRule>

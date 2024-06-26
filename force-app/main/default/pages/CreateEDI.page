@@ -1,0 +1,23 @@
+<apex:page showHeader="false" sidebar="false">
+<!-- Begin Default Content REMOVE THIS -->
+
+<!-- <h1>Work In progress.Please do not use the page--{!$CurrentPage.parameters.id}--{!$CurrentPage.parameters.objectApiName}</h1> -->
+<body style="height:100%;width:100%">
+<apex:includeLightning />    
+    <div id="LightningComponentid" />    
+    <script>
+    $Lightning.use("c:CreateEDIApp", function() {
+        $Lightning.createComponent("c:createEDI",
+          { recordId: "{!$CurrentPage.parameters.Id}",//recordId:'a3v0g000000uxhL',
+            objectApiName: "{!$CurrentPage.parameters.objectApiName}" //objectApiName: 'Reference_HNBF__c'
+          },
+          "LightningComponentid",
+          function(cmp) {
+             console.log('LWC Componenet added in VF page');
+          });
+    });
+    
+    </script>
+    </body>
+<!-- End Default Content REMOVE THIS -->
+</apex:page>

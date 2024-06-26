@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>APR_number_Required</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+ISBLANK(APR__c),
+OR(
+ISPICKVAL( Type__c ,&quot;Repair/Fix APR&quot;),
+ISPICKVAL( Type__c ,&quot;Enhancement/Product Gap&quot;)
+))</errorConditionFormula>
+    <errorDisplayField>APR__c</errorDisplayField>
+    <errorMessage>APR # cannot be blank when &quot;Type&quot; is equal to &quot;Repair/Fix APR&quot; or &quot;Enhancement/Product Gap&quot;</errorMessage>
+</ValidationRule>

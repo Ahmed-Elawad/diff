@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Lock_record_100_days_past_Approval_Date</fullName>
+    <active>false</active>
+    <description>Lock record when 100 days past the Approval Date (valid for 90 days)</description>
+    <errorConditionFormula>AND( 
+NOT(ISNEW()), Record_is_locked__c = True, AND($Profile.Name!=&apos;System Administrator&apos;,$User.ProfileId &lt;&gt; &apos;00e30000000mTjP&apos;, $User.UserRoleId &lt;&gt;&apos;00E70000001CNFW&apos;,$User.UserRoleId &lt;&gt;&apos;00E70000001CNG0&apos;, $User.UserRoleId &lt;&gt;&quot;00E70000001CNFv&quot;) 
+)</errorConditionFormula>
+    <errorMessage>You cannot edit this record as approval date is past 100 days.</errorMessage>
+</ValidationRule>

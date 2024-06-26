@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Open_Hold_Action_Req_Contractual_Discrep__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>Open Hold: Action Req - Payroll Will Not Run Contractual Discrepancies</description>
+    <inlineHelpText>Displays the number of related Reference PEO Discrepancy records that are: 
+1) Open 
+2) Discrepancy Area = Contractual 
+3) Hold: Action Req - Payroll Will Not Run = True</inlineHelpText>
+    <label>Open Contractual Hold Discrepancies</label>
+    <securityClassification>Internal</securityClassification>
+    <summaryFilterItems>
+        <field>Reference_PEO_Discrepancy__c.Discrepancy_Area__c</field>
+        <operation>equals</operation>
+        <value>Contractual</value>
+    </summaryFilterItems>
+    <summaryFilterItems>
+        <field>Reference_PEO_Discrepancy__c.HoldPayrollWillNotRun__c</field>
+        <operation>equals</operation>
+        <value>True</value>
+    </summaryFilterItems>
+    <summaryFilterItems>
+        <field>Reference_PEO_Discrepancy__c.Status__c</field>
+        <operation>equals</operation>
+        <value>Open</value>
+    </summaryFilterItems>
+    <summaryForeignKey>Reference_PEO_Discrepancy__c.Reference_PEO__c</summaryForeignKey>
+    <summaryOperation>count</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Summary</type>
+</CustomField>

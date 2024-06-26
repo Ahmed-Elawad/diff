@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Enter_Closeout_Period</fullName>
+    <active>false</active>
+    <description>If an HRA or FSA is being terminated you must enter a closeout for that product</description>
+    <errorConditionFormula>(ISPICKVAL(FSA_Termination__c,&quot;Yes&quot;)&amp;&amp;
+ISPICKVAL(FSA_Closeout_Period__c,&quot;&quot;))
+
+||  
+
+(ISPICKVAL(HRA_Termination__c,&quot;Yes&quot;)&amp;&amp;
+ISPICKVAL(HRA_Closeout_Period__c,&quot;&quot;))</errorConditionFormula>
+    <errorMessage>If an HRA or FSA is being terminated you must enter a closeout for that product</errorMessage>
+</ValidationRule>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AOR_Effective_date_or_Policy_Effective</fullName>
+    <active>true</active>
+    <description>A Policy Effective date must be entered unless there is a AOR Effective date</description>
+    <errorConditionFormula>ISBLANK(Policy_Effective_Date__c)||
+( CONTAINS(TEXT(Reference_HNBF__r.Submission_Type__c), &apos;AOR&apos;) &amp;&amp; ISBLANK( AOR_Effective_Date__c))</errorConditionFormula>
+    <errorMessage>A Policy Effective date must be entered and if there is a AOR the AOR Effective date must be entered.</errorMessage>
+</ValidationRule>

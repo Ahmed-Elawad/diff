@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Serial_Number_Required</fullName>
+    <active>true</active>
+    <description>APR0165854</description>
+    <errorConditionFormula>AND(OR(ISPICKVAL(STM_Category_5__c, &apos;Biometric Reader Issues&apos; ),
+ISPICKVAL(STM_Category_5__c, &apos;Clock Not Powering Up&apos; ),
+ISPICKVAL(STM_Category_5__c, &apos;Clock Physically Damaged&apos; ),
+ISPICKVAL(STM_Category_5__c, &apos;Display/Screen Blank&apos; ),
+ISPICKVAL(STM_Category_5__c, &apos;Iris Scanner Issues&apos; ),
+ISPICKVAL(STM_Category_5__c, &apos;Other Clock Errors Unresolved&apos; ),
+ISPICKVAL(STM_Category_5__c, &apos;Software Issues&apos; ),
+ISPICKVAL(STM_Category_5__c, &apos;Touchscreen Errors/Unresponsive&apos; ),
+ISPICKVAL(STM_Category_5__c, &apos;Upgrade Clock&apos; ),
+ISPICKVAL(STM_Category_5__c, &apos;Wi-Fi Connectivity/Error&apos;)),
+ Serial_Number__c = null)</errorConditionFormula>
+    <errorDisplayField>Serial_Number__c</errorDisplayField>
+    <errorMessage>Serial Number is required for RMA requests</errorMessage>
+</ValidationRule>

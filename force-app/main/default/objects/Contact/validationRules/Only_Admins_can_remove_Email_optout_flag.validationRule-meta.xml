@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Only_Admins_can_remove_Email_optout_flag</fullName>
+    <active>true</active>
+    <description>Only a System Admin can uncheck the Email Opt-Out box</description>
+    <errorConditionFormula>AND( 
+NOT(ISBLANK(Email)),
+ISCHANGED(  HasOptedOutOfEmail ),  HasOptedOutOfEmail 
+ = False, 
+$Profile.Name &lt;&gt; &quot;System Administrator&quot;, 
+
+$Profile.Name &lt;&gt; &quot;System Administrator API&quot;,
+
+$Profile.Name &lt;&gt; &quot;Sales Data Steward&quot; ,
+
+$Profile.Name &lt;&gt; &quot;Salesforce Support&quot; ,
+
+
+NOT(CONTAINS(RecordType.Name,&quot;Referral&quot;)))</errorConditionFormula>
+    <errorDisplayField>HasOptedOutOfEmail</errorDisplayField>
+    <errorMessage>Only a System Administrator can uncheck an Email Opt-Out</errorMessage>
+</ValidationRule>

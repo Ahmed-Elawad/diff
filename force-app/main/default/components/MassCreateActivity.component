@@ -1,0 +1,111 @@
+<!-- Component for mass creation of Activity - tasks and events.
+
+   History
+   -------
+   012/31/2012 Dan Carmen   Created 
+   10/07/2017 Lynn Michels  Added CPE Topic to Event section and TPE Topic to Task section
+ -->
+<apex:component id="MassCreateComponent" >
+   <apex:attribute name="taskList"
+      type="Task[]"
+      required="false"
+      description="The List of Tasks."
+       />
+   <apex:attribute name="meetingList"
+      type="MeetingWrapper[]"
+      required="false"
+      description="The List of Meetings."
+       />
+   <apex:attribute name="useWhat"
+      type="Boolean"
+      required="true"
+      description="Do we use the WhatId field?"
+      />
+   <apex:attribute name="useFirstActivity"
+      type="Boolean"
+      required="true"
+      description="Do we use the values in the first activity for all activities?"
+    />
+   <apex:attribute name="activityType"
+      type="String"
+      required="true"
+      description="Is this a Task or Event?"
+      />
+ 
+ 
+    <apex:pageBlockSection columns="1">
+
+      <apex:pageBlockSectionItem >
+         <apex:outputLabel value="Click to use the values in the first record for all activities" />
+         <apex:inputCheckbox value="{!useFirstActivity}"/>
+      </apex:pageBlockSectionItem>
+    </apex:pageBlockSection>      
+    <apex:pageBlockSection columns="1">
+
+      <apex:pageBlockTable rendered="{!activityType == 'Task'}" id="taskTable" value="{!taskList}" var="a">
+         <apex:column >
+            <apex:facet name="header">Name</apex:facet>
+            <apex:outputField rendered="{!useWhat}" value="{!a.WhatId}"/>
+            <apex:outputField rendered="{!NOT(useWhat)}" value="{!a.WhoId}"/>
+         </apex:column>
+            
+         <apex:column headerValue="{!$ObjectType.Task.fields.Type.label}">
+            <apex:inputField value="{!a.Type}" />
+         </apex:column>
+          
+         <apex:column rendered="{!$ObjectType.Task.Fields.TAP_Topic__c.updateable}" headerValue="{!$ObjectType.Task.fields.TAP_Topic__c.label}">
+            <apex:inputField value="{!a.TAP_Topic__c}" style="width:150px"/>
+         </apex:column>  
+            
+         <apex:column headerValue="{!$ObjectType.Task.fields.Subject.label}">
+            <apex:inputField value="{!a.Subject}" />
+         </apex:column>
+            
+         <apex:column headerValue="Due Date">
+            <apex:inputField value="{!a.ActivityDate}" />
+         </apex:column>
+
+         <apex:column headerValue="{!$ObjectType.Task.fields.Description.label}">
+            <apex:inputField value="{!a.Description}" required="false"/>
+         </apex:column>
+      </apex:pageBlockTable>
+
+      <apex:pageBlockTable rendered="{!activityType == 'Event'}" id="eventTable" value="{!meetingList}" var="meet">
+         <apex:column >
+            <apex:facet name="header">Name</apex:facet>
+            <apex:outputField rendered="{!useWhat}" value="{!meet.evnt.WhatId}"/>
+            <apex:outputField rendered="{!NOT(useWhat)}" value="{!meet.evnt.WhoId}"/>
+         </apex:column>
+            
+         <apex:column headerValue="{!$ObjectType.Task.fields.Type.label}">
+            <apex:inputField value="{!meet.evnt.Type}" />
+         </apex:column>
+                     
+         <apex:column rendered="{!$ObjectType.Task.Fields.CPE_Topic__c.updateable}" headerValue="{!$ObjectType.Task.fields.CPE_Topic__c.label}">
+            <apex:inputField value="{!meet.evnt.CPE_Topic__c}" style="width:150px"/>
+         </apex:column>
+            
+         <apex:column headerValue="{!$ObjectType.Task.fields.Subject.label}">
+            <apex:inputField value="{!meet.evnt.Subject}" />
+         </apex:column>
+         
+         <apex:column headerValue="Meeting Date">
+            <apex:inputField value="{!meet.evnt.ActivityDate}" id="meet_date" >
+            </apex:inputField>
+         </apex:column>
+         
+         <apex:column headerValue="Meeting Time">
+            <apex:inputField value="{!meet.meeting.Meeting_Time__c}" id="meet_time" />
+         </apex:column>
+         
+         <apex:column headerValue="Meeting Duration">
+            <apex:inputField value="{!meet.meeting.Meeting_Duration__c}" id="meet_duration" />
+         </apex:column>
+
+         <apex:column headerValue="{!$ObjectType.Task.fields.Description.label}">
+            <apex:inputField value="{!meet.evnt.Description}" required="false"/>
+         </apex:column>
+      </apex:pageBlockTable>
+
+   </apex:pageBlockSection>
+</apex:component>

@@ -1,0 +1,317 @@
+<aura:component controller="EZOnboardingRegistration" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:lightningQuickAction,force:hasRecordId" access="global">
+    <aura:html tag="style">
+        .toastMessage.forceActionsText{ white-space : pre-line !important; }
+    </aura:html>
+    <aura:attribute name="ContactList" type="List"/>
+    <aura:attribute name="contactId" type="String"/>
+    <aura:attribute name="accountId" type="String"/>
+    <aura:attribute name="showVerificationMessage" type="Boolean" default="false"/>
+    <aura:attribute name="email" type="String"/>
+    <aura:attribute name="emailVerified" type="Boolean" default="false"/>
+    <aura:attribute name="phone" type="String"/>
+    <aura:attribute name="fedIdIsSSN" type="Boolean" default="false"/>
+    <aura:attribute name="phoneVerified" type="Boolean" default="false"/>
+    <aura:attribute name="showNewContact" type="Boolean" default="false"/>
+    <aura:attribute name="showDataExtractButton" type="Boolean" default="false"/>
+    <aura:attribute name="showContact" type="Boolean" default="true"/>
+    <aura:attribute name="showKo" type="Boolean" default="true"/>
+    <aura:attribute name="contactSelected" type="Boolean" default="false"/>
+    <aura:attribute name="showAccount" type="Boolean" default="false"/>
+    <aura:attribute name="fields" type="String[]" default="['CloseDate']" />
+    <aura:attribute name="showLegalAddress" type="Boolean" default="false"/>
+    <aura:attribute name="hasLegalAddress" type="Boolean" default="false"/>
+    <aura:attribute name="legalIsShip" type="Boolean" default = "false" />
+    <aura:attribute name="legalAddressConcat" type="String"/>
+    <aura:attribute name="shippingAddress" type="String"/>
+    <aura:attribute name="legalAddress" type="String"/>
+    <aura:attribute name="street2" type="String"/>
+    <aura:attribute name="city" type="String"/>
+    <aura:attribute name="state" type="String"/>
+    <aura:attribute name="country" type="String"/>
+    <aura:attribute name="postalCode" type="String"/>
+    <aura:attribute name="showFinalPage" type="Boolean" default="false"/>
+    <aura:attribute name="buttonDisabled" type="Boolean" default="true"/>
+    <aura:attribute name="matchingAttachments" type="Boolean" default="false"/>
+    <aura:attribute name="isMulti" type="Boolean" default="false"/>
+    <aura:attribute name="needsNonEngPpwrk" type="Boolean" default="false"/>
+    <aura:attribute name="isReturning" type="Boolean" default="false"/>
+    <aura:attribute name="updateOppty" type="Boolean" default="false"/>
+    <aura:attribute name="showdataExtraction" type="Boolean" default="false"/>
+    <aura:attribute name="showDataExtractMessage" type="Boolean" default="false"/>
+    <aura:attribute name="AccountObj" type="Account"/>
+    <aura:attribute name="showSSN" type="Boolean" default="false"/>
+    <aura:attribute name="csoTrackingRec" type="CSO_Tracking__c"/>
+    <aura:attribute name="opportunityObj" type="Opportunity"/>
+    <aura:attribute name="containsFile" type="Boolean" default="false"/>
+    <aura:attribute name="loadSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="knockoutFields" type="String"/>
+    <aura:attribute name="parent" type="Aura.Component"/>
+    <aura:attribute name="confields" type="String[]" default="['Name','AccountId','Email','MobilePhone']" />
+    <aura:attribute name="ssn" type="String"/>
+    <aura:attribute name="displayNext" type="Boolean" default="true"/>
+    <aura:attribute name="recId" type="String"/>
+    <aura:attribute name="hasSignedQuote" type="Boolean" default="false"/>
+    <aura:attribute name="hideAttachments" type="Boolean"/>
+    <aura:attribute name="quoteOption" type="String" default="option2"/>
+    <aura:attribute name="quoteName" type="String"/>
+    <aura:attribute name="certificateName" type="String"/>
+    <aura:attribute name="quoteUploadName" type="String"/>
+    <aura:attribute name="certUploadName" type="String"/>
+    <aura:attribute name="quoteId" type="String"/>
+    <aura:attribute name="certificateId" type="String"/>
+    <aura:attribute name="file" type="Object"/>
+    <aura:attribute name="dataStart" type="String" />
+    <aura:attribute name="fileContents" type="String" />
+    <aura:attribute name="certfile" type="Object"/>
+    <aura:attribute name="certdataStart" type="String" />
+    <aura:attribute name="certfileContents" type="String" />
+    <aura:attribute name="base64" type="String"/>
+
+    
+    <aura:attribute name="options" type="List" default="[{'label': 'Select previously uploaded quote', 'value': 'option1'},{'label': 'Attach Signed Quote', 'value': 'option2'}]"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+	<aura:registerEvent name="closeForm" type="c:CloseRegistrationModal" />
+    <lightning:card>
+        <aura:if isTrue="{!v.loadSpinner}">
+            <div class="exampleHolder">
+                <lightning:spinner alternativeText="Loading" />
+            </div>
+        </aura:if>
+        <div class="slds-p-around_x-small">
+        <aura:if isTrue="{!v.showContact}">
+            <aura:if isTrue="{!!v.showNewContact}">
+                <Lightning:select aura:id="contactIdSelect" value="{!v.contactId}" label="Contact via" onchange="{!c.changeContactEmail}" required="true">
+                    <option value="{!PleaseSelect}">Please select</option>
+                    <aura:iteration items="{!v.ContactList}" var="con" indexVar="key">  
+                        <option value="{!con.Id}">{!con.Name}</option>
+                    </aura:iteration>
+                </Lightning:select>  
+                <br/>
+                <aura:if isTrue="{!v.contactSelected}">
+                    <div class="slds-grid" style="font-size: 15px">
+                        <div class="slds-col slds-size_1-of-2 slds-m-right_xx-small"><div><lightning:input type="email" name="email" value="{!v.email}" label="Email" required="true" onchange="{!c.updateNextButton}"/></div><div><lightning:input type="checkbox" name="emailVerified" checked="{!v.emailVerified}" value="{!v.emailVerified}" label="Check here to confirm e-mail" required="true" /></div></div>
+                        <div class="slds-col slds-size_1-of-2"><div><lightning:input type="phone" name="mobile" value="{!v.phone}" label="Mobile Phone" required="true" onchange="{!c.updateNextButton}" /></div><div><lightning:input type="checkbox" name="phoneVerified" checked="{!v.phoneVerified}" value="{!v.phoneVerified}" label="Check here to confirm mobile" required="true" /></div></div>
+                    </div>
+                    
+                </aura:if><br/>
+                
+                <aura:if isTrue="{!v.showVerificationMessage}">
+                    <div class="slds-scrollable slds-text-color_error">Please verify a valid email address and mobile phone has been provided and confirmed</div>
+                </aura:if>
+                <aura:if isTrue="{!v.contactSelected}">
+                    <lightning:button variant="brand" label="Update Contact" title="Update Contact" onclick="{!c.updateContactEmail}" />
+                </aura:if>
+                <lightning:button variant="brand" label="Create New Contact" title="Create New Contact" onclick="{!c.createNewContact}" />
+                <aura:if isTrue="{!v.displayNext}">
+                    <lightning:button variant="brand" label="Next" title="Next" onclick="{!c.nextOpportunity}" />
+                    <lightning:button variant="brand" label="Exit Form" title="Close" onclick="{!c.closeModal}" />
+                    <aura:set attribute="else">
+                        <div class="slds-scrollable slds-text-color_error">Please click the "Update Contact" button to save changes</div>
+                    </aura:set>
+                </aura:if>
+                <br/> <br/>
+            </aura:if>
+            <aura:if isTrue="{!v.showNewContact}">
+                
+            
+                <lightning:recordEditForm aura:id="recordEditForm"
+                                          objectApiName="Contact"
+                                          onsubmit="{!c.saveNewContact}"
+                                          onsuccess="{!c.updateContactList}">
+                    <lightning:messages />
+                    <lightning:inputField fieldName="AccountId" value="{!v.accountId}" />
+                    <lightning:inputField fieldName="Name" />
+                    <lightning:inputField fieldName="Email" required="true"/>
+                    <lightning:inputField fieldName="MobilePhone" required="true"/>
+                    <lightning:button class="slds-m-top_small" type="submit" label="Create new"/>
+                </lightning:recordEditForm>
+            </aura:if>
+            
+        </aura:if>
+        <aura:if isTrue="{!!v.showContact}">
+            <!--<aura:if isTrue="{!!v.showAccount}">-->
+                <lightning:input type="date" name="effectiveDate" label="Run Effective Date" required="true" value="{!v.opportunityObj.CloseDate}" />
+                <br/>
+            Shipping Address:<br/> <!--<ui:outputText value="{!v.shippingAddress}"/>-->
+            <lightning:formattedAddress
+                                        street="{!v.AccountObj.ShippingStreet}"
+                                        city="{!v.AccountObj.ShippingCity}"
+                                        country="{!v.AccountObj.ShippingCountry}"
+                                        province="{!v.AccountObj.ShippingState}"
+                                        postalCode="{!v.AccountObj.ShippingPostalCode}"
+                                        disabled="true" />
+                <br/>
+            <aura:if isTrue="{!v.hasLegalAddress}">
+                Legal Address:<br/> <!--<ui:outputText value="{!v.legalAddressConcat}"/>-->
+                <lightning:formattedAddress
+                                            street="{!v.AccountObj.LegalAddress__Street__s}"
+                                            city="{!v.AccountObj.LegalAddress__City__s}"
+                                            country="{!v.AccountObj.LegalAddress__CountryCode__s}"
+                                            province="{!v.AccountObj.LegalAddress__StateCode__s}"
+                                            postalCode="{!v.AccountObj.LegalAddress__PostalCode__s}"
+                                            disabled="true" />
+                <div><br /><lightning:button variant="brand-outline" label="Update Legal Address" title="Update Legal Address" onclick="{!c.updateLegal}" /></div>
+                
+                <aura:if isTrue="{!!v.showNewContact}">
+                    <!-- <lightning:input name="quote" type="file" label="Upload Signed CPQ Quote" required="true"/>-->
+                    <aura:if isTrue="{!v.knockoutFields!=null}">
+                        <div class="slds-text-body_small" style="color:blue;">Due to the selection of {!v.knockoutFields} this client is no longer eligible for "Easy Setup". Please exit the form and follow the PACO procedure</div>
+                        <br/>
+                    </aura:if>
+                    <br/>
+                    <lightning:input name="enteredssn" aura:id="fedId" label="Federal Id:" value="{!v.AccountObj.Federal_ID_Number__c}" required="true"  oncommit="{!c.updateFedId}"/>
+                    <br/>
+                    <lightning:input type="checkbox" name="fedIdIsSSN" checked="{!v.fedIdIsSSN}" value="{!v.fedIdIsSSN}" label="Check here if this is a Social Security Number" />
+                    <!--<Lightning:select aura:id="ssn" label="Is this a SSN Number" onchange="{!c.showSSNPage}">
+                        <option value="{!PleaseSelect}">Please select</option>
+                        <option value="{!Yes}">Yes</option>
+                        <option value="{!No}">No</option>
+                    </Lightning:select>-->
+                    <br/>
+                    <Lightning:select aura:id="multi" label="Does this company share an EIN with another paychex client?" onchange="{!c.checkValidationFields}">
+                        <option value="{!PleaseSelect}">Please select</option>
+                        <option value="{!Yes}">Yes</option>
+                        <option value="{!No}">No</option>
+                    </Lightning:select>
+                    <br/>
+                    <Lightning:select aura:id="paperwork" label="Does this client require Non-English (Spanish, etc) set up paperwork?" onchange="{!c.checkValidationFields}">
+                        <option value="{!PleaseSelect}">Please select</option>
+                        <option value="{!Yes}">Yes</option>
+                        <option value="{!No}">No</option>
+                    </Lightning:select>
+                    <br/>
+                    <Lightning:select aura:id="returning" label="Is this a returning Lost Client?" onchange="{!c.checkValidationFields}">
+                        <option value="{!PleaseSelect}">Please select</option>
+                        <option value="{!Yes}">Yes</option>
+                        <option value="{!No}">No</option>
+                    </Lightning:select>
+                    <br/>
+                    <Lightning:select aura:id="dataExtraction" label="Is a Data Extraction needed?" onchange="{!c.checkValidationFields}">
+                        <option value="{!PleaseSelect}">Please select</option>
+                        <option value="{!Yes}">Yes</option>
+                        <option value="{!No}">No</option>
+                    </Lightning:select>
+                    <br/>
+                    <aura:if isTrue="{!!v.hideAttachments}">
+                        <aura:if isTrue="{!!v.hasSignedQuote}">
+                            <div>
+                                <aura:if isTrue="{!or(v.quoteUploadName ==null,v.certUploadName ==null)}">
+                                    <b>Note: A Signed Quote was not found.  Please use options below to attach the Signed Quote and Certificate</b><br/><br/>
+                                    <!--<aura:if isTrue="{!v.opportunityObj.ContentDocumentLinks != null}">
+                                        <lightning:radioGroup name="uploadQuoteType"
+                                                              label="Select Uploaded Signed Quote or Attach?"
+                                                              options="{!v.options}"
+                                                              value="{!v.value}"
+                                                              onchange="{!c.handleChange}"
+                                                              required="true"
+                                                              type="radio"/><br />
+                                    </aura:if>-->
+                                </aura:if>
+                                <aura:if isTrue="{!v.matchingAttachments}">
+                                    <p style="color:red;"><b>Note: You cannot select the same file for both the quote and the certificate</b></p><br/>
+                                </aura:if> 
+                                    <aura:if isTrue="{!v.quoteOption =='option1'}">
+                                        <lightning:select name="selectQuote" label="Select Quoted" required="true" onchange="{!c.updateQuoteId}">
+                                            <option value="">Select One</option>
+                                            <aura:iteration items="{!v.opportunityObj.ContentDocumentLinks}" var="file">
+                                                <option text="{!file.ContentDocument.Title}" value="{!file.ContentDocument.Id}"/>
+                                            </aura:iteration>
+                                            <aura:iteration items="{!v.opportunityObj.Attachments}" var="attach">
+                                                <option text="{!attach.Name}" value="{!attach.Id}"/>
+                                            </aura:iteration>
+                                        </lightning:select>
+                                        <lightning:select name="selectCert" label="Select Certificate" required="true" onchange="{!c.updateCertId}">
+                                            <option value="">Select One</option>
+                                            <aura:iteration items="{!v.opportunityObj.ContentDocumentLinks}" var="file2">
+                                                <option text="{!file2.ContentDocument.Title}" value="{!file2.ContentDocument.Id}"/>
+                                            </aura:iteration>
+                                            <aura:iteration items="{!v.opportunityObj.Attachments}" var="attach2">
+                                                <option text="{!attach2.Name}" value="{!attach2.Id}"/>
+                                            </aura:iteration>
+                                        </lightning:select>
+                                    </aura:if>
+                                <aura:if isTrue="{!or(v.opportunityObj.ContentDocumentLinks == null,v.quoteOption =='option2')}">
+                                    <aura:if isTrue="{!or(v.quoteUploadName ==null,v.certUploadName ==null)}">
+                                        <aura:if isTrue="{!v.quoteName ==null}">
+                                        <div>Attach Quote:</div>
+                                        <lightning:input aura:id="fileId" onchange="{!c.handleFilesChange}" type="file" name="file" multiple="false" style="display: flex"/><br/>                                          
+                                        <aura:set attribute="else">
+                                            <p style="color:green;">Quote: {!v.quoteName} is ready to be uploaded</p>
+                                            <div>
+                                            <lightning:button variant="brand-outline" label="Remove attached Quote" onclick="{!c.removeQuote}" /></div><br />
+                                        </aura:set>
+                                    </aura:if>  
+                                    <!--<lightning:fileUpload label="Attach Signed Quote"
+                                                                  name="quoteUploader"
+                                                                  recordId="{!v.opportunityObj.Id}"
+                                                                  onuploadfinished="{!c.handleQuoteUploadFinished}" />-->
+                                   
+                                    <div>
+                                        <aura:if isTrue="{!v.certificateName ==null}">
+                                            <div>Attach Certificate:</div>
+                                            <lightning:input aura:id="certId" onchange="{!c.handleCertChange}" type="file" name="certfile" multiple="false" style="display: flex"/><br/>                                            
+                                            <aura:set attribute="else">
+                                                <p style="color:green;">Certificate: {!v.certificateName} is ready to be uploaded</p><div>
+                                            <lightning:button variant="brand-outline" label="Remove attached certificate" onclick="{!c.removeCert}" /></div>
+                                                <br /><br />
+                                            </aura:set>
+                                        </aura:if>  
+                                        <!--<lightning:fileUpload label="Attach Certificate"
+                                                                      name="certUploader"
+                                                                      recordId="{!v.opportunityObj.Id}"
+                                                                      onuploadfinished="{!c.handleCertUploadFinished}" />-->
+                                        </div>
+                                        <aura:if isTrue="{!and(v.quoteName !=null,v.certificateName !=null)}">
+                                            <center><div><lightning:button variant="brand" label="Upload Quote and Certificate Files" onclick="{!c.saveAttachmentFiles}" /></div></center>
+                                        </aura:if>
+                                        <aura:set attribute="else">
+                                            <center><b><p style="color:green;">The following files have been uploaded and are ready to be submitted</p></b><br/></center>
+                                            Quote Name: <br/> {!v.quoteUploadName}
+                                            <br /><br/>
+                                            Certificate Name: <br/> {!v.certUploadName}
+                                            <br />
+                                        </aura:set>
+                                    </aura:if>
+                                </aura:if>
+                                
+                            </div><br />
+                            
+                            
+                        </aura:if>
+                    </aura:if>
+                    <aura:if isTrue="{!v.buttonDisabled}">
+                        <div class="slds-text-body_small" style="color:blue;">Please complete all fields to submit.</div>
+                    </aura:if>
+                    <lightning:button variant="brand" label="Back" title="Back" onclick="{!c.displayContact}" />
+                    <lightning:button variant="brand" type="submit" label="Send Registration" disabled="{!v.buttonDisabled}" onclick="{!c.submitForm}"/>
+                    <lightning:button variant="brand" label="Exit Form" title="Close" onclick="{!c.closeModal}" />
+                </aura:if>
+                
+                <aura:set attribute="else">
+                    <lightning:recordEditForm recordId="{!v.accountId}" objectApiName="Account" 
+                                              onsubmit="{!c.saveNewLegalAddress}"
+                                              onsuccess="{!c.updateAddressDisplay}">
+                        <lightning:messages />
+                        <lightning:inputField aura:id="legalStreet" fieldName="LegalAddress__Street__s" required="true"/>
+                        <lightning:inputField aura:id="legalCity" fieldName="LegalAddress__City__s" required="true"/>
+                        <lightning:inputField aura:id="legalState" fieldName="LegalAddress__StateCode__s" required="true"/>
+                        <lightning:inputField aura:id="legalZip" fieldName="LegalAddress__PostalCode__s" required="true"/>
+                        <lightning:inputField aura:id="legalCountry" fieldName="LegalAddress__CountryCode__s" required="true"/>
+                        <lightning:input type="checkbox" name="legalIsShipping" checked="{!v.legalIsShip}" value="{!v.legalIsShip}" label="Make same as shipping address" onchange="{!c.updateLegalAddress}"/>
+                         <div>
+                            <lightning:button class="slds-m-top_small" variant="brand" type="submit" label="Save Legal Address" />
+                        </div>
+                    </lightning:recordEditForm>
+                    
+                       
+                </aura:set>
+            </aura:if>
+                            <!--<lightning:button variant="brand" label="Next" title="Next" onclick="{!c.saveAddressAndOpp}"/>-->
+            <!--</aura:if>
+            <aura:if isTrue="{!v.showAccount}">-->
+                
+            </aura:if>
+        <!--</aura:if>-->
+        </div>
+    </lightning:card>
+</aura:component>

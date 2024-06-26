@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prior_Wages_Due_Date__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <formula>CASE( 
+MOD(  Anticipated_Run_Date__c - DATE(1900, 1, 7), 7), 
+0, Anticipated_Run_Date__c-7, 
+1, Anticipated_Run_Date__c-7, 
+2, Anticipated_Run_Date__c-7, 
+3, Anticipated_Run_Date__c-7, 
+4, Anticipated_Run_Date__c-7, 
+5,Anticipated_Run_Date__c-7, 
+6,Anticipated_Run_Date__c-5, 
+Anticipated_Run_Date__c)</formula>
+    <label>Prior Wages Due Date</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Date</type>
+</CustomField>

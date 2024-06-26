@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>OwnerMismatch__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>This is used to determine if the contact ownership is not correct.</description>
+    <formula>AND( Hold_Out__c = false
+, Sales_Contact__c = true
+, OwnerId != Account.OwnerId
+, Account.Owner.IsActive = true )</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>This is true if the owner of the contact does not match the owner of the account.</inlineHelpText>
+    <label>Owner Mismatch</label>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

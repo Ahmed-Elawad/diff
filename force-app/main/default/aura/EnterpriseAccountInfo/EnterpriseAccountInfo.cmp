@@ -1,0 +1,433 @@
+<aura:component implements="lightning:isUrlAddressable,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <aura:html tag="style">
+        .toastMessage.forceActionsText{ white-space : pre-line !important; }
+    </aura:html>
+    <aura:attribute name="parentOnboardingRecord" type="String"/>
+    <aura:attribute name="oppty" type="Opportunity" />
+    <aura:attribute name="onboardingRecord" type="String"/>
+    <aura:attribute name="parentAccount" type="Account" />
+    <aura:attribute name="loadSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="parentTracker" type="CSO_Tracking__c"/>
+    <aura:attribute name="tracker" type="CSO_Tracking__c"/>
+	<aura:attribute name="oppId" type="String"/>    
+    <aura:attribute name="productList" type="String[]" />
+    <aura:attribute name="isParent" type="Boolean" default="false"/>
+    <aura:attribute name="isMulti" type="Boolean"/>
+    <aura:attribute name="registrationError" type="String"/>
+    <aura:attribute name="revalidateDateTime" type="DateTime"/>
+    <aura:attribute name="parentAccountId" type="String"/>
+    <aura:attribute name="accountId" type="String"/>
+    <aura:attribute name="isMMSStandalone" type="Boolean" />
+    <aura:attribute name="acctLoaded" type="Boolean" default="false"/>
+    <aura:attribute name="trackerLoaded" type="Boolean" default="false"/>
+    <aura:attribute name="opptyLoaded" type="Boolean" default="false"/>
+    <aura:attribute name="acctComplete" type="Boolean" default="false"/>
+    <aura:attribute name="billStreet" type="String"/>
+    <aura:attribute name="billState" type="String"/>
+    <aura:attribute name="billCity" type="String"/>
+    <aura:attribute name="billZip" type="String"/>
+    <aura:attribute name="shipStreet" type="String"/>
+    <aura:attribute name="shipState" type="String"/>
+    <aura:attribute name="shipCity" type="String"/>
+    <aura:attribute name="shipZip" type="String"/>
+    <aura:attribute name="legalStreet" type="String"/>
+    <aura:attribute name="legalState" type="String"/>
+    <aura:attribute name="legalCity" type="String"/>
+    <aura:attribute name="legalZip" type="String"/>
+    <aura:attribute name="ChildType" type="String" />
+    <aura:attribute name="legalStreetParent" type="String"/>
+    <aura:attribute name="legalStateParent" type="String"/>
+    <aura:attribute name="legalCityParent" type="String"/>
+    <aura:attribute name="legalZipParent" type="String"/>
+    <aura:attribute name="legalCountryParent" type="String"/>
+    <aura:attribute name="showForm" type="Boolean" default="false"/>
+    <aura:attribute name="fedIdIsSSN" type="Boolean" default="false"/>
+    <aura:attribute name="legalIsShip" type="Boolean" default="false"/>
+    <aura:attribute name="legalIsBill" type="Boolean" default="false"/>
+    <aura:attribute name="shipIsBill" type="Boolean" default="false"/>
+    <aura:attribute name="billIsShip" type="Boolean" default="false"/>
+    <aura:attribute name="billIsParent" type="Boolean" default="false"/>
+    <aura:attribute name="ShipIsParent" type="Boolean" default="false"/>
+    <aura:attribute name="LegalIsParent" type="Boolean" default="false"/>
+    <aura:attribute name="sstLeveraged" type="Boolean" default="true"/>
+    <aura:attribute name="acctName" type="String"/>
+    <aura:attribute name="revalidationCalled" type="Boolean" default="false"/>
+    <aura:attribute name="boolOptions" type="List" default="[
+                                                            {'label': 'Yes', 'value': true},
+                                                            {'label': 'No', 'value': false},
+                                                            ]"/>
+    <aura:attribute name="boolTrue" type="Boolean" default="true"/>
+    <aura:if isTrue="{!v.loadSpinner}">
+        <div class="exampleHolder">
+            <lightning:spinner alternativeText="Loading" />
+        </div>
+    </aura:if>
+    <aura:registerEvent name="validateEnterpriseForm" type="c:UpdateEntRegForm" />
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    
+
+    <lightning:recordEditForm recordId="{!v.tracker.Id}"
+                              onload="{!c.handleTrackerLoad}"
+                              aura:id="TrackerForm"
+                              objectApiName="CSO_Tracking__c">
+        <div class="slds-hide">
+            <lightning:inputField fieldName="ChildType__c" />
+            <lightning:inputField fieldName="FedIsSSN__c" value ="{!v.fedIdIsSSN}"  />
+            <lightning:inputField aura:id="AcctValidated" fieldName="AcctValidated__c" value ="{!v.acctComplete}" />
+            <lightning:inputField aura:id="revalidationDate" fieldName="RevalidationTime__c" />
+            <aura:if isTrue="{!!v.sstLeveraged}">
+                <lightning:inputField fieldName="SSTValidated__c" value ="{!v.boolTrue}" />
+                <aura:set attribute="else">
+                    <lightning:inputField aura:id="SSTValidationField" fieldName="SSTValidated__c" />
+                </aura:set>
+            </aura:if>           
+        </div>
+    </lightning:recordEditForm>
+    
+    <aura:if isTrue="{!v.trackerLoaded}">
+        <lightning:tabset selectedTabId="Account" aura:id="tabs" variant="scoped">
+            <lightning:tab id="Account" aura:id="Account" label="Company Information" onactive="{!c.hideSST}">
+                <div>
+                    <lightning:layout multipleRows="true">
+                        <lightning:layoutItem size="12" padding="horizontal-small">
+                            <aura:if isTrue="{!and(!v.isMMSStandalone, v.registrationError != null)}">
+                                <lightning:layoutItem size="12" padding="horizontal-small">
+                                    <lightning:formattedText style="font-size: 16px; color: red" value="{!'New Client Creation Issue:  '+v.registrationError}" />                             
+                                </lightning:layoutItem>
+                                <aura:set attribute="else">
+                                    <aura:if isTrue="{!v.acctComplete}">
+                                        <div class="slds-align_absolute-center">
+                                            <lightning:formattedText style="font-size: 16px; color: green; font-weight: bold" value="All required information obtained on this screen" />
+                                        </div>
+                                        <aura:set attribute="else">
+                                            <div class="slds-align_absolute-center"><b>Action Required: &nbsp; </b> All fields highlighted with <abbr class="slds-required">&nbsp;<b>*</b>&nbsp;</abbr>on this screen are required.  Please fill out required fields and click the 'Validate and Save' button.</div>
+                                        </aura:set>
+                                    </aura:if>
+                                </aura:set>
+                            </aura:if>             
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                    <aura:if isTrue="{!and(!v.isParent, v.trackerLoaded)}">
+                        <lightning:recordEditForm recordId="{!v.parentAccount.Id}"
+                                                  aura:id="ParentAcctForm"
+                                                  onload="{!c.handleAccountParentLoad}"
+                                                  objectApiName="Account">
+                            <div class="slds-hide">
+                                <lightning:outputField aura:id="payPlatform" fieldName="Payroll_Platform__c" variant="label-stacked"/>
+                                <lightning:inputField aura:id="ParentBillingStreet" fieldName="BillingStreet" />
+                                <lightning:inputField aura:id="ParentBillingCity" fieldName="BillingCity" />
+                                <lightning:inputField aura:id="ParentBillingState" fieldName="BillingState" />
+                                <lightning:inputField aura:id="ParentBillingZip" fieldName="BillingPostalCode" />
+                                <lightning:inputField aura:id="ParentBillingCountry" fieldName="BillingCountry" />
+                                <lightning:inputField aura:id="ParentShippingStreet" fieldName="ShippingStreet" />
+                                <lightning:inputField aura:id="ParentShippingCity" fieldName="ShippingCity" />
+                                <lightning:inputField aura:id="ParentShippingState" fieldName="ShippingState" />
+                                <lightning:inputField aura:id="ParentShippingZip" fieldName="ShippingPostalCode"/>
+                                <lightning:inputField aura:id="ParentShippingCountry" fieldName="ShippingCountry" />
+                                <lightning:inputField aura:id="ParentLegalStreet" fieldName="LegalAddress__Street__s"  />
+                                <lightning:inputField aura:id="ParentLegalCity" fieldName="LegalAddress__City__s"  />
+                                <lightning:inputField aura:id="ParentLegalState" fieldName="LegalAddress__StateCode__s"  />
+                                <lightning:inputField aura:id="ParentLegalZip" fieldName="LegalAddress__PostalCode__s"  />
+                                <lightning:inputField aura:id="ParentLegalCounty" fieldName="LegalAddress__CountryCode__s"  />
+                            </div>
+                            <lightning:layout multipleRows="true">
+                                <lightning:layoutItem size="12" padding="horizontal-small">
+                                    <b>Parent Information</b>
+                                </lightning:layoutItem>
+                                <lightning:layoutItem size="2" padding="horizontal-small">
+                                    <lightning:outputField fieldName="Name" variant="label-stacked"/>
+                                </lightning:layoutItem>
+                                <lightning:layoutItem size="2" padding="horizontal-small">
+                                    <lightning:outputField fieldName="Federal_ID_Number__c"  variant="label-stacked" />
+                                </lightning:layoutItem>
+                                <lightning:layoutItem size="2" padding="horizontal-small">
+                                    <lightning:outputField fieldName="BillingAddress" variant="label-stacked"/>
+                                </lightning:layoutItem>
+                                <lightning:layoutItem size="2" padding="horizontal-small">
+                                    <lightning:outputField fieldName="ShippingAddress" variant="label-stacked"/>
+                                </lightning:layoutItem>
+                                <lightning:layoutItem size="2" padding="horizontal-small">
+                                    <div class="slds-form-element__label" title="Field 1" >Legal Address</div>
+                                    <lightning:formattedAddress title="Legal Address"
+                                                                street="{!v.legalStreetParent}"
+                                                                city="{!v.legalCityParent}"
+                                                                province="{!v.legalStateParent}"
+                                                                postalCode="{!v.legalZipParent}"
+                                                                country="{!v.legalCountryParent}"/>
+                                </lightning:layoutItem>
+                            </lightning:layout>
+                        </lightning:recordEditForm>
+                    </aura:if>
+                    
+                    <lightning:recordEditForm aura:id="AccountUpdateForm"
+                                              recordId="{!v.accountId}"
+                                              onload="{!c.handleAccountLoad}"
+                                              onerror="{!c.handleAccountError}"
+                                              objectApiName="Account"
+                                              onsuccess="{!c.displaySucessMessage}"
+                                              onsubmit="{!c.handleAccountSubmit}">
+                        <!--onsuccess="{!c.closeFocusedTab}">-->
+                        <lightning:messages />
+                        <div class="slds-hide">
+                            <lightning:outputField aura:id="payPlatform" fieldName="Payroll_Platform__c" variant="label-stacked"/>
+                            <lightning:inputField aura:id="billStreetAddy" fieldName="BillingStreet" />
+                            <lightning:inputField aura:id="billCityAddy" fieldName="BillingCity" />
+                            <lightning:inputField aura:id="billStateAddy" fieldName="BillingState" />
+                            <lightning:inputField aura:id="billZipAddy" fieldName="BillingPostalCode" />
+                            <lightning:inputField aura:id="billCountryAddy" fieldName="BillingCountry" />
+                            <lightning:inputField aura:id="ShipStreetAddy" fieldName="ShippingStreet" />
+                            <lightning:inputField aura:id="ShipCityAddy" fieldName="ShippingCity" />
+                            <lightning:inputField aura:id="ShipStateAddy" fieldName="ShippingState" />
+                            <lightning:inputField aura:id="ShipZipAddy" fieldName="ShippingPostalCode"/>
+                            <lightning:inputField aura:id="ShipCountryAddy" fieldName="ShippingCountry" />
+                            <lightning:inputField fieldName="LegalAddress__Street__s" value ="{!v.legalStreet}" />
+                            <lightning:inputField fieldName="LegalAddress__City__s" value ="{!v.legalCity}" />
+                            <!--<lightning:inputField fieldName="LegalAddress__StateCode__s" value ="{!v.legalState}" />-->
+                            <lightning:inputField fieldName="LegalAddress__PostalCode__s" value ="{!v.legalZip}" />
+                            <lightning:inputField fieldName="LegalAddress__CountryCode__s" value ="{!v.legalCountry}" />
+                        </div>
+                        <lightning:card>
+                            <lightning:layoutItem size="12">
+                                <lightning:layout multipleRows="true">
+                                    <aura:if isTrue="{!!v.isParent}">
+                                        <lightning:layoutItem size="12" padding="horizontal-small">
+                                            <b>Child Information</b>
+                                        </lightning:layoutItem>
+                                        <lightning:layoutItem size="12" >
+                                            <lightning:recordEditForm recordId="{!v.tracker.Id}" aura:id="ChildTrackerForm"
+                                                                      objectApiName="CSO_Tracking__c">
+                                                <lightning:layout multipleRows="true">
+                                                    <lightning:layoutItem size="4" padding="around-small">
+                                                        <label class="slds-form-element__label">Is this Child part of a Same FED ID Relationship (Combo) or Different Fed ID relationship (Parent/Child)? </label><br/>
+                                                        <lightning:inputField fieldName="ChildType__c" aura:id="AcctFormField" variant="label-hidden" value ="{!v.ChildType}" />
+                                                    </lightning:layoutItem>
+                                                </lightning:layout>
+                                            </lightning:recordEditForm>
+                                        </lightning:layoutItem>
+                                    </aura:if>
+                                    <lightning:layoutItem size="3" padding="horizontal-small">
+                                        <lightning:outputField fieldName="Name" variant="label-stacked"/>
+                                    </lightning:layoutItem>
+                                    <aura:if isTrue="{!or(v.isParent,v.ChildType != '')}">
+                                        <lightning:layoutItem size="2" padding="horizontal-small">
+                                            <aura:if isTrue="{!and(v.isParent,v.oppty.LeverageSST__c)}">
+                                                <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Phone</label><br/>
+                                                <lightning:inputField aura:id="AcctFormField" fieldName="Phone" variant="label-hidden" required="false" />
+                                           </aura:if>
+                                            
+                                        </lightning:layoutItem>
+                                        <lightning:layoutItem size="2" padding="horizontal-small">
+                                            <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Federal ID Number</label><br/>
+                                            <lightning:inputField aura:id="AcctFormField" fieldName="Federal_ID_Number__c" variant="label-hidden" required="false" />
+                                            <lightning:input type="checkbox" name="fedIdIsSSN" checked="{!v.fedIdIsSSN}" value="{!v.fedIdIsSSN}" label="Check if this is a SSN" />
+                                        </lightning:layoutItem>
+                                        <aura:if isTrue="{!v.ChildType == 'Combo'}">
+                                            <lightning:layoutItem size="2" padding="horizontal-small">
+                                                <lightning:inputField aura:id="AcctFormField" fieldName="DBA__c" variant="label-stacked" required="false" />
+                                            </lightning:layoutItem>
+                                        </aura:if>
+                                        <aura:if isTrue="{!v.isParent}">
+                                            <lightning:layoutItem size="3" class="slds-hide">
+                                                <lightning:combobox name="leverageCTT" label="Will this deal leverage the Sales Submission Team?" value="{!v.sstLeveraged}" options="{!v.boolOptions }"  />
+                                            </lightning:layoutItem>
+                                            <aura:if isTrue="{!and(v.isParent,v.oppty.LeverageSST__c)}">
+                                            <lightning:layoutItem size="2" padding="horizontal-small">
+                                                <lightning:inputField fieldName="Industry" variant="label-stacked"/>
+                                            </lightning:layoutItem>
+                                            <lightning:layoutItem size="2" padding="horizontal-small">
+                                                <lightning:outputField fieldName="MMS_MAM_NAM__c" variant="label-stacked"/>
+                                            </lightning:layoutItem>
+                                            </aura:if>
+                                        </aura:if>
+                                        <lightning:layoutItem size="12" />
+                                        <aura:if isTrue="{!or(v.isParent,v.ChildType != 'Combo')}">
+                                            <lightning:layoutItem size="4" padding="horizontal-small">
+                                                <lightning:layout multipleRows="true">
+                                                    <lightning:layoutItem size="12">
+                                                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Legal Street</label><br/>
+                                                        <lightning:inputField aura:id="AcctFormField" fieldName="LegalAddress__Street__s" variant="label-hidden" value="{!v.legalStreet}" />
+                                                    </lightning:layoutItem>
+                                                    <lightning:layoutItem size="4">
+                                                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>City</label><br/>
+                                                        <lightning:inputField aura:id="AcctFormField" fieldName="LegalAddress__City__s" variant="label-hidden" value="{!v.legalCity}" />
+                                                    </lightning:layoutItem>
+                                                    <lightning:layoutItem size="4" padding="horizontal-small">
+                                                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>State</label><br/>
+                                                        <lightning:inputField aura:id="AcctFormField" fieldName="LegalAddress__StateCode__s" variant="label-hidden"  value="{!v.legalState}" />
+                                                    </lightning:layoutItem>
+                                                    <lightning:layoutItem size="4">
+                                                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Zip Code</label><br/>
+                                                        <lightning:inputField aura:id="AcctFormField" fieldName="LegalAddress__PostalCode__s" variant="label-hidden" value="{!v.legalZip}" />
+                                                    </lightning:layoutItem>
+                                                    <aura:if isTrue="{!v.isParent}">
+                                                        <lightning:layoutItem size="6" >
+                                                            <lightning:input type="checkbox" aura:id="legalIsBilling" name="legalIsBilling" checked="{!v.legalIsBill}" value="{!v.legalIsBill}" label="Same as Billing Address" oncommit="{!c.makeLegalBill}"/>
+                                                        </lightning:layoutItem>
+                                                        <lightning:layoutItem size="6" >
+                                                            <lightning:input type="checkbox" aura:id="legalIsShipping" name="legalIsShipping" checked="{!v.legalIsShip}" value="{!v.legalIsShip}" label="Same as Shipping Address" oncommit="{!c.makeLegalShip}" />
+                                                        </lightning:layoutItem>
+                                                        <aura:set attribute="else">
+                                                            <lightning:layoutItem size="6" >
+                                                                <lightning:input type="checkbox" aura:id="legalIsParent" name="legalIsParent" checked="{!v.LegalIsParent}" value="{!v.LegalIsParent}" label="Same as Parent Legal Address" oncommit="{!c.ParentIsChildLegal}"/>
+                                                            </lightning:layoutItem>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </lightning:layout>
+                                            </lightning:layoutItem>
+                                        </aura:if>
+                                        <aura:if isTrue="{!or(v.isParent,v.ChildType != '')}">
+                                            <lightning:layoutItem size="4" padding="horizontal-small">
+                                                <lightning:layout multipleRows="true">
+                                                    <lightning:layoutItem size="12">
+                                                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Shipping Street</label><br/>
+                                                        <lightning:inputField aura:id="AcctFormField" fieldName="ShippingStreet" variant="label-hidden" value="{!v.shipStreet}" />
+                                                    </lightning:layoutItem>
+                                                    <lightning:layoutItem size="4">
+                                                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>City</label><br/>
+                                                        <lightning:inputField aura:id="AcctFormField" fieldName="ShippingCity" variant="label-hidden" value="{!v.shipCity}" />
+                                                    </lightning:layoutItem>
+                                                    <lightning:layoutItem size="4" padding="horizontal-small">
+                                                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>State</label><br/>
+                                                        <lightning:inputField aura:id="AcctFormField" fieldName="ShippingState" variant="label-hidden" value="{!v.shipState}" />
+                                                    </lightning:layoutItem>
+                                                    <lightning:layoutItem size="4">
+                                                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Zip Code</label><br/>
+                                                        <lightning:inputField aura:id="AcctFormField" fieldName="ShippingPostalCode" variant="label-hidden" value="{!v.shipZip}" />
+                                                    </lightning:layoutItem>
+                                                    <aura:if isTrue="{!v.isParent}">
+                                                        <lightning:layoutItem size="12">
+                                                            <lightning:input aura:id="shippingIsBilling" type="checkbox" name="shippingIsBilling" checked="{!v.shipIsBill}" value="{!v.shipIsBill}" label="Same as Billing Address"  oncommit="{!c.ShipSameAsBilling}"/>
+                                                        </lightning:layoutItem>
+                                                        <aura:set attribute="else">
+                                                            <lightning:layoutItem size="12">
+                                                                <lightning:input aura:id="parentIsChildShip" type="checkbox" name="parentIsChildShip" checked="{!v.ShipIsParent}" value="{!v.ShipIsParent}" label="Same as Parent Shipping Address"  oncommit="{!c.ParentIsChildShipping}"/>
+                                                            </lightning:layoutItem>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </lightning:layout>
+                                            </lightning:layoutItem>                                      
+                                            <lightning:layoutItem size="4" padding="horizontal-small">
+                                                <lightning:layout multipleRows="true">
+                                                    <lightning:layoutItem size="12">
+                                                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Billing Street</label><br/>
+                                                        <lightning:inputField aura:id="AcctFormField" fieldName="BillingStreet" variant="label-hidden" value="{!v.billStreet}" />
+                                                    </lightning:layoutItem>
+                                                    <lightning:layoutItem size="4">
+                                                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>City</label><br/>
+                                                        <lightning:inputField aura:id="AcctFormField" fieldName="BillingCity" variant="label-hidden" value="{!v.billCity}" />
+                                                    </lightning:layoutItem>
+                                                    <lightning:layoutItem size="4" padding="horizontal-small">
+                                                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>State</label><br/>
+                                                        <lightning:inputField aura:id="AcctFormField" fieldName="BillingState" variant="label-hidden" value="{!v.billState}" />
+                                                    </lightning:layoutItem>
+                                                    <lightning:layoutItem size="4">
+                                                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Zip Code</label><br/>
+                                                        <lightning:inputField aura:id="AcctFormField" fieldName="BillingPostalCode" variant="label-hidden" value="{!v.billZip}" />
+                                                    </lightning:layoutItem>
+                                                    <aura:if isTrue="{!v.isParent}">
+                                                        <lightning:layoutItem size="12">
+                                                            <lightning:input aura:id="billIsShipping" type="checkbox" name="billIsShipping" checked="{!v.billIsShip}" value="{!v.billIsShip}" label="Same as Shipping Address"  oncommit="{!c.BillSameAsShipping}"/>
+                                                        </lightning:layoutItem>
+                                                        <aura:set attribute="else">
+                                                            <lightning:layoutItem size="12">
+                                                                <lightning:input aura:id="parentIsChildBill" type="checkbox" name="parentIsChildBill" checked="{!v.billIsParent}" value="{!v.billIsParent}" label="Same as Parent Billing Address"  oncommit="{!c.ParentIsChildBilling}"/>
+                                                            </lightning:layoutItem>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </lightning:layout>
+                                            </lightning:layoutItem>
+                                        </aura:if>
+                                    </aura:if>
+                                </lightning:layout>
+                            </lightning:layoutItem>          
+                        </lightning:card>            
+                    </lightning:recordEditForm>
+                    <aura:if isTrue="{!v.isParent}">
+                        <lightning:layoutItem size="12" padding="horizontal-small">
+                            <lightning:recordEditForm recordId="{!v.oppId}" 
+                                                      aura:id="OpptyUpdateForm" 
+                                                      onload="{!c.handleOpptyLoad}"
+                                                      objectApiName="Opportunity">
+                                
+                                <lightning:layoutItem size="12">
+                                    <br/><b>Opportunity Information</b>
+                                </lightning:layoutItem>
+                                <lightning:layout multipleRows="true">
+                                    <lightning:layoutItem size="2" class="slds-hide">
+                                        <lightning:outputField aura:id="payPlatform" fieldName="Payroll_Platform__c" variant="label-stacked"/>
+                                        <lightning:inputField aura:id="AcctFormField" fieldName="LeverageSST__c"  value="{!v.sstLeveraged}" variant="label-stacked" />
+                                        <lightning:inputField aura:id="OpptySkipTrigger" fieldName="SkipTriggers__c"  value="{!v.boolTrue}" variant="label-stacked" />
+                                    </lightning:layoutItem>
+                                    <lightning:messages />
+                                  <aura:if isTrue="{!v.oppty.LeverageSST__c}">
+                                    <lightning:layoutItem size="2" padding="horizontal-small">
+                                        <lightning:outputField aura:id="OpptyName" fieldName="Name" variant="label-stacked" />
+                                    </lightning:layoutItem>
+                                    <lightning:layoutItem size="2">
+                                        <lightning:outputField aura:id="primaryQuote" fieldName="Primary_Oracle_Quote__c" variant="label-stacked" />
+                                    </lightning:layoutItem>
+                                    <lightning:layoutItem size="2"  padding="horizontal-small">
+                                        <lightning:outputField aura:id="promotionApplied" fieldName="Promotions_Applied__c" variant="label-stacked" />
+                                    </lightning:layoutItem>
+                                    <lightning:layoutItem size="3"  padding="horizontal-small">
+                                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Service Location </label><br/>
+                                        <lightning:inputField aura:id="AcctFormField" fieldName="Service_Location__c"  variant="label-hidden" />
+                                    </lightning:layoutItem>
+                                    <lightning:layoutItem size="2"  padding="horizontal-small">
+                                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Handbook Contact </label><br/>
+                                        <lightning:inputField aura:id="AcctFormField" fieldName="Handbook_Contact__c"  variant="label-hidden" />
+                                    </lightning:layoutItem>
+                                    <lightning:layoutItem size="2"  padding="horizontal-small">
+                                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Previous Method</label><br/>
+                                        <lightning:inputField aura:id="AcctFormField" fieldName="Payroll_Current_Prior_Method__c" variant="label-hidden" />
+                                    </lightning:layoutItem>
+                                    <lightning:layoutItem size="2">
+                                        <label class="slds-form-element__label">Payroll Frequency: </label>
+                                        <br/><lightning:outputField aura:id="OpptyName" fieldName="Frequency__c" variant="label-hidden" />
+                                    </lightning:layoutItem>
+                                    <lightning:layoutItem size="2"  padding="horizontal-small">
+                                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>First Payroll Delivery Method </label><br/>
+                                        <lightning:inputField aura:id="AcctFormField" fieldName="First_Payroll_Delivery_Method__c" variant="label-hidden" />
+                                    </lightning:layoutItem>
+                                    <lightning:layoutItem size="2"  padding="horizontal-small">
+                                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Source of Business</label><br/>
+                                        <lightning:inputField aura:id="AcctFormField" fieldName="LeadSource" variant="label-hidden" />
+                                    </lightning:layoutItem>
+                                    <lightning:layoutItem size="2">
+                                        <label class="slds-form-element__label"><abbr class="slds-required"><b>*</b> </abbr>Checks per pay period </label><br/>
+                                        <lightning:inputField aura:id="AcctFormField" fieldName="Employees_Paid_Per_Payroll__c" variant="label-hidden" />
+                                    </lightning:layoutItem>
+                                  </aura:if>
+                                  <aura:if isTrue="{!!v.oppty.LeverageSST__c}">
+                                    <lightning:layoutItem size="2" padding="horizontal-small">
+                                        <lightning:outputField aura:id="OpptyName" fieldName="Name" variant="label-stacked" />
+                                    </lightning:layoutItem>
+                                    <lightning:layoutItem size="2">
+                                        <lightning:outputField aura:id="primaryQuote" fieldName="Primary_Oracle_Quote__c" variant="label-stacked" />
+                                    </lightning:layoutItem>
+                                    <lightning:layoutItem size="2"  padding="horizontal-small">
+                                        <lightning:outputField aura:id="promotionApplied" fieldName="Promotions_Applied__c" variant="label-stacked" />
+                                    </lightning:layoutItem>
+                                 </aura:if>
+                                </lightning:layout>
+                            </lightning:recordEditForm>
+                        </lightning:layoutItem>                                       
+                    </aura:if>
+
+                    <lightning:button class="slds-m-top_small" variant="brand" label="Validate and Save"  onclick="{!c.handleAccountSubmit}" />
+                    <lightning:button label="Save and Return to Oppty" variant="brand"  onclick="{!c.saveAndCloseAcct}"  />
+                    <lightning:button label="Exit/Cancel" variant="brand"  onclick="{!c.closeAcct}"  />
+                </div>
+            </lightning:tab>
+            <aura:if isTrue="{!v.sstLeveraged}">
+                <lightning:tab id="SST" aura:id="SST" label="Sales Submission Team Information" onactive="{!c.showSST}">
+                    <aura:if isTrue="{!v.showForm}">
+                        <c:SalesSubmissionForm onboardingToolId="{!v.onboardingRecord}" parentOnboardingId="{!v.parentOnboardingRecord}" oppty="{!v.oppty}" parentTracker="{!v.parentTracker}" tracker="{!v.tracker}" acctName="{!v.acctName}"  productList="{!v.productList}"/>
+                    </aura:if>
+                </lightning:tab>
+            </aura:if>
+        </lightning:tabset>
+    </aura:if>
+</aura:component>

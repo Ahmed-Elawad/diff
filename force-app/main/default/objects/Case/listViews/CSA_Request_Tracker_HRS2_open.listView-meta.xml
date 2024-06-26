@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CSA_Request_Tracker_HRS2_open</fullName>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>Sales_Admin_Contact__c</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.PRIORITY</columns>
+    <filterScope>Queue</filterScope>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Cancelled,Closed</value>
+    </filters>
+    <label>CSA Request Tracker - HRS (Open)</label>
+    <queue>CSARequestTrackerHRS</queue>
+    <sharedTo>
+        <role>CSAAnalystCoordinator</role>
+        <role>CSAManager</role>
+    </sharedTo>
+</ListView>

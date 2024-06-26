@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Employer_contributions_prior_to_AgencyLC</fullName>
+    <active>true</active>
+    <description>Set up employer contributions prior to Agency load complete</description>
+    <errorConditionFormula>OR(
+AND
+
+(
+
+RecordTypeId = &apos;0120g000000l3qD&apos;,
+
+ISBLANK( Agency_Load_Complete__c ),
+
+NOT(ISBLANK( Set_Up_Employer_Contributions__c ))
+
+),
+AND
+
+(
+
+RecordTypeId = &apos;012700000001jeX&apos;,
+ISPICKVAL(Onboarding_Process__c,&apos;Agency Integrated Online Enrollment&apos;),
+
+ISBLANK( Agency_Load_Complete__c ),
+
+NOT(ISBLANK( Set_Up_Employer_Contributions__c ))
+
+)
+
+
+)</errorConditionFormula>
+    <errorDisplayField>Set_Up_Employer_Contributions__c</errorDisplayField>
+    <errorMessage>You must have a date in the agency load complete field prior to setting up employer contributions</errorMessage>
+</ValidationRule>

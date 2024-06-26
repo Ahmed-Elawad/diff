@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Restrict_Sales2Service_Creation</fullName>
+    <active>true</active>
+    <description>Sales2Service is created by clicking the Sales Case button. This validation rule will restrict who can create it.</description>
+    <errorConditionFormula>AND(
+RecordType.Name = &quot;Sales2Service Case&quot;,
+ISNEW(),
+NOT(CONTAINS($Profile.Name,&quot;System Administrator&quot;)), 
+OR(
+CONTAINS(LOWER($User.Title),&apos;oasis&apos;),
+CONTAINS(LOWER($User.Title),&apos;hroi&apos;),
+ISPICKVAL( $User.License_Type__c , &apos;PEO HROi&apos;),
+CONTAINS(LOWER($Profile.Name),&apos;oasis&apos;),
+CONTAINS(LOWER($Profile.Name),&apos;hroi&apos;)))</errorConditionFormula>
+    <errorMessage>You do not have permission to create a Sales2Service case.</errorMessage>
+</ValidationRule>

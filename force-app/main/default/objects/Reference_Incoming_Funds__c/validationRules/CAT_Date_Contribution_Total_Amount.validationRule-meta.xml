@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CAT_Date_Contribution_Total_Amount</fullName>
+    <active>true</active>
+    <description>Date Completed by CAT, # of Contribution Lines Approved and CAT Total Amount must be filled out together</description>
+    <errorConditionFormula>AND( NOT(BEGINS($Profile.Name,&quot;System Admin&quot;)),
+OR(NOT(ISBLANK(Date_Completed_by_CAT__c)), NOT(ISBLANK(of_Contribution_Lines_Approved__c )),NOT(ISBLANK(CAT_Total_Amount__c))),
+OR(ISBLANK(Date_Completed_by_CAT__c),ISBLANK(of_Contribution_Lines_Approved__c ),ISBLANK(CAT_Total_Amount__c)))</errorConditionFormula>
+    <errorMessage>Date Completed by CAT, # of Contribution Lines Approved and CAT Total Amount must be filled out together</errorMessage>
+</ValidationRule>

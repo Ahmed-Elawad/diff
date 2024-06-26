@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRS_4S_FSA_POP_over_90_days</fullName>
+    <columns>NAME</columns>
+    <columns>LAST_UPDATE</columns>
+    <columns>OWNER.ALIAS</columns>
+    <columns>CREATEDBY_USER</columns>
+    <columns>Date_Paperwork_Received__c</columns>
+    <columns>New_Case__c</columns>
+    <columns>SunGard_Number__c</columns>
+    <columns>HSA_Termination__c</columns>
+    <columns>HRA_Termination__c</columns>
+    <columns>FSA_Termination__c</columns>
+    <columns>Is_Client_Terminating_All_Active_PBA_Pro__c</columns>
+    <columns>Discrepancy__c</columns>
+    <columns>POP_Downgrade__c</columns>
+    <columns>Term_Transfer_Stopped__c</columns>
+    <columns>RECORDTYPE</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Discrepancy_Closed_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>LAST_UPDATE</field>
+        <operation>lessThan</operation>
+        <value>LAST_90_DAYS</value>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>equals</operation>
+        <value>In Process,Paperwork Discrepancy,Oustanding NSF</value>
+    </filters>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_Terms_Transfers__c.S125_FSA_Termination</value>
+    </filters>
+    <label>HRS 4S FSA term over 90 days</label>
+    <sharedTo>
+        <role>HRS4SClientRetentionRepresentative</role>
+    </sharedTo>
+</ListView>

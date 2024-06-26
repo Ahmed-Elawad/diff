@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>54.0</apiVersion>
+    <decisions>
+        <name>Is_the_Merge_Name_Still_Populated</name>
+        <label>Is the Merge Name Still Populated?</label>
+        <locationX>374</locationX>
+        <locationY>288</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Check_Merge_Name</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Merge_Name__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Clear_Merge_Fields</targetReference>
+            </connector>
+            <label>Check Merge Name</label>
+        </rules>
+    </decisions>
+    <description>Clear Merge Fields after 5 days</description>
+    <interviewLabel>Referral Account Scheduled Actions {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Referral Account Scheduled Actions</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <description>If the merge didn&apos;t happen within 5 days, clear the fields.</description>
+        <name>Clear_Merge_Fields</name>
+        <label>Clear Merge Fields</label>
+        <locationX>242</locationX>
+        <locationY>408</locationY>
+        <inputAssignments>
+            <field>Merge_Name__c</field>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Merge_Request_Date__c</field>
+        </inputAssignments>
+        <inputAssignments>
+            <field>To_Be_Merged_Merged__c</field>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Merge_Name__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <object>Referral_Account__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <name>X5_Days_After_Request</name>
+            <connector>
+                <targetReference>Is_the_Merge_Name_Still_Populated</targetReference>
+            </connector>
+            <label>5 Days After Request</label>
+            <offsetNumber>5</offsetNumber>
+            <offsetUnit>Days</offsetUnit>
+            <recordField>Merge_Request_Date__c</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <triggerOrder>70</triggerOrder>
+</Flow>

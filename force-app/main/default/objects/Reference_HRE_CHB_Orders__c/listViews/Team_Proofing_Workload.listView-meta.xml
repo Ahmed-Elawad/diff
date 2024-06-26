@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Team_Proofing_Workload</fullName>
+    <booleanFilter>(2 AND 3 AND 4 AND 5 and (6 or 7) and (8 and 9)) or (1 and ((6 and 8) or (7 and 9)))</booleanFilter>
+    <columns>NAME</columns>
+    <columns>BIS_ID__c</columns>
+    <columns>Order_Date__c</columns>
+    <columns>Type_of_Request__c</columns>
+    <columns>Binder_Quantity__c</columns>
+    <columns>Spanish_Binder_Quantity__c</columns>
+    <columns>Date_Sent_to_Vendor__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_HRE_CHB_Orders__c.Handbook_Supply_Order_Record_Type</value>
+    </filters>
+    <filters>
+        <field>Order_Date__c</field>
+        <operation>greaterOrEqual</operation>
+        <value>1/18/2015</value>
+    </filters>
+    <filters>
+        <field>Void_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Type_of_Request__c</field>
+        <operation>equals</operation>
+        <value>Binders Only</value>
+    </filters>
+    <filters>
+        <field>Open_Discrepancies__c</field>
+        <operation>lessOrEqual</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Binder_Quantity__c</field>
+        <operation>greaterThan</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Spanish_Binder_Quantity__c</field>
+        <operation>greaterThan</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Date_Sent_to_Vendor__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Spanish_Binder_Order_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <label>Workload - Binders Only</label>
+    <sharedTo>
+        <role>HRE_Handbook_Rep_team_1</role>
+        <role>HRE_Handbook_Rep_team_2</role>
+        <role>HRE_Handbook_Rep_team_3</role>
+        <role>HRE_Handbook_Supervisor_team_1</role>
+        <role>HRE_Handbook_Supervisor_team_2</role>
+        <role>HRE_Handbook_Supervisor_team_3</role>
+    </sharedTo>
+</ListView>

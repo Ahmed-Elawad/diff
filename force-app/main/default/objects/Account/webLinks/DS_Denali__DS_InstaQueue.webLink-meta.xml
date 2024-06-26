@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DS_Denali__DS_InstaQueue</fullName>
+    <availability>online</availability>
+    <displayType>button</displayType>
+    <linkType>javascript</linkType>
+    <masterLabel>DS InstaQueue</masterLabel>
+    <openType>onClickJavaScript</openType>
+    <protected>false</protected>
+    <url>{!REQUIRESCRIPT(&quot;/resource/DS_Denali__DSConnection&quot;)} 
+{!REQUIRESCRIPT(&quot;/soap/ajax/40.0/apex.js&quot;)} 
+var sid = &quot;{!$Api.Session_ID}&quot;; 
+var loc = &quot;{!$Api.Partner_Server_URL_80}&quot;; 
+var aid = &quot;{!$Organization.Id}&quot;; 
+var uid = &quot;{!User.Id}&quot;; 
+var phone = &quot;{!Account.Phone}&quot;; 
+var name = &quot;{!Account.Name}&quot;; 
+var oid = &quot;{!Account.Id}&quot;; 
+
+if({!User.DS_Denali__DialSource_Development_Mode__c} == true) { 
+var url = &apos;https://websocket-dev-andrew.dialsource.com:8000/addToQueue?aid=&apos;+aid+&apos;&amp;uid=&apos;+uid+&apos;&amp;object_id=&apos;+oid; 
+
+} 
+else { 
+
+var url = &apos;https://ws.dialsource.com:8000/addToQueue?aid=&apos;+aid+&apos;&amp;uid=&apos;+uid+&apos;&amp;object_id=&apos;+oid; 
+} 
+console.log(url); 
+
+var result = sforce.apex.execute(&quot;DS_Denali.addToQueue&quot;,&quot;httpPOSTrecord&quot;, 
+{urlParams : url, phone : phone, name: name});
+
+if (phone == &quot;&quot;)
+window.alert(&apos;Account record has no phone number.&apos;);  
+
+//window.alert(&apos;Record successfully queued&apos;);</url>
+</WebLink>

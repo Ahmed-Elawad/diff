@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Service_Support_Forfeiture_Alloc_Preps</fullName>
+    <columns>NAME</columns>
+    <columns>Date_Paperwork_Received__c</columns>
+    <columns>Last_Check_Date__c</columns>
+    <columns>Date_Sent_to_Service_Support__c</columns>
+    <columns>Unresolved_Allocation__c</columns>
+    <columns>Allocation_Issue_Resolved__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_Terms_Transfers__c.X401k_Termination</value>
+    </filters>
+    <filters>
+        <field>Date_Sent_to_Service_Support__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Unresolved_Allocation__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Send_to_CAM_to_Trade_Allocation__c</field>
+        <operation>equals</operation>
+    </filters>
+    <label>Service Support: Forfeiture Alloc. Preps</label>
+    <sharedTo>
+        <role>HRS4SCPRRepresentative</role>
+        <role>HRS4SCPRSupervisor</role>
+        <role>HRS4SClientChangesRepresentativeI</role>
+        <role>HRS4SClientChangesSupervisorI</role>
+    </sharedTo>
+</ListView>

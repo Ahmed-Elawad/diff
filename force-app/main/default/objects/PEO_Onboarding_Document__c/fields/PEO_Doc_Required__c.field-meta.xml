@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PEO_Doc_Required__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>This field was created for Reporting and determines whether the Document is Needed or Optional</description>
+    <externalId>false</externalId>
+    <formula>IF(
+(
+(PEO_Onboarding_Checklist__r.CensusRequired__c == true &amp;&amp; Name == &apos;Census&apos;)||
+(PEO_Onboarding_Checklist__r.Medical_Invoice_Required__c == true &amp;&amp; Name == &apos;Medical Invoice&apos;)||
+(PEO_Onboarding_Checklist__r.Benefit_Summaries_Required__c == true &amp;&amp; Name == &apos;Benefit Summary&apos;)||
+(PEO_Onboarding_Checklist__r.Health_Insurance_Renewal_required__c == true &amp;&amp; Name == &apos;Health Insurance Renewal&apos;)||
+(PEO_Onboarding_Checklist__r.Claims_Report_required__c == true &amp;&amp; Name == &apos;Claims Report&apos;)
+),
+&apos;Needed&apos;, &apos;Optional&apos;)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>This field was created for Reporting and determines whether the Document is Needed or Optional</inlineHelpText>
+    <label>PEO Document Required?</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

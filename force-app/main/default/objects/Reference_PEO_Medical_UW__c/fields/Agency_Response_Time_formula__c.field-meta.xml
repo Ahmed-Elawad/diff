@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Agency_Response_Time_formula__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>ROUND( 9 * ( 
+( 5 * FLOOR( ( DATEVALUE(  Date_Response_from_Agency__c  ) - DATE( 1900, 1, 8) ) / 7) + 
+MIN( 5, 
+MOD( DATEVALUE( Date_Response_from_Agency__c  ) - DATE( 1996, 1, 1), 7 ) + 
+MIN( 1, 24 / 8 * ( MOD( Date_Response_from_Agency__c  - DATETIMEVALUE( &apos;1900-01-08 13:00:00&apos; ), 1) ) ) 
+) 
+) 
+- 
+( 5 * FLOOR( ( DATEVALUE(  Date_Submitted_to_Agency__c ) - DATE( 1900, 1, 8) ) / 7) + 
+MIN(5, 
+MOD( DATEVALUE( Date_Submitted_to_Agency__c) - DATE( 1900, 1, 8), 7) + 
+MIN( 1, 24 / 8 * ( MOD( Date_Submitted_to_Agency__c - DATETIMEVALUE( &apos;1900-01-08 13:00:00&apos; ), 1 ) ) ) 
+) 
+) 
+), 
+0 )</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Agency Response Time</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

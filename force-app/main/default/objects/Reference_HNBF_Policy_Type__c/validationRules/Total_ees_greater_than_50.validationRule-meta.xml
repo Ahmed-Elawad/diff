@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Total_ees_greater_than_50</fullName>
+    <active>true</active>
+    <description>If Total # of EE&apos;s Actively Enrolled &gt; 50 and Policy Type = Medical, Percent Commissionable must be populated</description>
+    <errorConditionFormula>Total_of_EE_s_Actively_Enrolled__c &gt;50 &amp;&amp; ISPICKVAL(Policy_Type__c , &quot;Medical&quot;)&amp;&amp;
+ISNULL ( Percent_Commissionable__c )</errorConditionFormula>
+    <errorMessage>If the Total Number of Actively Enrolled Employees is greater than 50 and the Policy Type is medical, you must enter a value in the Percent Commisionable Field.</errorMessage>
+</ValidationRule>

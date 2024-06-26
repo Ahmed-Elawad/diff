@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MyNotSoldOpportunities</fullName>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>OPPORTUNITY.CLOSE_DATE</columns>
+    <columns>Reason_Not_Sold__c</columns>
+    <columns>OPPORTUNITY.AMOUNT</columns>
+    <columns>OPPORTUNITY.LEAD_SOURCE</columns>
+    <columns>Referring_Employee__c</columns>
+    <columns>Referral_Contact__c</columns>
+    <columns>Employees_Paid_Per_Payroll__c</columns>
+    <columns>Frequency__c</columns>
+    <columns>Primary_Competition__c</columns>
+    <columns>Local_Competitors__c</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>OPPORTUNITY.STAGE_NAME</field>
+        <operation>contains</operation>
+        <value>Not Sold,Lost,No Decision,Disqualified</value>
+    </filters>
+    <filters>
+        <field>Reason_Not_Sold__c</field>
+        <operation>notContain</operation>
+        <value>Cleanup,Duplicate Opportunity,Employee Inquiry,SOAR Bad Lead</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.CLOSE_DATE</field>
+        <operation>greaterOrEqual</operation>
+        <value>5/1/2019</value>
+    </filters>
+    <label>My Not Sold Opportunities</label>
+    <sharedTo>
+        <group>CORE</group>
+        <group>HNBF</group>
+        <group>HRSSales</group>
+        <group>MMS</group>
+        <role>HRS_SR_DIR_RETIREMENT</role>
+        <roleAndSubordinates>HRSERVICESSRDIR</roleAndSubordinates>
+        <roleAndSubordinatesInternal>PEO_Director</roleAndSubordinatesInternal>
+    </sharedTo>
+</ListView>

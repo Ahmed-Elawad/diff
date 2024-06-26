@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ProductFeature_Gap_Description_required</fullName>
+    <active>true</active>
+    <description>Product/Feature Gap Description is required only if the Product/Feature Gap field is Yes</description>
+    <errorConditionFormula>IF( AND(ISPICKVAL(  Product_Feature_Gap__c  , &apos;Yes&apos;),  ISBLANK( Product_Feature_Gap_Description__c ) )  , true, false)</errorConditionFormula>
+    <errorDisplayField>Product_Feature_Gap_Description__c</errorDisplayField>
+    <errorMessage>Product/Feature Gap Description is required when Product/Feature Gap field is Yes</errorMessage>
+</ValidationRule>

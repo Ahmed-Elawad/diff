@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Branch_Client_Number_Format</fullName>
+    <active>true</active>
+    <description>trying to prevent bad or not complete numbers from being manually entered</description>
+    <errorConditionFormula>AND(OR(ISNEW(),ISCHANGED(AccountNumber)),
+    NOT(ISBLANK(AccountNumber)),
+    NOT(ISPICKVAL(Type,&apos;HROi Client&apos;)),
+    NOT(BEGINS($Profile.Name, &quot;System Admin&quot;)),
+    NOT(AND(
+	REGEX(AccountNumber, &quot;[0-9]+[-]([A-Z0-9]{9}|[A-Z0-9]{8}|[A-Z0-9]{4}|[A-Z0-9]{7})&quot;),
+	NOT(REGEX(AccountNumber, &quot;[0-9]+[-]([A-Z0-9])\\1{2}[A-Z0-9]{1}&quot;)),
+	NOT(REGEX(AccountNumber, &quot;[0-9]+[-]([A-Z0-9])\\1{6}[A-Z0-9]{1}&quot;)),
+	NOT(REGEX(AccountNumber, &quot;[0-9]+[-](0)\\1{3}[A-Z0-9]{4}&quot;)),
+	NOT(REGEX(AccountNumber, &quot;[0-9]+[-](NPR)[A-Z0-9]*&quot;))
+           )
+       )
+)</errorConditionFormula>
+    <errorDisplayField>AccountNumber</errorDisplayField>
+    <errorMessage>Incorrect format for Prospect-Client Number.</errorMessage>
+</ValidationRule>

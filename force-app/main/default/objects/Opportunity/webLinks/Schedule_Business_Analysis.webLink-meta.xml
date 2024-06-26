@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Schedule_Business_Analysis</fullName>
+    <availability>online</availability>
+    <description>MMS Sales Business Analysis
+JSH 6/26 renamed to Discover</description>
+    <displayType>button</displayType>
+    <linkType>javascript</linkType>
+    <masterLabel>Schedule Discovery</masterLabel>
+    <openType>onClickJavaScript</openType>
+    <protected>false</protected>
+    <url>{!REQUIRESCRIPT(&quot;/soap/ajax/8.0/connection.js&quot;)}
+
+var connection = sforce.connection; 
+var Opportunity = new sforce.SObject(&quot;Opportunity&quot;); 
+
+if (Opportunity != &quot;Discover&quot;) 
+
+{ 
+
+var opp = new sforce.SObject(&quot;Opportunity&quot;); 
+opp.Id = &quot;{!Opportunity.Id}&quot;; 
+opp.StageName = (&quot;Discover&quot;);
+connection.update([opp]); 
+window.top.location.href = window.top.location.href; 
+window.parent.location.replace(&apos;/00U/e?&amp;retURL=/{!Opportunity.Id}&amp;who_id={!Contact.Id}&amp;what_id={!Opportunity.Id}&amp;tsk4={!Today}&amp;00N50000001HEKm={!Opportunity.LeadSource}&amp;evt5=Discovery for {!Opportunity.Name}&amp;evt6={!Contact.Name}%0D%0APhone: {!Contact.Phone}%0D%0AMobile: {!Contact.MobilePhone}%0D%0A{!JSINHTMLENCODE(Account.BillingStreet)}%0D%0A{!JSINHTMLENCODE(Account.BillingCity)} {!JSINHTMLENCODE(Account.BillingState)}, {!JSINHTMLENCODE(Account.BillingPostalCode)}%0D%0A{!JSINHTMLENCODE( Contact.Email )}&amp;evt12={!JSINHTMLENCODE(Account.BillingStreet)} &amp;evt10=Presentation - Follow-up&apos;); 
+} 
+else 
+{ 
+alert(&quot;Error&quot;); 
+}</url>
+</WebLink>

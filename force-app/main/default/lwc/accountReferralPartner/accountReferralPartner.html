@@ -1,0 +1,47 @@
+<template>
+
+    <div class="slds-box slds-theme_default slds-var-m-bottom_medium">
+         <div if:true={isLoading} class="exampleHolder slds-is-relative slds-spinner_container" style="height: 5px; position:relative">
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </div>
+        <div class="slds-grid slds-gutters slds-wrap">
+            <div class="slds-col slds-size_3-of-3">
+                <h2 class="slds-var-m-bottom_medium" style="text-align: center;font-weight:700;float:left; font-size:1rem">Referral Account</h2>
+            </div>
+           
+           <div class="slds-col slds-size_2-of-3 slds-m-top_x-small" if:false={cpaname}>
+                <span style="font-size: 1rem;font-weight: 500;float:left;">The CPA Full Name field is empty. Please add their accountant and save to verify the mutual client relationship</span>
+            </div>
+            <!-- <div class="slds-col slds-size_2-of-4 slds-m-top_x-small" if:true={cpaname}>
+                <span style="font-size: 1rem;font-weight: 500;float:left;">Name : {cpaname}</span>
+            </div>
+             <div class="slds-col slds-size_2-of-4 slds-m-top_x-small" if:true={cpaname}>
+                <span style="font-size: 1rem;font-weight: 500;float:left;">Primary Referral Type : {referralType}</span>
+            </div>
+             <div class="slds-col slds-size_3-of-4 slds-m-top_x-small" if:true={cpaname}>
+                <span style="font-size: 1rem;font-weight: 500;float:left;">Last Verification Date : <lightning-formatted-date-time value={verificationDate} >
+                    </div> -->
+              <table class="slds-table slds-m-left_xx-small" if:true={cpaname}>
+                  <tr>
+                      <th style="font-weight:600">Name</th>
+                      <th style="font-weight:600">Primary Referral Type </th>
+                      <th style="font-weight:600">Last Verification Date </th>
+                  </tr>
+                  <tr>
+                      <td>{cpaname}</td>
+                      <td>{referralType}</td>
+                      <td><lightning-formatted-date-time value={verificationDate} ></lightning-formatted-date-time></td>
+                  </tr>
+                 
+              </table>
+    
+            
+             <div class="slds-col slds-size_1-of-4 slds-m-top_x-small" if:true={cpaname}></div>
+            <div class="slds-col slds-size_4-of-4 slds-var-m-top_large" if:true={cpaname}>
+                 <lightning-button  class="slds-var-m-bottom_medium" style="margin-bottom:5%; margin-left:60%" variant="brand" label="Remove CPA" title="Remove CPA" onclick={handleRemoveCPA}></lightning-button>
+
+                  <lightning-button  class="slds-var-m-bottom_medium" style="float:right;margin-bottom:5%;" variant="brand" label="Verify" title="Verify" onclick={verifyCPA}></lightning-button>
+            </div>
+        </div>
+    </div>
+</template>

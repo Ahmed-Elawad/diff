@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>First_Check_Date_with_New_Provider</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND
+(
+ISNULL (First_Run_Date_on_New_Platform__c),
+
+ISPICKVAL(Processing_with_new_provider_this_month__c,&quot;Yes&quot;)
+
+)</errorConditionFormula>
+    <errorDisplayField>First_Run_Date_on_New_Platform__c</errorDisplayField>
+    <errorMessage>First Check date with New Provider is required.</errorMessage>
+</ValidationRule>

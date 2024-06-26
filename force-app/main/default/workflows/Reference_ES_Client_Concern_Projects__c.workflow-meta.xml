@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Add_to_Log</fullName>
+        <field>Comments_Log__c</field>
+        <formula>upper( $User.FirstName ) &amp; &quot; &quot; &amp; upper( $User.LastName )&amp; &quot; (&quot; &amp; text(month(today())) &amp; &quot;/&quot;&amp; text(day(today())) &amp; &quot;/&quot;&amp; text(year(today()))&amp; &quot; &quot; &amp;Text(CASE(VALUE(MID(TEXT( Now() ) , 12, 2)) , 0, 20, 1, 21, 2, 22,3, 23,4, 0,5, 1,6, 2,7, 3,8, 4,9, 5,10, 6,11, 7,12, 8,13, 9,14,10,15, 11,16, 12,17, 13,18, 14,19, 15,20, 16,21, 17,22, 18,23, 19, 24)) 
+&amp; &quot;:&quot; &amp; MID(TEXT( Now() ) , 15, 2) &amp; &quot;)&quot; &amp; BR() &amp; &quot;- &quot; &amp; Comments__c &amp; BR() &amp; BR() &amp; Comments_Log__c</formula>
+        <name>Add to Log</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Clear_Comments</fullName>
+        <field>Comments__c</field>
+        <name>Clear Comments</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Reference ES Client Concern Comment Tool</fullName>
+        <actions>
+            <name>Add_to_Log</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Clear_Comments</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_ES_Client_Concern_Projects__c.Comments__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>Reference ES Client Concern Projects Comment Tool</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

@@ -1,0 +1,26 @@
+/* 
+   Mock for the callout
+
+
+
+   
+  History
+  -------
+  03/08/2021 Dan Carmen           Created
+  01/06/2022 Dan Carmen           Update API version
+
+ */
+@isTest
+global class DataDictionaryMock implements HttpCalloutMock {
+
+   // Implement this interface method
+   global HTTPResponse respond(HTTPRequest request) {
+        // Create a fake response
+        HttpResponse response = new HttpResponse();
+        response.setHeader('Content-Type', 'application/json');
+        response.setBody('{"size":21,"totalSize":21,"done":true,"queryLocator":null,"entityTypeName":"FieldDefinition","records":[{"attributes":{"type":"FieldDefinition","url":"/services/data/v50.0/tooling/sobjects/FieldDefinition/01I210000019Z0Z.00N2100000C6l37"},"QualifiedApiName":"ObjectAPIName__c","Description":null,"LastModifiedDate":"2021-03-02T20:00:20.000+0000"},{"attributes":{"type":"FieldDefinition","url":"/services/data/v50.0/tooling/sobjects/FieldDefinition/01I210000019Z0Z.00N2100000C6l3C"},"QualifiedApiName":"Active__c","Description":null,"LastModifiedDate":"2021-03-02T20:01:47.000+0000"},{"attributes":{"type":"FieldDefinition","url":"/services/data/v50.0/tooling/sobjects/FieldDefinition/01I210000019Z0Z.00N2100000C6qd6"},"QualifiedApiName":"NotifyNewField__c","Description":"Check out this description","LastModifiedDate":"2021-03-08T14:34:27.000+0000"},{"attributes":{"type":"FieldDefinition","url":"/services/data/v50.0/tooling/sobjects/FieldDefinition/01I210000019Z0Z.00N2100000C7P4A"},"QualifiedApiName":"ProcessNotes__c","Description":null,"LastModifiedDate":"2021-03-03T16:40:22.000+0000"},{"attributes":{"type":"FieldDefinition","url":"/services/data/v50.0/tooling/sobjects/FieldDefinition/01I210000019Z0Z.Id"},"QualifiedApiName":"Id","Description":null,"LastModifiedDate":null},{"attributes":{"type":"FieldDefinition","url":"/services/data/v50.0/tooling/sobjects/FieldDefinition/01I210000019Z0Z.Owner"},"QualifiedApiName":"OwnerId","Description":null,"LastModifiedDate":null},{"attributes":{"type":"FieldDefinition","url":"/services/data/v50.0/tooling/sobjects/FieldDefinition/01I210000019Z0Z.IsDeleted"},"QualifiedApiName":"IsDeleted","Description":null,"LastModifiedDate":null},{"attributes":{"type":"FieldDefinition","url":"/services/data/v50.0/tooling/sobjects/FieldDefinition/01I210000019Z0Z.Name"},"QualifiedApiName":"Name","Description":null,"LastModifiedDate":null},{"attributes":{"type":"FieldDefinition","url":"/services/data/v50.0/tooling/sobjects/FieldDefinition/01I210000019Z0Z.CreatedDate"},"QualifiedApiName":"CreatedDate","Description":null,"LastModifiedDate":null},{"attributes":{"type":"FieldDefinition","url":"/services/data/v50.0/tooling/sobjects/FieldDefinition/01I210000019Z0Z.CreatedBy"},"QualifiedApiName":"CreatedById","Description":null,"LastModifiedDate":null},{"attributes":{"type":"FieldDefinition","url":"/services/data/v50.0/tooling/sobjects/FieldDefinition/01I210000019Z0Z.LastModifiedDate"},"QualifiedApiName":"LastModifiedDate","Description":null,"LastModifiedDate":null},{"attributes":{"type":"FieldDefinition","url":"/services/data/v50.0/tooling/sobjects/FieldDefinition/01I210000019Z0Z.LastModifiedBy"},"QualifiedApiName":"LastModifiedById","Description":null,"LastModifiedDate":null},{"attributes":{"type":"FieldDefinition","url":"/services/data/v50.0/tooling/sobjects/FieldDefinition/01I210000019Z0Z.SystemModstamp"},"QualifiedApiName":"SystemModstamp","Description":null,"LastModifiedDate":null},{"attributes":{"type":"FieldDefinition","url":"/services/data/v50.0/tooling/sobjects/FieldDefinition/01I210000019Z0Z.LastViewedDate"},"QualifiedApiName":"LastViewedDate","Description":null,"LastModifiedDate":null},{"attributes":{"type":"FieldDefinition","url":"/services/data/v50.0/tooling/sobjects/FieldDefinition/01I210000019Z0Z.LastReferencedDate"},"QualifiedApiName":"LastReferencedDate","Description":null,"LastModifiedDate":null},{"attributes":{"type":"FieldDefinition","url":"/services/data/v50.0/tooling/sobjects/FieldDefinition/01I210000019Z0Z.UserRecordAccess"},"QualifiedApiName":"UserRecordAccessId","Description":null,"LastModifiedDate":null},{"attributes":{"type":"FieldDefinition","url":"/services/data/v50.0/tooling/sobjects/FieldDefinition/01I210000019Z0Z.RecordVisibility"},"QualifiedApiName":"RecordVisibilityId","Description":null,"LastModifiedDate":null},{"attributes":{"type":"FieldDefinition","url":"/services/data/v50.0/tooling/sobjects/FieldDefinition/01I210000019Z0Z.ConnectionReceived"},"QualifiedApiName":"ConnectionReceivedId","Description":null,"LastModifiedDate":null},{"attributes":{"type":"FieldDefinition","url":"/services/data/v50.0/tooling/sobjects/FieldDefinition/01I210000019Z0Z.ConnectionReceivedDate"},"QualifiedApiName":"ConnectionReceivedDate","Description":null,"LastModifiedDate":null},{"attributes":{"type":"FieldDefinition","url":"/services/data/v50.0/tooling/sobjects/FieldDefinition/01I210000019Z0Z.ConnectionSent"},"QualifiedApiName":"ConnectionSentId","Description":null,"LastModifiedDate":null},{"attributes":{"type":"FieldDefinition","url":"/services/data/v50.0/tooling/sobjects/FieldDefinition/01I210000019Z0Z.ConnectionSentDate"},"QualifiedApiName":"ConnectionSentDate","Description":null,"LastModifiedDate":null}]}');
+        response.setStatusCode(200);
+        return response; 
+   } // respond
+    
+} // class DataDictionaryMock

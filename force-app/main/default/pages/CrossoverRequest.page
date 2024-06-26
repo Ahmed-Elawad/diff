@@ -1,0 +1,326 @@
+<!-- Page to handle crossover requests
+
+History
+-------
+10/23/2009 Dan Carmen   Created 
+3/16/2016 Jacob Hinds   Added picklist to choose who to crossover to.
+7/13/2016 Josh Cartwright increased the size of the crossover request input field
+9/28/2016 Justin Stouffer Re-wrote to work better in SF1
+1/19/2021 Michael Karcz re-worked submit buttons to "load" on click, preventing duplicate records from double-clicking
+-->
+<apex:page standardController="Account" extensions="CrossoverRequestController"
+           tabStyle="Account">
+    <script type="text/javascript">
+        function clickSaveDsaRequest(objSubmitBtn1)
+        {
+            objSubmitBtn1.disabled = true;
+            objSubmitBtn1.value = 'Submitting…';
+            dosaveDsaRequest();
+        }
+        function clicksetRecipient(objSubmitBtn2)
+        {
+            objSubmitBtn2.disabled = true;
+            objSubmitBtn2.value = 'Submitting…';
+            dosetRecipient();
+        }
+        function clickSaveRequest(objSubmitBtn3)
+        {
+            objSubmitBtn3.disabled = true;
+            objSubmitBtn3.value = 'Submitting…';
+            doSaveRequest();
+        }
+        function clicksaveExtension(objSubmitBtn4)
+        {
+            objSubmitBtn4.disabled = true;
+            objSubmitBtn4.value = 'Submitting…';
+            dosaveExtension();
+        }
+    
+    </script> 
+    <!--<apex:includeScript value="{!URLFOR($Resource.iOSFix)}"/>-->    
+    <apex:pageMessages id="messages"/>
+    <apex:form id="form">
+        <apex:outputPanel id="Desktop" rendered="{!NOT(isSF1)}">
+            <apex:pageBlock rendered="{!cannotComplete}" title="Your DSA/FSS must determine who has authority to approve your request" >
+                <apex:pageBlockSection columns="1">
+                    <apex:outputText value="Enter the name of your DSA/FSS and click the magnifying glass to select from the list." /> 
+                    <apex:outputText value="Click Submit to send the request to your DSA/FSS. If you do not click Submit, the request will not be processed." />
+                    <apex:inputField value="{!request.Send_Request_To__c}" />
+                </apex:pageBlockSection>
+                <apex:facet name="footer">
+                    <apex:outputPanel >
+                        <apex:commandButton onclick="clickSaveDsaRequest(this);" value="Submit and Return to Prospect-Client" styleClass="btn"/>
+                        <apex:commandButton action="{!cancel}" value="Cancel and Return to Prospect-Client" styleClass="btn"/>
+                        <apex:actionFunction name="dosaveDsaRequest" action="{!saveDsaRequest}"/>
+                    </apex:outputPanel>
+                </apex:facet>
+            </apex:pageBlock>
+            
+            <apex:pageBlock id="returnToPC" rendered="{!AND(finished,NOT(cannotComplete))}" title="Click the button to return to the Prospect-Client record." >
+                <apex:outputText rendered="{!isTransfer}" value="The Ownership change will not occur until the '{!returnButtonTitle}' button is clicked. Click 'Cancel' if you do not want to transfer the record to yourself." />
+                
+                <apex:facet name="footer">
+                    <apex:outputPanel rendered="{!NOT(cannotComplete)}">
+                        <apex:commandButton rendered="{!isTransfer}" action="{!cancel}" value="Cancel" styleClass="btn"/>
+                        <apex:commandButton action="{!returnToAcct}" value="{!returnButtonTitle}" styleClass="btn"/>
+                    </apex:outputPanel>
+                </apex:facet>
+            </apex:pageBlock>
+            
+            <apex:pageBlock rendered="{!AND(NOT(finished),hasRequests)}" >
+                <apex:pageBlockSection title="Open Crossover Requests were found">
+                    <apex:dataTable value="{!requests}" var="request" cellPadding="4" border="1">
+                        <apex:column headerValue="Submitted By"> 
+                            <apex:outputField value="{!request.CreatedBy.Name}"/>
+                        </apex:column>
+                        <apex:column headerValue="Submitted Date"> 
+                            <apex:outputField value="{!request.CreatedDate}" />
+                        </apex:column>
+                        <apex:column headerValue="Owner Field"> 
+                            <apex:outputField value="{!request.Owner_Field__c}" />
+                        </apex:column>
+                        <apex:column headerValue="Comments"> 
+                            <apex:outputField value="{!request.Comments__c}" />
+                        </apex:column>
+                    </apex:dataTable>
+                    
+                </apex:pageBlockSection>
+                
+            </apex:pageBlock>
+            
+            <!--  {!AND(NOT(finished),OR(NOT(hasAcct),hasRequests))} -->
+            <!--  If there isn't an account, can't proceed  -->
+            <apex:pageBlock rendered="{!AND(NOT(finished),OR(NOT(hasAcct),hasOpenOwnerRequests))}" title="Request to transfer {!thisAcct.Name} from {!acctOwner.Name} to {!crossoverUser.Name}.">
+                <apex:facet name="footer">
+                    <apex:outputPanel >
+                        <apex:commandButton action="{!cancel}" value="Cancel" styleClass="btn"/>
+                    </apex:outputPanel>
+                </apex:facet>
+                
+                <apex:outputText value="Unable to proceed with Crossover request" />
+                <apex:pageBlockSection rendered="{!hasRequests}" title="Open Crossover Requests were found for the {!ownerFieldType} owner field.">
+                    
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+            
+            <!--  If an account is present  -->
+            <apex:pageBlock id="selectRecipient" rendered="{!multipleRecipients && NOT(finished) && AND(hasAcct,NOT(hasOpenOwnerRequests))}">
+                <apex:pageBlockSection title="Who Should be Receiving the Crossover Request?">
+                    <apex:selectList value="{!selectedRecipient}" size="1" required="true">
+                        <apex:selectOptions value="{!fieldOptions}"/>
+                    </apex:selectList>
+                </apex:pageBlockSection>
+                <apex:facet name="footer">
+                    <apex:outputPanel >
+                        <apex:commandButton onclick="clicksetRecipient(this);" reRender="form,messages" value="Submit" styleClass="btn"/>
+                        <apex:actionFunction name="dosetRecipient" action="{!setRecipient}"/>
+                    </apex:outputPanel>
+                </apex:facet>
+            </apex:pageBlock>
+            <apex:outputPanel id="submitCrossover">
+                <apex:pageBlock rendered="{!recipientSelected && NOT(finished) && AND(hasAcct,NOT(hasOpenOwnerRequests))}" title="Request to transfer {!thisAcct.Name} from {!acctOwner.Name} to {!crossoverUser.Name}.">
+                    <apex:facet name="footer">
+                        <apex:outputPanel >
+                            <apex:commandButton onclick="clickSaveRequest(this);" value="Submit Crossover" styleClass="btn"/>
+                            <apex:commandButton action="{!cancel}" value="Cancel" styleClass="btn"/>
+                            <apex:actionFunction name="doSaveRequest" action="{!saveRequest}"/>
+                        </apex:outputPanel>
+                    </apex:facet>
+                    
+                    <apex:pageBlockSection rendered="{!hasActivity}" title="Activities have been found within the last 90 days. Please review before you proceed.">
+                        <!--  a table to display the events -->
+                        <apex:dataTable rendered="{!hasEvents}" value="{!events}" var="event" cellpadding="4" border="1" title="Events">
+                            <apex:column headerValue="Subject">
+                                <apex:outputField value="{!event.Subject}" />
+                            </apex:column>
+                            <apex:column headerValue="Type">
+                                <apex:outputField value="{!event.Type}" />
+                            </apex:column>
+                            <apex:column headerValue="Activity Date">
+                                <apex:outputField value="{!event.ActivityDate}" />
+                            </apex:column>
+                            <apex:column headerValue="Owner">
+                                <apex:outputField value="{!event.Owner.Name}" />
+                            </apex:column>
+                        </apex:dataTable>
+                        
+                        <!--  a table to display the tasks -->
+                        <apex:dataTable rendered="{!hasTasks}" value="{!tasks}" var="task" cellpadding="4" border="1" title="Tasks">
+                            <apex:column headerValue="Subject">
+                                <apex:outputField value="{!task.Subject}" />
+                            </apex:column>
+                            <apex:column headerValue="Type">
+                                <apex:outputField value="{!task.Type}" />
+                            </apex:column>
+                            <apex:column headerValue="Activity Date">
+                                <apex:outputField value="{!task.ActivityDate}" />
+                            </apex:column>
+                            <apex:column headerValue="Owner">
+                                <apex:outputField value="{!task.Owner.Name}" />
+                            </apex:column>
+                        </apex:dataTable>
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection title="Enter the Reason for this Crossover">
+                        <apex:inputField value="{!request.Comments__c}" style="display:block;width:500px;height:100px" />
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+            </apex:outputPanel>
+        </apex:outputPanel>
+        
+        
+        
+<!-------------------------------------- Above this Line is the Desktop page. Below this line is the Salesforce1 page -------------------------------------->
+        
+        <apex:outputPanel id="SF1" rendered="{!isSF1}">
+            <apex:stylesheet value="{!URLFOR($Resource.Salesforce1Bootstrap, 'bootstrap-sf1-010-beta15/dist/css/bootstrap-namespaced.css')}"/>
+            <style>
+                .lookupInput input{
+                width:60%;
+                border: none !important;
+                background: none !important;
+                }
+                .lookupInput img {
+                float: right;
+                }
+                .tableFixed 
+                {
+                    table-layout:fixed;
+                    width:100%;
+                }
+            </style>
+            <div class="bootstrap-sf1" style="padding: 10px;">
+                <div class="page-header page-header-anchor context-account">
+                        <h1>Crossover Request</h1>
+                </div>
+                
+
+                <apex:outputPanel rendered="{!cannotComplete}" title="Your DSA/FSS must determine who has authority to approve your request" >
+                        <apex:outputText value="Enter the name of your DSA/FSS and click the magnifying glass to select from the list." /> 
+                        <apex:outputText value="Click Submit to send the request to your DSA/FSS. If you do not click Submit, the request will not be processed." />
+                        <div class="form-control">
+                            <apex:inputField value="{!request.Send_Request_To__c}" />
+                        </div>
+                        <apex:outputPanel >
+                            <apex:commandButton onclick="clickSaveDsaRequest(this);" value="Submit and Return to Prospect-Client" styleClass="btn"/>
+                            <apex:commandButton action="{!cancel}" value="Cancel and Return to Prospect-Client" styleClass="btn"/>
+                            <apex:actionFunction name="dosaveDsaRequest" action="{!saveDsaRequest}"/>
+                        </apex:outputPanel>
+                </apex:outputPanel>
+                
+                <apex:outputPanel rendered="{!AND(finished,NOT(cannotComplete))}">
+                    <apex:outputText rendered="{!isTransfer}" value="The Ownership change will not occur until the '{!returnButtonTitle}' button is clicked. Click 'Cancel' if you do not want to transfer the record to yourself." />
+                    <apex:outputPanel rendered="{!NOT(cannotComplete)}">
+                        <apex:commandButton rendered="{!isTransfer}" action="{!cancel}" value="Cancel" styleClass="btn"/>
+                        <apex:commandButton action="{!returnToAcct}" value="{!returnButtonTitle}" styleClass="btn"/>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+                
+                <apex:outputPanel rendered="{!AND(NOT(finished),hasRequests)}" >
+                    <apex:outputText value="Open Crossover Requests were found!"/>
+                        <table class="table table-hover well table-striped tableFixed" style="width:100%;border-color:blue;">
+                            <thead><tr><th>Submitter</th><th>Date</th><th>Field</th><th>Comments</th></tr></thead>
+                            <tbody>  
+                                <apex:repeat value="{!requests}" var="request">
+                                    <tr>
+                                        <td><apex:outputField value="{!request.CreatedBy.Name}"/></td>
+                                        <td><apex:outputField value="{!request.CreatedDate}" /></td>
+                                        <td><apex:outputField value="{!request.Owner_Field__c}" /></td>
+                                        <td style="word-wrap: break-word;"><apex:outputField value="{!request.Comments__c}" /></td>
+                                    </tr>        
+                                </apex:repeat>
+                            </tbody>
+                        </table> 
+                </apex:outputPanel>
+                
+                <!--  {!AND(NOT(finished),OR(NOT(hasAcct),hasRequests))} -->
+                <!--  If there isn't an account, can't proceed  -->
+                <apex:outputPanel rendered="{!AND(NOT(finished),OR(NOT(hasAcct),hasOpenOwnerRequests))}">
+                    <apex:outputText value="Request to transfer {!thisAcct.Name} from {!acctOwner.Name} to {!crossoverUser.Name}."/>
+                    <br/>
+                    <apex:commandButton action="{!cancel}" value="Cancel" styleClass="btn"/>
+                    
+                    <apex:outputText value="Unable to proceed with Crossover request" />
+                    <apex:outputPanel rendered="{!hasRequests}">
+                        <br/>
+                        <apex:outputText value="Open Crossover Requests were found for the {!ownerFieldType} owner field." />    
+                    </apex:outputPanel>
+                </apex:outputPanel>
+                
+                <!--  If an account is present  -->
+                <apex:outputPanel rendered="{!multipleRecipients && NOT(finished) && AND(hasAcct,NOT(hasOpenOwnerRequests))}">
+                    <apex:outputText value="Who Should be Receiving the Crossover Request?"/>
+                        <apex:selectList styleClass="form-control" value="{!selectedRecipient}" size="1" required="true">
+                            <apex:selectOptions value="{!fieldOptions}"/>
+                        </apex:selectList>
+                        <apex:commandButton onclick="clicksetRecipient(this);" reRender="form,messages" value="Submit" styleClass="btn"/>
+                        <apex:actionFunction name="dosetRecipient" action="{!setRecipient}"/>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!recipientSelected && NOT(finished) && AND(hasAcct,NOT(hasOpenOwnerRequests))}">
+                        <apex:outputText value="Request to transfer {!thisAcct.Name} from {!acctOwner.Name} to {!crossoverUser.Name}."/>
+                        <hr/>                    
+                        <apex:outputPanel rendered="{!hasActivity}">
+                            <apex:outputText value="Activities have been found within the last 90 days. Please review before you proceed."/>
+                            <br/><br/>
+                            <!--  a table to display the events -->
+                            <apex:outputPanel rendered="{!hasEvents}" >
+                                <apex:outputText value="Event(s)"/>
+                                <table class="table table-hover well table-striped tableFixed">
+                                    <thead><tr><th>Subject</th><th>Type</th><th>Activity Date</th><th>Owner</th></tr></thead>
+                                    <tbody>  
+                                        <apex:repeat value="{!events}" var="event">
+                                            <tr>
+                                                <td><apex:outputField value="{!event.Subject}" /></td>
+                                                <td><apex:outputField value="{!event.Type}" /></td>
+                                                <td><apex:outputField value="{!event.ActivityDate}" /></td>
+                                                <td style="word-wrap: break-word;"><apex:outputField value="{!event.Owner.Name}" /></td>
+                                            </tr>        
+                                        </apex:repeat>
+                                    </tbody>
+                                </table>
+                            </apex:outputPanel>
+                            
+                            <!--  a table to display the tasks -->
+                            <apex:outputPanel rendered="{!hasTasks}" >
+                                <apex:outputText value="Task(s)"/>
+                                <table class="table table-hover well table-striped tableFixed">
+                                    <thead><tr><th>Subject</th><th>Type</th><th>Activity Date</th><th>Owner</th></tr></thead>
+                                    <tbody>  
+                                        <apex:repeat value="{!tasks}" var="task">
+                                            <tr>
+                                                <td><apex:outputField value="{!task.Subject}" /></td>
+                                                <td><apex:outputField value="{!task.Type}" /></td>
+                                                <td><apex:outputField value="{!task.ActivityDate}" /></td>
+                                                <td style="word-wrap: break-word;"><apex:outputField value="{!task.Owner.Name}" /></td>
+                                            </tr>        
+                                        </apex:repeat>
+                                    </tbody>
+                                </table>
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                        <div class="form-group">
+                            <label class="control-label" for="reqComm" >Enter the Reason for this Crossover</label>
+                            <apex:inputField styleClass="form-control" value="{!request.Comments__c}" id="reqComm"/>
+                        </div>
+                        <apex:commandButton onclick="clickSaveRequest(this);" value="Submit Crossover" styleClass="btn"/>
+                        <apex:commandButton rendered="{!crossoverExtension}" onclick="clicksaveExtension(this);" value="Submit as Crossover Extension" styleClass="btn"/>
+                        <apex:commandButton action="{!cancel}" value="Cancel" styleClass="btn"/>
+                        <apex:actionFunction name="doSaveRequest" action="{!saveRequest}"/>
+                        <apex:actionFunction name="dosaveExtension" action="{!saveExtension}"/>
+                </apex:outputPanel>
+                
+                <apex:outputPanel rendered="{!crossoverExtension && currentOwnerSubmission}">
+                    <br/><br/>
+                    <apex:outputText value="Would you like to submit a Crossover Extension request?"/>
+                    <br/><br/>
+                    <div class="form-group">
+                            <label class="control-label" for="reqCommExt" >Enter the Reason for this Crossover Extension</label>
+                            <apex:inputField styleClass="form-control" value="{!request.Comments__c}" id="reqCommExt"/>
+                    </div>
+                    <apex:commandButton action="{!SaveExtension}" value="Submit Crossover Extension" styleClass="btn"/>
+                    <apex:commandButton action="{!cancel}" value="Cancel" styleClass="btn"/>
+                </apex:outputPanel>
+                        
+            </div>
+        </apex:outputPanel>
+    </apex:form> 
+</apex:page>

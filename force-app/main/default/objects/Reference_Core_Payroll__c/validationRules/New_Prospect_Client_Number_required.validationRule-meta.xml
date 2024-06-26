@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>New_Prospect_Client_Number_required</fullName>
+    <active>true</active>
+    <description>&quot;New Prospect Client Number&quot; should be required when &quot;Date Client Load Complete&quot; is populated</description>
+    <errorConditionFormula>ISBLANK(New_Prospect_Client_Number__c) &amp;&amp; 
+NOT(ISBLANK( Date_Client_Load_Complete__c)) &amp;&amp; 
+ (RecordTypeId = &apos;012700000001jk2&apos;) &amp;&amp;
+NOT(BEGINS($Profile.Name,&apos;System Admin&apos;))</errorConditionFormula>
+    <errorMessage>&quot;New Prospect Client Number&quot; should be required when &quot;Date Client Load Complete&quot; is populated</errorMessage>
+</ValidationRule>

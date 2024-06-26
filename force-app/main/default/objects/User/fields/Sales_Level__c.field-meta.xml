@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sales_Level__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>IF( Title==&apos;Sr Mid-Market HCM Consultant&apos; , &apos;MMS Level 1 Certified&apos;,
+IF(Title==&apos;Mid-Market HCM Consultant&apos;, &apos;MMS-20-49&apos; ,
+IF(Title==&apos;Enterprise HCM Consultant&apos;, &apos;MMS-50-99&apos; ,
+IF(OR(Title==&apos;Sr Enterprise HCM Consultant – Legacy&apos;,Title==&apos;Sr Enterprise HCM Consultant&apos;), &apos;MMS-100-499&apos; ,
+IF(ISPICKVAL(Sales_Org__c,&apos;PAY&apos;), &apos;SMB&apos; ,
+&apos;false&apos;)))))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Sales Level</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

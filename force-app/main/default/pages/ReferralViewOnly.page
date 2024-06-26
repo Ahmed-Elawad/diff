@@ -1,0 +1,40 @@
+<!-- Page to view only partner information
+
+   History
+   -------
+   04/10/2014 Dan Carmen      Created 
+ -->
+<apex:page controller="ReferralController"
+           tabStyle="Contact" 
+           id="referralPage"
+           showHeader="false"
+           sidebar="false">
+
+   <apex:pageBlock id="DisplayBlock">
+      <apex:pageMessages /> 
+      
+      <apex:pageBlockSection collapsible="false" id="ReferralSection" title="Territory Reps for {!zipCodeToUse}" columns="1">
+      
+         <apex:pageBlockTable id="ReferralTable" value="{!displayList}" var="rec">
+            
+            <apex:column >
+               <apex:facet name="header">Partner Type</apex:facet>
+               <apex:outputField style="white-space:nowrap;" value="{!rec.ref.Name}"/>
+
+            </apex:column>
+            
+            <apex:column >
+               <apex:facet name="header">Refer To</apex:facet>
+               <apex:outputText rendered="{!rec.isOpenTerritory}" value="Open Territory" />
+               <apex:outputText rendered="{!rec.isUnknownTerritory}" value="Unknown Territory" />
+
+               <apex:outputField rendered="{!rec.referToUser}" style="white-space:nowrap;" value="{!rec.ref.User__c}" />
+               <apex:outputField rendered="{!rec.referToContact}" style="white-space:nowrap;" value="{!rec.ref.Contact__c}" />
+               <apex:outputField rendered="{!rec.referToRefContact}" style="white-space:nowrap;" value="{!rec.ref.Referral_Contact__c}" />
+            </apex:column>
+            
+            
+         </apex:pageBlockTable>
+     </apex:pageBlockSection>
+  </apex:pageBlock>
+</apex:page>

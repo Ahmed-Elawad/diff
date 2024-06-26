@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Parent_Records</fullName>
+    <active>true</active>
+    <description>when setting two records for merge, make sure the correct is listed as the parent</description>
+    <errorConditionFormula>!(ISNULL( Merge_Name__c))&amp;&amp; 
+!(CONTAINS(Merge_Name__c, &quot;primary1&quot;))&amp;&amp; 
+!(CONTAINS(Merge_Name__c, &quot;Primary1&quot;))&amp;&amp; 
+(SalesBroker_Primary_Record__c ||
+!(ISBLANK(User_Name__c)))</errorConditionFormula>
+    <errorMessage>If a record has a value in the Online Access field or SalesBroker Primary Record field it must be marked as a surviving record</errorMessage>
+</ValidationRule>

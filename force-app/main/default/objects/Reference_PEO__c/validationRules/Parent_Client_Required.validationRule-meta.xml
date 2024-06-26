@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Parent_Client_Required</fullName>
+    <active>true</active>
+    <description>Parent-Client Number is required if &apos;Controlled With&apos; is populated</description>
+    <errorConditionFormula>And( Not(IsBlank(Controlled_With__c )), IsBlank( Parent_Client_Number__c )) &amp;&amp; NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))</errorConditionFormula>
+    <errorDisplayField>Parent_Client_Number__c</errorDisplayField>
+    <errorMessage>Parent-Client Number is required if Controlled With is populated.</errorMessage>
+</ValidationRule>

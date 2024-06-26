@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>District__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <inlineHelpText>The District Org Unit this zip assignment is attached to.</inlineHelpText>
+    <label>District</label>
+    <lookupFilter>
+        <active>true</active>
+        <errorMessage>The Zip Assignment can only be linked to an Org Unit of type District.</errorMessage>
+        <filterItems>
+            <field>Org_Unit__c.Org_Type__c</field>
+            <operation>equals</operation>
+            <value>District</value>
+        </filterItems>
+        <infoMessage>Only Districts can be linked to a Zip Assignment</infoMessage>
+        <isOptional>false</isOptional>
+    </lookupFilter>
+    <referenceTo>Org_Unit__c</referenceTo>
+    <relationshipLabel>Zip Assignments</relationshipLabel>
+    <relationshipName>Zip_Assignments</relationshipName>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Number_of_Locations</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(NOT(ISPICKVAL(Current_Step__c,&apos;(1 of 12) Sales Rep Conducting Needs Analysis&apos;)), NOT(ISPICKVAL(Current_Step__c,&apos;(2 of 12) Internal Review of Needs Analysis/Demo Strategy&apos;)), NOT(ISPICKVAL(Current_Step__c,&apos;Onboarding Complete&apos;)), 
+NOT(ISPICKVAL(Current_Step__c,&apos;&apos;)), 
+ISBLANK(Number_of_Locations__c))</errorConditionFormula>
+    <errorDisplayField>Number_of_Locations__c</errorDisplayField>
+    <errorMessage>Number of Locations is a required field when &quot;Current Step&quot; field is (3 of 12) or greater</errorMessage>
+</ValidationRule>

@@ -1,0 +1,721 @@
+<!-- Handle the HRG Reference object.
+
+   History
+   -------
+   01/15/2013 Dan Carmen        Created.
+   01/28/2014 Dan Carmen        Added Code to disable the buttons.
+   02/28/2014 Carrie Marciano   Display open Salesforce Tasks/Events on first page to assist in creating HRG Activities when needed and updated controller to allow usage in Salesforce1.
+   04/28/2014 Carrie Marciano   Fixed code to pass the DeleteKey value to the controller to delete individual Salesforce activities from the first screen of VF page.
+   04/10/2017 Cindy Freeman     modified to use SetController to avoid vf page limit
+   04/25/2017 Lynn Michels      changed message in Open HRG Activity section
+   05/25/2018 Lynn Michels      add functionality for managers to select an HRG and changed to requery for each page load
+
+ -->
+<apex:page controller="ReferenceHRGController"
+        tabStyle="ReferenceHRG__tab" id="RefHRGPage">
+        
+  <apex:sectionHeader title="HRG Activity"
+                      subtitle="{!IF(acct==null,'Select a Prospect-Client',acct.Name)}"/>
+
+<apex:form >
+<apex:includeScript value="{!$Resource.jQuery2_0_3}" /> 
+
+   <script> 
+   function disableAllButtons(buttonIdName) {
+      var elements = document.getElementsByTagName('input');
+      //alert('elements='+elements+' nbr elements='+elements.length+' buttonIdName='+buttonIdName);
+      for (var i=0; i<elements.length; i++) {
+         if (elements[i].id.indexOf(buttonIdName)!=-1) {
+            //alert('button!' +elements[i].id);
+            elements[i].disabled = true;
+         }
+      }
+   }
+   
+    // function to control the native css style 
+    // and the addition and removal of the disabled attribute on the buttons
+    function buttonsEnabled(enable) {
+        var $buttons = jQuery('.btn'); // find all buttons in the page
+        if (enable === false) {
+            $buttons.toggleClass('btnDisabled', true).attr('disabled', 'disabled');
+        } else {
+            $buttons.toggleClass('btnDisabled', false).attr('disabled', null);
+        } 
+    }
+    
+  
+   function confirmSelectAllClients() {
+       if (confirm("You will add activity to your entire client base. Do you want to continue?")) {
+          return jsSelectAllClients();
+       }
+       return buttonsEnabled(true);
+    }
+   
+</script>
+
+
+  <!--  If there's an error on loading it will go into this block -->
+  <apex:pageBlock rendered="{!currentStep == 'Prompt For Account'}" id="selectAccountBlock">
+    <apex:pageMessages />
+    <apex:pageBlockButtons >
+       <apex:commandButton value="Set Prospect-Client" immediate="false" action="{!setAccount}" />
+       <apex:commandButton value="Cancel" immediate="true" action="{!cancel}" />
+    </apex:pageBlockButtons>
+    <apex:pageBlockSection columns="1">
+       <apex:pageBlockSectionItem >
+          <apex:outputLabel value="Enter the Prospect-Client" />
+          <apex:inputField value="{!refHRG.Account__c}" />
+       </apex:pageBlockSectionItem>
+       
+    </apex:pageBlockSection>
+  </apex:pageBlock>
+  
+  <apex:pageBlock rendered="{!currentStep == 'Account Health'}" id="accountHealthBlock">
+    <apex:pageMessages />
+    <apex:pageBlockButtons >
+       <apex:commandButton value="Save New Account Health" immediate="false" action="{!setAccountHealth}" />
+       <apex:commandButton value="Cancel" immediate="true" action="{!setWhatDidYouDoStep}" />
+    </apex:pageBlockButtons>
+  
+    <apex:pageBlockSection columns="1">
+       <apex:pageBlockSectionItem >
+          <apex:outputLabel value="Current HR Solutions Account Health"/>
+          <apex:outputText value="{!oldAcctHealthValue}" />
+       </apex:pageBlockSectionItem>
+       
+       <apex:pageBlockSectionItem >
+          <apex:outputLabel value="New HR Solutions Account Health" for="newAccountHealth"/>
+          <apex:inputField value="{!acct.Premier_Account_Health__c}" id="newAccountHealth"/>
+       </apex:pageBlockSectionItem>
+       
+       <apex:pageBlockSectionItem >
+          <apex:outputLabel value="Reason for Change" for="reasonForChange" />
+          <apex:inputTextArea value="{!acctHealthActivity.Notes__c}" rows="3" cols="80" id="reasonForChange"/>
+       </apex:pageBlockSectionItem>
+       
+    </apex:pageBlockSection>
+  </apex:pageBlock>
+  
+  
+  <apex:pageBlock rendered="{!currentStep == 'What Did You Do'}" id="WhatDidYouDoBlock" title="What Activity Did You Do?">
+    <apex:pageMessages />
+
+    <apex:pageBlockButtons >
+         <!-- 
+         <apex:commandButton value="Previous" immediate="false" action="{!setInteractionTypeStep}" />
+         <apex:commandButton rendered="{!hasOpenActivityList}" value="Select Pending Activity" immediate="false" action="{!setOpenActivityStep}" />
+          -->
+         <apex:commandButton value="Next" immediate="false" action="{!setVerifyActivityStep}" />
+         <!-- apex:commandButton value="Next" immediate="false" action="{!setUserId}" /-->
+         <apex:commandButton value="Cancel" immediate="true" action="{!cancel}" />
+    </apex:pageBlockButtons>
+
+    <apex:pageBlockSection columns="2">
+        <apex:panelGrid columns="2">
+           <apex:outputPanel >
+             <b>Onboarding % Completed:</b>&nbsp; <apex:outputField value="{!refHRG.Onboarding_Completed__c}" />
+           </apex:outputPanel> 
+           <apex:commandButton value="{!IF(showOnboarding,'Hide Onboarding','Show Onboarding')}" action="{!toggleOnboarding}" rerender="WhatDidYouDoBlock"/>
+
+          <apex:outputPanel >
+             <b>Onboarding Concerns:</b>&nbsp; <font color="blue">{!refHRG.Client_Concern_Count__c}</font>
+          </apex:outputPanel>
+          <apex:commandButton value="{!IF(showClientConcerns,'Hide Onboarding Concerns','Show Onboarding Concerns')}" action="{!toggleShowClientConcerns}" rerender="WhatDidYouDoBlock"/>
+
+          <apex:outputPanel >
+             <b>Onboarding Setup Issues:</b>&nbsp; <font color="blue">{!refHRG.Setup_Issue_Count__c}</font>
+          </apex:outputPanel>
+          <apex:commandButton value="{!IF(showSetupIssues,'Hide Onboarding Setup Issues','Show Onboarding Setup Issues')}" action="{!toggleShowSetupIssues}" rerender="WhatDidYouDoBlock"/>
+
+        </apex:panelGrid>
+
+        <apex:panelGrid columns="2">
+           <apex:outputPanel >
+              <b>HR Solutions Account Health</b>&nbsp; <apex:outputField value="{!acct.Premier__c}" />                            
+           </apex:outputPanel>
+           <apex:commandButton value="Change Account Health" action="{!changeAccountHealth}" />
+           <apex:outputPanel rendered="{!hasHealthUpdate}">
+               Account Health last updated&nbsp; &nbsp; <apex:outputField value="{!acct.HR_Solutions_Account_Health_Updated__c}" />
+           </apex:outputPanel>
+           <apex:outputPanel rendered="{!hasHealthUpdate}"></apex:outputPanel> <!-- empty space to keep formatting clean -->
+            
+           <apex:outputPanel >
+             <b>Product Utilization:</b>&nbsp; <apex:outputField value="{!refHRG.ProductUtilization__c}" />
+           </apex:outputPanel> 
+           <apex:commandButton value="{!IF(showProductUtilization,'Hide Product Utilization','Show Product Utilization')}" action="{!toggleShowProductUtilization}" rerender="WhatDidYouDoBlock"/>
+
+          <!-- 
+          <apex:outputPanel >
+             <b>Open Ongoing Activities:</b>&nbsp; <font color="blue">{!refHRG.Open_Activities__c}</font>
+          </apex:outputPanel>
+           -->
+        </apex:panelGrid>
+     </apex:pageBlockSection>
+
+     <!-- ***********************    Onboarding  *************************** -->
+     <c:ReferenceHRGActivity rendered="{!showOnboarding}" activityList="{!onboardingActivityList}" 
+                             sectionTitle="Onboarding Activity"  readOnly="false" showCompletedDate="true" />
+
+     <apex:pageBlockSection id="OnboardingSection" rendered="{!showOnboarding}" columns="2">
+        <apex:outputField value="{!refHRG.Onboarding_Start_Date__c}" />
+        <apex:pageBlockSectionItem />
+        
+        <apex:inputField value="{!refHRG.Sales_Rep_Attended_CC_Meeting__c}" />
+        <apex:pageBlockSectionItem />
+        
+        <apex:outputField value="{!refHRG.Onboarding_End_Date__c}" />
+        <apex:outputField value="{!refHRG.Expected_Onboarding_End_Date__c}" />
+        
+        <apex:pageBlockSectionItem />
+        <apex:pageBlockSectionItem />
+     </apex:pageBlockSection>
+
+     <!-- ***********************    Client concerns  *************************** -->
+
+     <c:ReferenceHRGActivity rendered="{!showClientConcerns}" activityList="{!onboardingConcernsList}" 
+                             sectionTitle="Onboarding Concerns"   readOnly="false" showCompletedDate="true" />
+
+     <!-- ***********************    Setup Issues  *************************** -->
+
+     <c:ReferenceHRGActivity rendered="{!showSetupIssues}" activityList="{!onboardingSetupList}" 
+                             sectionTitle="Onboarding Setup Issues"  readOnly="false" showCompletedDate="true" />
+
+     <!-- ***********************    Product Utilization  *************************** -->
+
+     <apex:pageBlockSection id="ProductsSection" rendered="{!showProductUtilization}" title="Product Utilization" columns="2">
+        <apex:repeat value="{!ProductFields}" var="f">
+           <apex:inputField value="{!refHRG[f.fieldPath]}" />
+        </apex:repeat>
+     </apex:pageBlockSection>
+
+     <hr width="100%" />
+     
+     <!-- ***********************    Ongoing Activity  *************************** -->
+
+     <apex:pageBlockSection id="OngoingActivitySection" columns="1">
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel style="white-space:nowrap;" value="How many Ongoing activities are you adding?" />
+          <apex:outputPanel >
+             <apex:inputText value="{!nbrNewOngoingActivities}" size="2">
+                <apex:actionSupport event="onchange" action="{!addOngoingActivity}" rerender="OngoingActivitySection,newOngoingSection" status="addNewOngoingActivityStatus" />
+             </apex:inputText>
+             <apex:commandButton value="Add" action="{!addOngoingActivity}" rerender="OngoingActivitySection,newOngoingSection" status="addNewOngoingActivityStatus" />         
+         </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:actionStatus startText="Adding Ongoing Activity..." id="addNewOngoingActivityStatus"/>
+        
+
+     </apex:pageBlockSection>
+     
+     <c:ReferenceHRGActivity id="newOngoingSection" activityList="{!ongoingActivityList}" 
+                             sectionTitle="Ongoing Activity"  readOnly="false" showCompletedDate="false" />
+
+     <!-- ***********************    Open HRG Activity  *************************** -->
+
+     <!--apex:outputText rendered="{!hasOpenActivityList}" style="color:BLUE; font-weight: bold;" value="To Update Open HRG Activity Click The Next Button." /-->
+     <c:ReferenceHRGActivity rendered="{!hasOpenActivityList}" activityList="{!pendingHrgActivityList}" 
+                             sectionTitle="Open HRG Activity"  readOnly="false" showCompletedDate="false"/>
+     <apex:outputText rendered="{!hasOpenActivityList}" style="color:Red; font-weight: bold;" value="To update the Activity Date and complete the open HRG Activity, click the Next button." />
+
+  
+  <!-- ***********************    Open Salesforce Activity  *************************** -->
+ 
+    <apex:pageBlockSection id="activityVerifySection" title="Open Salesforce Activites" columns="1" >
+          <apex:pageBlockTable value="{!sortedOpenActivityList}" var="activity" id="activityToSaveList" columnsWidth="100px,100px,100px,500px">          
+                  <apex:column rendered="{!IF((activity.hasHrgActivity),FALSE,TRUE)}">
+                     <apex:commandLink rendered="{!hasOpenActivityList}" action="{!deleteSalesforceActivity}" onclick="return confirm('Are you sure you want to delete this activity?');" style="white-space:nowrap;" value="Delete Activity" immediate="true"  >
+                        <apex:param name="activityKey" value="{!activity.key}" assignTo="{!deletekey}"/>
+                     </apex:commandLink>
+                  </apex:column>    
+                  <apex:column rendered="{!IF((activity.hasHrgActivity),FALSE,TRUE)}" headerValue="Type" value="{!activity.taskOrEvent}" >
+                  </apex:column>            
+                  <apex:column rendered="{!IF((activity.hasHrgActivity),FALSE,TRUE)}" headerValue="Date"> 
+                        <!--  <apex:outputLabel value="{!activity.taskOrEvent} Date " style="font-style:bold" />-->
+                        <apex:outputPanel >
+                           <apex:outputField rendered="{!activity.isEvent}" value="{!activity.evnt.ActivityDate}" />
+                           <apex:outputField rendered="{!activity.isTask}" value="{!activity.tsk.ActivityDate}" />
+                        </apex:outputPanel>
+                  </apex:column>          
+                  <apex:column rendered="{!IF((activity.hasHrgActivity),FALSE,TRUE)}" headerValue="Subject" >
+                        <!-- <apex:outputLabel value="Subject   " style="font-style:bold" /> -->
+                        <apex:outputPanel >
+                            <apex:outputText rendered="{!activity.isEvent}" value="{!activity.evnt.Subject}" />
+                            <apex:outputText rendered="{!activity.isTask}" value="{!activity.tsk.Subject}" />   
+                        </apex:outputPanel>
+                  </apex:column>              
+           </apex:pageBlockTable>  
+    </apex:pageBlockSection>
+    <hr width="100%" />
+  </apex:pageBlock>   
+     
+  <!-- ***********************    HRG List for Area Managers  *************************** -->
+  
+  <!-- if the user is a manager, display an hrg list for them to choose from.-->    
+        <apex:pageBlock rendered="{!currentStep == 'Choose HRG' && clc.isAreaManager}"> 
+            <p><h2>Choose an HRG whom you wish to display clients for</h2></p>
+              <apex:selectList value="{!hrg}" title="Choose an HRG" multiselect="false" size="6">
+                   <apex:selectOptions value="{!clc.hrgList}"/>
+              </apex:selectList>
+              <p><apex:commandButton value="Choose HRG to Display Clients for" action="{!setCurUserToHrg}"/>
+              <apex:commandButton value="Cancel" immediate="true" action="{!cancel}" /></p>
+        </apex:pageBlock> 
+        
+        
+     <!-- ***********************    Verify Activity  *************************** -->
+
+  <apex:pageBlock rendered="{!currentStep == 'Verify Activity'}" id="VerifyActivityBlock" title="Verify the Activity:">
+
+  
+    <apex:pageMessages />
+
+    <apex:actionFunction action="{!saveAndReturnToAcct}" name="jsSaveAndReturn" />
+
+    <apex:actionFunction action="{!saveAndNewActivity}" name="jsSaveAndNew" />
+
+    <apex:pageBlockButtons id="verifySaveButtons" >
+         <apex:commandButton id="verifySaveBtnPrevious" value="Previous" immediate="false" action="{!setAskForWhatTheyDidStep}" />
+         <apex:commandButton id="verifySaveBtnReturn" rendered="{!OR(hasActivityToSave,refHrgChanged)}" value="Save-Return to {!acct.Name}" immediate="false" onclick="buttonsEnabled(false);return jsSaveAndReturn();" >
+         </apex:commandButton>
+         <apex:commandButton id="verifySaveBtnEnterMore" rendered="{!OR(hasActivityToSave,refHrgChanged)}"  value="Save-Enter More Activity" immediate="false" onclick="buttonsEnabled(false);return jsSaveAndNew();" >
+         </apex:commandButton>
+         <apex:commandButton id="verifySaveBtnCancel" value="Cancel" immediate="true" action="{!cancel}" />
+    </apex:pageBlockButtons>
+    
+    <!-- 
+         <apex:commandButton id="verifySaveBtnReturn" rendered="{!OR(hasActivityToSave,refHrgChanged)}" value="Save-Return to {!acct.Name}" immediate="false" ondblclick="alert('Please Only Click the Save Button Once!');" action="{!saveAndReturnToAcct}" >
+      <apex:panelGrid id="verifySaveButtons" style="width:100%; text-align:center; ">
+        <apex:outputPanel >
+            <apex:commandButton value="Previous" immediate="false" action="{!setAskForWhatTheyDidStep}" />
+
+            <apex:actionStatus rendered="{!OR(hasActivityToSave,refHrgChanged)}" id="saveReturnButtonStatus">
+               <apex:facet name="stop">
+                  <apex:commandButton id="saveReturnButtonActive" value="Save-Return to {!acct.Name}" status="saveReturnButtonStatus" disabled="false" rerender="VerifyActivityBlock"/>
+               </apex:facet>
+               <apex:facet name="start">
+                  <apex:commandButton id="saveReturnButtonDisabled" action="{!saveAndReturnToAcct}" value="Processing..." status="saveReturnButtonStatus" disabled="true" />
+               </apex:facet>
+            </apex:actionStatus>
+
+            <apex:actionStatus rendered="{!OR(hasActivityToSave,refHrgChanged)}" id="saveEnterMoreButtonStatus">
+               <apex:facet name="stop">
+                  <apex:commandButton id="saveEnterMoreButtonActive" value="Save-Enter More Activity" status="saveEnterMoreButtonStatus" disabled="false" rerender="VerifyActivityBlock"/>
+               </apex:facet>
+               <apex:facet name="start">
+                  <apex:commandButton id="saveEnterMoreButtonDisabled" action="{!saveAndNewActivity}" value="Processing..." status="saveEnterMoreButtonStatus" disabled="true" />
+               </apex:facet>
+            </apex:actionStatus>
+
+         <apex:commandButton value="Cancel" immediate="true" action="{!cancel}" />
+         </apex:outputPanel>
+      </apex:panelGrid>
+     -->
+
+   <apex:outputText rendered="{!NOT(hasActivityToSave)}" style="color:BLUE; font-weight: bold;" value="No New Activity was Entered. " />
+   <apex:outputText rendered="{!AND(NOT(hasActivityToSave),refHrgChanged)}" style="color:BLUE; font-weight: bold;" value="Changes need to be saved on the Reference HRG record." />
+    
+    <apex:pageBlockSection columns="1">
+       <apex:pageBlockSectionItem >
+          <apex:outputLabel value="Completed activity will be logged against: " />
+          <apex:selectRadio layout="pageDirection" 
+                          required="true" 
+                          value="{!logActivitySelection}"
+                          title="What are you logging the activity against?">
+           <apex:selectOptions value="{!logActivityOptions}"/>
+         
+        </apex:selectRadio>
+      </apex:pageBlockSectionItem>
+ 
+    </apex:pageBlockSection>
+    
+    <apex:repeat rendered="{!hasActivityToSave}" value="{!activityToSaveList}" var="activity" id="activityToSaveList">
+
+      <apex:outputText rendered="{!NOT(activity.isNew)}" style="color:BLUE; font-weight: bold;" value="This is a previously opened {!activity.taskOrEvent}" />
+      <apex:outputText rendered="{!activity.isNew}" style="color:GREEN; font-weight: bold;" value="New {!activity.taskOrEvent}" />
+
+      <apex:pageBlockSection id="activityVerifySection"  >
+         <apex:pageBlockSectionItem >
+            <apex:outputLabel value="{!activity.taskOrEvent} Date" />
+            <apex:outputPanel >
+               <apex:inputField rendered="{!activity.isEvent}" value="{!activity.evnt.ActivityDate}" />
+               &nbsp;&nbsp;
+               <apex:selectList rendered="{!activity.isEvent}" value="{!activity.selectedTime}" id="meet_time" title="Meeting Time" size="1">
+                  <apex:selectOptions value="{!activity.timeOptions}"/>
+               </apex:selectList>
+
+               <apex:inputField rendered="{!activity.isTask}" value="{!activity.tsk.ActivityDate}" />
+
+               <!-- 
+               <apex:inputField rendered="{!AND(activity.isEvent,NOT(activity.isNew))}" value="{!activity.evnt.ActivityDate}" />
+
+               <apex:inputField rendered="{!AND(activity.isTask,NOT(activity.isNew))}" value="{!activity.tsk.ActivityDate}" />
+               <apex:outputField rendered="{!AND(activity.isEvent,activity.isNew)}" value="{!activity.evnt.ActivityDate}" />
+               <apex:outputField rendered="{!AND(activity.isTask,activity.isNew)}" value="{!activity.tsk.ActivityDate}" />
+ -->
+            </apex:outputPanel>
+         </apex:pageBlockSectionItem>
+         
+         <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Client Contact"/>
+            <apex:selectList rendered="{!hasContactSelections}" value="{!activity.activityContactId}" title="Contact Selection" size="1">
+               <apex:selectOptions value="{!contactSelections}"/>
+            </apex:selectList>
+         </apex:pageBlockSectionItem>
+ 
+         <!-- ************ -->
+         <apex:inputText rendered="{!activity.isEvent}" value="{!activity.evnt.Subject}" size="80"/>
+         <apex:inputText rendered="{!activity.isTask}" value="{!activity.tsk.Subject}" size="80"/>
+
+         <apex:inputField rendered="{!activity.isEvent}" value="{!activity.evnt.Meeting_Not_Held__c}" />
+         <apex:inputField rendered="{!activity.isTask}" value="{!activity.tsk.Meeting_Not_Held__c}" />
+
+         <!-- ************ -->
+
+         <apex:inputField rendered="{!activity.isEvent}" value="{!activity.evnt.Date_Activity_Completed__c}" />
+         <apex:inputField rendered="{!activity.isTask}" value="{!activity.tsk.Date_Activity_Completed__c}" />
+
+
+         <apex:inputField rendered="{!activity.isEvent}" value="{!activity.evnt.Reason_Canceled__c}" />
+         <apex:inputField rendered="{!activity.isTask}" value="{!activity.tsk.Reason_Canceled__c}" />
+
+         <!-- ************ -->
+         <apex:inputTextarea rendered="{!activity.isEvent}" value="{!activity.evnt.Description}" rows="8" cols="80"/>
+         <apex:inputTextarea rendered="{!activity.isTask}" value="{!activity.tsk.Description}" rows="8" cols="80"/>
+
+         <apex:inputField rendered="{!activity.isEvent}" value="{!activity.evnt.Client_Summary__c}" />
+         <apex:inputField rendered="{!activity.isTask}" value="{!activity.tsk.Client_Summary__c}" />
+
+         <!-- ************ -->
+
+         <apex:pageBlockSectionItem >
+               <apex:outputLabel value="HRG Activity" />
+               <apex:outputPanel >
+               <apex:dataTable rendered="{!activity.hasHrgActivity}" value="{!activity.hrgActivity}" var="hrgAct" cellPadding="0" border="0">
+                  <apex:column >
+                     <apex:commandLink rendered="{!NOT(hrgAct.isNew)}" action="{!selectHrgActivity}" style="white-space:nowrap;" value="Delete Activity" immediate="false"  >
+                        <apex:param name="activityKey" value="{!activity.key}"/>
+                        <apex:param name="hrgActivityId" value="{!hrgAct.activity.Id}"/>
+                        <apex:param name="hrgRecId" value="{!hrgAct.recId}"/>
+                        <apex:param name="actionType" value="deleteFromVerify"/>
+                     </apex:commandLink>
+                     <apex:outputText rendered="{!hrgAct.isNew}" style="color:GREEN; font-weight: bold;" value="New" />
+                     &nbsp;&nbsp;
+                  </apex:column>
+                  
+                  <apex:column >
+                     <apex:outputText rendered="{!hrgAct.isNew}" value="{!hrgAct.activity.Type__c+'-'+hrgAct.label}" />
+                     <apex:outputText rendered="{!NOT(hrgAct.isNew)}" style="color:BLUE; font-weight: bold;" value="{!hrgAct.activity.Type__c+'-'+hrgAct.label}" />
+                  </apex:column>
+               </apex:dataTable>
+               
+               <apex:outputText rendered="{!NOT(activity.hasHrgActivity)}" style="color:BLUE; font-weight: bold;" value="No HRG Activity Exists for this {!activity.taskOrEvent}!" />
+               </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+      </apex:pageBlockSection>
+      
+<!-- 
+      <apex:pageBlockSection id="taskVerifySection" rendered="{!activity.isTask}">
+         <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Task Date" />
+            <apex:outputField value="{!activity.tsk.ActivityDate}" />
+         </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Client Contact"/>
+            <apex:selectList rendered="{!hasContactSelections}" value="{!activity.activityContactId}" title="Contact Selection" size="1">
+               <apex:selectOptions value="{!contactSelections}"/>
+            </apex:selectList>
+
+         </apex:pageBlockSectionItem>
+         
+         <apex:inputText value="{!activity.tsk.Subject}" size="80"/>
+         <apex:inputField value="{!activity.tsk.Date_Activity_Completed__c}" />
+
+         <apex:inputField rendered="{!NOT(activity.isNew)}" value="{!activity.tsk.Meeting_Not_Held__c}" />
+         <apex:inputField rendered="{!NOT(activity.isNew)}" value="{!activity.tsk.Reason_Canceled__c}" />
+
+
+         <apex:inputTextarea value="{!activity.tsk.Description}" rows="{!activity.nbrHrgActivity+1}" cols="80"/>
+         <apex:inputField value="{!activity.tsk.Client_Summary__c}" />
+
+         <apex:pageBlockSectionItem >
+               <apex:outputLabel value="HRG Activity" />
+               <apex:dataTable rendered="{!activity.hasHrgActivity}" value="{!activity.hrgActivity}" var="hrgAct" cellPadding="0" border="0">
+                  <apex:column >
+                     {!hrgAct.activity.Type__c+'-'+hrgAct.label}
+                  </apex:column>
+               </apex:dataTable>
+        </apex:pageBlockSectionItem>
+      </apex:pageBlockSection>
+
+      <apex:pageBlockSection id="eventVerifySection" rendered="{!activity.isEvent}" >
+         <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Event Date" />
+            <apex:outputField value="{!activity.evnt.ActivityDate}" />
+         </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Client Contact"/>
+            <apex:selectList rendered="{!hasContactSelections}" value="{!activity.activityContactId}" title="Contact Selection" size="1">
+               <apex:selectOptions value="{!contactSelections}"/>
+            </apex:selectList>
+        </apex:pageBlockSectionItem>
+
+         <apex:inputText value="{!activity.evnt.Subject}" size="80"/>
+         <apex:inputField value="{!activity.evnt.Date_Activity_Completed__c}" />
+
+         <apex:inputField rendered="{!NOT(activity.isNew)}" value="{!activity.evnt.Meeting_Not_Held__c}" />
+         <apex:inputField rendered="{!NOT(activity.isNew)}" value="{!activity.evnt.Reason_Canceled__c}" />
+
+         
+         <apex:inputTextarea value="{!activity.evnt.Description}" rows="{!activity.nbrHrgActivity+1}" cols="80"/>
+         <apex:inputField value="{!activity.evnt.Client_Summary__c}" />
+
+         <apex:pageBlockSectionItem >
+               <apex:outputLabel value="HRG Activity" />
+               <apex:dataTable rendered="{!activity.hasHrgActivity}" value="{!activity.hrgActivity}" var="hrgAct" cellPadding="0" border="0">
+                  <apex:column >
+                     <apex:outputText rendered="{!hrgAct.isNew}" value="{!hrgAct.activity.Type__c+'-'+hrgAct.label}" />
+                     <apex:outputText rendered="{!NOT(hrgAct.isNew)}" value="{!hrgAct.activity.Type__c+'-'+hrgAct.label}" />
+                  </apex:column>
+               </apex:dataTable>
+        </apex:pageBlockSectionItem>
+      </apex:pageBlockSection>
+      
+      <!-- 
+     <c:ReferenceHRGActivity activityList="{!activity.hrgActivity}" 
+                             sectionTitle="The following activity data will be saved"  readOnly="true"/>
+ -->
+ 
+      
+     <br/><hr width="100%"/><br/>
+    </apex:repeat>
+      
+
+  </apex:pageBlock>
+
+  <!-- **************************    Modify Open Activity  ************************************ -->  
+  <!-- 
+  <apex:pageBlock rendered="{!currentStep == 'Manage Open Activity'}" id="ManageOpenActivityBlock" title="Open Activity:">
+    <apex:pageMessages />
+  
+    <apex:pageBlockButtons >
+         <apex:commandButton value="Save" immediate="false" action="{!saveOpenActivity}" />
+         <apex:commandButton value="Cancel-Return to {!acct.Name}" immediate="true" action="{!cancel}" />
+    </apex:pageBlockButtons>
+
+   <apex:outputText style="color:BLUE; font-weight: bold;" value="If Meeting Not Held is selected, all HRG Activity will be deleted." />
+   <br/>
+   <apex:outputText style="color:BLUE; font-weight: bold;" value="If an HRG Activity did not occur, click on the Delete link next to that activity. The Delete cannot be undone." />
+
+      <apex:pageBlockSection id="taskModifySection" rendered="{!selectedActivity.isTask}">
+         <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Task Date" />
+            <apex:inputField value="{!selectedActivity.tsk.ActivityDate}" />
+         </apex:pageBlockSectionItem>
+         <apex:outputField value="{!selectedActivity.tsk.WhoId}" />
+         
+         <apex:inputText value="{!selectedActivity.tsk.Subject}" size="80"/>
+         <apex:inputField value="{!selectedActivity.tsk.Date_Activity_Completed__c}" />
+         
+         <apex:inputField value="{!selectedActivity.tsk.Meeting_Not_Held__c}" />
+         <apex:inputField value="{!selectedActivity.tsk.Reason_Canceled__c}" />
+
+         <apex:inputTextarea value="{!selectedActivity.tsk.Description}" rows="{!selectedActivity.nbrHrgActivity+1}" cols="80"/>
+         <apex:inputField value="{!selectedActivity.tsk.Client_Summary__c}" />
+
+      </apex:pageBlockSection>
+
+      <apex:pageBlockSection id="eventModifySection" rendered="{!selectedActivity.isEvent}" >
+         <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Event Date" />
+            <apex:inputField value="{!selectedActivity.evnt.ActivityDate}" />
+         </apex:pageBlockSectionItem>
+         <apex:outputField value="{!selectedActivity.evnt.WhoId}" />
+
+         <apex:inputText value="{!selectedActivity.evnt.Subject}" size="80"/>
+         <apex:inputField value="{!selectedActivity.evnt.Date_Activity_Completed__c}" />
+         
+         <apex:inputField value="{!selectedActivity.evnt.Meeting_Not_Held__c}" />
+         <apex:inputField value="{!selectedActivity.evnt.Reason_Canceled__c}" />
+
+         <apex:inputTextarea value="{!selectedActivity.evnt.Description}" rows="{!selectedActivity.nbrHrgActivity+1}" cols="80"/>
+         <apex:inputField value="{!selectedActivity.evnt.Client_Summary__c}" />
+
+      </apex:pageBlockSection>
+      
+      <apex:pageBlockSection columns="1">
+        <apex:pageBlockTable id="hrgActivityTable" value="{!selectedActivity.hrgActivity}" var="rec" cellPadding="2" border="1">
+        
+            <apex:column >
+               <apex:commandLink action="{!selectHrgActivity}" value="Delete this Activity" immediate="false"  >
+                     <apex:param name="activityId" value="{!rec.activity.Id}"/>
+                     <apex:param name="actionType" value="delete"/>
+               </apex:commandLink>
+            </apex:column>
+        
+            <apex:column >
+               <apex:facet name="header">Type </apex:facet>
+               <apex:outputField value="{!rec.activity.Type__c}" />
+            </apex:column>
+
+            <apex:column >
+               <apex:facet name="header">Activity Name</apex:facet>
+               <apex:outputText style="white-space:nowrap;" value="{!rec.label}" />
+            </apex:column>
+            
+           <apex:column >
+               <apex:facet name="header">Notes</apex:facet>
+               <apex:outputField value="{!rec.activity.Notes__c}" />
+            </apex:column>
+
+        </apex:pageBlockTable>
+
+      </apex:pageBlockSection>
+
+  </apex:pageBlock>
+ -->
+
+  <!-- *******************   Select additional prospect-client records to log against  *********************** -->
+  
+  <apex:pageBlock rendered="{!currentStep == 'Additional Logging'}" id="additionalLoggingBlock" title="Select Additional Prospect-Clients">
+    <apex:outputText rendered="{!clc.isAreaManager}">
+                <h2>Displaying clients for <span style="text-transform: uppercase">{!hrgName}</span>:</h2><br /><br />
+    </apex:outputText>
+    <apex:pageMessages />
+<!--
+      <apex:panelGrid id="additionalLoggingBlockButtons" style="width:100%; text-align:center; ">
+        <apex:outputPanel >
+            <apex:actionStatus id="saveAdditionalButtonStatus">
+               <apex:facet name="stop">
+                  <apex:commandButton id="saveAdditionalButtonActive" action="{!saveAdditionalActivity}" value="Save Additional Activity-{!IF(saveAndNewActivity,'Enter More Activity','Return to '+acct.Name)}" status="saveAdditionalButtonStatus" disabled="false"/>
+               </apex:facet>
+               <apex:facet name="start">
+                  <apex:commandButton id="saveAdditionalButtonDisabled" value="Processing..." status="saveAdditionalButtonStatus" disabled="true" />
+               </apex:facet>
+            </apex:actionStatus>
+
+            <apex:commandButton value="Do Not Save Additional Activity-{!IF(saveAndNewActivity,'Enter More Activity','Return to '+acct.Name)}" immediate="true" action="{!finishSave}" />
+         </apex:outputPanel>
+      </apex:panelGrid>
+  -->
+<apex:actionFunction action="{!saveAdditionalActivity}" name="jsSaveAdditionalActivity" />
+<apex:actionFunction action="{!finishSave}" name="jsFinishSave" />
+
+<apex:actionFunction action="{!selectAllClients}" name="jsSelectAllClients" />
+
+
+    <apex:pageBlockButtons >
+         <apex:commandButton value="Save Additional Activity-{!IF(saveAndNewActivity,'Enter More Activity','Return to '+acct.Name)}" immediate="false" onclick="buttonsEnabled(false);return jsSaveAdditionalActivity();" />
+         <apex:commandButton value="Do Not Save Additional Activity-{!IF(saveAndNewActivity,'Enter More Activity','Return to '+acct.Name)}" immediate="true" onclick="buttonsEnabled(false);return jsFinishSave();" />
+    </apex:pageBlockButtons>
+
+    <apex:pageBlockSection columns="1">
+<!--
+        <apex:pageBlockTable id="additionalLoggingTable" value="{!extraAcctsList}" var="rec" cellPadding="2" border="1">
+        
+            <apex:column >
+               <apex:facet name="header">Selected
+                  <apex:inputCheckbox value="{!selectAllOption}" title="Select All">
+                     <apex:actionSupport event="onclick" action="{!changeSelectAllOption}" rerender="additionalLoggingTable" >
+                     </apex:actionSupport>
+                  </apex:inputCheckbox>
+               </apex:facet>
+               <apex:inputCheckbox disabled="false" value="{!rec.selected}" />
+            </apex:column>
+
+            <apex:column >
+               <apex:facet name="header">Prospect-Client Name</apex:facet>
+               <apex:outputText style="white-space:nowrap;" value="{!rec.acct.Name}-{!rec.acct.AccountNumber}" />
+            </apex:column>
+            
+           <apex:column >
+               <apex:facet name="header">Parent Name</apex:facet>
+               <apex:outputField value="{!rec.acct.ParentId}" />
+            </apex:column>
+
+        </apex:pageBlockTable>
+-->
+ 
+ 
+    <!-- apex:commandButton value="Select All Clients and Save Activity" immediate="false" onclick="buttonsEnabled(false);return jsConfirm();" /-->
+    <apex:commandButton value="Select All Clients and Save Activity" immediate="false" onclick="buttonsEnabled(false);return confirmSelectAllClients();"/> 
+       <apex:pageBlockTable id="additionalLoggingTable" value="{!extraAcctsList}" var="rec" cellPadding="2" border="1">
+               
+            <apex:facet name="header">
+               <apex:panelGrid columns="3" width="100%" border="0" cellPadding="0" cellSpacing="0" rules="none">
+                  <apex:outputText >
+                     {!(extraAccountsSet.pageNumber * extraAccountsSet.pageSize)+1-extraAccountsSet.pageSize}-{!IF((extraAccountsSet.pageNumber * extraAccountsSet.pageSize)>extraAccountsSet.resultSize, extraAccountsSet.resultSize,(extraAccountsSet.pageNumber * extraAccountsSet.pageSize))} of {!extraAccountsSet.resultSize}
+                  </apex:outputText>
+                  <apex:outputPanel >
+                     <CENTER>
+                     <apex:commandButton disabled="{!NOT(extraAccountsSet.hasPrevious)}" value="|<" action="{!firstPage}" rerender="additionalLoggingTable" title="First Page"/>  
+                     <apex:commandButton disabled="{!NOT(extraAccountsSet.hasPrevious)}" value="<" action="{!previous}" rerender="additionalLoggingTable" title="Previous Page"/>
+                     &nbsp;
+                     <apex:commandButton disabled="{!NOT(extraAccountsSet.hasNext)}" value=">" action="{!next}" rerender="additionalLoggingTable" title="Next Page"/>      
+                     <apex:commandButton disabled="{!NOT(extraAccountsSet.hasNext)}" value=">|" action="{!lastPage}" rerender="additionalLoggingTable" title="Last Page"/>
+                     </CENTER>
+                  </apex:outputPanel>
+                  <apex:outputText style="text-align:right;">
+                    <CENTER>
+                     Page {!extraAccountsSet.pageNumber} of {!numOfPages}
+                     </CENTER>
+                  </apex:outputText>      
+               </apex:panelGrid>   
+            </apex:facet>
+            <apex:facet name="footer">
+               <apex:panelGrid columns="3" width="100%" border="0" cellPadding="0" cellSpacing="0" rules="none">
+                  <apex:outputText >
+                     {!(extraAccountsSet.pageNumber * extraAccountsSet.pageSize)+1-extraAccountsSet.pageSize}-{!IF((extraAccountsSet.pageNumber * extraAccountsSet.pageSize)>extraAccountsSet.resultSize, extraAccountsSet.resultSize,(extraAccountsSet.pageNumber * extraAccountsSet.pageSize))} of {!extraAccountsSet.resultSize}
+                  </apex:outputText>
+                  <apex:outputPanel >
+                     <CENTER>
+                     <apex:commandButton disabled="{!NOT(extraAccountsSet.hasPrevious)}" value="|<" action="{!firstPage}" rerender="additionalLoggingTable" title="First Page"/>  
+                     <apex:commandButton disabled="{!NOT(extraAccountsSet.hasPrevious)}" value="<" action="{!previous}" rerender="additionalLoggingTable" title="Previous Page"/>
+                     &nbsp;
+                     <apex:commandButton disabled="{!NOT(extraAccountsSet.hasNext)}" value=">" action="{!next}" rerender="additionalLoggingTable" title="Next Page"/>      
+                     <apex:commandButton disabled="{!NOT(extraAccountsSet.hasNext)}" value=">|" action="{!lastPage}" rerender="additionalLoggingTable" title="Last Page"/>
+                     </CENTER>
+                  </apex:outputPanel>
+                  <apex:outputText style="text-align:right;">
+                    <CENTER>
+                     Page {!extraAccountsSet.pageNumber} of {!numOfPages}
+                     </CENTER>
+                  </apex:outputText>      
+               </apex:panelGrid>   
+            </apex:facet>
+            
+            
+    
+            <apex:column width="5%">
+               <apex:facet name="header">Selected
+                  <apex:inputCheckbox value="{!selectAllOption}" title="Select All">
+                     <apex:actionSupport event="onclick" action="{!changeSelectAllOption}" rerender="additionalLoggingTable" >
+                     </apex:actionSupport>
+                  </apex:inputCheckbox>
+               </apex:facet>
+               <!-- apex:inputCheckbox disabled="false" value="{!rec.selected}" /-->
+               <apex:inputCheckbox disabled="false" value="{!rec.selected}" />
+            </apex:column>
+
+            <apex:column width="35%">
+               <apex:facet name="header">Prospect-Client Name</apex:facet>
+               <apex:outputText style="white-space:nowrap;" value="{!rec.acct.Name}-{!rec.acct.AccountNumber}" />
+            </apex:column>
+            
+           <apex:column width="35%">
+               <apex:facet name="header">Parent Name</apex:facet>
+               <apex:outputField value="{!rec.acct.ParentId}" />
+            </apex:column>
+            
+            <apex:column width="25%">
+               <apex:facet name="header">Area Manager</apex:facet>
+               <apex:outputField value="{!rec.acct.HR_Manager__c}" />
+            </apex:column>
+            
+        </apex:pageBlockTable>
+  
+       
+    </apex:pageBlockSection>
+  </apex:pageBlock>
+  
+ 
+</apex:form>
+</apex:page>

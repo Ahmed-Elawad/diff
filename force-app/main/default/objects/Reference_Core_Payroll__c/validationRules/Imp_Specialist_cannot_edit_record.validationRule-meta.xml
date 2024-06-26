@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Imp_Specialist_cannot_edit_record</fullName>
+    <active>true</active>
+    <description>The user in the Implementation Specialist field can only edit Implementation Specialist Name, Client Run Date, and Expected Audit Date.</description>
+    <errorConditionFormula>OR($RecordType.Name = &apos;MPSC Employee Audit&apos;,$RecordType.Name = &apos;MPSC Client Audit&apos;) &amp;&amp;
+Record_Locked__c  &amp;&amp;
+NOT(ISCHANGED( Implementation_Specialist_Name__c)) &amp;&amp;
+NOT(ISCHANGED( Client_Run_Date__c)) &amp;&amp;
+NOT(ISCHANGED( Expected_Audit_Completion_Date__c)) &amp;&amp;
+($User.FirstName = Implementation_Specialist_Name__r.FirstName) &amp;&amp; ($User.LastName = Implementation_Specialist_Name__r.LastName)</errorConditionFormula>
+    <errorMessage>You do not have permission to edit these fields on this record.</errorMessage>
+</ValidationRule>

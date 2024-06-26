@@ -1,0 +1,1724 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>54.0</apiVersion>
+    <assignments>
+        <name>Assign_Business_Hours</name>
+        <label>Assign Business Hours</label>
+        <locationX>5704</locationX>
+        <locationY>1127</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.BusinessHoursId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>MPSCServiceBusinesshourId</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Check_to_assign_to_Queue</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_Case_values</name>
+        <label>Assign Case values queue and Status</label>
+        <locationX>5858</locationX>
+        <locationY>1919</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.OwnerId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Queue_Id.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>$Record.Status</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Submitted</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <assignments>
+        <name>Assign_Queue_to_MPSC_Project_Payroll</name>
+        <label>Assign Queue to MPSC Project Payroll</label>
+        <locationX>5858</locationX>
+        <locationY>1511</locationY>
+        <assignmentItems>
+            <assignToReference>MPSCQueueName</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>MPSC Project Payroll</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_Queue_Id</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_Queue_to_MPSC_Project_TAA_Queue</name>
+        <label>Assign Queue to MPSC Project TAA Queue</label>
+        <locationX>6122</locationX>
+        <locationY>1511</locationY>
+        <assignmentItems>
+            <assignToReference>MPSCQueueName</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>MPSC Project TAA</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_Queue_Id</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_to_MPSC_Data_Entry_Queue</name>
+        <label>Assign to MPSC Data Entry Queue</label>
+        <locationX>5594</locationX>
+        <locationY>1511</locationY>
+        <assignmentItems>
+            <assignToReference>MPSCQueueName</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>MPSC Data Entry</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_Queue_Id</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Copy_2_of_Assign_Case_values</name>
+        <label>Assign Case values Queue</label>
+        <locationX>6122</locationX>
+        <locationY>1919</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.OwnerId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Queue_Id.Id</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <decisions>
+        <name>Check_Flat_Dollar_Amount</name>
+        <label>Check Flat Dollar Amount</label>
+        <locationX>3482</locationX>
+        <locationY>803</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Check_for_Medium_Priority</name>
+            <conditionLogic>(1 AND 2) OR (3 AND 4)</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Flat_Dollar_Amount__c</leftValueReference>
+                <operator>GreaterThanOrEqualTo</operator>
+                <rightValue>
+                    <numberValue>1000.0</numberValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Flat_Dollar_Amount__c</leftValueReference>
+                <operator>LessThan</operator>
+                <rightValue>
+                    <numberValue>10000.0</numberValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Flat_Dollar_Amount__c</leftValueReference>
+                <operator>GreaterThan</operator>
+                <rightValue>
+                    <numberValue>-10000.0</numberValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Flat_Dollar_Amount__c</leftValueReference>
+                <operator>LessThanOrEqualTo</operator>
+                <rightValue>
+                    <numberValue>-1000.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Priority_to_Medium</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Check for Medium Priority</label>
+        </rules>
+        <rules>
+            <name>Check_for_High_Priority</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Flat_Dollar_Amount__c</leftValueReference>
+                <operator>GreaterThanOrEqualTo</operator>
+                <rightValue>
+                    <numberValue>10000.0</numberValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Flat_Dollar_Amount__c</leftValueReference>
+                <operator>LessThanOrEqualTo</operator>
+                <rightValue>
+                    <numberValue>-10000.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Priority_to_High</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Check for High Priority</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_For_Expense_Wire_Updates</name>
+        <label>Check For Expense Wire Updates</label>
+        <locationX>974</locationX>
+        <locationY>1103</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Check_for_Subject_Update</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Action__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>ExpenseWire Onboarding/Setup</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Reference Parent Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Completed</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Origin</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Email</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Subject_to_ExpenseWire_Onboarding</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Check for Subject Update</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_for_New_Path</name>
+        <label>Check for New Path</label>
+        <locationX>5990</locationX>
+        <locationY>803</locationY>
+        <defaultConnector>
+            <targetReference>Check_to_assign_to_Queue</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Update Path</defaultConnectorLabel>
+        <rules>
+            <name>New_Path</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>IsNew</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_MPSC_Service_business_hours</targetReference>
+            </connector>
+            <label>New Path</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_to_assign_to_Queue</name>
+        <label>Check to assign to Queue</label>
+        <locationX>5990</locationX>
+        <locationY>1403</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Assign_to_MPSC_Data_Entry</name>
+            <conditionLogic>1 AND 2 AND (3 OR 4) AND ((5 AND 6) OR 7) AND 8</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Product__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Payroll</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.MPSC_Reassign_Category_3__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Discount Request (HRIS.net)</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.MPSC_Reassign_Category_3__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Billing Adjustment (AR0008)</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Submitted</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>New</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Approved/Ready</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Type</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Help</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_to_MPSC_Data_Entry_Queue</targetReference>
+            </connector>
+            <label>Assign to MPSC Data Entry</label>
+        </rules>
+        <rules>
+            <name>Assign_to_MPSC_Project_Payroll</name>
+            <conditionLogic>1 AND 3 AND ((2 AND 4) OR 5) AND 6 AND (NOT (7 OR 8))</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Product__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Payroll</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Submitted</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>New</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Approved/Ready</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Type</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Help</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.MPSC_Reassign_Category_3__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Discount Request (HRIS.net)</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.MPSC_Reassign_Category_3__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Billing Adjustment (AR0008)</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Queue_to_MPSC_Project_Payroll</targetReference>
+            </connector>
+            <label>Assign to MPSC Project Payroll</label>
+        </rules>
+        <rules>
+            <name>Assign_to_MPSC_Project_TAA</name>
+            <conditionLogic>1 AND 2 AND ((3 AND 4) OR 5) AND 6</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Product__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>FlexTime</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Submitted</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>New</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Approved/Ready</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Type</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Help</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Queue_to_MPSC_Project_TAA_Queue</targetReference>
+            </connector>
+            <label>Assign to MPSC Project TAA</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Decision_13</name>
+        <label>Check Case Priority</label>
+        <locationX>5990</locationX>
+        <locationY>1811</locationY>
+        <defaultConnector>
+            <targetReference>Copy_2_of_Assign_Case_values</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Outcome_1_of_Decision_13</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Priority</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>High</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Priority</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Critical</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Case_values</targetReference>
+            </connector>
+            <label>Priority High Or Critical</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Do_We_Add_Follow_Up_Date</name>
+        <label>Do We Add Follow Up Date?</label>
+        <locationX>4934</locationX>
+        <locationY>803</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Check_Follow_Up_Date_Conditions</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.IsClosed</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.TAA_Category_1__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Graduated</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Reassign_Category_1__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>TLO AS Support East</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Reassign_Category_1__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>TLO AS Support West</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Follow_Up_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Follow_Up_Date_to_Next_Day</targetReference>
+            </connector>
+            <label>Check Follow Up Date Conditions</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Do_We_Update_Date_Time_First_Modified</name>
+        <label>Do We Update Date Time First Modified?</label>
+        <locationX>3482</locationX>
+        <locationY>287</locationY>
+        <defaultConnector>
+            <targetReference>Update_Manager_Escalation_Email</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_More_than_2_Minutes_Ago</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Date_Time_First_Modified__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>CreatedDateMoreThan2MinutesAgo</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Date_Time_First_Modified</targetReference>
+            </connector>
+            <label>Is More than 2 Minutes Ago?</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Do_We_Update_The_Product</name>
+        <label>Do We Update The Product?</label>
+        <locationX>2558</locationX>
+        <locationY>803</locationY>
+        <defaultConnector>
+            <targetReference>Do_We_Update_The_Subject</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_the_Action_HRO_Onboarding</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Action__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>HRO Onboarding/Setup</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Product_to_HR_Online_0</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Is the Action HRO Onboarding?</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Do_We_Update_The_Subject</name>
+        <label>Do We Update The Subject?</label>
+        <locationX>2558</locationX>
+        <locationY>1103</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Check_the_criteria</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Action__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>HRO Onboarding/Setup</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Reference Parent Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Completed</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Origin</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Email</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Subject_to_HRO_Onboarding</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Check the criteria</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>If_MPSC_Service_Business_hours_exist_then_assign_it</name>
+        <label>If MPSC Service Business hours exist then assign it</label>
+        <locationX>5836</locationX>
+        <locationY>1019</locationY>
+        <defaultConnector>
+            <targetReference>Check_to_assign_to_Queue</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_Business_hours_exist</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>MPSCServiceBusinesshourId</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Business_Hours</targetReference>
+            </connector>
+            <label>Is Business hours exist</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>What_action_do_we_take</name>
+        <label>What action do we take?</label>
+        <locationX>314</locationX>
+        <locationY>803</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Support_Type_Changes</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Termination_Transfer_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Termination</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Termination_Transfer_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Transfer</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Termination_Transfer_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>POP Termination</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Termination_Transfer_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>FSA Termination</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Termination_Transfer_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>NSF</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Termination_Transfer_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>QDRO</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Termination_Transfer_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Death Distribution</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Termination_Transfer_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>FSA/HSA Termination</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Owner_to_HRS_4S_Cancellations</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Support Type Changes</label>
+        </rules>
+        <rules>
+            <name>Support_Type_ForSubjectUpdate</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Termination_Transfer_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Manual Trade – Distribution</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Termination_Transfer_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Manual Trade – Distribution Correction</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Termination_Transfer_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Manual Trade – Loan Processing</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Subject_BySupportType</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Support Type For Subject Update</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>What_s_the_Status</name>
+        <label>What&apos;s the Status?</label>
+        <locationX>974</locationX>
+        <locationY>803</locationY>
+        <defaultConnector>
+            <targetReference>Check_For_Expense_Wire_Updates</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Check_Refused_or_Lost</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Refused</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Lost Client</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Owner_to_EW_Lost_Queue_0</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Check Refused or Lost</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Which_Record_Type</name>
+        <label>Which Record Type?</label>
+        <locationX>3482</locationX>
+        <locationY>695</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>X401k_S125_Operations_Support</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>401k/S125 Operations Support</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>What_action_do_we_take</targetReference>
+            </connector>
+            <label>401k/S125 Operations Support</label>
+        </rules>
+        <rules>
+            <name>Service_Onboarding_PEM_Case_Record_Type</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Onboarding PEM Case Record Type</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>What_s_the_Status</targetReference>
+            </connector>
+            <label>Service Onboarding PEM Case Record Type</label>
+        </rules>
+        <rules>
+            <name>Service_Onboarding_GL_and_PEO_to_Cancelled</name>
+            <conditionLogic>(1 OR 2) AND 3</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Onboarding GL Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Onboarding PEO New Business</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Current_Step__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Cancelled</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Status_to_Cancelled</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Service Onboarding GL and PEO to Cancelled</label>
+        </rules>
+        <rules>
+            <name>Service_Onboarding_GL_Case</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Onboarding GL Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Current_Step__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Client Unresponsive</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Status_to_Client_Unresponsive</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Service Onboarding GL Case</label>
+        </rules>
+        <rules>
+            <name>Handbooks_In_Progress</name>
+            <conditionLogic>(1 OR 2 OR 3 OR 4 OR 5) AND 6 AND 7 AND 8</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Onboarding HRE/CHB</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Support HRE/CHB</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Support Handbook HRE/CHB</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Support Handbook HR Solutions</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Support Handbook PEO</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>New</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Current_Step__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Case Creation</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.IsClosed</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Status_to_In_Progress</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Handbooks In Progress</label>
+        </rules>
+        <rules>
+            <name>Handbooks_Close_Case</name>
+            <conditionLogic>((1 OR 2) AND (3 OR 4)) OR ((5 OR 6) AND (7 OR 8)) OR (9 AND (10 OR 11))</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Onboarding HRE/CHB</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Support Handbook HRE/CHB</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Current_Step__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Onboarding Complete</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Current_Step__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>Client Canceled</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Support Handbook HR Solutions</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Support Handbook PEO</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Current_Step__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Completed</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Current_Step__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>Client Canceled</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Support HRE/CHB</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Current_Step__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Resolved</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Current_Step__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>Client Canceled</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Close_the_Case</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Handbooks Close Case</label>
+        </rules>
+        <rules>
+            <name>Service_Onboarding_HRO_Case_Record_Type</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Onboarding HRO Case Record Type</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Do_We_Update_The_Product</targetReference>
+            </connector>
+            <label>Service Onboarding HRO Case Record Type</label>
+        </rules>
+        <rules>
+            <name>HRS_4S_Moxie_Email_Auto_Delete_Queue</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.SuppliedEmail</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>mailer-daemon</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Support HRO Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Support TAA Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Support OS Field Support Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Support Nettime Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Support GL Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Support MSP Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Support MSP Applicant Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Support STM Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Support Icon</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Owner_to_HRS_4S_Email_Delete</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>HRS 4S Moxie Email Auto Delete Queue</label>
+        </rules>
+        <rules>
+            <name>HRS_4S_Project_Submission_Case</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>HRS 4S Project Submission Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Origin</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Email-to-case 401k Audit</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.IsClosed</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Check_Flat_Dollar_Amount</targetReference>
+            </connector>
+            <label>HRS 4S Project Submission Case</label>
+        </rules>
+        <rules>
+            <name>Service_Onboarding_MMS_Payroll_Case</name>
+            <conditionLogic>1 AND (2 OR 3)</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Onboarding MMS Payroll Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Current_Step__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>(5 of 5) Transferred to Client Support</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Current_Step__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Client Never Ran</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Status_to_Completed</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Service Onboarding MMS Payroll Case</label>
+        </rules>
+        <rules>
+            <name>Service_Onboarding_Core_Payroll_Case</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Onboarding Core Payroll Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Non Payroll/Non Core</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Owner_to_Core_Non_Payroll_Non_Core_New_Load_Queue</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Service Onboarding Core Payroll Case</label>
+        </rules>
+        <rules>
+            <name>Service_Support_ESR_Dedicated_Service_Case</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Support ESR Dedicated Service Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Support Benetrac ESR Dedicated Service Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.ESR_Risk_Level__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_ESR_Risk_Level_Timestamp</targetReference>
+            </connector>
+            <label>Service Support ESR Dedicated Service Case</label>
+        </rules>
+        <rules>
+            <name>Service_Support_TAA_Case</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Support TAA Case</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Do_We_Add_Follow_Up_Date</targetReference>
+            </connector>
+            <label>Service Support TAA Case</label>
+        </rules>
+        <rules>
+            <name>Sales_Support_Cases_Record_Type</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Sales Support Cases Record Type</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Due_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Origin</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>S2S Submission</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Due_Date</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Sales Support Cases Record Type</label>
+        </rules>
+        <rules>
+            <name>Multi_Product_Service_Case</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Multi-Product Service Case</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Check_for_New_Path</targetReference>
+            </connector>
+            <label>Multi-Product Service Case</label>
+        </rules>
+    </decisions>
+    <description>More flow actions for the Case
+4-April-2024 - MPSC development Manual merge for &quot;Multi-Product Service Case&quot; case record type
+11- April-2024- Update Product as Flextime
+15-May-2024 MPSC Update Queue assignment
+15-May-2024 Fix of issue in the MPSC Update Queue assignment
+15-May-2024 Fix of issue in the MPSC Update Queue assignment The status change depends on the priority</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>CreatedDateMoreThan2MinutesAgo</name>
+        <dataType>Boolean</dataType>
+        <expression>(({!$Flow.CurrentDateTime} - {!$Record.CreatedDate}) *24*60) &gt;= 2</expression>
+    </formulas>
+    <formulas>
+        <name>DueDate10DaysFromCreatedDate</name>
+        <dataType>Date</dataType>
+        <expression>{!$Record.CreatedDate}+10</expression>
+    </formulas>
+    <formulas>
+        <name>IsNew</name>
+        <dataType>Boolean</dataType>
+        <expression>IsNew()</expression>
+    </formulas>
+    <formulas>
+        <name>NextDay</name>
+        <dataType>Date</dataType>
+        <expression>{!$Flow.CurrentDate} + 1</expression>
+    </formulas>
+    <formulas>
+        <name>Owner401kOpsTransferType</name>
+        <dataType>String</dataType>
+        <expression>CASE({!$Record.Termination_Transfer_Type__c}, 
+&quot;Termination&quot;,&quot;00G70000001hHu5EAE&quot;,   /* HRS 4S Cancellations */
+&quot;Transfer&quot;,&quot;00G70000001hHu5EAE&quot;,
+&quot;POP Termination&quot;,&quot;00G4u000004ogxsEAA&quot;,
+&quot;FSA/HSA Termination&quot;,&quot;00G4u000004ogxsEAA&quot;,
+&quot;NSF&quot;,&quot;00G70000001hHu5EAE&quot;,
+&quot;QDRO&quot;,&quot;00G70000001RPj1EAG&quot;,   /* HRS 4S LDPS */
+&quot;Death Distribution&quot;,&quot;00G70000001RPj1EAG&quot;,   
+{!$Record.OwnerId})</expression>
+    </formulas>
+    <formulas>
+        <name>Subject401kOpsTransferType</name>
+        <dataType>String</dataType>
+        <expression>CASE({!$Record.Termination_Transfer_Type__c}, 
+&quot;Termination&quot;, &quot;401k Plan Termination&quot;,
+&quot;Transfer&quot;,&quot;401k Plan Transfer&quot;,
+&quot;FSA Termination&quot;,&quot;FSA Plan Termination&quot;,
+&quot;POP Termination&quot;,&quot;POP Plan Termination&quot;,
+&quot;FSA/HSA Termination&quot;,&quot;FSA Plan Termination&quot;,
+TEXT({!$Record.Termination_Transfer_Type__c}))</expression>
+    </formulas>
+    <formulas>
+        <name>SubjectBySupportType</name>
+        <dataType>String</dataType>
+        <expression>Case ({!$Record.Termination_Transfer_Type__c}
+,&quot;Manual Trade – Distribution&quot;,&quot;3 day CAM case – distribution request&quot;
+,&quot;Manual Trade – Distribution Correction&quot;,&quot;CAM case – distribution correction request&quot;
+,&quot;Manual Trade – Loan Processing&quot;,&quot;CAM case – loan processing request&quot;
+,&quot;FSA/HSA Termination&quot;,&quot;FSA Plan Termination&quot;
+,{!$Record.Subject})</expression>
+    </formulas>
+    <interviewLabel>Case Before 2 {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Case Before Flows 2</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_MPSC_Service_business_hours</name>
+        <label>Get MPSC Service business hours</label>
+        <locationX>5836</locationX>
+        <locationY>911</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>If_MPSC_Service_Business_hours_exist_then_assign_it</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Name</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>MPSC Service</stringValue>
+            </value>
+        </filters>
+        <object>BusinessHours</object>
+        <outputAssignments>
+            <assignToReference>MPSCServiceBusinesshourId</assignToReference>
+            <field>Id</field>
+        </outputAssignments>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Queue_Id</name>
+        <label>Get Queue Id</label>
+        <locationX>5990</locationX>
+        <locationY>1703</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Decision_13</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Type</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Queue</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Name</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>MPSCQueueName</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Group</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <name>Close_the_Case</name>
+        <label>Close the Case</label>
+        <locationX>2162</locationX>
+        <locationY>803</locationY>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>Closed</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Owner_to_Core_Non_Payroll_Non_Core_New_Load_Queue</name>
+        <label>Owner to Core Non Payroll/Non Core New Load Queue</label>
+        <locationX>4274</locationX>
+        <locationY>803</locationY>
+        <inputAssignments>
+            <field>OwnerId</field>
+            <value>
+                <stringValue>00G70000001l3HwEAI</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Owner_to_HRS_4S_Cancellations</name>
+        <label>Owner to HRS 4S Cancellations</label>
+        <locationX>50</locationX>
+        <locationY>911</locationY>
+        <inputAssignments>
+            <field>OwnerId</field>
+            <value>
+                <elementReference>Owner401kOpsTransferType</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <elementReference>Subject401kOpsTransferType</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Set_Due_Date</name>
+        <label>Set Due Date</label>
+        <locationX>5330</locationX>
+        <locationY>803</locationY>
+        <inputAssignments>
+            <field>Due_Date__c</field>
+            <value>
+                <elementReference>DueDate10DaysFromCreatedDate</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Date_Time_First_Modified</name>
+        <label>Update Date Time First Modified</label>
+        <locationX>3350</locationX>
+        <locationY>395</locationY>
+        <connector>
+            <targetReference>Update_Manager_Escalation_Email</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Date_Time_First_Modified__c</field>
+            <value>
+                <elementReference>$Flow.CurrentDateTime</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_ESR_Risk_Level_Timestamp</name>
+        <label>Update ESR Risk Level Timestamp</label>
+        <locationX>4538</locationX>
+        <locationY>803</locationY>
+        <inputAssignments>
+            <field>ESR_Risk_Level_c__c</field>
+            <value>
+                <elementReference>$Flow.CurrentDateTime</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Follow_Up_Date_to_Next_Day</name>
+        <label>Update Follow Up Date to Next Day</label>
+        <locationX>4802</locationX>
+        <locationY>911</locationY>
+        <inputAssignments>
+            <field>Follow_Up_Date__c</field>
+            <value>
+                <elementReference>NextDay</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Manager_Escalation_Email</name>
+        <label>Update Manager Escalation Email</label>
+        <locationX>3482</locationX>
+        <locationY>587</locationY>
+        <connector>
+            <targetReference>Which_Record_Type</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Manager_Escalation_Submitter_Email__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Manager_Escalation_Needed__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Manager_Escalation_Submitter_Email__c</field>
+            <value>
+                <elementReference>$User.Email</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Owner_to_EW_Lost_Queue_0</name>
+        <label>Update Owner to EW Lost Queue</label>
+        <locationX>842</locationX>
+        <locationY>911</locationY>
+        <connector>
+            <targetReference>Check_For_Expense_Wire_Updates</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>OwnerId</field>
+            <value>
+                <stringValue>00G70000001iFbyEAE</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Owner_to_HRS_4S_Email_Delete</name>
+        <label>Update Owner to HRS 4S Email Delete</label>
+        <locationX>2954</locationX>
+        <locationY>803</locationY>
+        <inputAssignments>
+            <field>OwnerId</field>
+            <value>
+                <stringValue>00G70000003O7WSEA0</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Priority_to_High</name>
+        <label>Update Priority to High</label>
+        <locationX>3482</locationX>
+        <locationY>911</locationY>
+        <inputAssignments>
+            <field>Priority</field>
+            <value>
+                <stringValue>High</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Priority_to_Medium</name>
+        <label>Update Priority to Medium</label>
+        <locationX>3218</locationX>
+        <locationY>911</locationY>
+        <inputAssignments>
+            <field>Priority</field>
+            <value>
+                <stringValue>Medium</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Product_to_HR_Online_0</name>
+        <label>Update Product to HR Online</label>
+        <locationX>2426</locationX>
+        <locationY>911</locationY>
+        <connector>
+            <targetReference>Do_We_Update_The_Subject</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Product__c</field>
+            <value>
+                <stringValue>HR Online</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Status_to_Cancelled</name>
+        <label>Update Status to Cancelled</label>
+        <locationX>1370</locationX>
+        <locationY>803</locationY>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>Cancelled</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Status_to_Client_Unresponsive</name>
+        <label>Update Status to Client Unresponsive</label>
+        <locationX>1634</locationX>
+        <locationY>803</locationY>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>Client Unresponsive</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Status_to_Completed</name>
+        <label>Update Status to Completed</label>
+        <locationX>4010</locationX>
+        <locationY>803</locationY>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>Completed</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Status_to_In_Progress</name>
+        <label>Update Status to In Progress</label>
+        <locationX>1898</locationX>
+        <locationY>803</locationY>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>In Progress</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Subject_BySupportType</name>
+        <label>Update Subject By Support Type</label>
+        <locationX>314</locationX>
+        <locationY>911</locationY>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <elementReference>SubjectBySupportType</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Subject_to_ExpenseWire_Onboarding</name>
+        <label>Update Subject to ExpenseWire Onboarding</label>
+        <locationX>842</locationX>
+        <locationY>1211</locationY>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <stringValue>ExpenseWire Onboarding</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Subject_to_HRO_Onboarding</name>
+        <label>Update Subject to HRO Onboarding</label>
+        <locationX>2426</locationX>
+        <locationY>1211</locationY>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <stringValue>HRO Onboarding</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>3356</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Do_We_Update_Date_Time_First_Modified</targetReference>
+        </connector>
+        <object>Case</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+    <triggerOrder>20</triggerOrder>
+    <variables>
+        <name>MPSCQueueName</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>MPSCServiceBusinesshourId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

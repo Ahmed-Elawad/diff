@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PEO_Close_Discrepancy</fullName>
+    <active>true</active>
+    <description>Requires the user to fill in the resolved by field when the status is resloved</description>
+    <errorConditionFormula>ispickval(Status__c, &quot;Resolved&quot;) &amp;&amp; len(text( Resolved_by__c)) &lt;2</errorConditionFormula>
+    <errorDisplayField>Resolved_by__c</errorDisplayField>
+    <errorMessage>Please choose who resolved the discrepancy</errorMessage>
+</ValidationRule>

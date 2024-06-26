@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Primary_Competition_Required</fullName>
+    <active>false</active>
+    <description>Sales Reps populate Primary Competition field when stage is &apos;Not Sold&apos; or at or above 50% prob, and before the rep marks it as Sold (80% prob)
+Do not trigger if the Opp is already marked Sold or another non-Sales user triggers changes from another record</description>
+    <errorConditionFormula>AND(
+
+$User.Job_Name__c = &apos;Sales Representative&apos;,
+
+$User.Sales_Division__c != &apos;Virtual TAA&apos;,
+ISCHANGED(StageName),
+NOT(BEGINS(PRIORVALUE(StageName), &apos;Sold&apos;)),
+ISBLANK(TEXT(Primary_Competition__c)),
+
+OR(
+AND(
+OR(AND(Probability &gt;= 0.50, Probability &lt;= 0.80),
+(IsWon=false &amp;&amp; IsClosed=True)),
+
+OR($RecordType.Name = &apos;Core Opportunity DSA Record Type&apos;
+,$RecordType.Name = &apos;Core Opportunity Record Type&apos;
+,$RecordType.Name = &apos;Core Virtual Sales&apos;
+,$RecordType.Name = &apos;PC Opportunity DSA Record Type&apos;
+,$RecordType.Name = &apos;PC Opportunity Record Type&apos;
+)
+),
+
+AND(
+Probability &gt;= 0.80 || (IsWon=false &amp;&amp; IsClosed=True),
+
+OR($RecordType.Name = &apos;ASO Opportunity FSS Record Type&apos;
+,$RecordType.Name = &apos;ASO Opportunity Record Type&apos;
+,$RecordType.Name = &apos;PEO Opportunity FSS Record Type&apos;
+,$RecordType.Name = &apos;PEO Opportunity Record Type&apos;
+,$RecordType.Name = &apos;HRS 401(k) Opportunity Record Type&apos;
+,$RecordType.Name = &apos;HRS 401(k) Opportunity FSS Record Type&apos;)
+)
+),
+
+NOT(BEGINS($Profile.Name, &apos;System Administrator&apos;))
+)</errorConditionFormula>
+    <errorMessage>You must complete the Primary Competition field before saving this Opportunity to a higher Status or to a not sold Status.</errorMessage>
+</ValidationRule>

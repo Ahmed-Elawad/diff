@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRE_Lockdown_All_Versions_Printed_Date</fullName>
+    <active>true</active>
+    <description>Prevent the All Versions Printed Date field from being updated multiple times.</description>
+    <errorConditionFormula>AND(
+ ISCHANGED(All_Versions_Printed_Date__c),
+ ( NOT(ISNULL(PRIORVALUE(All_Versions_Printed_Date__c))) ),
+ (RecordType.Name = &quot;Reference HRE/CHB Onboarding&quot;),  
+ ($UserRole.Name &lt;&gt; &quot;HRE Handbook Supervisor team 1&quot;), 
+ ($UserRole.Name &lt;&gt; &quot;HRE Handbook Supervisor team 2&quot;), 
+ ($UserRole.Name &lt;&gt; &quot;HRE Handbook Supervisor team 3&quot;), 
+ ($UserRole.Name &lt;&gt; &quot;HRE HR Services Supervisor team 1&quot;), 
+ ($UserRole.Name &lt;&gt; &quot;HRE HR Services Supervisor team 2&quot;),
+ ($UserRole.Name &lt;&gt; &quot;HRE Advisor Team 1&quot;),
+ ($UserRole.Name &lt;&gt; &quot;HRE Advisor Team 2&quot;),
+ ($UserRole.Name &lt;&gt; &quot;System Administrator&quot;) 
+)</errorConditionFormula>
+    <errorDisplayField>All_Versions_Printed_Date__c</errorDisplayField>
+    <errorMessage>You cannot update the &apos;All Versions Printed Date&apos; field.</errorMessage>
+</ValidationRule>

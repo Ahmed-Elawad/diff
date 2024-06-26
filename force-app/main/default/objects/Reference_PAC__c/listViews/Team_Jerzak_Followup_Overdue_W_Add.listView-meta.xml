@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Team_Jerzak_Followup_Overdue_W_Add</fullName>
+    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6</booleanFilter>
+    <columns>NAME</columns>
+    <columns>Follow_Up_Date__c</columns>
+    <columns>OWNER.ALIAS</columns>
+    <columns>Prospect_Client_Number__c</columns>
+    <columns>Account_Lookup__c</columns>
+    <columns>Tax_Agency__c</columns>
+    <columns>Tax_Type__c</columns>
+    <columns>First_Period_Listed__c</columns>
+    <columns>Status__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_PAC__c.Reference_PAC_Record_Type</value>
+    </filters>
+    <filters>
+        <field>Status__c</field>
+        <operation>notContain</operation>
+        <value>Closed in PAC,new notice received</value>
+    </filters>
+    <filters>
+        <field>Follow_Up_Date__c</field>
+        <operation>lessThan</operation>
+        <value>TODAY</value>
+    </filters>
+    <filters>
+        <field>Status__c</field>
+        <operation>notEqual</operation>
+        <value>Pending PAC Review - Transferring New to D/E</value>
+    </filters>
+    <filters>
+        <field>Status__c</field>
+        <operation>notEqual</operation>
+        <value>Pending PAC Review - Reassign to New ORR</value>
+    </filters>
+    <filters>
+        <field>OWNER.ALIAS</field>
+        <operation>equals</operation>
+        <value>dhosi,gjuar,jsmit,lfull,kclay,dolte,jkoma</value>
+    </filters>
+    <label>Team Jerzak Followup - Overdue (W/Add)</label>
+</ListView>

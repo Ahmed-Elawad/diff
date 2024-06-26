@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Only_Admins_can_remove_DNC_flag</fullName>
+    <active>true</active>
+    <description>Only a System Administrator can uncheck a Do Not Call</description>
+    <errorConditionFormula>AND( 
+ISCHANGED( Do_Not_Call__c ), 
+Do_Not_Call__c = False, 
+$Profile.Name &lt;&gt; &quot;System Administrator&quot;, 
+$Profile.Name &lt;&gt; &quot;System Administrator API&quot;,
+
+$Profile.Name &lt;&gt; &quot;Sales Data Steward&quot; , 
+
+$Profile.Name &lt;&gt; &quot;Salesforce Support&quot;   )</errorConditionFormula>
+    <errorMessage>*** Only a System Administrator can uncheck a Do Not Call ***</errorMessage>
+</ValidationRule>

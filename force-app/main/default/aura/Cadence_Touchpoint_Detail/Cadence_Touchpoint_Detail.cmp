@@ -1,0 +1,1260 @@
+<aura:component controller="WorkQueueController"
+                implements="force:lightningQuickAction,lightning:isUrlAddressable,force:appHostable,flexipage:availableForAllPageTypes">
+    <aura:attribute name="isLastStep" type="Boolean" default="false"/><!--Pratik-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="TouchpointUpdateNote" type="string" />
+    <aura:attribute name="currentUserId" type="string" />
+    <aura:attribute name="recordReferralAccount" type="Object" />
+    <aura:attribute name="RemovalReason" type="string" default="None" />
+    <aura:attribute name="followUpDate" type="datetime" />
+    <aura:attribute name="repeatReason" type="string" />
+    <aura:attribute name="skipReason" type="string" />
+    <aura:attribute name="selectedLabel" type="string" />
+    <aura:attribute name="cadStepList" type="Object[]" />
+    <aura:attribute name="SalesNotes" type="string" />
+    <aura:attribute name="allActivityList" type="Object[]" />
+    <aura:attribute name="activityTableColumns" type="List" />
+    <aura:attribute name="opportunityList" type="Object[]" />
+    <aura:attribute name="oppTableColumns" type="List" />
+    <aura:attribute name="productList" type="Object[]" />
+    <aura:attribute name="prodTableColumns" type="List" />
+    <aura:attribute name="navigatedFromParent" type="Boolean" default="false" />
+    <aura:attribute name="closeReasons" type="List" />
+    <aura:attribute name="StepCount" type="Integer" />
+    <aura:attribute name="recordMode" type="String" default="view" />
+    <aura:attribute name="parentRecordId" type="Id" />
+    <aura:attribute name="recordBeingViewed" type="String" />
+    <aura:attribute name="createMode" type="Boolean" default="false" />
+    <aura:attribute name="updateSig" type="Boolean" default="true" />
+    <aura:attribute name="accountFields" type="String[]"
+                    default="Name,Type,NumberOfEmployees,Industry,Current_Prior_Method__c,X401K_Assets__c,Local_Competitors__c,ShippingAddress,Website" />
+    <aura:attribute name="leadFields" type="String[]"
+                    default="Name,Lead_Company__c,Title,Email,Phone,Status,MobilePhone,Company,NumberOfEmployees,Industry,Current_Prior_Method__c,X401K_Assets__c,Local_Competitors__c,Address,LeadId__c,Comment__c" />
+    <aura:attribute name="contactFields" type="String[]"
+                    default="Name,Title,Email,AccountId,Phone,Do_Not_Call_Flag__c,MobilePhone,ContactId__c,Comment__c,LinkedIn_Profile__c,Consent_To_Text__c,TextEligible__c" />
+    <aura:attribute name="carFields" type="String[]" default="TargetList__c" />
+    <aura:attribute name="contactSource" type="String" default="Cadence - Significant" />
+    <aura:attribute name="emailBounceFields" type="String[]" default="Email,EmailBouncedReason,EmailBouncedDate" />
+    <aura:attribute name="ownedByQueue" type="Boolean" />
+    <aura:attribute name="ownerStaysQueue" type="Boolean" />
+    <!--Email Insight Table-->
+    <aura:attribute name="emailInsightData" type="Object[]" />
+    <aura:attribute name="emailInsightTableColumns" type="List" />
+    <!--Display Screen Attributes-->
+    <aura:attribute name="displayScreen" type="String" default="displayDetails" />
+    <!-- End Display Screen Attributes-->
+    <aura:attribute name="createOppBtnLabel" type="String" default="Create Opportunity" />
+    <!-- Display the email buttons -->
+    <aura:attribute name="displayEmailButton" type="Boolean" default="false" />
+    <aura:attribute name="cannotEmailContact" type="Boolean" default="false" />
+    <!-- Touchpoint Variables-->
+    <aura:attribute name="cadenceTouchpoint" type="object" />
+    <aura:attribute name="touchpointIcon" type="string" />
+    <aura:attribute name="touchpointRecordName" type="string" />
+    <aura:attribute name="touchpointContactList" type="object[]" />
+    <aura:attribute name="touchpointParentInfo" type="Object" />
+    <aura:attribute name="touchpointIsLead" type="Boolean" />
+    <aura:attribute name="touchpointIsAccount" type="Boolean" />
+    <aura:attribute name="touchpointIsRefAccount" type="Boolean" default="false" />
+    <aura:attribute name="ctctTableData" type="Object" />
+    <aura:attribute name="ctctTableColumns" type="List" />
+    <aura:attribute name="refCtctEmailColumns" type="List" />
+    <aura:attribute name="isTelemarketing" type="Boolean" default="false" />
+    <aura:attribute name="recordContact" type="Object" />
+    <aura:attribute name="recordLead" type="Object" />
+    <aura:attribute name="recordIsSignificant" type="Boolean" default="false" />
+    <aura:attribute name="missingSignificant" type="Boolean" />
+    <aura:attribute name="consentToText" type="Boolean" />
+    <aura:attribute name="noSignificantErrorMessage" type="String" />
+    <aura:attribute name="queryContactsOnly" type="Boolean" default="false" />
+    <aura:attribute name="goToButtonLabel" type="String" />
+    <aura:attribute name="referralOppLabel" type="String" />
+    <aura:attribute name="isSecondaryUser" type="boolean" default="false" />
+    <aura:attribute name="notAllowCadRemove" type="boolean" default="false" />
+    <!-- End Touchpoint Variables-->
+    <!-- Email Attributes-->
+    <aura:attribute name="emailTemplate" type="string" />
+    <aura:attribute name="emailTemplateId" type="string" />
+    <aura:attribute name="emailRecipient" type="string" />
+    <aura:attribute name="emailSubject" type="string" />
+    <aura:attribute name="emailBody" type="string" />
+    <aura:attribute name="isEmailPreviewOpen" type="boolean" default="false" />
+    <aura:attribute name="emailPreviewBody" type="string" />
+    <aura:attribute name="emailTemplateOptions" type="List" default="[]" />
+    <aura:attribute name="hasTemplateOptions" type="boolean" default="false" />
+    <aura:attribute name="selectedEmailTemplate" type="String" />
+    <aura:attribute name="selectedTemplateName" type="String" />
+    <aura:attribute name="emailExtra" type="string" />
+    <aura:attribute name="referralContactEmailOptions" type="List" default="[]" />
+    <aura:attribute name="referralContactOptions" type="List" default="[]" />
+    <aura:attribute name="selectedRefctctEmails" type="List" default="[]"/>
+    <aura:attribute name="selectedMirrorContactIds" type="List" default="[]"/>
+    <aura:attribute name="preselectedContacts" type="List" default="[]"/>
+    <aura:attribute name="preselectedRefContacts" type="List" default="[]"/>
+    <aura:attribute name="accountContactLabel" type="String"/>
+    <!--End Email Attributes-->
+    <!--Log Step Attributes-->
+    <aura:attribute name="disableButton" type="boolean" default="false" />
+    <aura:attribute name="logStepValue" type="string" />
+    <aura:attribute name="logStepOptions" type="string" />
+    <aura:attribute name="showSelectContacts" type="boolean" default="true" />
+    <aura:attribute name="selectedRefctctNames" type="String"/>
+    <aura:attribute name="selectedRefctctNamesList" type="List"/>
+    <!--Create Activity Attributes  -->
+    <aura:attribute name="isCreateActivityOpen" type="boolean" default="false" />
+    <aura:attribute name="showCreateActivity" type="boolean" default="false" />
+    <aura:attribute name="mirrorContactSelected" type="boolean" default="false" />
+    <aura:attribute name="createActivityOptions" type="List" default="[]"/>
+    <aura:attribute name="selectedCARefctctId" type="String" />
+    <aura:attribute name="CANamesList" type="String" />
+    <aura:attribute name="selectedCARefctct" type="Object" />
+    <!--Device Attributes-->
+    <aura:attribute name="device" type="string" />
+    <aura:attribute name="filterSummary" type="string" />
+    <!--End Device Attributes-->
+    <aura:registerEvent name="updateTouchpointList" type="c:UpdateWorkQueue" />
+    <aura:registerEvent name="updateTouchpoint" type="c:UpdateDisplayTouchpoint" />
+    <!--Spinner Info-->
+    <aura:attribute name="showSpinner" type="Boolean" default="false" />
+    <aura:if isTrue="{!v.showSpinner}">
+        <lightning:spinner />
+    </aura:if>
+    <!--ADD EVENT SUBSCRIPTION-->
+    <!--The empApi component Exposes the Streaming API library which provides methods to subscribe and unsubscribe to a platform event channel-->
+    <lightning:empApi aura:id="empApi" />
+    <!-- Attribute to store platform event channel name -->
+    <aura:attribute name="channel" type="String" default="/event/Touchpoint_Update__e" />
+    <!--Attribute to store object that is returned by the empApi.subscribe() method-->
+    <aura:attribute name="subscription" type="Map" />
+    <!--END EVENT SUBSCRIPTION-->
+    <!--EMAIL SCREEN-->
+    <aura:if isTrue="{!v.displayScreen == 'displayEmail'}">
+        <div class="slds-text-heading_medium slds-text-color_inverse" style="padding:0.1rem;background:#16325c">
+            <lightning:icon iconName="utility:email" size="small" /> <b> Email</b>
+        </div>
+        <lightning:card class="slds-p-horizontal_medium">
+            <!-- where the email select goes -->
+            <aura:if isTrue='{!v.cadenceTouchpoint.CarRecord__r.IsReferralSource__c}'>
+                <div>
+                    <lightning:datatable columns="{!v.refCtctEmailColumns}" keyField="Id"
+                                         data="{!v.referralContactEmailOptions}" selectedRows="{!v.preselectedRefContacts}" onrowselection="{! c.handleEmailList }" />
+                </div>
+            </aura:if>
+            <!-- <div> The ongoing list: {!v.selectedRefctctEmails}</div> -->
+            <aura:if isTrue="{!v.hasTemplateOptions}">
+                <aura:if isTrue="{!v.emailTemplate != null}">
+                    <br /><b>Currently using email template:
+                    "{!v.emailTemplate}" as defined by
+                    step.</b>
+                    <aura:set attribute="else">
+                        <lightning:combobox aura:id="selectEmailTemplate" name="chooseEmailTemplate"
+                                            label="Select an Email Template to use" value="{!v.selectedEmailTemplate}"
+                                            options="{!v.emailTemplateOptions}" />
+                    </aura:set>
+                </aura:if>
+                <aura:if isTrue="{!v.cadenceTouchpoint.Cadence_Touchpoint_Step__r.EmailExtraTextAllowed__c}">
+                    <lightning:textarea label="Extra Email Text:" value="{!v.emailExtra}" />
+                </aura:if>
+            </aura:if>
+            <aura:if isTrue='{!not(v.cadenceTouchpoint.CarRecord__r.IsReferralSource__c)}'>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-large-size_1-of-2 slds-p-top_small">
+                    <div class="slds-p-vertical_small"><b>Recipient: </b>
+                        <lightning:formattedText value="{!v.cadenceTouchpoint.CarRecord__r.SignificantContactEmail__c}" />
+                    </div>
+                </div>
+            </aura:if>
+            <aura:if isTrue='{!not(v.cadenceTouchpoint.CarRecord__r.IsReferralSource__c)}'>
+                <aura:if isTrue="{!v.cadenceTouchpoint.CarRecord__r.SignificantContactEmailBounceReason__c !=null}">
+                    <div class="slds-text-color_error">
+                        <b>This contact has had a bounced email. Please view contact list for bounce reason</b>
+                    </div>
+                    <aura:set attribute="else">
+                        <b>Contact email has not recently bounced.</b>
+                    </aura:set>
+                </aura:if>
+            </aura:if>
+            <aura:if isTrue="{! !v.hasTemplateOptions}">
+                <div>
+                    <lightning:input label="Email Subject:" value="{!v.emailSubject}" />
+                    <lightning:textarea label="Email Body:" value="{!v.emailBody}" />
+                </div>
+            </aura:if>
+            <div class="slds-align_absolute-center">
+                <aura:if isTrue="{!cannotEmailContact}">
+                    <div class="slds-text-color_error">
+                        <b>This contact is an Email Opt-Out. Select Cancel and Swap Contact OR Add a Contact that can be
+                            emailed. If no other Contact is available use the Skip Step button.</b>
+                    </div>
+                    <div class="slds-align_absolute-center">
+                        <lightning:button label="Cancel" aura:id="cancel" name="cancel"
+                                          onclick="{!c.processCancelRequest}" />
+                    </div>
+                    <aura:set attribute="else">
+                        <aura:if isTrue="{!v.hasTemplateOptions}">
+                            <lightning:button label="Preview Email" aura:id="previewEmail" name="previewEmail"
+                                              onclick="{!c.handleEmailPreview}" />
+                        </aura:if>
+                        <lightning:button label="Send Email" aura:id="sendEmail" name="sendEmail"
+                                          onclick="{!c.processEmailRequest}" />
+                        <lightning:button label="Cancel" aura:id="cancel" name="cancel"
+                                          onclick="{!c.processCancelRequest}" />
+                    </aura:set>
+                </aura:if>
+            </div>
+        </lightning:card>
+    </aura:if>
+    <aura:if isTrue="{!v.isCreateActivityOpen}">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+                 aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Box Header Starts here-->
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close" onclick="{! c.closeCreateActivityScreen }"
+                                          alternativeText="close" variant="bare-inverse" class="slds-modal__close" />
+                    <!-- <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Email Preview for
+{!v.selectedTemplateName}</h2> -->
+                </header>
+                <!--Modal/Popup Box Body Starts here-->
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <!--
+<lightning:formattedText value="{!v.emailPreviewBody}" />
+-->
+                    <!-- <lightning:formattedRichText value="{!v.emailPreviewBody}" /> -->
+                    <!-- <div> This is where the create activity section will be</div> -->
+                    <aura:if isTrue="{!v.showCreateActivity}">
+                        <h2>Create Activity</h2>
+                        <!-- <c:createActivity recordId="{!v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Id}" refctct="{!v.selectedCARefctct}" /> -->
+                        <!-- <c:createActivity recordId="{!v.selectedCARefctctId}"  description="{!v.caDescription}" sobjecttype="Referral_Contact__c" /> -->
+                        <!-- <c:createActivity recordId="{!v.selectedCARefctctId}"  sobjecttype="Referral_Account__c" /> -->
+                        <c:createActivity recordId="{!v.selectedCARefctctId}" sobjecttype="Referral_Account__c" carId="{!v.cadenceTouchpoint.CarRecord__c}" />
+                        <aura:set attribute="else">
+                            <div style="height: 300px;">
+                                <h2>Select Referral Contact</h2>
+                                <!-- <lightning:datatable columns="{!v.refCtctEmailColumns}" keyField="id"
+data="{!v.referralContactEmailOptions}" onrowselection="{! c.handleEmailList }" /> -->
+                                <lightning:combobox name="progress" label="Status" value="{!v.selectedCARefctctId}" placeholder="Select Referral Contact" options="{! v.createActivityOptions }" onchange="{! c.updateCAContact }"/>
+                            </div>
+                            <lightning:button label="Next" variant="brand" aura:id="CreateActivity1"
+                                              name="CreateActivity1" onclick="{!c.displayCreateActivity}" />
+                        </aura:set>
+                    </aura:if>
+                </div>
+                <!--Modal/Popup Box Footer Starts here-->
+                <footer class="slds-modal__footer">
+                    <lightning:button variant="brand" label="Close Create Activity" title="Close Create Activity" onclick="{!c.closeCreateActivityScreen}" />
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+        <!-- <c:createActivity/>  -->
+    </aura:if>
+    <!--SWAP CONTACT SCREEN-->
+    <aura:if isTrue="{!v.displayScreen == 'displayContact'}">
+        <div class="slds-text-heading_medium slds-text-color_inverse" style="padding:0.1rem;background:#16325c">
+            <lightning:icon iconName="utility:change_owner" size="small" /> <b> Swap Contact</b>
+        </div>
+        <lightning:card class="slds-p-horizontal_medium">
+            <div class="slds-form-element">
+                <label class="slds-form-element__label" for="currentContactName">Current Contact:</label>
+                <div class="slds-form-element__control">
+                    <ui:outputText value="{!v.cadenceTouchpoint.CarRecord__r.SignificantContactName__c}"
+                                   aura:id="currentContactName" />
+                </div>
+                <aura:if isTrue="{!v.cadenceTouchpoint.CarRecord__r.SignificantContactEmailBounceReason__c !=null}">
+                    <div class="slds-text-color_error">
+                        <b>This contact's email bounced following reason:
+                            {!v.cadenceTouchpoint.CarRecord__r.SignificantContactEmailBounceReason__c}</b>
+                    </div>
+                </aura:if>
+            </div>
+            <aura:if isTrue="{!$Browser.isPhone}">
+                <!-- display in a card format for mobile -->
+                <aura:iteration items="{!v.touchpointContactList}" var="ctct">
+                    <p>
+                        <lightning:card>
+                            <b>Contact Name:</b> {!ctct.Name}<br />
+                            <b>Name:</b> {!ctct.Title}<br />
+                            <b>Email:</b> {!ctct.Email}<br />
+                            <b>Phone:</b> {!ctct.Phone}<br />
+                        </lightning:card>
+                    </p>
+                </aura:iteration>
+                <aura:set attribute="else">
+                    <!-- if not mobile display as a table -->
+                    <lightning:datatable data="{! v.ctctTableData }" columns="{! v.ctctTableColumns }" keyField="Id"
+                                         hideCheckboxColumn="true" onrowaction="{! c.handleCtctRowAction}" />
+                </aura:set>
+            </aura:if>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-4 slds-large-size_1-of-4 slds-p-vertical_xx-small">
+                <lightning:select aura:id="contact_List" name="contact_List" label="Select Contact to Assign:">
+                    <option value="None">None</option>
+                    <aura:iteration items="{!v.touchpointContactList}" var="con">
+                        <option value="{!con.Id}">{!con.Name}</option>
+                    </aura:iteration>
+                </lightning:select>
+            </div>
+            <div class="slds-align_absolute-center">
+                <lightning:input type="checkbox" name="makeSignificant" label="Make Significant?"
+                                 aura:id="makeSignificant" value="{!v.updateSig}" checked="{!v.updateSig}"
+                                 onchange="{!c.updateContactSource}" />
+                <lightning:button label="Update Contact" aura:id="updateCtct" name="updateContact"
+                                  onclick="{!c.processContactUpdate}" />
+                <lightning:button label="Cancel" aura:id="cancel" name="cancel" onclick="{!c.processCancelRequest}" />
+            </div>
+        </lightning:card>
+    </aura:if>
+    <!--EMAIL INSIGHTS SCREEN-->
+    <aura:if isTrue="{!v.displayScreen == 'displayInsights'}">
+        <div class="slds-text-heading_medium slds-text-color_inverse" style="padding:0.1rem;background:#16325c">
+            <lightning:icon iconName="standard:insights" size="small" /> <b> Email Insights</b>
+        </div>
+        <lightning:card class="slds-p-horizontal_medium">
+            <aura:if isTrue="{!v.device == 'DESKTOP'}">
+                <lightning:datatable data="{!v.emailInsightData}" columns="{!v.emailInsightTableColumns }"
+                                     keyField="emailStatusId" hideCheckboxColumn="true" />
+                <aura:set attribute="else">
+                    <aura:iteration items="{!v.emailInsightData}" var="insights">
+                        <p>
+                            <lightning:card>
+                                <b>Contact Name:</b> &nbsp;
+                                <lightning:formattedText value="{!insights.contactName}" /><br />
+                                <b>Template Name</b>&nbsp;
+                                <lightning:formattedText value="{!insights.templateName}" /><br />
+                                <b>Bounced?</b>&nbsp;
+                                <lightning:formattedText value="{!insights.emailBounced}" /><br />
+                                <b>Opened?</b>&nbsp;
+                                <lightning:formattedText value="{!insights.opened}" /><br />
+                                <b>Date Opened:</b>&nbsp;
+                                <lightning:formattedDateTime value="{!insights.activityDate}" year="2-digit"
+                                                             month="numeric" day="numeric" /><br />
+                            </lightning:card>
+                        </p>
+                    </aura:iteration>
+                </aura:set>
+            </aura:if>
+            <lightning:button label="Return" aura:id="cancel" name="cancel" onclick="{!c.processCancelRequest}" />
+        </lightning:card>
+    </aura:if>
+    <!--LOG STEP-->
+    <aura:if isTrue="{!v.displayScreen == 'displayLogScreen'}">
+        <aura:if isTrue="{!v.showSelectContacts}">
+            <h2>Select Referral Contact</h2>
+            <div >
+                <lightning:datatable columns="{!v.refCtctEmailColumns}" keyField="id"
+                                     data="{!v.referralContactOptions}" onrowselection="{! c.handleRefCtctSelect }" />
+            </div>
+            <!-- <lightning:combobox name="progress" label="Status" value="{!v.selectedCARefctctId}" placeholder="Select Referral Contact" options="{! v.createActivityOptions }" onchange="{! c.updateCAContact }"/> -->
+            <div>
+                <lightning:button label="Next" variant="brand" aura:id="LogScreen2"
+                                  name="LogScreen2" onclick="{!c.displayLogScreen2}" />
+                <lightning:button label="Cancel" aura:id="cancel" name="cancel" onclick="{!c.processCancelRequest}" />
+            </div>
+            <aura:set attribute="else">
+                <div class="slds-text-heading_medium slds-text-color_inverse" style="padding:0.1rem;background:#16325c">
+                    <lightning:icon iconName="utility:check" size="small" /> <b> Log Touchpoint Step</b>
+                </div>
+                <lightning:card class="slds-p-horizontal_medium">
+                    <div class="slds-grid slds-wrap slds-text-heading_small">
+                        <lightning:select aura:id="logStepCombo" name="chooseLogStepType" label="Choose a Log Type"
+                                          value="{!v.logStepValue}">
+                            <aura:iteration items="{!v.logStepOptions}" var="item">
+                                <option text="{!item.label}" value="{!item.value}" />
+                            </aura:iteration>
+                        </lightning:select>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-1">
+                            <!--Pratik--><!--{!v.isLastStep}-->
+                            <aura:if isTrue="{!v.isLastStep}">
+                                <lightning:input label="Required: Add note to activity" type="string"
+                                                 value="{!v.TouchpointUpdateNote}" required="true"/>
+                                <!-- </aura:if> -->
+                                <aura:set attribute="else">
+                                    <lightning:input label="Optional: Add note to activity" type="string"
+                                                     value="{!v.TouchpointUpdateNote}"/>
+                                </aura:set>
+                            </aura:if><!--Pratik-->
+                            <!--<lightning:input label="Optional: Add note to activity" type="string"
+value="{!v.TouchpointUpdateNote}" />-->
+                        </div>
+                        <aura:if isTrue="{!v.logStepValue == 'Repeat Step'}">
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+                                <ui:inputDateTime aura:id="newTpDate" label="Enter follow-up date" class="field"
+                                                  value="{!v.followUpDate}" displayDatePicker="true" />
+                                <lightning:textarea label="Follow-up Reason:" value="{!v.repeatReason}" required="true" />
+                            </div>
+                        </aura:if>
+                        <aura:if isTrue="{!v.logStepValue == 'Complete and Remove'}">
+                            <lightning:select aura:id="removeFromCadReason" name="removeFromCadReason"
+                                              label="Reason for Removal:" value="{!v.RemovalReason}">
+                                <option value="None">None</option>
+                                <aura:iteration items="{!v.closeReasons}" var="closeReasons">
+                                    <option value="{!closeReasons}">{!closeReasons}</option>
+                                </aura:iteration>
+                            </lightning:select>
+                        </aura:if>
+                    </div>
+                    <div class="slds-align_absolute-center">
+                        <!--Pratik--><!--{!v.isLastStep}-->
+                        <aura:if isTrue="{!v.isLastStep}">
+                            <lightning:button label="Save Change" aura:id="saveLogStep" name="saveLogStep"
+                                              disabled="{!v.TouchpointUpdateNote == null || v.TouchpointUpdateNote == ''}"
+                                              onclick="{!c.processLogStep}" />
+                            <aura:set attribute="else">
+                                <lightning:button label="Save Change" aura:id="saveLogStep" name="saveLogStep"
+                                                  disabled="{!or(v.disableButton, or(and(v.logStepValue == 'Complete and Remove', v.RemovalReason == 'None'),and(v.logStepValue == 'Repeat Step',or(v.repeatReason == null,v.repeatReason == ''))))}"
+                                                  onclick="{!c.processLogStep}" />
+                            </aura:set>
+                        </aura:if>
+                        <!--<lightning:button label="Save Change" aura:id="saveLogStep" name="saveLogStep"
+disabled="{!or(v.disableButton, or(and(v.logStepValue == 'Complete and Remove', v.RemovalReason == 'None'),and(v.logStepValue == 'Repeat Step',or(v.repeatReason == null,v.repeatReason == ''))))}"
+onclick="{!c.processLogStep}" />-->
+                        <!--Pratik-->
+                        <lightning:button label="Cancel" aura:id="cancel" name="cancel" onclick="{!c.processCancelRequest}" />
+                    </div>
+                </lightning:card>
+            </aura:set>
+        </aura:if>
+    </aura:if>
+    <!--REMOVE FROM CADENCE SCREEN-->
+    <aura:if isTrue="{!v.displayScreen == 'displayRemoveFromCad'}">
+        <div class="slds-text-heading_medium slds-text-color_inverse" style="padding:0.1rem;background:#16325c">
+            <lightning:icon iconName="utility:close" size="small" /> <b> Remove from Cadence</b>
+        </div>
+        <lightning:card class="slds-p-horizontal_medium">
+            <lightning:formattedText
+                                     value="Note: This will only remove the lead from Touchpoint, and will not record a call or activity" />
+            <lightning:select aura:id="removeFromCadReason" name="removeFromCadReason" label="Reason for Removal:"
+                              value="{!v.RemovalReason}">
+                <option value="None">None</option>
+                <aura:iteration items="{!v.closeReasons}" var="closeReasons">
+                    <option value="{!closeReasons}">{!closeReasons}</option>
+                </aura:iteration>
+            </lightning:select>
+            <div class="slds-align_absolute-center">
+                <lightning:button label="Save Change" aura:id="updateDate" name="updateDate"
+                                  disabled="{!v.RemovalReason == null || v.RemovalReason == 'None'}"
+                                  onclick="{!c.processCadRemoval}" />
+                <lightning:button label="Cancel" aura:id="cancel" name="cancel" onclick="{!c.processCancelRequest}" />
+            </div>
+        </lightning:card>
+    </aura:if>
+    <!--SKIP STEP SCREEN-->
+    <aura:if isTrue="{!v.displayScreen == 'displaySkipScreen'}">
+        <div class="slds-text-heading_medium slds-text-color_inverse" style="padding:0.1rem;background:#16325c">
+            <lightning:icon iconName="utility:skip" size="small" /> <b> Skip Touchpoint</b>
+        </div>
+        <lightning:card class="slds-p-horizontal_medium">
+            <div>
+                <lightning:textarea label="Reason for skipping:" value="{!v.skipReason}" required="true" />
+            </div>
+            <div class="slds-align_absolute-center">
+                <lightning:button label="Skip Step" aura:id="skipStep" name="skipStep"
+                                  disabled="{!v.skipReason == null || v.skipReason == ''}" onclick="{!c.processTouchpointSkip}" />
+                <lightning:button label="Cancel" aura:id="cancel" name="cancel" onclick="{!c.processCancelRequest}" />
+            </div>
+        </lightning:card>
+    </aura:if>
+    <!--TOUCHPOINT DETAIL-->
+    <aura:if isTrue="{!v.cadenceTouchpoint != null}">
+        <!-- DETAIL SCREEN TABSET-->
+        <aura:if isTrue="{!v.displayScreen == 'displayDetails'}">
+            <lightning:card>
+                <lightning:tabset selectedTabId="{!v.selectedLabel}" class="slds-p-left_medium">
+                    <!--TOUCHPOINT DETAILS SCREEN-->
+                    <lightning:tab id="Touchpoint" label="Touchpoint Detail">
+                        <aura:if isTrue="{!v.device == 'DESKTOP'}">
+                            <div class="slds-grid slds-wrap slds-text-heading_small">
+                                <lightning:icon iconName="utility:connected_apps" title="Touchpoint Detail"
+                                                size="small" /> Touchpoint Detail
+                            </div>
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-p-top_small"><b>Cadence Steps &nbsp; </b></div>
+                                <lightning:progressIndicator
+                                                             currentStep="{!v.cadenceTouchpoint.Cadence_Touchpoint_Step__r.Name}"
+                                                             type="{!v.StepCount > 8 ? 'base' : 'path'}" variant="base">
+                                    <aura:iteration items="{!v.cadStepList}" var="step">
+                                        <lightning:progressStep label="{!step.Name}" value="{!step.Name}" />
+                                    </aura:iteration>
+                                </lightning:progressIndicator>
+                            </div>
+                            <aura:set attribute="else">
+                                <div class="slds-grid slds-wrap">
+                                    <div
+                                         class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4">
+                                        <div class="slds-p-top_small">
+                                            <b>Step&nbsp;{!v.cadenceTouchpoint.Step_Number__c}&nbsp;of&nbsp;{!v.StepCount}</b>
+                                        </div>
+                                    </div>
+                                </div>
+                            </aura:set>
+                        </aura:if>
+                        <div class="slds-grid slds-wrap">
+                            <div
+                                 class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-large-size_1-of-2 slds-p-top_small">
+                                <div class="slds-p-top_small"><b>Company Name</b></div>
+                                <div>
+                                    {!v.cadenceTouchpoint.CarRecord__r.CompanyName__c}
+                                </div>
+                            </div>
+                            <aura:if isTrue="{!v.cadenceTouchpoint.CarRecord__r.AccountId__r.SignificantContact__c}">
+                                <div
+                                     class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-large-size_1-of-2 slds-p-top_small">
+                                    <div class="slds-p-top_small"><b>Significant Contact</b></div>
+                                    <div>
+                                        <lightning:formattedText value="{!v.cadenceTouchpoint.CarRecord__r.AccountId__r.SignificantContact__r.Name}" />
+                                    </div>
+                                </div>
+                            </aura:if>
+                            <div
+                                 class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-large-size_1-of-2 slds-p-top_small">
+                                <div class="slds-p-top_small"><b>Cadence Name</b></div>
+                                <div>
+                                    <lightning:formattedText value="{!v.cadenceTouchpoint.Cadence__r.Name}" />
+                                </div>
+                            </div>
+                            <!-- APR0166811 New field  -->
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+
+                           <div class="slds-p-top_small"><b>Primary Owner</b></div>
+                                <div>
+                                    <lightning:formattedRichText
+                                                                 value="{!v.cadenceTouchpoint.CarRecord__r.Cadence_Owner__r.Name}" />
+                                </div>
+                            </div>
+                            
+                           
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                                <div class="slds-p-top_small"><b>Time Zone</b></div>
+                                <div>
+                                    <lightning:formattedText
+                                                             value="{!v.cadenceTouchpoint.CarRecord__r.TimeZoneAbbrev__c}" />
+                                </div>
+                            </div>
+                                                        <!-- APR0166811 New field  -->
+
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-large-size_1-of-2">
+                                <div class="slds-p-top_small"><b>Secondary Owner</b></div>
+                                <div>
+                                    <lightning:formattedRichText
+                                                                 value="{!v.cadenceTouchpoint.CarRecord__r.Secondary_User__r.Name}" />
+                                </div>
+                            </div> 
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                                <div class="slds-p-top_small"><b>Expiration Date</b></div>
+                                <div>
+                                    <lightning:formattedDateTime
+                                                                 value="{!v.cadenceTouchpoint.CarRecord__r.ExpirationDate__c}" year="2-digit"
+                                                                 month="numeric" day="numeric" hour="numeric" minute="2-digit" hour12="true"
+                                                                 title="When this CAR record expires." />
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-large-size_1-of-2">
+                                <div class="slds-p-top_small"><b>Due Date</b></div>
+                                <div>
+                                    <lightning:formattedDateTime value="{!v.cadenceTouchpoint.Due_Date__c}"
+                                                                 year="2-digit" month="numeric" day="numeric" hour="numeric" minute="2-digit"
+                                                                 hour12="true" />
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-large-size_1-of-2">
+                                <div class="slds-p-top_small"><b>Touchpoint Type</b></div>
+                                <div>
+                                    <lightning:formattedText value="{!v.cadenceTouchpoint.TypeFilter__c}" />
+                                </div>
+                            </div>
+                            
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                                <div class="slds-p-top_small"><b>Touchpoint Step</b></div>
+                                <div>
+                                    <lightning:formattedText
+                                                             value="{!v.cadenceTouchpoint.Cadence_Touchpoint_Step__r.Name}"
+                                                             title="These are notes provided by your admin for this specific prospect record to provide insights." />
+                                </div>
+                            </div>
+                            <aura:if isTrue="{!v.cadenceTouchpoint.ExpirationDate__c != null}">
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                                    <div class="slds-p-top_small"><b>Step Expiration Date</b></div>
+                                    <div>
+                                        <lightning:formattedDateTime
+                                                                     value="{!v.cadenceTouchpoint.ExpirationDate__c}" year="2-digit"
+                                                                     month="numeric" day="numeric" hour="numeric" minute="2-digit" hour12="true"
+                                                                     title="When this touchpoint step expires." />
+                                    </div>
+                                </div>
+                            </aura:if>
+                            <aura:if isTrue="{!v.cadenceTouchpoint.CarRecord__r.ShowCreator__c}">
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                                    <div class="slds-p-top_small"><b>Referred By</b></div>
+                                    <div>
+                                        <lightning:formattedText
+                                                                 value="{!v.cadenceTouchpoint.CarRecord__r.CreatedBy.Name}"
+                                                                 title="This is who referred the record to you." />
+                                    </div>
+                                </div>
+                            </aura:if>
+                            <!-- <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+<div class="slds-p-top_small"><b>Referral Source/Type</b></div>
+<div>
+<lightning:formattedText
+value="{!v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Referral_Source_Business_Type__c}"
+/>
+<lightning:formattedText
+value="{!v.cadenceTouchpoint.CarRecord__r.AccountId__r.Type}"
+/>
+</div>
+</div> -->
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                                <aura:if isTrue="{!v.cadenceTouchpoint.Cadence__r.TagUpdateable__c}">
+                                    <lightning:recordForm aura:id="CarForm"
+                                                          recordId="{!v.cadenceTouchpoint.CarRecord__r.Id}"
+                                                          objectApiName="Cadence_Assignment_Record__c" mode="{!v.recordMode}" columns="1"
+                                                          fields="{!v.carFields}" />
+                                    <aura:set attribute="else">
+                                        <div class="slds-p-top_small"><b>Tag</b></div>
+                                        <lightning:formattedText
+                                                                 value="{!v.cadenceTouchpoint.CarRecord__r.TargetList__c}" />
+                                    </aura:set>
+                                </aura:if>
+                            </div>
+                            <aura:if isTrue="{!v.cadenceTouchpoint.CarRecord__r.LatestCadenceActivityDate__c != null}">
+                                <div
+                                     class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-large-size_1-of-2 slds-p-top_small">
+                                    <div class="slds-p-top_small"><b>Last Activity on Account</b></div>
+                                    <lightning:formattedDateTime
+                                                                 value="{!v.cadenceTouchpoint.CarRecord__r.LatestCadenceActivityDate__c}" />
+                                </div>
+                            </aura:if>
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                                <div class="slds-p-top_small"><b>Prospect Insights</b></div>
+                                <div>
+                                    <lightning:formattedText value="{!v.cadenceTouchpoint.CarRecord__r.Description__c}"
+                                                             title="These are notes provided by your admin for this specific prospect record to provide insights." />
+                                </div>
+                            </div>
+                            <aura:if isTrue="{!v.isSecondaryUser}">
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-1">
+                                    <div class="slds-p-top_small"><b>Meeting URL :</b></div>
+                                    <div>
+                                        <lightning:formattedRichText value="{!v.cadenceTouchpoint.CarRecord__r.Cadence_Owner__r.TimeTrade_URL__c}"
+                                                                     title="Meeting URL"/>
+                                    </div>
+                                </div>
+                            </aura:if>
+                            
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-1">
+                                <div class="slds-p-top_small"><b>Touchpoint Instructions</b></div>
+                                <div>
+                                    <lightning:formattedRichText
+                                                                 value="{!v.cadenceTouchpoint.Cadence_Touchpoint_Step__r.Touchpoint_Instructions__c}"
+                                                                 title="These are the recommended steps to follow for this touchpoint step" />
+                                </div>
+                            </div>                            
+                        </div>
+                    </lightning:tab>
+                    <!--PARENT RECORD SCREEN-->
+                    <!-- <lightning:tab label="Account/Contact Detail"> -->
+                    <lightning:tab label="{!v.accountContactLabel}">
+                        <div class="c-container">
+                            <aura:if isTrue="{!v.cadenceTouchpoint.CarRecord__r.IsReferralSource__c}">
+                                <!-- <lightning:tab label="Referral Account/Contact Detail">
+<div class="c-container"> -->
+                                <lightning:card iconName="custom:custom16" title="Referral Account Detail">
+                                </lightning:card>
+                                <c:cadenceTouchpointRefAcct
+                                                            refacct="{!v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Id}" />
+                                <lightning:card iconName="custom:custom15" title="Referral Contact Detail">
+                                </lightning:card>
+                                <c:cadenceTouchpointRefCtctRecordForm
+                                                                      refacct="{!v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Id}"
+                                                                      refisTelemarketing="{!v.cadenceTouchpoint.Cadence__r.IsTelemarketing__c}" />
+                                <!-- </div> -->
+                                <aura:set attribute="else">
+                                    <aura:if isTrue="{!v.createMode}">
+                                        <aura:if isTrue="{!v.cadenceTouchpoint.CarRecord__r.AccountId__c != null}">
+                                            <lightning:card iconName="standard:contact" title="New Contact Detail">
+                                            </lightning:card>
+                                            <lightning:layout>
+                                                <lightning:recordEditForm objectApiName="Contact"
+                                                                          recordTypeId="012500000000nCZAAY"
+                                                                          onsubmit="{!c.handleContactSubmit}"
+                                                                          onsuccess="{!c.handleContactSuccess}">
+                                                    <!-- the messages component is for error messages -->
+                                                    <lightning:messages />
+                                                    <lightning:inputField fieldName="Name" />
+                                                    <!--
+<lightning:inputField fieldName="FirstName" required="true" />
+<lightning:inputField fieldName="LastName" />
+-->
+                                                    <lightning:inputField fieldName="Title" />
+                                                    <lightning:inputField fieldName="Email" />
+                                                    <lightning:inputField fieldName="Phone" required="true" />
+                                                    <lightning:inputField fieldName="AccountId"
+                                                                          value="{!v.cadenceTouchpoint.CarRecord__r.AccountId__c}" />
+                                                    <lightning:input type="checkbox" name="makeSignificant"
+                                                                     label="Make Significant Contact?" aura:id="makeSignificant"
+                                                                     value="{!v.updateSig}" checked="{!v.updateSig}"
+                                                                     onchange="{!c.updateContactSource}" />
+                                                    <div class="slds-align_absolute-center slds-p-top_medium">
+                                                        <lightning:button variant="neutral" label="Cancel"
+                                                                          title="Cancel" type="text"
+                                                                          onclick="{!c.cancelCreateScreen}" />
+                                                        <lightning:button disabled="{!v.disabled}" aura:id="submit"
+                                                                          variant="brand" type="submit" name="save"
+                                                                          label="Save New Contact" />
+                                                    </div>
+                                                    <lightning:inputField fieldName="Sales_Contact__c"
+                                                                          value="{!v.salesContactDefault}" class="slds-hidden" />
+                                                    <lightning:inputField fieldName="Source__c"
+                                                                          value="{!v.contactSource}" class="slds-hidden" />
+                                                </lightning:recordEditForm>
+                                            </lightning:layout>
+                                            <aura:set attribute="else">
+                                                <lightning:card iconName="standard:lead" title="New Lead Detail">
+                                                </lightning:card>
+                                                <lightning:recordEditForm objectApiName="Lead"
+                                                                          recordTypeId="01270000000UNquAAG"
+                                                                          onsubmit="{!c.handleContactSubmit}"
+                                                                          onsuccess="{!c.handleContactSuccess}">
+                                                    <!-- the messages component is for error messages -->
+                                                    <lightning:messages />
+                                                    <lightning:inputField fieldName="FirstName" required="true" />
+                                                    <lightning:inputField fieldName="LastName" />
+                                                    <lightning:inputField fieldName="Title" />
+                                                    <lightning:inputField fieldName="Email" />
+                                                    <lightning:inputField fieldName="Phone" required="true" />
+                                                    <lightning:input type="checkbox" name="makeSignificant"
+                                                                     label="Make Significant?" aura:id="makeSignificant"
+                                                                     value="{!v.updateSig}" checked="{!v.updateSig}"
+                                                                     onchange="{!c.updateContactSource}" />
+                                                    <div class="slds-align_absolute-center slds-p-top_medium">
+                                                        <lightning:button variant="neutral" label="Cancel"
+                                                                          title="Cancel" type="text"
+                                                                          onclick="{!c.cancelCreateScreen}" />
+                                                        <lightning:button disabled="{!v.disabled}" aura:id="submit"
+                                                                          variant="brand" type="submit" name="save"
+                                                                          label="Save New Lead" />
+                                                    </div>
+                                                    <lightning:inputField fieldName="Lead_Company__c"
+                                                                          value="{!v.recordLead.Lead_Company__c}" class="slds-hidden" />
+                                                    <lightning:inputField fieldName="LeadGroupId__c"
+                                                                          value="{!v.recordLead.LeadGroupId__c}" class="slds-hidden" />
+                                                    <lightning:inputField fieldName="Company"
+                                                                          value="{!v.recordLead.Company}" class="slds-hidden" />
+                                                    <lightning:inputField fieldName="Street"
+                                                                          value="{!v.recordLead.Street}" class="slds-hidden" />
+                                                    <lightning:inputField fieldName="City" value="{!v.recordLead.City}"
+                                                                          class="slds-hidden" />
+                                                    <lightning:inputField fieldName="State"
+                                                                          value="{!v.recordLead.State}" class="slds-hidden" />
+                                                    <lightning:inputField fieldName="PostalCode"
+                                                                          value="{!v.recordLead.PostalCode}" class="slds-hidden" />
+                                                    <lightning:inputField fieldName="NumberOfEmployees"
+                                                                          value="{!v.recordLead.NumberOfEmployees}" class="slds-hidden" />
+                                                    <lightning:inputField fieldName="Current_Prior_Method__c"
+                                                                          value="{!v.recordLead.Current_Prior_Method__c}"
+                                                                          class="slds-hidden" />
+                                                    <lightning:inputField fieldName="Industry"
+                                                                          value="{!v.recordLead.Industry}" class="slds-hidden" />
+                                                    <lightning:inputField fieldName="X401K_Assets__c"
+                                                                          value="{!v.recordLead.X401K_Assets__c}" class="slds-hidden" />
+                                                </lightning:recordEditForm>
+                                                <!--
+<lightning:inputField fieldName="Name" />
+<lightning:inputField fieldName="FirstName" required="true" />
+<lightning:inputField fieldName="LastName" />
+<lightning:inputField fieldName="Lead_Company__c" value="{!v.cadenceTouchpoint.CarRecord__r.LeadCompanyId__c}"/>
+-->
+                                            </aura:set>
+                                        </aura:if>
+                                        <aura:set attribute="else">
+                                            <aura:if isTrue="{!v.touchpointIsAccount}">
+                                                <lightning:card iconName="{!v.touchpointIcon}"
+                                                                title="{!v.recordBeingViewed+' Detail'}">
+                                                    <aura:if isTrue="{!v.isTelemarketing}">
+                                                        <div class="slds-grid" style="font-size: 15px">
+                                                            <div class="slds-col slds-size_1-of-2">
+                                                                <b>Account Phone:</b>&nbsp;
+                                                                <lightning:clickToDial
+                                                                                       value="{!v.recordContact.Account.Phone}"
+                                                                                       recordId="{!v.recordContact.Id}"
+                                                                                       title="Dial the Account Phone from DialSource" />
+                                                            </div>
+                                                            <div class="slds-col slds-size_1-of-2">
+                                                            </div>
+                                                        </div>
+                                                        <br />
+                                                    </aura:if>
+                                                    <lightning:recordForm aura:id="AccountForm"
+                                                                          recordId="{!v.cadenceTouchpoint.CarRecord__r.AccountId__c}"
+                                                                          objectApiName="Account" mode="{!v.recordMode}" columns="2"
+                                                                          fields="{!v.accountFields}" />
+                                                </lightning:card>
+                                                <lightning:card iconName="standard:contact" title="Contact Detail">
+                                                    <aura:if isTrue="{!v.isTelemarketing}">
+                                                        <div class="slds-grid" style="font-size: 15px">
+                                                            <div class="slds-col slds-size_1-of-2">
+                                                                <b>Phone:</b>&nbsp;
+                                                                <lightning:clickToDial value="{!v.recordContact.Phone}"
+                                                                                       recordId="{!v.recordContact.Id}"
+                                                                                       title="Dial the Phone from DialSource" /><br />
+                                                            </div>
+                                                            <div class="slds-col slds-size_1-of-2">
+                                                                <b>Mobile Phone:</b>&nbsp;
+                                                                <lightning:clickToDial
+                                                                                       value="{!v.recordContact.MobilePhone}"
+                                                                                       recordId="{!v.recordContact.Id}"
+                                                                                       title="Dial the Mobile Phone from DialSource" />
+                                                            </div>
+                                                        </div>
+                                                        <br />
+                                                    </aura:if>
+                                                    <lightning:recordForm aura:id="ContactForm"
+                                                                          recordId="{!v.cadenceTouchpoint.CarRecord__r.ContactId__c}"
+                                                                          objectApiName="Contact" mode="{!v.recordMode}" columns="2"
+                                                                          fields="{!v.contactFields}"
+                                                                          onsuccess="{!c.handleRefreshContact}" />
+                                                </lightning:card>
+                                                <aura:set attribute="else">
+                                                    <aura:if isTrue="{!v.isTelemarketing}">
+                                                        <div class="slds-grid">
+                                                            <div class="slds-col slds-size_1-of-2">
+                                                                <b>Phone:</b>&nbsp;
+                                                                <lightning:clickToDial value="{!v.recordLead.Phone}"
+                                                                                       recordId="{!v.recordLead.Id}"
+                                                                                       title="Dial the Phone from DialSource" />
+                                                            </div>
+                                                            <div class="slds-col slds-size_1-of-2">
+                                                                <b>Mobile Phone:</b>&nbsp;
+                                                                <lightning:clickToDial
+                                                                                       value="{!v.recordLead.MobilePhone}"
+                                                                                       recordId="{!v.recordLead.Id}"
+                                                                                       title="Dial the Mobile Phone from DialSource" />
+                                                            </div>
+                                                        </div>
+                                                        <br />
+                                                    </aura:if>
+                                                    <lightning:card iconName="{!v.touchpointIcon}"
+                                                                    title="{!v.recordBeingViewed+' Detail'}">
+                                                        <lightning:recordForm aura:id="LeadForm"
+                                                                              recordId="{!v.cadenceTouchpoint.CarRecord__r.LeadId__c}"
+                                                                              objectApiName="Lead" mode="{!v.recordMode}" columns="2"
+                                                                              fields="{!v.leadFields}"
+                                                                              onsuccess="{!c.handleRefreshLead}" />
+                                                    </lightning:card>
+                                                </aura:set>
+                                            </aura:if>
+                                        </aura:set>
+                                    </aura:if>
+                                    <!-- </div>
+</lightning:tab> -->
+                                </aura:set>
+                            </aura:if>
+                            <div class="slds-align_absolute-center slds-p-top_medium">
+                                <aura:if isTrue="{!and(not(v.recordIsSignificant),not(v.cadenceTouchpoint.CarRecord__r.IsReferralSource__c))}">
+                                    <lightning:button label="Make Significant" aura:id="makeMainRecSig"
+                                                      name="makeMainRecSig" onclick="{!c.processMakeMainRecSig}" />
+                                </aura:if>
+                                <aura:if isTrue="{!not(v.navigatedFromParent)}">
+                                    <lightning:button label="{!'Go to '+ v.cadenceTouchpoint.TouchpointObject__c}"
+                                                      aura:id="parentNavigation" name="parentNavigation"
+                                                      onclick="{!c.navigateToParent}" />
+                                </aura:if>
+                                <aura:if isTrue="{!not(v.cadenceTouchpoint.CarRecord__r.IsReferralSource__c)}">
+                                    <lightning:button label="Add Contact" aura:id="addContact" name="addContact"
+                                                      onclick="{!c.displayCreateScreen}" />
+                                </aura:if>
+                            </div>
+                        </div>
+                    </lightning:tab>
+                    <!--CADENCE HISTORY SCREEN-->
+                    <lightning:tab id="History" label="Cadence History">
+                        <div class="c-container">
+                            <aura:if isTrue="{!v.device == 'DESKTOP'}">
+                                <div class="slds-grid slds-wrap slds-text-heading_small">
+                                    <lightning:icon iconName="standard:note" title="Cadence Notes" size="small" />
+                                    <lightning:formattedText class="slds-m-left_x-small" value="  Cadence Notes" />
+                                </div>
+                            </aura:if>
+                            <ui:outputTextArea aura:id="cadenceNote"
+                                               value="{!v.cadenceTouchpoint.CarRecord__r.Activity_Log__c}" />
+                            <lightning:textarea name="Sales_Notes:" id="Sales_Notes:" value="{!v.SalesNotes}"
+                                                label="Sales Notes:" />
+                            <lightning:button label="Save Notes" aura:id="SaveNotes" name="SaveNotes"
+                                              onclick="{!c.processSaveNotes}" />
+                        </div>
+                    </lightning:tab>
+                    <!--ACTIVITY SCREEN-->
+                    <lightning:tab id="Activity" label="Activity">
+                        <div class="c-container">
+                            <aura:if isTrue="{!v.device == 'DESKTOP'}">
+                                <div class="slds-grid slds-wrap slds-text-heading_small">
+                                    <lightning:icon iconName="standard:task" title="Activity" size="small" />
+                                    <lightning:formattedText class="slds-m-left_x-small" value="  Activity" />
+                                </div>
+                                <aura:if isTrue="{!v.cadenceTouchpoint.CarRecord__r.IsReferralSource__c}">
+                                    <c:cadenceTouchpointActivity
+                                                                 refacct="{!v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Id}" />
+                                    <aura:set attribute="else">
+                                        <lightning:datatable data="{!v.allActivityList}"
+                                                             columns="{!v.activityTableColumns }" keyField="Id"
+                                                             hideCheckboxColumn="true" />
+                                    </aura:set>
+                                </aura:if>
+                                <aura:set attribute="else">
+                                    <aura:iteration items="{!v.allActivityList}" var="act">
+                                        <p>
+                                            <lightning:card>
+                                                <b>Subject:</b> &nbsp;
+                                                <lightning:formattedText value="{!act.subject}" /><br />
+                                                <b>Activity Date:</b>&nbsp;
+                                                <lightning:formattedDateTime value="{!act.activityDate}" year="2-digit"
+                                                                             month="numeric" day="numeric" /><br />
+                                                <b>Contact Name:</b>&nbsp;
+                                                <lightning:formattedText value="{!act.contactName}" /><br />
+                                                <b>Activity Type:</b>&nbsp;
+                                                <lightning:formattedText value="{!act.activityType}" /><br />
+                                                <b>Activity Owner:</b>&nbsp;
+                                                <lightning:formattedText value="{!act.Owner.Name}" /><br />
+                                            </lightning:card>
+                                        </p>
+                                    </aura:iteration>
+                                </aura:set>
+                            </aura:if>
+                        </div>
+                    </lightning:tab>
+                    <aura:if isTrue="{!v.cadenceTouchpoint.TouchpointObject__c != 'Lead'}">
+                        <!--Opportunity SCREEN-->
+                        <aura:if isTrue="{!v.cadenceTouchpoint.CarRecord__r.IsReferralSource__c == false }">
+                            <lightning:tab id="Opportunities" label="Opportunities">
+                                <div class="c-container">
+                                    <aura:if isTrue="{!v.device == 'DESKTOP'}">
+                                        <div class="slds-grid slds-wrap slds-text-heading_small">
+                                            <lightning:icon iconName="standard:opportunity" title="Opportunities"
+                                                            size="small" />
+                                            <lightning:formattedText class="slds-m-left_x-small"
+                                                                     value="  Opportunities" />
+                                        </div>
+                                        <!-- <c:cadenceTouchpointReferrals
+refactid="{!v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Id}" /> -->
+                                        <lightning:datatable data="{!v.opportunityList}"
+                                                             columns="{!v.oppTableColumns }"
+                                                             keyField="Id"
+                                                             hideCheckboxColumn="true" />
+                                        <aura:set attribute="else">
+                                            <aura:iteration items="{!v.opportunityList}" var="opp">
+                                                <p>
+                                                    <lightning:card>
+                                                        <b>Name:</b> &nbsp;
+                                                        <lightning:formattedText value="{!opp.oppName}" /><br />
+                                                        <b>Status:</b>&nbsp;
+                                                        <lightning:formattedText value="{!opp.status}" /><br />
+                                                        <b>Owner Name:</b>&nbsp;
+                                                        <lightning:formattedText value="{!opp.owner}" /><br />
+                                                        <b>Run Effective Date:</b>&nbsp;
+                                                        <lightning:formattedDateTime value="{!opp.closeDate}"
+                                                                                     year="2-digit" month="numeric" day="numeric" /><br />
+                                                    </lightning:card>
+                                                </p>
+                                            </aura:iteration>
+                                        </aura:set>
+                                    </aura:if>
+                                </div>
+                            </lightning:tab>
+                            <aura:set attribute='else'>
+                                <lightning:tab id="Opportunities" label="Referrals">
+                                    <div class="c-container">
+                                        <aura:if isTrue="{!v.device == 'DESKTOP'}">
+                                            <div class="slds-grid slds-wrap slds-text-heading_small">
+                                                <lightning:icon iconName="standard:opportunity" title="Opportunities"
+                                                                size="small" />
+                                                <lightning:formattedText class="slds-m-left_x-small"
+                                                                         value="  Opportunities" />
+                                            </div>
+                                            <c:cadenceTouchpointReferrals
+                                                                          refactid="{!v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Id}" />
+                                            <aura:set attribute="else">
+                                                <aura:iteration items="{!v.opportunityList}" var="opp">
+                                                    <p>
+                                                        <lightning:card>
+                                                            <b>Name:</b> &nbsp;
+                                                            <lightning:formattedText value="{!opp.oppName}" /><br />
+                                                            <b>Status:</b>&nbsp;
+                                                            <lightning:formattedText value="{!opp.status}" /><br />
+                                                            <b>Owner Name:</b>&nbsp;
+                                                            <lightning:formattedText value="{!opp.owner}" /><br />
+                                                            <b>Run Effective Date:</b>&nbsp;
+                                                            <lightning:formattedDateTime value="{!opp.closeDate}"
+                                                                                         year="2-digit" month="numeric" day="numeric" /><br />
+                                                        </lightning:card>
+                                                    </p>
+                                                </aura:iteration>
+                                            </aura:set>
+                                        </aura:if>
+                                    </div>
+                                </lightning:tab>
+                            </aura:set>
+                        </aura:if>
+                    </aura:if>
+                    <aura:if
+                             isTrue="{!and(v.cadenceTouchpoint.TouchpointObject__c != 'Lead',v.cadenceTouchpoint.CarRecord__r.IsReferralSource__c == false)}">
+                        <!--Products SCREEN-->
+                        <lightning:tab id="Products" label="Products">
+                            <div class="c-container">
+                                <aura:if isTrue="{!v.device == 'DESKTOP'}">
+                                    <div class="slds-grid slds-wrap slds-text-heading_small">
+                                        <lightning:icon iconName="standard:asset" title="Products" size="small" />
+                                        <lightning:formattedText class="slds-m-left_x-small" value="  Products" />
+                                    </div>
+                                    <lightning:datatable data="{!v.productList}" columns="{!v.prodTableColumns }"
+                                                         keyField="Id" hideCheckboxColumn="true" />
+                                    <aura:set attribute="else">
+                                        <aura:iteration items="{!v.productList}" var="prod">
+                                            <p>
+                                                <lightning:card>
+                                                    <b>Name:</b> &nbsp;
+                                                    <lightning:formattedText value="{!prod.assetName}" /><br />
+                                                    <b>Start Date:</b>&nbsp;
+                                                    <lightning:formattedDateTime value="{!prod.startDate}"
+                                                                                 year="2-digit" month="numeric" day="numeric" /><br />
+                                                    <b>End Date:</b>&nbsp;
+                                                    <lightning:formattedDateTime value="{!prod.endtDate}" year="2-digit"
+                                                                                 month="numeric" day="numeric" /><br />
+                                                    <b>Lost Reason:</b>&nbsp;
+                                                    <lightning:formattedText value="{!prod.lostReason}" /><br />
+                                                </lightning:card>
+                                            </p>
+                                        </aura:iteration>
+                                    </aura:set>
+                                </aura:if>
+                            </div>
+                        </lightning:tab>
+                    </aura:if>
+                    <!-- Profile Screen -->
+                    <aura:if isTrue="{!and(v.cadenceTouchpoint.CarRecord__r.ReferralAccount__c == null, v.cadenceTouchpoint.CarRecord__r.Cadence__r.TargetType__c =='Client') }">
+                        <lightning:tab label="Profile">
+                            <div class="slds-grid slds-wrap slds-text-heading_small">
+                                <lightning:icon iconName="standard:work_order_item" title="Profile" size="small" />
+                                <lightning:formattedText class="slds-m-left_x-small" value="Profile" />
+                            </div>
+                            <!-- <aura:if isTrue="{!or(v.cadenceTouchpoint.CarRecord__r.ReferralAccount__c != null, v.cadenceTouchpoint.CarRecord__r.ReferralAccount__c != undefined)}">
+<c:cadenceTouchpointCpaProfile account="{!v.cadenceTouchpoint.CarRecord__r.ReferralAccount__c}" createmode="true"/>
+</aura:if> -->
+                            <div>
+                                <c:cadenceTouchpointCpaProfile
+                                                               account="{!v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Id}"
+                                                               createmode="{!v.createmode}" refferalSourceBussType="{!v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Referral_Source_Business_Type__c}" targetType="{!v.cadenceTouchpoint.CarRecord__r.Cadence__r.TargetType__c}" prospectClient="{!v.cadenceTouchpoint.CarRecord__r.AccountId__r.Id}"/>
+                            </div>
+                        </lightning:tab>
+                    </aura:if>
+                    <aura:if isTrue="{!v.cadenceTouchpoint.CarRecord__r.ReferralAccount__c != null}">
+                        <!-- <div>
+{!v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Name}
+</div> -->
+                        <!--
+{!v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Referral_Source_Business_Type__c }
+rtype -->
+                        <aura:if
+                                 isTrue="{!and((v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Referral_Source_Business_Type__c == 'Accounting Firm' ||
+                                         v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Referral_Source_Business_Type__c == 'Strategic Accountant Firm' ||
+                                         v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Referral_Source_Business_Type__c == 'Health Insurance Broker' ||
+                                         v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Referral_Source_Business_Type__c == 'Business Consultant' ||
+                                         v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Referral_Source_Business_Type__c == 'Financial Services' ||
+                                         v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Referral_Source_Business_Type__c == 'Broker Dealer' ||
+                                         v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Referral_Source_Business_Type__c == 'Broker Dealer Branch' ||
+                                         v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Referral_Source_Business_Type__c == 'P&amp;C Broker' ||
+                                         v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Referral_Source_Business_Type__c == 'Full Service Agency' ||
+                                         v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Referral_Source_Business_Type__c == 'PEO Broker'),
+                                         Or(v.cadenceTouchpoint.CarRecord__r.Cadence__r.TargetType__c =='Ongoing Referral Source',  v.cadenceTouchpoint.CarRecord__r.Cadence__r.TargetType__c =='Referral Source'))}">
+                            <lightning:tab label="Profile">
+                                <div class="slds-grid slds-wrap slds-text-heading_small">
+                                    <lightning:icon iconName="standard:work_order_item" title="Profile" size="small" />
+                                    <lightning:formattedText class="slds-m-left_x-small" value="Profile" />
+                                </div>
+                                <!-- <aura:if isTrue="{!or(v.cadenceTouchpoint.CarRecord__r.ReferralAccount__c != null, v.cadenceTouchpoint.CarRecord__r.ReferralAccount__c != undefined)}">
+<c:cadenceTouchpointCpaProfile account="{!v.cadenceTouchpoint.CarRecord__r.ReferralAccount__c}" createmode="true"/>
+</aura:if> -->
+                                <div>
+                                    <c:cadenceTouchpointCpaProfile
+                                                                   account="{!v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Id}"
+                                                                   createmode="{!v.createmode}" refferalSourceBussType="{!v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Referral_Source_Business_Type__c}" targetType="{!v.cadenceTouchpoint.CarRecord__r.Cadence__r.TargetType__c}" prospectClient="{!v.cadenceTouchpoint.CarRecord__r.AccountId__r.Id}"/>
+                                </div>
+                            </lightning:tab>
+                        </aura:if>
+                        <lightning:tab label="Mutual Clients">
+                            <div class="slds-grid slds-wrap slds-text-heading_small">
+                                <!-- <img src="{!$Resource.BannerIcons + '/LightningIcons/mutual_client.png'}" Style="height:40px; width:55px; margin:0; padding: 0" /> -->
+                                <lightning:icon iconName="standard:employee_contact" title="Mutual Clients"
+                                                size="small" />
+                                <lightning:formattedText class="slds-m-left_x-small" value="Mutual Clients" />
+                            </div>
+                            <c:cadenceTouchpointMutualClients
+                                                              dtdata="{!v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Id}"
+                                                              refactid="{!v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Id}" refferalSourceBussType="{!v.cadenceTouchpoint.CarRecord__r.ReferralAccount__r.Referral_Source_Business_Type__c}"/>
+                        </lightning:tab>
+                    </aura:if>
+                </lightning:tabset>
+                <!-- Touchpoint Buttons-->
+                <aura:if isTrue="{!and(v.displayScreen == 'displayDetails', not(v.createMode))}">
+                    <aura:if isTrue="{!or(not(v.ownedByQueue), v.ownerStaysQueue)}">
+                        <aura:if isTrue="{!v.missingSignificant}">
+                            <div class="slds-text-color_error">{!v.noSignificantErrorMessage}</div>
+                        </aura:if>
+                        <aura:if isTrue="{!and(not(v.missingSignificant), and(not(v.cadenceTouchpoint.SignificantEmailEligible__c),v.cadenceTouchpoint.StepType__c=='Email'))}">
+                            <div class="slds-text-color_error">Oops! Looks like the contact selected cannot be emailed. Review your contact details or use Swap Contact select a different recipient.</div>
+                        </aura:if>
+                        <aura:if isTrue="{!and(not(v.missingSignificant), and(not(v.cadenceTouchpoint.SignificantTextEligible__c),v.cadenceTouchpoint.StepType__c=='Text'))}">
+                            <div class="slds-text-color_error">Oops! Looks like the contact selected cannot be Texted. Review your contact details or use Swap Contact select a different recipient.</div>
+                        </aura:if>
+                        <aura:if isTrue="{!v.device == 'DESKTOP'}">
+                            <aura:if isTrue="{!v.displayEmailButton}">
+                                <lightning:button label="Email Client" variant="brand" aura:id="displayEmail" disabled="{!and(not(v.missingSignificant), and(not(v.cadenceTouchpoint.SignificantEmailEligible__c),v.cadenceTouchpoint.StepType__c=='Email'))}"
+                                                  name="displayEmail" onclick="{!c.displayEmail}" />
+                                <aura:set attribute="else">
+                                    <lightning:button label="Log Step" variant="brand" aura:id="processStep"
+                                                      name="processStep" onclick="{!c.displayLogScreen}" />
+                                </aura:set>
+                            </aura:if>
+                            <aura:if isTrue="{!not(v.cadenceTouchpoint.CarRecord__r.IsReferralSource__c)}">
+                                <lightning:button label="{!v.createOppBtnLabel}" disabled="{!v.missingSignificant}"
+                                                  variant="brand" aura:id="createOpportunity" name="createOpportunity"
+                                                  onclick="{!c.processCreateOpp}" />
+                            </aura:if>
+                            <aura:if isTrue="{!v.cadenceTouchpoint.Cadence__r.AllowInternalReferral__c}">
+                                <lightning:button label="Submit Referral" variant="brand" aura:id="submitReferral"
+                                                  name="submitReferral" onclick="{!c.processSubmitReferral}" />
+                            </aura:if>
+                            <aura:if isTrue="{! not(v.cadenceTouchpoint.CarRecord__r.IsReferralSource__c)}">
+                                <lightning:button label="Swap Contact" variant="brand" aura:id="swapContactBtn"
+                                                  name="swapContactBtn" onclick="{!c.displayContactScreen}" />
+                            </aura:if>
+                            <aura:if isTrue="{! or(not(v.isSecondaryUser),and(v.isSecondaryUser,not(v.notAllowCadRemove)))}">
+                                <lightning:button label="Remove from Cadence" variant="brand" aura:id="removeFromCad"
+                                                  name="removeFromCad" onclick="{!c.displayRemoveScreen}" />
+                            </aura:if>
+                            <lightning:button label="Email Insights" variant="brand" aura:id="getInsights"
+                                              name="getInsights" onclick="{!c.displayInsightScreen}" />
+                            <!--
+<aura:if isTrue="{!v.cadenceTouchpoint.Cadence_Touchpoint_Step__r.Allow_Repeat__c}">
+<lightning:button label="Log and Repeat" variant="brand" aura:id="processStep" name="processStep" onclick="{!c.displayRepeatScreen}" />
+</aura:if>
+-->
+                            <!-- Create Activity Button -->
+                            <aura:if isTrue="{!v.cadenceTouchpoint.CarRecord__r.IsReferralSource__c}">                               <lightning:button label="Create Activity" variant="brand"
+                                                                                                                                                       onclick="{!c.displayCreateActivityScreen}" />
+                                <!-- End Create Activity Button -->
+                            </aura:if>
+                            <aura:if isTrue="{!v.cadenceTouchpoint.Cadence_Touchpoint_Step__r.Allow_Skip__c}">
+                                <lightning:button label="Skip Step" variant="brand" aura:id="TouchpointSkip"
+                                                  name="TouchpointSkip" onclick="{!c.displaySkipScreen}" />
+                            </aura:if>
+                            <aura:set attribute="else">
+                                <div class="slds-align_absolute-center slds-border_top ">
+                                    <div class="slds-grid slds-wrap slds-p-top_x-small slds-p-left_x-small">
+                                        <div class="slds-col slds-size_1-of-6 slds-m-left_x-small slds-text-title">
+                                            <lightning:buttonIcon iconName="utility:add"
+                                                                  disabled="{!v.missingSignificant}" variant="brand"
+                                                                  onclick="{!c.processCreateOpp}" />
+                                            <br />
+                                            <lightning:formattedText value="{!v.createOppBtnLabel}" />
+                                        </div>
+                                        <aura:if isTrue="{!!v.cadenceTouchpoint.Cadence__r.AllowInternalReferral__c}">
+                                            <div class="slds-col slds-size_1-of-6 slds-m-left_x-small slds-text-title">
+                                                <lightning:buttonIcon iconName="utility:people" variant="brand"
+                                                                      onclick="{!c.processSubmitReferral}" />
+                                                <br />
+                                                <lightning:formattedText value="Submit Referral" />
+                                            </div>
+                                        </aura:if>
+                                        <div class="slds-col slds-size_1-of-6 slds-m-left_x-small slds-text-title">
+                                            <aura:if isTrue="{!v.displayEmailButton}">
+                                                <lightning:buttonIcon iconName="utility:email" variant="brand"
+                                                                      onclick="{!c.displayEmail}" />
+                                                <br />
+                                                <lightning:formattedText value="Email" />
+                                                <aura:set attribute="else">
+                                                    <lightning:buttonIcon iconName="utility:check" variant="brand"
+                                                                          onclick="{!c.displayLogScreen}" />
+                                                    <br />
+                                                    <lightning:formattedText value="Log Step" />
+                                                </aura:set>
+                                            </aura:if>
+                                        </div>
+                                        <aura:if isTrue="{! not(v.cadenceTouchpoint.CarRecord__r.IsReferralSource__c)}">
+                                            <div class="slds-col slds-size_1-of-6 slds-m-left_x-small slds-text-title">
+                                                <lightning:buttonIcon iconName="utility:change_owner" variant="brand"
+                                                                      onclick="{!c.displayContactScreen}" />
+                                                <br />
+                                                <lightning:formattedText value="Swap Contact" />
+                                            </div>
+                                        </aura:if>
+                                        <div class="slds-col slds-size_1-of-6 slds-m-left_x-small slds-text-title">
+                                            <lightning:buttonIcon iconName="utility:close" variant="brand"
+                                                                  onclick="{!c.displayRemoveScreen}" />
+                                            <br />
+                                            <lightning:formattedText value="Remove" />
+                                        </div>
+                                        <!--
+<aura:if isTrue="{!v.cadenceTouchpoint.Cadence_Touchpoint_Step__r.Allow_Repeat__c}">
+<div class="slds-col slds-size_1-of-6 slds-m-left_x-small slds-text-title">
+<lightning:buttonIcon iconName="utility:change_record_type" variant="brand" onclick="{!c.displayRepeatScreen}"/>
+<br/><lightning:formattedText value="Log &amp; Repeat"/>
+</div>
+</aura:if>
+-->
+                                        <aura:if
+                                                 isTrue="{!v.cadenceTouchpoint.Cadence_Touchpoint_Step__r.Allow_Skip__c}">
+                                            <div class="slds-col slds-size_1-of-6 slds-m-left_x-small slds-text-title">
+                                                <lightning:buttonIcon iconName="utility:skip" variant="brand"
+                                                                      onclick="{!c.displaySkipScreen}" />
+                                                <br />
+                                                <lightning:formattedText value="Skip Step" />
+                                            </div>
+                                        </aura:if>
+                                    </div>
+                                </div>
+                            </aura:set>
+                            <lightning:button label="Refresh" variant="brand" aura:id="refreshRecord"
+                                              name="refreshRecord" onclick="{!c.refreshRecord}" />
+                        </aura:if>
+                    </aura:if>
+                    <aura:if isTrue="{!and(not(v.ownerStaysQueue), v.ownedByQueue)}">
+                        <!--
+<lightning:button label="Take Ownership: Current Touchpoint" variant="brand"
+aura:id="takeOwnership" name="takeOwnership" onclick="{!c.processOwnershipChange}" />
+-->
+                        <lightning:button label="Take Ownership: All Touchpoints" variant="brand"
+                                          aura:id="takeOwnershipAll" name="takeOwnershipAll"
+                                          onclick="{!c.processOwnershipChangeAll}" />
+                    </aura:if>
+                </aura:if>
+            </lightning:card>
+        </aura:if>
+    </aura:if>
+    <!--Use aura:if tag to display/hide email preview value-->
+    <aura:if isTrue="{!v.isEmailPreviewOpen}">
+        <!-- Modal/Popup Box starts here-->
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+                 aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Box Header Starts here-->
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close" onclick="{! c.closeEmailPreview }"
+                                          alternativeText="close" variant="bare-inverse" class="slds-modal__close" />
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Email Preview for
+                        {!v.selectedTemplateName}</h2>
+                </header>
+                <!--Modal/Popup Box Body Starts here-->
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <!--
+<lightning:formattedText value="{!v.emailPreviewBody}" />
+-->
+                    <lightning:formattedRichText value="{!v.emailPreviewBody}" />
+                </div>
+                <!--Modal/Popup Box Footer Starts here-->
+                <footer class="slds-modal__footer">
+                    <lightning:button variant="brand" label="OK" title="OK" onclick="{!c.closeEmailPreview}" />
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+</aura:component>

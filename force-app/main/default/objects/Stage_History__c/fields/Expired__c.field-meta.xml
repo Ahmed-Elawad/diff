@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Expired__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <formula>AND( NOT(ISBLANK(Expiration_Deadline__c)),
+     Expiration_Deadline__c &lt; Now(), 
+     ISBLANK(Exited_Date_Time__c) || Expiration_Deadline__c &lt; Exited_Date_Time__c 
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Expired</label>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

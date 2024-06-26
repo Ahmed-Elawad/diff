@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Referral_Contact_Required</fullName>
+    <active>true</active>
+    <description>need referral contact name when Referral - External - Bank, CPA, AICPA/CPA2Biz, Non-AICPA, or Finl Advr Lead Source is used</description>
+    <errorConditionFormula>AND(NOT(AND(ISNEW(),OppSource__c=&quot;ReferralMethods&quot;))
+ ,OR(ISPICKVAL(LeadSource, &quot;Referral-Bank Referral&quot;),
+	ISPICKVAL(LeadSource, &quot;Referral-CPA&quot;), 
+ISPICKVAL(LeadSource, &quot;Referral-CPA-AICPA&quot;),
+ISPICKVAL(LeadSource, &quot;Referral-CPA-Non-AICPA&quot;),
+ISPICKVAL(LeadSource, &quot;Referral-Insurance Broker&quot;),
+	ISPICKVAL(LeadSource, &quot;Referral-Financial Advisor-Comm Based&quot;),
+ISPICKVAL(LeadSource, &quot;Referral-Financial Advisor-Fee Based&quot;),
+ISPICKVAL(LeadSource, &quot;Referral-PEO Trusted Advisor&quot;),
+ISPICKVAL(LeadSource, &quot;Referral-Financial Advisor&quot;)),
+Referral_Contact__c  = &quot;&quot;, 
+OR(CONTAINS($User.Job_Name__c , &quot;Sales Rep&quot;),CONTAINS($User.Job_Name__c , &quot;District Sales Manager&quot;),CONTAINS($User.Job_Name__c ,&quot;District Sales Assistant&quot;)))</errorConditionFormula>
+    <errorDisplayField>Referral_Contact__c</errorDisplayField>
+    <errorMessage>*** You Must Enter The Referral Contact Name ***
+Remember to click the Magnifying Glass icon to complete the selection</errorMessage>
+</ValidationRule>

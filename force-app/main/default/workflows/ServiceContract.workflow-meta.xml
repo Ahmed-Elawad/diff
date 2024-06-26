@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Icon_RTC1000_free_support_expiring_notification</fullName>
+        <description>Icon RTC-1000 free support expiring notification</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactId</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>customercare@icontime.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Icon/Icon_RTC_1000_Free_Support_Expiring_7_days</template>
+    </alerts>
+    <alerts>
+        <fullName>Icon_SB100_PRO_free_support_expiring_notification</fullName>
+        <description>Icon SB-100 PRO free support expiring notification</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactId</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>customercare@icontime.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Icon/Icon_SB100PRO_Free_Support_Expiring_7_days</template>
+    </alerts>
+    <alerts>
+        <fullName>Icon_TotalPassBiometric_free_support_expiring_notification</fullName>
+        <description>Icon TotalPass Biometric free support expiring notification</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactId</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>customercare@icontime.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Icon/Icon_TotalPass_Biometric_Free_Support_Expiring_7_Days</template>
+    </alerts>
+    <alerts>
+        <fullName>Icon_TotalPass_Prox_free_support_expiring_notification</fullName>
+        <description>Icon TotalPass Prox free support expiring notification</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactId</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>customercare@icontime.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Icon/Icon_TotalPass_Prox_Free_Support_Expiring_7_Days</template>
+    </alerts>
+    <rules>
+        <fullName>Icon RTC-1000 free support expiring notification</fullName>
+        <active>true</active>
+        <formula>AND( ISPICKVAL( Icon_Support_Contract_Name__c, &apos;30-Day Gold Trial&apos;),  Product_and_Service__r.Name =&apos;RTC-1000&apos;, NOT(ISNULL(Contact.Email)), EndDate &lt;&gt; TODAY())</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Icon_RTC1000_free_support_expiring_notification</name>
+                <type>Alert</type>
+            </actions>
+            <offsetFromField>ServiceContract.EndDate</offsetFromField>
+            <timeLength>-7</timeLength>
+            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+    <rules>
+        <fullName>Icon SB-100 PRO free support expiring notification</fullName>
+        <active>true</active>
+        <formula>AND( ISPICKVAL( Icon_Support_Contract_Name__c, &apos;30-Day Gold Trial&apos;),  Product_and_Service__r.Name =&apos;SB-100 PRO&apos;, NOT(ISNULL(Contact.Email)),  EndDate &lt;&gt; TODAY())</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Icon_SB100_PRO_free_support_expiring_notification</name>
+                <type>Alert</type>
+            </actions>
+            <offsetFromField>ServiceContract.EndDate</offsetFromField>
+            <timeLength>-7</timeLength>
+            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+    <rules>
+        <fullName>Icon TotalPass Biometric free support expiring notification</fullName>
+        <active>true</active>
+        <formula>AND( ISPICKVAL( Icon_Support_Contract_Name__c, &apos;30-Day Gold Trial&apos;),  Product_and_Service__r.Name =&apos;TotalPass Biometric&apos;, NOT(ISNULL(Contact.Email)),  EndDate &lt;&gt; TODAY())</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Icon_TotalPassBiometric_free_support_expiring_notification</name>
+                <type>Alert</type>
+            </actions>
+            <offsetFromField>ServiceContract.EndDate</offsetFromField>
+            <timeLength>-7</timeLength>
+            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+    <rules>
+        <fullName>Icon TotalPass Prox free support expiring notification</fullName>
+        <active>true</active>
+        <formula>AND( ISPICKVAL( Icon_Support_Contract_Name__c, &apos;30-Day Gold Trial&apos;),  Product_and_Service__r.Name =&apos;TotalPass Prox&apos;, NOT(ISNULL(Contact.Email)))</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Icon_TotalPass_Prox_free_support_expiring_notification</name>
+                <type>Alert</type>
+            </actions>
+            <offsetFromField>ServiceContract.EndDate</offsetFromField>
+            <timeLength>-7</timeLength>
+            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+</Workflow>

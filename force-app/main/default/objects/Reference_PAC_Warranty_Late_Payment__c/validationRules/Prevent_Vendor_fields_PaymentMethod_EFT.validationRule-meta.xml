@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_Vendor_fields_PaymentMethod_EFT</fullName>
+    <active>true</active>
+    <description>Prevent users from entering values in the Vendor address fields, when the EDI or the EFT value is chosen for the Payment Method field.</description>
+    <errorConditionFormula>AND( 
+( (ISPICKVAL(Payment_Method__c, &apos;EDI&apos;)) || (ISPICKVAL(Payment_Method__c, &apos;EFT&apos;)) ), 
+( NOT(ISBLANK(Vendor_City__c)) || NOT(ISPICKVAL(Vendor_State_Province__c, &apos;&apos;)) || NOT(ISBLANK(Vendor_Street_Address1__c)) || NOT(ISBLANK(Vendor_Zip_Postal_Code__c)) ),
+($Profile.Name &lt;&gt;&quot;System Administrator&quot;)
+)</errorConditionFormula>
+    <errorDisplayField>Payment_Method__c</errorDisplayField>
+    <errorMessage>You must not enter values into the Vendor address fields when the EDI or EFT the value is chosen for the Payment Method field.</errorMessage>
+</ValidationRule>

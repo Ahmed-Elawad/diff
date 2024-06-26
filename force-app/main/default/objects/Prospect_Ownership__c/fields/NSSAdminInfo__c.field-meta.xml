@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NSSAdminInfo__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>IF( Prospect_Client__c != null, &quot;Type:&quot; + TEXT(Prospect_Client__r.Type) + &quot; Method: &quot; + TEXT(Prospect_Client__r.Current_Prior_Method__c) + &quot; Nbr Emps: &quot; + TEXT(Prospect_Client__r.NumberOfEmployees)
+ , IF( Lead__c != null, &quot;Method: &quot; + TEXT(Lead__r.Current_Prior_Method__c) + &quot; Nbr Emps: &quot; + TEXT(Lead__r.NumberOfEmployees), &quot;&quot;))
++ IF( NOT(ISBLANK(NextCallback__c)), &quot; Next CB: &quot;+TEXT(MONTH(NextCallbackDate__c)) +&quot;/&quot; +TEXT(DAY(NextCallbackDate__c)) +&quot;/&quot;+ TEXT(YEAR(NextCallbackDate__c)), &quot;&quot;)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>NSS Admin Info</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

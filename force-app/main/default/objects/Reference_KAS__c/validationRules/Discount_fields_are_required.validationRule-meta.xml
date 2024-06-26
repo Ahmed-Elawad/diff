@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Discount_fields_are_required</fullName>
+    <active>true</active>
+    <description>Fields in the Discount section should be required when Resolution Type is &apos;Stabilize&apos; and Resolution Type Details is &apos;Discount&apos;.</description>
+    <errorConditionFormula>ISPICKVAL( Case_Lookup__r.Reason , &apos;Reactive&apos;) &amp;&amp; 
+ISPICKVAL( Resolution_type__c, &apos;Stabilize&apos;) &amp;&amp; ISPICKVAL( Resolution_Type_Details__c , &apos;Discount&apos;) &amp;&amp; 
+(ISPICKVAL(Discount_Reason__c, &apos;&apos;) || 
+ISBLANK(Current_Preview_Discount__c ) || 
+ISBLANK(Retention_Discount__c ) || 
+ISBLANK(Discount_of_Free_Months__c ) || 
+ISBLANK(Discount_Free_W2_s_of_years__c ) || 
+ISBLANK(Other_types_of_discounts__c ))</errorConditionFormula>
+    <errorMessage>All fields in the Discount Related section need to be populated.</errorMessage>
+</ValidationRule>

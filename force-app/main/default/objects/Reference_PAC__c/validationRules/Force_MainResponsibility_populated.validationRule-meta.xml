@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_MainResponsibility_populated</fullName>
+    <active>true</active>
+    <description>Force users to populate the Main Responsibility field, when a &quot;Closed&quot; Status value is chosen.</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;Reference PAC Record Type&quot; ), 
+(ISPICKVAL(Main_Responsibility__c, &apos;&apos;)), 
+( ( ISPICKVAL(Status__c, &apos;Closed in PAC - Communicated Findings to Client&apos;) ) || ( ISPICKVAL(Status__c, &apos;Closed in PAC - Field to Relay Findings to Client&apos;) ) ),
+($Profile.Name &lt;&gt;&quot;System Administrator&quot;)
+)</errorConditionFormula>
+    <errorDisplayField>Main_Responsibility__c</errorDisplayField>
+    <errorMessage>You must select a Main Responsibility value when choosing a &quot;Closed&quot; Status value.</errorMessage>
+</ValidationRule>

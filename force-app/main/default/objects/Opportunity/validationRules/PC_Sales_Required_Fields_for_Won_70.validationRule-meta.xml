@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PC_Sales_Required_Fields_for_Won_70</fullName>
+    <active>true</active>
+    <description>PC Carrier Sold and Child Id fields are required when moving the status to Verbal Commit with Probability: 70%</description>
+    <errorConditionFormula>AND(
+NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+BEGINS($RecordType.DeveloperName, &apos;PC&apos;),
+OR(
+BEGINS($Profile.Name,&apos;PC Sales Administration - SB&apos;),
+BEGINS($Profile.Name,&apos;PC Sales Manager - SB&apos;),
+BEGINS($Profile.Name,&apos;PC Sales Rep - SB&apos;)
+),
+(Probability==0.7),
+OR(
+AND(
+ISPICKVAL(Child_ID__c, &quot;&quot;),
+OR(
+ISPICKVAL(OpportunityType__c,&apos;AUTO&apos;),
+ISPICKVAL(OpportunityType__c,&quot;BOP (Business Owner&apos;s Package)&quot;),
+ISPICKVAL(OpportunityType__c,&apos;Disability&apos;),
+ISPICKVAL(OpportunityType__c,&apos;Umbrella&apos;),
+ISPICKVAL(OpportunityType__c,&apos;Workers Comp&apos;),
+ISPICKVAL(OpportunityType__c,&apos;General Liability&apos;),
+ISPICKVAL(OpportunityType__c,&apos;Errors and Omissions&apos;)
+)
+),
+
+AND(
+ISBLANK(Tarmika_Quote__c),
+ISPICKVAL(PC_Carrier_Sold__c, &quot;&quot;),
+NOT(CONTAINS(TEXT(OpportunityType__c),&quot;ERISA&quot;)),
+NOT(CONTAINS(TEXT(OpportunityType__c),&quot;Cyber&quot;)),
+NOT(CONTAINS (TEXT(OpportunityType__c),&quot;Referral&quot;))
+),
+
+AND(
+NOT(ISBLANK(Primary_Opportunity__c)),
+ISBLANK(Primary_Opportunity__r.Tarmika_Quote__c),
+ISPICKVAL(PC_Carrier_Sold__c, &quot;&quot;),
+NOT(CONTAINS(TEXT(OpportunityType__c),&quot;ERISA&quot;)),
+NOT(CONTAINS(TEXT(OpportunityType__c),&quot;Cyber&quot;)),
+NOT(CONTAINS (TEXT(OpportunityType__c),&quot;Referral&quot;))
+)
+)
+)</errorConditionFormula>
+    <errorMessage>PC Carrier Sold and Child Id fields are required when moving the status to Verbal Commit with Probability: 70%</errorMessage>
+</ValidationRule>

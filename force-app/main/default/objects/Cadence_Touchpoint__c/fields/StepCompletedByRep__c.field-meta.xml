@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>StepCompletedByRep__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>If ( AND( (CarRecord__r.LatestTouchpoint__c = Id), CarRecord__r.RepClosed__c ), &quot;Complete&quot;
+,IF ( AND( (CarRecord__r.LatestTouchpoint__c = Id), ISPICKVAL( Status__c , &quot;Open&quot;) ), &quot;Open&quot;
+,IF ( AND( (CarRecord__r.LatestTouchpoint__c = Id), NOT(ISPICKVAL( Status__c , &quot;Open&quot;)), NOT(CarRecord__r.RepClosed__c)), &quot;Not Complete&quot;
+,IF ( AND( (CarRecord__r.LatestTouchpoint__c != Id), ISPICKVAL( Status__c , &quot;Skipped&quot;)), &quot;Skipped&quot;
+, IF ( AND (CarRecord__r.LatestTouchpoint__c != Id, ISPICKVAL( Status__c , &quot;Closed&quot;)), &quot;Complete&quot;, &quot;&quot;)))))</formula>
+    <inlineHelpText>What is the status of this Touchpoint?</inlineHelpText>
+    <label>Step Completed By Rep</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

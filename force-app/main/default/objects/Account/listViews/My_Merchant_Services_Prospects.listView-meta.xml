@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>My_Merchant_Services_Prospects</fullName>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>First_Run_Date__c</columns>
+    <columns>ACCOUNT.ADDRESS2_CITY</columns>
+    <columns>ACCOUNT.ADDRESS2_STATE</columns>
+    <columns>ACCOUNT.EMPLOYEES</columns>
+    <columns>ACCOUNT.INDUSTRY</columns>
+    <columns>OpportunityTypes__c</columns>
+    <columns>CadenceType__c</columns>
+    <columns>LastCadenceClosedDate__c</columns>
+    <columns>LastCadenceClosedType__c</columns>
+    <columns>ACCOUNT.LAST_ACTIVITY</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>Do_Not_Call__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Email_Opt_Out__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>CadenceType__c</field>
+        <operation>notContain</operation>
+        <value>MS</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>notEqual</operation>
+        <value>Accountant,Bank,Competitor,Decision Maker Elsewhere,HROi Prospect,HRS Client (Only),Independent Agent,Lost Client,Oasis ACH Client,Oasis Prospect,Partner,PEO Prospect,Prospect,Prospect - January,Vendor</value>
+    </filters>
+    <filters>
+        <field>SensitivityList__c</field>
+        <operation>notContain</operation>
+        <value>CC Processing</value>
+    </filters>
+    <filters>
+        <field>isChild__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>OpportunityTypes__c</field>
+        <operation>notContain</operation>
+        <value>Merchant</value>
+    </filters>
+    <filters>
+        <field>LastCadenceClosedDate__c</field>
+        <operation>lessThan</operation>
+        <value>LAST_N_DAYS:30</value>
+    </filters>
+    <label>My Merchant Services Prospects</label>
+    <sharedTo>
+        <role>CORE_SALES_REP_CUYAHOGA_VALLEY</role>
+    </sharedTo>
+</ListView>

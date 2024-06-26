@@ -1,0 +1,335 @@
+<aura:component controller="CommunityAccountEditFormController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+    <aura:handler name="init" value="{!this}" action="{!c.fetchBenchmarkValues}"/>
+    <aura:attribute name='currentAccount' type='Account' />
+    <aura:attribute name="PEOChecklist" type="Object" />
+    <!--<aura:attribute name="averageWages" type="Decimal" />-->
+    <aura:attribute name="averageWages" type="String" />
+    <aura:attribute name="surveyYear" type="Integer" default='2021' />
+    <aura:attribute name="medPart" type="String"/>
+    <aura:attribute name="turnOverrate" type="String"/>
+    <aura:attribute name='tabList' type='String[]' default="['Basic Information', 'About Your Business']" />
+    <aura:attribute name='selectedTab' type='String' default='Basic Information' />
+    <aura:attribute name="tabStyle" type="String"/>
+    <aura:attribute name='parentTabs' type='String[]' />
+    <aura:attribute name='ActiveParentTab' type='String'/>
+    <aura:attribute name='errorMsg' type='String' />
+    <aura:attribute name='oldNaics' type='String' />
+    <aura:handler name='change' value='{!v.currentAccount.NAICS_Code__c}' action='{!c.naicsChange}' />
+    <!-- save function reference used by tab navigation -->
+    <aura:attribute name='section' type='String'/>
+    
+    <!-- save function reference used by tab navigation -->
+    <aura:attribute name='saveFunc' type='Object' />
+    
+    <aura:if isTrue="{!v.section == 'CompInfo'}">
+        <div id='smallHeader' class='slds-p-around_small'>
+            <span class="slds-text-body_small">
+                <b> Did You Know? </b>
+            </span>
+            <div>
+                <span class="slds-text-heading_small">
+                    <b>Average Wage for {!v.currentAccount.NAICS_Code__c}: {!v.currentAccount.NAICS_Description__c} </b>
+                </span>
+            </div>
+        </div>
+        <div class="slds-col slds-size_3-of-3">
+            <span>
+                A competitive compensation program is critical to attracting, retaining, and rewarding high-performing employees. Without a proper compensation analysis, you can run the risk of underpaying or overpaying employees.    
+            </span>
+        </div>
+        <div class="slds-p-around_small"></div>
+        <div id="benchmarkHeaderId" class="benchmarkHeaderId slds-p-around_small">
+            <Lightning:card class="benchmarkHeader">
+                <div slot="title" class="slds-align_absolute-center slds-border_bottom slds-text-heading_small benchmarkHeaderText">
+                    Average wages
+                </div>
+                <!--<p class="slds-p-horizontal_small slds-align_absolute-center slds-text-heading_medium slds-card__body" style="background-color: white; height: 4rem;">$ {!v.averageWages} per year
+                    <abbr title="required" class="tmStyle slds-required">1</abbr>
+                </p>-->
+                <aura:if isTrue="{!v.averageWages.length > 0 }">
+                    <aura:if isTrue= "{!v.averageWages  == 'Not Available' }">
+                        <p class="slds-p-horizontal_small slds-align_absolute-center slds-text-heading_medium slds-card__body" style="background-color: white; height: 4rem;">
+                            {!v.averageWages}
+                        </p>
+                        <aura:set attribute="else">
+                            <p class="slds-p-horizontal_small slds-align_absolute-center slds-text-heading_medium slds-card__body" style="background-color: white; height: 4rem;">
+                                $ {!v.averageWages} per year
+                                <abbr title="required" class="tmStyle slds-required">1</abbr>
+                            </p>
+                        </aura:set>
+                    </aura:if>
+                    <aura:set attribute="else">
+                        <p class="benchMarkSpinner slds-p-horizontal_small slds-align_absolute-center slds-text-heading_medium slds-card__body" style="background-color: white; height: 4rem;">
+                            <lightning:spinner alternativeText="Loading" size="medium" />
+                        </p>
+                    </aura:set>
+                </aura:if>
+            </Lightning:card>
+        </div>
+        
+        <div class="slds-col slds-text-heading_small slds-size_3-of-3">
+            <span>
+                <b> How Does Your Company Compare? </b>
+            </span>
+        </div>
+        
+        <div class="slds-col slds-size_3-of-3 slds-p-around_small">
+            <span>
+                If your average wage is below the industry average, it's important to take steps to monitor industry standards for salaries on a regular basis. Compensation benchmarking can help you: 
+            </span>
+        </div>
+        
+        <div class="slds-col slds-size_3-of-3">
+            <span>
+                &emsp;  •  &ensp;Stay competitive in your industry <br/>
+                &emsp; •  &ensp;Attract qualified people to your business <br/>
+                &emsp; •  &ensp;Retain your employees 
+            </span>
+        </div>
+        <div class="slds-p-around_small"></div>
+        <div class="slds-p-around_small"></div>
+        <div class="slds-p-around_small"></div>
+    </aura:if>
+    <aura:if isTrue="{!v.section == 'Medical'}">
+        <div id='smallHeader' class='slds-p-around_small'>
+            <span class="slds-text-body_small">
+                <b>Did You Know? </b>
+            </span>
+            <div>
+                <span class="slds-text-heading_small">
+                    <b>Average Medical Participation for {!v.currentAccount.NAICS_Code__c}: {!v.currentAccount.NAICS_Description__c} </b>
+                </span>
+            </div>
+        </div>
+        <div class="slds-col slds-size_3-of-3">
+            <span>
+                Surveys show that an overwhelming majority of today's job candidates prefer an 
+                employer who offers good employee benefits. Employees who have benefits tend to stay 
+                longer in their jobs, saving the organization the cost of replacement and onboarding. 
+            </span>
+        </div>
+        <div class="slds-p-around_small"></div>
+        <aura:if isTrue="{! or(v.medPart >100,v.medPart == 'Not Available')}">
+            <div id="benchmarkHeaderId" class="benchmarkHeaderId slds-p-around_small">
+                <Lightning:card class="benchmarkHeaderMed">
+                    <div slot="title" class="slds-align_absolute-center slds-border_bottom slds-text-heading_small benchmarkHeaderText">
+                        Average Medical Participation 
+                    </div>
+                    <p class="slds-p-horizontal_small slds-align_absolute-center slds-text-heading_medium slds-card__body" style="background-color: white; height: 4rem;"> {!v.medPart}
+                        <abbr title="required" class="tmStyle slds-required" style="margin-top: -6%;">2</abbr>
+                    </p>
+                </Lightning:card>
+            </div>
+            <aura:set attribute="else">
+                <div id="benchmarkHeaderId" class="benchmarkHeaderId slds-p-around_small">
+                    <Lightning:card class="benchmarkHeaderMed" >
+                        <div slot="title" class="slds-align_absolute-center slds-border_bottom slds-text-heading_small benchmarkHeaderText">
+                            Average Medical Participation
+                        </div>
+                        <!--<p class="slds-p-horizontal_small slds-align_absolute-center slds-text-heading_medium slds-card__body" style="background-color: white; height: 7rem;padding-left: 19%;padding-top: 2%;">
+                            <c:PEOUWCircularProgress actualProgress = '{!v.medPart}'/>
+                        </p>-->
+                        <aura:if isTrue="{!v.medPart.length > 0 }">
+                            <p class="slds-p-horizontal_small slds-align_absolute-center slds-text-heading_medium slds-card__body" style="background-color: white; height: 7rem;padding-left: 19%;padding-top: 2%;">
+                                <c:PEOUWCircularProgress actualProgress = '{!v.medPart}'/>
+                            </p>
+                            <aura:set attribute="else">
+                                <p class="benchMarkSpinner slds-p-horizontal_small slds-align_absolute-center slds-text-heading_medium slds-card__body" style="background-color: white; height: 7rem;padding-left: 19%;padding-top: 2%;">
+                                    <lightning:spinner alternativeText="Loading" size="large" />
+                                </p>
+                            </aura:set>
+                        </aura:if>
+                    </Lightning:card>
+                </div>
+            </aura:set>
+        </aura:if>
+        <div class="slds-p-around_xx-small"></div>
+        <div class="slds-col slds-text-heading_small slds-size_3-of-3">
+            <span>
+                <b> How Does Your Company Compare? </b>
+            </span>
+        </div>
+        
+       <div class="slds-col slds-size_3-of-3 slds-p-around_small">
+
+            <span><p>
+
+                If your average medical participation is below the industry average, it's important to 
+                make sure you're offering the right benefits and communicating what you offer to your 
+                employees. Paychex research found that employers assume their employees know and 
+                understand all the benefits offered to them, though that isn't really the case — on 
+                average 33% of employees we surveyed said they don't fully understand the benefits 
+                offered by their organization. <sup>3</sup>
+                <!--<p style="margin-left: 34%;margin-top: -3.2%;font-size: 65%;">3</p>-->
+                </p>
+                </span>
+        </div>
+        <div class="slds-p-around_small"></div>
+        <div class="slds-p-around_small"></div>
+        <div class="slds-p-around_small"></div>
+    </aura:if>
+    
+    <!-- SFDC-14448 -->
+    <aura:if isTrue="{!v.section == 'WorkersComp'}">
+        <div id='smallHeader' class='slds-p-around_small'>
+            <span class="slds-text-body_small">
+                <b>Did You Know? </b>
+            </span>
+            <div>
+                <span class="slds-text-heading_small">
+                    <b>Average Turnover Rate for {!v.currentAccount.NAICS_Code__c}: {!v.currentAccount.NAICS_Description__c} </b>
+                </span>
+            </div>
+        </div>
+        <div class="slds-col slds-size_3-of-3">
+            <span>
+                Employee turnover is an issue that can affect every business. 
+                The simplest way to minimize turnover costs is to understand what is leading to your turnover, so you can take proactive steps to prevent it.
+            </span>
+        </div>
+        <div class="slds-p-around_small"></div>
+         <!-- <div id="benchmarkHeaderId" class="benchmarkHeaderId slds-p-around_small slds-card" style='border-style: solid;padding: 0%;width: 30%;border-width: 1px;margin-left: 5%;border-radius: 3%;border-color: black;'>
+          <Lightning:card class="benchmarkHeader">
+                <div slot="title" class="slds-align_absolute-center slds-border_bottom slds-text-heading_small benchmarkHeaderText">
+                    Average turnOverrate 
+                </div>
+                <p class="slds-p-horizontal_small slds-align_absolute-center slds-text-heading_medium slds-card__body" style="background-color: white; height: 4rem;">{!v.turnOverrate}%
+                    <abbr title="required" class="tmStyle slds-required">1</abbr>
+                </p>
+            </Lightning:card>
+            <div slot="title" class="slds-align_absolute-center slds-border_bottom slds-text-heading_small benchmarkHeaderText" style="padding-top: 5%;border-top-left-radius: 3%;border-top-right-radius: 3%;">
+                    Average Turnover Rate
+                </div>
+                <p class="slds-p-horizontal_small slds-align_absolute-center slds-text-heading_medium slds-card__body" style="background-color: white; height: 4rem;border-radius: 5%;">{!v.turnOverrate}% Per Year
+                    <abbr title="required" class="tmStyle slds-required">4</abbr>
+                </p>
+        </div>-->
+        <article class="slds-card" style="width: 30%;margin-left: 5%;border-color: #325f5e;">
+            <article class="slds-card" style="width: 202%;height: 3em;margin-left: -34%;margin-top: -1%;background-color: #325f5e;padding-left: 5%;border-bottom-right-radius: 0;border-bottom-left-radius: 0;padding-top: 7%">
+                <span style="color: white;margin-left: 16%;font-size: 113%;">Average Turnover Rate</span>
+            </article>
+            <!--<div class="slds-grid slds-gutters slds-card__body" style="width: 186%;font-size: 150%;">
+                <div class="slds-col" style="padding-right: 0px;margin-right: -5%;">
+                    <span>{!v.turnOverrate}% Per Year</span>
+                </div>
+                <div class="slds-col" style="margin-top: -7%;margin-left: -23%;">
+                    <span style="font-size: 50%;">4</span>
+                </div>
+            </div>-->
+            <aura:if isTrue="{!v.turnOverrate.length > 0 }"> 
+                <div class="slds-grid slds-gutters slds-card__body" style="width: 186%;font-size: 150%;">
+                    <div class="slds-col" style="padding-right: 0px;margin-right: -5%;">
+                        <aura:if isTrue="{!v.turnOverrate != 'Not Available' }"> 
+                        	<span>{!v.turnOverrate}% Per Year</span>
+                            <aura:set attribute="else">
+                                <span>{!v.turnOverrate}</span>
+                            </aura:set>
+                        </aura:if>
+                    </div>
+                    <div class="slds-col" style="margin-top: -7%;margin-left: -23%;">
+                        <span style="font-size: 50%;">4</span>
+                    </div>
+                </div>
+                <aura:set attribute="else">
+                    <div class="benchMarkSpinner slds-grid slds-gutters slds-card__body" style="width: 186%;font-size: 150%;">
+                        <div class="slds-col" style="padding-right: 0px;margin-right: -5%;">
+                            <lightning:spinner alternativeText="Loading" size="medium" />
+                        </div>
+                    </div>
+                </aura:set>
+            </aura:if>
+        </article>
+        <div class="slds-p-around_small"></div>
+        <div class="slds-col slds-text-heading_small slds-size_3-of-3">
+            <span>
+                <b> How Does Your Company Compare? </b>
+            </span>
+        </div>
+        
+        <div class="slds-col slds-size_3-of-3 slds-p-around_small">
+            <span>
+                If your turnover rate is above the industry average, it's important to take steps to understand why people are leaving your company. 
+                You can lower the turnover rate of your employees by focusing on: 
+            </span>
+        </div>
+        
+        <div class="slds-col slds-size_3-of-3">
+            <span>
+                &emsp; • &ensp;Growth opportunities  <br/>
+                &emsp; • &ensp;Hiring the right staff  <br/>
+                &emsp; • &ensp;Training your managers  <br/>
+                 &emsp; • &ensp;Investing in employee engagement
+            </span>
+        </div>
+        <div class="slds-p-around_small"></div>
+        <div class="slds-p-around_small"></div>
+        <div class="slds-p-around_small"></div>
+    </aura:if>
+    
+    <!--button should be placed here -->
+    <div class="slds-col slds-size_3-of-3">
+        <c:communityFormNavButtons tabNameList='{!v.tabList}' 
+                                   currentPos='{!v.selectedTab}' 
+                                   allPossibleParents='{!v.parentTabs}'
+                                   activeParent='{!v.ActiveParentTab}'
+                                   parentTabsetUsesIteration='True'
+                                   hideBackButton="false" 
+                                   saveFunc='{!v.saveFunc}'
+                                   skipSaveEvt="{! if(equals(v.selectedTab, 'Basic Information'), true, false)}" />
+        
+    </div>
+    
+    <aura:if isTrue="{!v.section == 'CompInfo'}">
+        <aura:if isTrue= "{!v.averageWages  != 'Not Available' }">
+            <div id="footerId" class="footerId slds-p-around_small">
+                <article class="" style="background-color: white;">
+                    <div class="slds-card__body slds-card__body_inner">
+                        <abbr title="required" class="slds-required" style='font-size: 70%;color: black;'>1</abbr>
+                        <p class="slds-col slds-size_3-of-3 slds-p-around_small" style="background-color: white;margin-top: -3.7%;font-size: 80%;margin-bottom: -25%;">
+                            Based on {!v.surveyYear} data
+                        </p>
+                    </div>
+                </article>     
+            </div>
+        </aura:if>
+    </aura:if>
+    <aura:if isTrue="{!v.section == 'Medical'}">
+        <aura:if isTrue= "{!v.medPart != 'Not Available' }">
+            <div id="footerId" class="footerId slds-p-around_small">
+                <article class="" style="background-color: white;">
+                    <div class="slds-card__body slds-card__body_inner">
+                        <abbr title="required" class="slds-required" style='font-size: 70%;color: black;'>2</abbr>
+                        <p class="slds-col slds-size_3-of-3 slds-p-around_small" style="background-color: white;margin-top: -3.7%;font-size: 80%;margin-bottom: -25%;">
+                            Based on {!v.surveyYear} data
+                        </p>
+                    </div>
+                </article>
+                <article class="" style="background-color: white">
+                    <div class="slds-card__body slds-card__body_inner">
+                        <abbr title="required" class="slds-required" style='font-size: 70%;color: black;'>3</abbr>
+                        <p class="slds-col slds-size_3-of-3 slds-p-around_small" style="background-color: white;margin-top: -3.7%;font-size: 80%;">
+                            
+                            <!--<p style="font-size: 45%;margin-top: -100%;margin-right: -42%;margin-bottom: -15%;color: rgb(64, 64, 64);"> 3</p>-->
+                            Based on a Paychex ClearlyRated survey of 610 HR decision-makers (fielded May 13- June 1, 2021) 
+                            and 2,142 employees (fielded November 2-30, 2020) at different sized organizations across the U.S. 
+                        </p>
+                    </div>
+                </article>
+            </div>
+        </aura:if>
+    </aura:if>
+    <aura:if isTrue="{!v.section == 'WorkersComp'}">
+        <div id="footerId" class="footerId slds-p-around_small"> 
+            <article class="" style="background-color: white;">
+                <div class="slds-card__body slds-card__body_inner">
+                    <abbr title="required" class="slds-required" style='font-size: 70%;color: black;'>4</abbr>
+                    <p class="slds-col slds-size_3-of-3 slds-p-around_small" style="background-color: white;margin-top: -3.7%;font-size: 80%;margin-bottom: -25%;">
+                        Percentage of employees leaving a company.
+                    </p>
+                </div>
+            </article>                        
+        </div>
+    </aura:if>
+    
+</aura:component>

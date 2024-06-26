@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Send_Email_to_QSEHRA_30_Days</fullName>
+        <description>Send Email to QSEHRA 30 Days</description>
+        <protected>false</protected>
+        <recipients>
+            <field>QSEHRA_Sales_Rep_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>fsa_implementation@paychex.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>HRS_4S_New_Case1/QSEHRA_Discrepancies</template>
+    </alerts>
+    <alerts>
+        <fullName>Send_Email_to_QSEHRA_7_Days</fullName>
+        <description>Send Email to QSEHRA 7 Days</description>
+        <protected>false</protected>
+        <recipients>
+            <field>QSEHRA_Sales_Rep_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>fsa_implementation@paychex.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>HRS_4S_New_Case1/QSEHRA_Discrepancies</template>
+    </alerts>
+    <alerts>
+        <fullName>Sending_an_email_to_QSEHRA_Sales_Rep_Process_builder</fullName>
+        <description>Sending an email to QSEHRA Sales Rep Process builder</description>
+        <protected>false</protected>
+        <recipients>
+            <field>QSEHRA_Sales_Rep_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>pbasalessupport@paychex.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>HRS_4S_New_Case1/QSEHRA_Discrepancies</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>Set_the_Resolved_by_field</fullName>
+        <description>This is the user that populates the Discrepancy Resolution Date.</description>
+        <field>Resolved_by__c</field>
+        <formula>$User.FirstName &amp; &quot; &quot; &amp; $User.LastName</formula>
+        <name>Set the Resolved by field</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Send Email to QSHERA</fullName>
+        <active>true</active>
+        <criteriaItems>
+            <field>S125_Discrepancy__c.Discrepancy_Resolution_Date__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_S125_Onboarding__c.Current_Step__c</field>
+            <operation>notEqual</operation>
+            <value>Lost During Onboarding</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Send_Email_to_QSEHRA_7_Days</name>
+                <type>Alert</type>
+            </actions>
+            <actions>
+                <name>Reminder_QSEHRA_Email_has_been_sent</name>
+                <type>Task</type>
+            </actions>
+            <timeLength>7</timeLength>
+            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Send_Email_to_QSEHRA_30_Days</name>
+                <type>Alert</type>
+            </actions>
+            <actions>
+                <name>Reminder_QSEHRA_Email_has_been_sent_30days</name>
+                <type>Task</type>
+            </actions>
+            <timeLength>30</timeLength>
+            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+    <rules>
+        <fullName>Set Resolved by field</fullName>
+        <actions>
+            <name>Set_the_Resolved_by_field</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Set the Resolved by field when the Discrepancy Resolution Date has been populated.</description>
+        <formula>ISCHANGED(Discrepancy_Resolution_Date__c ) &amp;&amp;  NOT(ISNULL(Discrepancy_Resolution_Date__c) )</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <tasks>
+        <fullName>Reminder_QSEHRA_Email_has_been_sent</fullName>
+        <assignedToType>owner</assignedToType>
+        <dueDateOffset>7</dueDateOffset>
+        <notifyAssignee>false</notifyAssignee>
+        <priority>Low</priority>
+        <protected>false</protected>
+        <status>Completed</status>
+        <subject>Reminder QSEHRA Email has been sent</subject>
+    </tasks>
+    <tasks>
+        <fullName>Reminder_QSEHRA_Email_has_been_sent_30days</fullName>
+        <assignedToType>owner</assignedToType>
+        <dueDateOffset>30</dueDateOffset>
+        <notifyAssignee>false</notifyAssignee>
+        <priority>Low</priority>
+        <protected>false</protected>
+        <status>Completed</status>
+        <subject>Reminder QSEHRA Email has been sent</subject>
+    </tasks>
+</Workflow>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cannot_create_closed_Opps</fullName>
+    <active>true</active>
+    <description>case 28180009 - do not allow the creation of closed opportunities. Opps were being created as closed and then reassigned to the correct reps and the opp split and forecasting was not being updated properly.</description>
+    <errorConditionFormula>NOT(BEGINS($Profile.Name, &apos;System Admin&apos;)) &amp;&amp; ISNEW() &amp;&amp; IsClosed = true</errorConditionFormula>
+    <errorMessage>You cannot create a Closed Opportunity. Please select an earlier Status.</errorMessage>
+</ValidationRule>

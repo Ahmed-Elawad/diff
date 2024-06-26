@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TAP_Type_Dependent_value</fullName>
+    <active>false</active>
+    <description>If TAP Type is picked in Type then force user to pick TAP Type.</description>
+    <errorConditionFormula>((ISPICKVAL(Type, &quot;TAP&quot;) &amp;&amp; ISPICKVAL(TAP_Topic__c, &quot;&quot;)) ||
+(ISPICKVAL(Type, &quot;CPE Seminar&quot;) &amp;&amp; ISPICKVAL(CPE_Topic__c, &quot;&quot;)))</errorConditionFormula>
+    <errorDisplayField>Type</errorDisplayField>
+    <errorMessage>If you have picked TAP or CPE Seminar, please pick a value in the TAP Topic  or CPE Topic Picklist.</errorMessage>
+</ValidationRule>

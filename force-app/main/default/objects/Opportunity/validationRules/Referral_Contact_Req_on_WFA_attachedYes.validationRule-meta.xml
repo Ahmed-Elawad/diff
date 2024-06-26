@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Referral_Contact_Req_on_WFA_attachedYes</fullName>
+    <active>true</active>
+    <description>Referral Contact field is required on &apos;Will a Financial Advisor be attached to the Plan&apos; field is YES on HRS 401k Opportunity Record Types OR HRS 401k Opportunity FSS Record Types OR Lead Source = &quot;Referral-Financial Advisor&quot;</description>
+    <errorConditionFormula>AND( OR($RecordType.Name = &apos;HRS 401(k) Opportunity Record Type&apos;,$RecordType.Name = &apos;HRS 401(k) Opportunity FSS Record Type&apos;, ISPICKVAL(LeadSource,&apos;Referral-Financial Advisor&apos;) ), Probability &gt;=0.80, ISPICKVAL(Will_a_FA_be_attached_to_the_Plan__c, &apos;Yes&apos;), ISBLANK(Referral_Contact__c) )</errorConditionFormula>
+    <errorMessage>Complete the Referral Contact field</errorMessage>
+</ValidationRule>

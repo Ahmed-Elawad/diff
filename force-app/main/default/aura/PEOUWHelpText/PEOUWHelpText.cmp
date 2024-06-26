@@ -1,0 +1,71 @@
+<aura:component controller="CommunitiesAccountUpdateController" >
+    
+    <aura:handler name='init' value='{!this}' action='{!c.init}' />
+    
+    <aura:attribute name="checklist" type="Object" />
+    <aura:attribute name="stepSelected" type="string"/>
+    <aura:attribute name="salesRepName" type="String" default=""/>
+    <aura:attribute name="salesRepNumber" type="String" default=""/>
+    <aura:attribute name="selectedTab" type="String" default=""/>
+    <aura:attribute name="currTabId" type="String" default=""/>
+    <!--
+    <aura:if isTrue="{!v.stepSelected == 'medical' || v.currTabId == 'WC' || v.currTabId == 'epliQuestionnaire' || v.currTabId == 'fileUploadWC'}">
+        <div aria-labelledby="helpText" 
+             class="slds-theme_default slds-container_small slds-border_top slds-border_bottom slds-border_left slds-border_right" 
+             style="border-color: #4ba1a4 #dddbda #dddbda #dddbda;" 
+             aura:id="helpText" 
+             id='helpText' >
+            
+            <lightning:card>
+                <aura:set attribute="title">
+                    Why Do We Need This?
+                </aura:set>
+                
+                <p class="slds-p-horizontal_small">
+                    <aura:if isTrue="{!v.stepSelected == 'medical'}">
+                        Your business and medical information is required for review purposes and to customize your Paychex HR package. If you have questions, please contact your Strategic Business Consultant.
+                    </aura:if>
+                    <aura:if isTrue="{!v.currTabId == 'WC'}">
+                        Your workers’ compensation information is required for review purposes and to customize your Paychex HR package. If you have questions, please contact your Strategic Business Consultant.
+                    </aura:if>
+                    <aura:if isTrue="{!v.currTabId == 'epliQuestionnaire'}">
+                        Your Employment Practices Liability Insurance (EPLI) information is required for review purposes and to customize your Paychex HR package. If you have questions, please contact your Strategic Business Consultant.
+                    </aura:if>
+                    <aura:if isTrue="{!v.currTabId == 'fileUploadWC'}">
+                        Your workers’ compensation information is required for review purposes and to customize your Paychex HR package. If you have questions, please contact your Strategic Business Consultant.
+                    </aura:if>
+                </p>
+            </lightning:card>
+            
+        </div>
+    </aura:if>-->
+    <br/>
+    <div aria-labelledby="needHelp" 
+         class="slds-theme_default slds-container_small slds-border_top slds-border_bottom slds-border_left slds-border_right" 
+         style="border-color: #4ba1a4 #dddbda #dddbda #dddbda;" 
+         aura:id="needHelp" 
+         id='needHelp' >
+        
+        <lightning:card>
+            <aura:set attribute="title">
+                Need Help?
+            </aura:set>
+            
+            <p class="slds-p-horizontal_small" style="padding-bottom: 5px">
+                Please contact your Strategic Business Consultant.
+            </p>
+            <p class="slds-p-horizontal_small">
+                <b>
+                    {!v.salesRepName}: 
+                    <aura:if isTrue="{!v.salesRepNumber == ''}">
+                        No Phone Number available.
+                        <aura:set attribute="else">
+                            {!v.salesRepNumber}
+                        </aura:set>
+                    </aura:if>
+                </b>
+            </p>
+        </lightning:card>
+        
+    </div>
+</aura:component>

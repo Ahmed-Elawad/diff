@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prospect_Client_Name_field</fullName>
+    <active>true</active>
+    <description>Please enter the Prospect-Client Name</description>
+    <errorConditionFormula>AND 
+( 
+$RecordType.Name = &quot;MPSC Reload&quot;, 
+ISPICKVAL(Current_Step__c,&quot;(2 of 7) Initial contact complete - Load in progress&quot;), 
+ISBLANK( New_Prospect_Client_Number__c ))</errorConditionFormula>
+    <errorMessage>Please enter the Prospect-Client Name</errorMessage>
+</ValidationRule>

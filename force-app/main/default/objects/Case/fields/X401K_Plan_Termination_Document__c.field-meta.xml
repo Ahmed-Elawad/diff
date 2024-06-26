@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>X401K_Plan_Termination_Document__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>Conga URL to create plan termination document
+3/7/17-turned off encryption PS0 so outside clients could open pdf file without password</description>
+    <externalId>false</externalId>
+    <formula>IF(ISPICKVAL(Reassign_Category_1__c,&apos;Retention - 401K&apos;), hyperlink(&quot;/apex/APXTConga4__Conga_Composer?ServerURL=&quot; +
+$Api.Partner_Server_URL_370 + &quot;&amp;Id=&quot;+ Id &amp;&quot;&amp;Queryid=[PS]a0I7000000OVSoT?pv0=&quot;&amp;Id&amp;&quot;&amp;TemplateID=a1B70000004ZDpU&amp;OFN=&quot;&amp;Account.Name&amp;&quot;++Plan Termination&amp;FP0=1&amp;PS0=0&amp;PS1=1&amp;PS3=1&amp;DS7=1&amp;DS7Preview=0&quot;,
+IMAGE(&quot;/resource/Term401K&quot;, &quot;Term401K&quot;),&quot;_blank&quot;), IMAGE(&quot;/resource/UnavailableBttn&quot;, &quot;Unavailable&quot;))</formula>
+    <label>401K Plan Termination Document</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Spanish_Speaking_Service_Location</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+DATEVALUE(CreatedDate) &gt;= DATE(2021,03,02),
+Spanish_Speaking_Needs__c = TRUE,
+ISPICKVAL(Payroll_Platform__c, &apos;PAY&apos;),
+AND
+(
+NOT(CONTAINS(Text( Service_Location__c ),&quot;Las Vegas Branch 0902&quot;)),
+NOT(CONTAINS(Text( Service_Location__c ),&quot;MPSC&quot;))
+),
+ISCHANGED( StageName ) )</errorConditionFormula>
+    <errorMessage>When Spanish Speaking Needs is checked, the Service Location must equal Las Vegas 0902 or one of the MPSC locations. Reference SPANISH ONBOARDING REGIONS on the Documents tab: https://na64.salesforce.com/01570000002z7bY</errorMessage>
+</ValidationRule>

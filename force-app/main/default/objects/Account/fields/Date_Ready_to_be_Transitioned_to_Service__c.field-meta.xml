@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Date_Ready_to_be_Transitioned_to_Service__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>Used for an MPSC report to know when Preview to Flex migration clients are ready to be transitioned to Service. Can be deleted after 5ish years. Case 21741558</description>
+    <formula>IF( AND( NOT(ISBLANK(Flex_First_Scheduled_Run_Date__c)),ISPICKVAL(Frequency__c,&apos;1 Weekly&apos;)),Flex_First_Scheduled_Run_Date__c +14, 
+IF(AND( NOT(ISBLANK(Flex_First_Scheduled_Run_Date__c)),NOT(ISPICKVAL(Frequency__c,&apos;1 Weekly&apos;))),Flex_First_Scheduled_Run_Date__c +30,null))</formula>
+    <label>Date Ready to be Transitioned to Service</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <type>Date</type>
+</CustomField>

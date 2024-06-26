@@ -1,0 +1,112 @@
+<apex:page controller="CommunitiesLoginController" showheader="false" standardStylesheets="false">
+    <apex:slds /> 
+    <apex:form >
+        <html>
+            <head>
+                <style>
+                     @font-face{
+                font-family: 'PublicoHeadline';
+                src: url("{!URLFOR($Resource.PaychexFont, '/Font_Graphik-Publico-Web/PublicoHeadline-Bold-Web.woff')}") format('woff'); ;
+            }
+                     @font-face{
+                font-family: 'GraphikRegular';
+                src: url("{!URLFOR($Resource.PaychexFont, '/Font_Graphik-Publico-Web/Graphik-Regular-Web.woff')}") format('woff'); ;
+            }
+
+
+            @font-face{
+        font-family: 'PublicoBanner';
+        src: url("{!URLFOR($Resource.PaychexFont, '/Font_Graphik-Publico-Web/PublicoBanner-Bold-Web.woff')}") format('woff'); ;
+    }  
+                body {font-family: Arial, Helvetica, sans-serif;}
+                input[type=text], input[type=password] {
+                  width: 80%;
+                  padding: 12px 20px;
+                  margin: 8px 0;
+                  box-sizing: border-box;
+                }
+                
+                    textarea:focus, input:focus{
+                    outline: none;
+                    }
+                </style>
+            </head>
+                
+            <body style="background-color:#F2F4F7;" >
+               
+                <table width="100%">
+                    <tr>
+                        <td>
+                            <br/>
+                            <br/>
+                            <div style="text-align: center;">
+                                <img src="{!URLFOR($Resource.PayxCPALogo)}" style="width: 200px; height: 50px; margin:0 auto; text-align:center"/>
+
+                            </div>
+
+                            <!-- placeholder for image  -->
+                            
+                            <!-- <p style="font-size:25px;font-weight:bold;font-family: 'PublicoBanner', serif;" align="center"> Paychex Accountant Program</p> -->
+                            <br/>
+                        </td>
+                     </tr>
+                     <tr>
+                         <td>
+                            <table style="background-color:white;width:470px;border-radius:0.25rem;" align="center" width="50%">
+                                <tr>
+                                    <td style="padding-left:20px;">
+                                        <br/>
+                                        <p style="font-size:20px;font-weight:bold;font-family: 'PublicoHeadline', serif;">Log In</p>
+                                        <p class="slds-m-top_small lgc-bg"><a href="/s/pap-new-enrollment-request">Not yet enrolled? Sign up here.</a></p>
+                                        <br/>
+                                         <p style="font-size:15px;font-weight:bold;font-family: 'GraphikRegular', serif;color:red;">
+                                            <apex:messages style="font-size:13px;font-weight:bold;font-family: 'GraphikRegular', serif;color:red;"/>                                             
+                                        </p>
+                                        <p>
+                                            <label for="uname"><b>Email Address</b></label>
+                                            <div style="width:100%">
+                                                <apex:inputText title="username" value="{!userName}"/>
+                                            </div>
+                                        </p>
+                                        <br/>
+                                        <p>
+                                            <label for="pwd"><b>Password</b></label>
+                                            <div style="width:100%">
+                                                <apex:inputsecret title="Password" value="{!passWord}"/>
+                                            </div>
+                                        </p>
+                                        
+                                        <p>
+                                            <a href="/s/login/ForgotPassword">Forgot Password?</a>
+                                        </p>
+                                        <br/>
+                                        <p>
+                                            <apex:commandButton value="Log In" action="{!Login}" styleclass="slds-button slds-button_brand" style="width:150px; height:40px;radius:20px;border-radius:1.25rem;background-color:#0059a2" />
+                                        </p>
+                                        <br/><br/>
+                                    </td>
+                                </tr>
+                            </table>
+                            <br/>
+                         </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p style="font-size:20px;font-weight:bold;font-family: 'PublicoHeadline', serif;" align="center">Need Help?</p>
+                            <br/>
+                            <h2 class="slds-align_absolute-center">                         
+                            <p style="font-size:12px;width:450px;font-weight:bold;font-family: 'GraphikRegular', serif;">
+                                <!--Contact us if you have questions about the Paychex Accountant Program. We'll explain how you can easily share clients with Paychex and track their progress in the program.-->
+                                Please feel free to contact your Paychex Sales Representative and they’ll be happy to help.
+                            </p>
+                            </h2>
+                            <br/>
+                            <!--<button class="slds-button slds-button_brand slds-align_absolute-center" style="width:150px; height:40px;radius:20px;border-radius:1.25rem;background-color:#0059a2">Contact Support</button>-->
+                            <br/><br/>
+                        </td>
+                    </tr>
+                </table>
+            </body>       
+        </html>
+    </apex:form>
+</apex:page>

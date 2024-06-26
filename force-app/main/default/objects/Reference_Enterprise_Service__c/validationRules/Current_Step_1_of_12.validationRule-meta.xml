@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Current_Step_1_of_12</fullName>
+    <active>true</active>
+    <description>JSH - Deactivating because there are individual validation rules that do the same exact thing</description>
+    <errorConditionFormula>ISPICKVAL( Current_Step__c ,&quot;(1 of 12) Sales Rep Conducting Needs Analysis&quot;) &amp;&amp; RecordTypeId = &quot;01270000000UQ53&quot; &amp;&amp; 
+OR( 
+ISBLANK( Payroll_Conversion_Target_Date__c ) , 
+ISBLANK(Text( What_Platform__c )), 
+ISNULL( Estimated_Paychex_Revenue__c ) , 
+ISBLANK( Number_of_Active_EEs__c ) , 
+ISBLANK( Sales_Representative__c ) , 
+ISBLANK( DSM__c ) )</errorConditionFormula>
+    <errorDisplayField>of_States__c</errorDisplayField>
+    <errorMessage>Conversion Target Date,What Platform?,Estimated Paychex Revenue,Number of Active Ees,Sales Representative,DSM 
+These fields are required field.</errorMessage>
+</ValidationRule>

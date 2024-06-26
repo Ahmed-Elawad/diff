@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MPSC_Idea_Submission_Status</fullName>
+    <active>false</active>
+    <description>Status must be set to Submitted on Submission</description>
+    <errorConditionFormula>AND( 
+   OR(ISCHANGED(Status),
+      NOT(ISPICKVAL(Status,&apos;Submitted&apos;))),
+   Community.Name = &apos;All MPSC/Enterprise&apos;,
+   NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)), 
+   NOT($Profile.Name=&apos;2008-09 Operations Administration&apos;),
+   NOT( $Permission.Ideas_edit_access_to_status_field ))</errorConditionFormula>
+    <errorMessage>MPSC Ideas must be set to Submitted on Submission.  Only Idea Administrators can set other status values.</errorMessage>
+</ValidationRule>

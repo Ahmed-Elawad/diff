@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>49.0</apiVersion>
+    <description>mass delete paused flows based on Interview Label from an error email and possibly an inactive user</description>
+    <interviewLabel>Mass Delete Paused flows {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Mass Delete Paused flows</label>
+    <processType>Flow</processType>
+    <recordDeletes>
+        <description>This process will delete paused and waiting interviews caused by time based workflows and inactive users.</description>
+        <name>Delete_paused_and_waiting_interviews_for_inactive_Users</name>
+        <label>Delete paused and waiting interviews for inactive Users</label>
+        <locationX>549</locationX>
+        <locationY>148</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>InterviewLabel</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Client_Reference_Selected_sales_rep_reminder-4_InterviewLabel</stringValue>
+            </value>
+        </filters>
+        <object>FlowInterview</object>
+    </recordDeletes>
+    <startElementReference>Delete_paused_and_waiting_interviews_for_inactive_Users</startElementReference>
+    <status>Draft</status>
+</Flow>

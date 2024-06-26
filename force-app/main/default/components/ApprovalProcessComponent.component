@@ -1,0 +1,14 @@
+<apex:component controller="ApprovalProcessController" access="global">
+    <apex:attribute name="joinId" assignTo="{!referraljoinId}" type="String" description="Id of the Join"/> 
+    <apex:attribute name="refId" assignTo="{!referralId}" type="String" description="Id of the current referral"/>
+    <apex:outputPanel rendered="{!IF(joinId!='', 'true', 'false')}">
+        <b>The following partners were also sent this referral:</b>
+        <apex:dataTable var="Join" value="{!refList}">
+            <apex:column value="{!Join.Contact__r.Name}  ({!Join.ProductReferred__c})"/>
+        </apex:dataTable>     
+    </apex:outputPanel>
+    <p></p>
+    <p><a href="{!repLink}">{!repString}</a></p>
+
+    <p><a href="{!dsaLink}">{!dsaString}</a></p>
+</apex:component>

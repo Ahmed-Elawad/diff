@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PEO_other_type</fullName>
+    <active>true</active>
+    <description>This will require that the additional notes section is filled in when the type of discrepancy is listed as other</description>
+    <errorConditionFormula>((ispickval(Discrepancy_Type__c,&quot;other&quot;) &amp;&amp; 
+ isblank(Additional_Information__c))  || ((ispickval(Discrepancy_Sub_Type__c,&quot;other&quot;) &amp;&amp; 
+ isblank(Additional_Information__c))))
+&amp;&amp;  NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))</errorConditionFormula>
+    <errorDisplayField>Additional_Information__c</errorDisplayField>
+    <errorMessage>A discrepancy description is required for &apos;Other&apos; discrepancies.</errorMessage>
+</ValidationRule>

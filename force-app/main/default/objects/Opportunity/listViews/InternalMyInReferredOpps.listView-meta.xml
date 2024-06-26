@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>InternalMyInReferredOpps</fullName>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>Referral_From__c</columns>
+    <columns>Internal_Referral__c</columns>
+    <columns>OPPORTUNITY.AMOUNT</columns>
+    <columns>OPPORTUNITY.CLOSE_DATE</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>OPPORTUNITY.CREATED_DATE</columns>
+    <columns>OPPORTUNITY.LEAD_SOURCE</columns>
+    <columns>Referring_Employee__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Referral_From__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Referral__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.STAGE_NAME</field>
+        <operation>equals</operation>
+        <value>Rejected</value>
+    </filters>
+    <label>(Internal) My Incoming Referrals</label>
+    <sharedTo>
+        <group>CORE</group>
+        <group>MMS</group>
+    </sharedTo>
+</ListView>

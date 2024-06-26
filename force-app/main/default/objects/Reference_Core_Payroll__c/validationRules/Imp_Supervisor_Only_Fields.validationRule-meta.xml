@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Imp_Supervisor_Only_Fields</fullName>
+    <active>true</active>
+    <description>Reviewed by,Reviewed Date,Exception Outcome,Rejection Reason can only be edited by an Imp Supervisor</description>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)), 
+
+OR (NOT(CONTAINS($UserRole.Name,&apos;Imp Supervisor&apos;))),
+OR (NOT(CONTAINS($UserRole.Name,&apos;Imp Specialist&apos;))),
+OR (NOT(CONTAINS($UserRole.Name,&apos;MPSC NBCER&apos;))),
+
+
+
+OR(
+AND(ISBLANK(PRIORVALUE(Reviewed_By__c)),NOT(ISBLANK(Reviewed_By__c))),
+AND(ISBLANK(PRIORVALUE(Reviewed_Date__c)),NOT(ISBLANK(Reviewed_Date__c))),
+AND(ISBLANK(PRIORVALUE(Exception_Outcome__c)),NOT(ISBLANK(TEXT(Exception_Outcome__c)))),
+
+AND(ISBLANK(PRIORVALUE(Rejection_Reason__c)),NOT(ISBLANK(Rejection_Reason__c)))))</errorConditionFormula>
+    <errorMessage>Reviewed by,Reviewed Date,Exception Outcome,Rejection Reason can only be edited by an Imp Supervisor</errorMessage>
+</ValidationRule>

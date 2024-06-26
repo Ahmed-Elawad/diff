@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cannot_enter_Lost_code_if_pending_task</fullName>
+    <active>true</active>
+    <description>o	Unresolved Paperwork Discrepancy, CPR NPR Callout, CPR Safe Harbor Call, Process ROE&apos;s, Prepare Forfeiture Allocation, Trade Forfeitures, Trade Holding Account, Unresolved Allocation Issue, Managed Accounts Issue, Bank Detail Issue, Clear Outstanding Al</description>
+    <errorConditionFormula>NOT(ISNULL( Enter_Lost_Code__c ))&amp;&amp;
+(
+CONTAINS( Pending_Termination_Tasks__c, &quot;Unresolved Paperwork Discrepancy&quot;)||
+CONTAINS( Pending_Termination_Tasks__c,  &quot;CPR NPR Callout&quot;) ||
+CONTAINS( Pending_Termination_Tasks__c, &quot;CPR Safe Harbor Call&quot;)||
+CONTAINS( Pending_Termination_Tasks__c,  &quot;Process ROE&apos;s&quot;)||
+CONTAINS( Pending_Termination_Tasks__c, &quot;Prepare Forfeiture Allocation&quot;)||
+CONTAINS( Pending_Termination_Tasks__c, &quot;Trade Forfeiture Account&quot;)||
+CONTAINS( Pending_Termination_Tasks__c, &quot;Trade Holding Account&quot;)||
+CONTAINS( Pending_Termination_Tasks__c, &quot;Unresolved Allocation Issue&quot;)||
+CONTAINS( Pending_Termination_Tasks__c, &quot;Managed Accounts Issue&quot;)||
+CONTAINS( Pending_Termination_Tasks__c, &quot;Bank Detail Issue&quot;)||
+CONTAINS( Pending_Termination_Tasks__c, &quot;Clear Outstanding Alerts&quot;)||
+CONTAINS( Pending_Termination_Tasks__c, &quot;Holding Account Balance&quot;)||
+CONTAINS( Pending_Termination_Tasks__c, &quot;Contributions on Hold&quot;)
+
+)</errorConditionFormula>
+    <errorMessage>You cannot enter a lost code until Pending Tasks are completed</errorMessage>
+</ValidationRule>

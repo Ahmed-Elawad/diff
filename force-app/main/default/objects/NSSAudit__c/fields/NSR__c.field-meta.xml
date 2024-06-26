@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NSR__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <inlineHelpText>The contact record of the NSR</inlineHelpText>
+    <label>NSR</label>
+    <lookupFilter>
+        <active>true</active>
+        <errorMessage>You must select a Paychex employee!</errorMessage>
+        <filterItems>
+            <field>Contact.Account.Name</field>
+            <operation>equals</operation>
+            <value>Paychex Inc SA</value>
+        </filterItems>
+        <filterItems>
+            <field>Contact.HR_Person_Id__c</field>
+            <operation>notEqual</operation>
+            <value></value>
+        </filterItems>
+        <infoMessage>Paychex Employee contact records</infoMessage>
+        <isOptional>false</isOptional>
+    </lookupFilter>
+    <referenceTo>Contact</referenceTo>
+    <relationshipLabel>NSS Sales</relationshipLabel>
+    <relationshipName>NSS_Sales</relationshipName>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

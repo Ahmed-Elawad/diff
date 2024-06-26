@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Primary_Concern_Type_1_Required</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+ISCHANGED(Current_Step__c),
+ISBLANK(TEXT(Primary_Concern_Type_1__c)),
+OR(
+AND(
+$RecordType.Name = &apos;Reference Client Retention&apos;,
+OR(ISPICKVAL(Current_Step__c,&apos;Connected with client - In Progress&apos;),ISPICKVAL(Current_Step__c,&apos;Triage working on Resolution&apos;),ISPICKVAL(Current_Step__c,&apos;Triage Resolved&apos;),ISPICKVAL(Current_Step__c,&apos;Transfer to Resolution Team&apos;), ISPICKVAL(Current_Step__c,&apos;Unable to retain Client&apos;))
+),
+AND(
+$RecordType.Name = &apos;Client Retention - Resolution Team&apos;,
+OR(ISPICKVAL(Current_Step__c,&apos;Resolution Team working on Resolution&apos;),ISPICKVAL(Current_Step__c,&apos;Referred to Field for Action Items&apos;),ISPICKVAL(Current_Step__c,&apos;Sent Second Reminder to Field for Action Items&apos;),ISPICKVAL(Current_Step__c,&apos;Resolution Resolved&apos;),ISPICKVAL(Current_Step__c,&apos;Transferred to Taxpay&apos;),ISPICKVAL(Current_Step__c,&apos;Transfer to Resolution Team&apos;), ISPICKVAL(Current_Step__c,&apos;Unable to retain Client&apos;), ISPICKVAL(Current_Step__c,&apos;Sent to 2nd Level Support Team&apos;))
+),
+AND(
+$RecordType.Name = &apos;Client Retention - Email Analytics&apos;,
+OR(ISPICKVAL(Current_Step__c,&apos;First Attempt made&apos;),ISPICKVAL(Current_Step__c,&apos;Second Attempt made&apos;),ISPICKVAL(Current_Step__c,&apos;Meeting Scheduled&apos;),ISPICKVAL(Current_Step__c,&apos;Client Unresponsive&apos;),ISPICKVAL(Current_Step__c,&apos;Transferred to Taxpay&apos;),ISPICKVAL(Current_Step__c,&apos;Solution team working on Resolution&apos;),ISPICKVAL(Current_Step__c,&apos;CRT Internal Transfer&apos;),ISPICKVAL(Current_Step__c,&apos;False positive - transferred to original recipient&apos;),ISPICKVAL(Current_Step__c,&apos;Leadership Email sent&apos;),ISPICKVAL(Current_Step__c,&apos;Leadership already involved&apos;),ISPICKVAL(Current_Step__c,&apos;Solution Resolved&apos;),ISPICKVAL(Current_Step__c,&apos;Unable to retain Client&apos;), ISPICKVAL(Current_Step__c,&apos;Sent to 2nd Level Support Team&apos;))
+)
+)
+)</errorConditionFormula>
+    <errorMessage>You must populate the Primary Concern Type 1 field for this Current Step value.</errorMessage>
+</ValidationRule>

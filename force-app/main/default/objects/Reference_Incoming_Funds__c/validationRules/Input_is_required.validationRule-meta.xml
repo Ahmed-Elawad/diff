@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Input_is_required</fullName>
+    <active>true</active>
+    <description>If Transmission Method = &quot;Chase 401k&quot;, &quot;ACH 401k&quot; and &quot;Contribution Type&quot; = ER Match, Money Purchase Plan, Profit Sharing, QNEC, Safe Harbor (NEC), or Top Heavy 
+
+Make “Input” a required field before the object can be updated.</description>
+    <errorConditionFormula>AND( 
+ISPICKVAL(Input__c, &quot;&quot;), 
+NOT(ISNULL( Tentative_Trade_Date__c)), 
+OR( 
+ISPICKVAL(Transmission_Method__c, &quot;Chase 401k&quot;), 
+ISPICKVAL(Transmission_Method__c, &quot;ACH 401k&quot;)), 
+OR( 
+ISPICKVAL(Contribution_Type__c, &quot;ER Match&quot;), 
+ISPICKVAL(Contribution_Type__c, &quot;Money Purchase Plan&quot;), 
+ISPICKVAL(Contribution_Type__c, &quot;Profit Sharing&quot;), 
+ISPICKVAL(Contribution_Type__c , &quot;QNEC&quot;), 
+ISPICKVAL(Contribution_Type__c , &quot;Safe Harbor (NEC)&quot;), 
+ISPICKVAL(Contribution_Type__c , &quot;Top Heavy&quot;), 
+ISPICKVAL(Contribution_Type__c , &quot;Multiple&quot;)))</errorConditionFormula>
+    <errorDisplayField>Input__c</errorDisplayField>
+    <errorMessage>Input is required.</errorMessage>
+</ValidationRule>

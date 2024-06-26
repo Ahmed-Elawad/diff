@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_PenIntGT0_ClosCode_noPenInt</fullName>
+    <active>true</active>
+    <description>Closure code CANNOT start with ‘No Penalty or Interest Assessed if there is an amount greater than 0.00 listed in the Penalty &amp; Interest Assessed field.</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;Reference PAC Record Type&quot; ), 
+((BEGINS(TEXT(Closure_Code__c),&apos;No Penalty or Interest Assessed&apos;) )||(BEGINS(TEXT(Closure_Code__c),&apos;Assisted Client - No Penalty Assessed&apos;) )), 
+(Penalty_Interest_Assessed__c &gt; 0.00), 
+($Profile.Name &lt;&gt;&quot;System Administrator&quot;) 
+)</errorConditionFormula>
+    <errorDisplayField>Closure_Code__c</errorDisplayField>
+    <errorMessage>The Closure code field cannot start with ‘No Penalty or Interest Assessed if there is an amount greater than 0.00 listed in the Penalty &amp; Interest Assessed field.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Labor_Assignments_Detail</fullName>
+    <active>true</active>
+    <errorConditionFormula>(ISPICKVAL( Labor_Assignments__c , &quot;Yellow: 200 - 999&quot;) ||
+ISPICKVAL(Labor_Assignments__c , &quot;Red: 1000 +&quot;))&amp;&amp;
+
+OR(
+ISBLANK( Labor_Assignments_Detail__c ))</errorConditionFormula>
+    <errorDisplayField>Labor_Assignments_Detail__c</errorDisplayField>
+    <errorMessage>Labor Assignments Detail is required when Labor Assignments is selected as Red or Yellow</errorMessage>
+</ValidationRule>

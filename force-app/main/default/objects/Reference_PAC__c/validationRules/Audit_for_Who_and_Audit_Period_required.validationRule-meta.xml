@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Audit_for_Who_and_Audit_Period_required</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND (
+ISPICKVAL(Non_Audit_Issue__c, &apos;Yes&apos;),
+OR(
+ISBLANK(Quality_Audit_for_Who__c), 
+ISBLANK(Audit_Period__c),
+ISBLANK(TEXT( Non_Audit_Issue_Identified_How__c))
+))</errorConditionFormula>
+    <errorDisplayField>Non_Audit_Issue__c</errorDisplayField>
+    <errorMessage>Audit for Who and Audit Period and Non-Audit Issue Identified How? are required</errorMessage>
+</ValidationRule>

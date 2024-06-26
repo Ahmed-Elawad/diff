@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DSA_PC_Opportunities_Pipeline</fullName>
+    <booleanFilter>(1 AND 2 AND 3 AND 4 AND 6) OR (1 AND 2 AND 4 AND 5 AND 6)</booleanFilter>
+    <columns>Renewal_Date__c</columns>
+    <columns>CORE.USERS.FULL_NAME</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>OPPORTUNITY.PROBABILITY</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>Reason_Not_Sold__c</columns>
+    <columns>OPPORTUNITY.CLOSE_DATE</columns>
+    <columns>OPPORTUNITY.LAST_ACTIVITY</columns>
+    <columns>OPPORTUNITY.AMOUNT</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>OPPORTUNITY.PROBABILITY</field>
+        <operation>lessThan</operation>
+        <value>80</value>
+    </filters>
+    <filters>
+        <field>CORE.USERS.FULL_NAME</field>
+        <operation>contains</operation>
+        <value>Maves</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.STAGE_NAME</field>
+        <operation>notEqual</operation>
+        <value>Not Sold,Rejected,Disqualified</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Opportunity.PCWC_Opportunity_Record_Type</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.STAGE_NAME</field>
+        <operation>equals</operation>
+        <value>Not Sold</value>
+    </filters>
+    <filters>
+        <field>Reason_Not_Sold__c</field>
+        <operation>equals</operation>
+        <value>Future Renewal Date</value>
+    </filters>
+    <label>DSA - PC Opportunities Pipeline</label>
+    <sharedTo>
+        <role>PC_Zone_50</role>
+    </sharedTo>
+</ListView>

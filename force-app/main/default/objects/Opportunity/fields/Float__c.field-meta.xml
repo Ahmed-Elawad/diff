@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Float__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <formula>IF( 
+  OR(
+     Prod_FlexPay_C__c,  
+     Prod_Small_Business_Pkg_C__c,
+     Prod_Officer_Only_Pkg__c,
+     Prod_FlexPay_D__c ,
+     Prod_Small_Business_Pkg_D__c,
+     Enhanced_Package__c ,
+     Entrepreneur_Package__c ,
+     Essentials_Package__c) , 0.00,
+          IF(  
+               OR(
+                      Payroll_Processing_Services_Package__c &amp;&amp;  ISNULL( Payroll_Processing_Services_Opt_Out__c),
+                      Payroll_Processing_Services_Plus_Package__c &amp;&amp;  ISNULL( Payroll_Processing_Services_Opt_Out__c ))  ,0.00, 
+           IF( INCLUDES( Payroll_Processing_Services_Opt_Out__c , &quot;Direct Deposit&quot;) &amp;&amp; INCLUDES( Payroll_Processing_Services_Opt_Out__c , &quot;Taxpay&quot;),0.00,
+                 IF(
+                      OR( 
+                              Prod_Payroll_Taxpay__c ,
+                              Prod_Taxpay_SUI__c, 
+                              INCLUDES( Payroll_Processing_Services_Opt_Out__c , &quot;Direct Deposit&quot;)),0.00,
+                  IF( INCLUDES( Payroll_Processing_Services_Opt_Out__c , &quot;Taxpay&quot;),0.00,0.00
+)))))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Float</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <type>Currency</type>
+</CustomField>

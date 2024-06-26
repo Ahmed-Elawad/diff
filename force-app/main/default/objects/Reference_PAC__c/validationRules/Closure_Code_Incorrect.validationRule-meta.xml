@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Closure_Code_Incorrect</fullName>
+    <active>true</active>
+    <description>APR0169645</description>
+    <errorConditionFormula>AND(
+OR(
+ISPICKVAL( Main_Cause__c ,&apos;Additional Notice&apos;),
+ISPICKVAL( Main_Cause__c ,&apos;Duplicate Notice&apos;)
+),
+NOT(ISPICKVAL( Closure_Code__c , &apos;Withdrawn - Duplicate/Additional Notice&apos;)))</errorConditionFormula>
+    <errorMessage>Closure Code must be Withdrawn - Duplicate/Additional Notice if the Main Cause is Additional Notice or Duplicate Notice.</errorMessage>
+</ValidationRule>

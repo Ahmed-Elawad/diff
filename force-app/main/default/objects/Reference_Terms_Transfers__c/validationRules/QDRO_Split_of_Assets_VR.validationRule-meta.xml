@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>QDRO_Split_of_Assets_VR</fullName>
+    <active>true</active>
+    <description>Required fields when Split of Assets Complete is populated: Fund Allocation, EE Search ID, Alt Payee Search ID and SunGard Number</description>
+    <errorConditionFormula>RecordType.Name = &apos;QDRO&apos; &amp;&amp;  (NOT(ISNULL( Split_of_Assets_Complete__c )) &amp;&amp; (ISBLANK(TEXT( Fund_Allocation__c)) || ISBLANK(EE_Search_ID__c) || ISBLANK( Alt_Payee_Search_ID__c) || ISBLANK(SunGard_Number__c)))</errorConditionFormula>
+    <errorDisplayField>SunGard_Number__c</errorDisplayField>
+    <errorMessage>* Required fields when Split of Assets Complete is populated: SunGard Number, Fund Allocation, EE Search ID, Alt Payee Search ID *</errorMessage>
+</ValidationRule>

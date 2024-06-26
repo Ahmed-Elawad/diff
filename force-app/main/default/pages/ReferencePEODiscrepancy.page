@@ -1,0 +1,109 @@
+<!-- Get parameters for emailing discrepancies.
+
+   History
+   -------
+   09/15/2011 Dan Carmen        Created.
+   04/18/2013 Dan Carmen        Modified to use common code.
+ -->
+<apex:page standardController="Reference_PEO__c" extensions="RefPEODiscrepancyController"
+        tabStyle="Reference_PEO__c" id="RefPEODiscrepancyPage">
+
+   <apex:pageMessages />
+
+   <apex:form id="pageForm">
+      <apex:pageBlock rendered="{!NOT(hasRef)}" id="notFoundBlock" title="Unable to Proceed!">
+         <apex:pageBlockButtons >
+            <apex:commandButton action="{!cancel}" value="Return To Reference Object" />
+         </apex:pageBlockButtons>
+      </apex:pageBlock>
+
+      <apex:pageBlock rendered="{!hasRef}" id="foundBlock" title="Please Select Criteria To Send Email">
+         <apex:pageBlockButtons >
+            <apex:commandButton action="{!sendEmail}" value="Send Email" />
+            <apex:commandButton action="{!cancel}" value="Cancel" />
+         </apex:pageBlockButtons>
+         
+         <apex:pageBlockSection id="discSelection" title="Select The Discrepancies To Send" columns="1">
+            <apex:pageBlockTable value="{!discrepancies}" var="rec" cellPadding="4" border="1">
+               <apex:column headerValue="Selected">
+                  <apex:inputCheckbox disabled="{!onlyOneDiscRecord}" value="{!rec.selected}" />
+               </apex:column>
+               <apex:column value="{!rec.discPeo.Name}" />
+               <apex:column headerValue="Hold">
+                  <apex:outputField value="{!rec.discPeo.HoldPayrollWillNotRun__c}" />
+               </apex:column>
+               <apex:column headerValue="Non-Hold">
+                  <apex:outputField value="{!rec.discPeo.NonHoldPayrollWillRun__c}" />
+               </apex:column>
+               <apex:column value="{!rec.discPeo.Discrepancy_Area__c}" />
+               <apex:column value="{!rec.discPeo.Discrepancy_Type__c}" />
+               <apex:column value="{!rec.discPeo.Discrepancy_Sub_Type__c}" />
+               <apex:column value="{!rec.discPeo.Additional_Information__c}" />
+            </apex:pageBlockTable>
+         </apex:pageBlockSection>
+         
+         <apex:pageBlockSection id="emailSelection" title="Select Who To Send The Email To" columns="1">
+            <apex:pageBlockTable value="{!users}" var="user" cellPadding="4" border="1">
+               <apex:column headerValue="Selected">
+                  <apex:inputCheckbox disabled="{!onlyOneUserRecord}" value="{!user.selected}" />
+               </apex:column>
+               <apex:column headerValue="Title">
+                  <apex:outputText value="{!user.label}" />
+               </apex:column>
+               <apex:column headerValue="Name">
+                  <apex:outputText value="{!user.name}" />
+               </apex:column>
+               <apex:column headerValue="Email">
+                  <apex:outputText value="{!user.email}" />
+               </apex:column>
+            </apex:pageBlockTable>
+         </apex:pageBlockSection>
+         
+         <apex:pageBlockSection id="additionalEmails" title="Names To Send To Additional Paychex Employees">
+            
+            <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Number of Additional Employees"/>
+               <apex:inputText value="{!nbrAddlNames}" size="4" >
+                  <apex:actionSupport event="onchange" action="{!setAddlNames}" rerender="additionalEmails"  />  
+               </apex:inputText>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem />
+            
+            <apex:pageBlockTable value="{!addlNames}" var="name" cellPadding="4" border="1">
+               <apex:column >
+                  <apex:outputLabel value="Enter the Name of a Paychex Employee" />
+               </apex:column>
+               <apex:column headerValue="Employee Name">
+                  <apex:inputField value="{!name.Contact_Paychex_Emp__c}" />
+               </apex:column>
+            </apex:pageBlockTable>
+            
+            <br/>
+            
+         </apex:pageBlockSection>
+         
+         <apex:pageBlockSection id="Notes" title="Message" columns="2">
+            <apex:pageBlockSectionItem >
+              <apex:outputLabel value="Enter any Comments to add to the Email" />
+              <apex:inputTextarea value="{!emailNote}" cols="60"/>
+            </apex:pageBlockSectionItem> 
+              
+             <!--
+            <apex:pageBlockTable value="{!emailNotes}" var="Note" cellpadding="4" border="1">
+                <apex:column >
+                  <apex:outputText style="white-space:wrap" >Enter any Comments to add to the Email</apex:outputText>
+                </apex:column>
+                <apex:column headerValue="Message">
+                  <apex:inputTextarea value="{!emailNote}" cols="60"/> 
+                </apex:column>
+            </apex:pageBlockTable>
+             -->
+          
+            <br/>
+            
+         </apex:pageBlockSection>
+         
+      </apex:pageBlock>
+
+   </apex:form>
+</apex:page>

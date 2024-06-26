@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MyNSSOpportunities</fullName>
+    <booleanFilter>(1 OR 3) AND 2 AND 4 AND 5</booleanFilter>
+    <columns>Created_Date_Time__c</columns>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>OPPORTUNITY.CLOSE_DATE</columns>
+    <columns>Employees_Paid_Per_Payroll__c</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>Age_Excluding_Weekends__c</columns>
+    <columns>OPPORTUNITY.AMOUNT</columns>
+    <columns>Field_Campaign__c</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <columns>NSS_Rep__c</columns>
+    <columns>NSS_Flag__c</columns>
+    <columns>NSS_Source__c</columns>
+    <filterScope>Team</filterScope>
+    <filters>
+        <field>OPPORTUNITY.STAGE_NAME</field>
+        <operation>contains</operation>
+        <value>Qualified,Plan,IEUP,Qualified.,No Decision,Disqualified</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.STAGE_NAME</field>
+        <operation>contains</operation>
+        <value>Pre-Qualified,Create - Received,Qualified,Create - Qualified,Gained Access</value>
+    </filters>
+    <filters>
+        <field>NSS_Source__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Employees_Paid_Per_Payroll__c</field>
+        <operation>greaterOrEqual</operation>
+        <value>10</value>
+    </filters>
+    <filters>
+        <field>Age_Excluding_Weekends__c</field>
+        <operation>lessOrEqual</operation>
+        <value>180</value>
+    </filters>
+    <label>My NSS Opportunities</label>
+    <sharedTo>
+        <group>CORE</group>
+        <group>HNBF</group>
+        <group>HRSSales</group>
+        <group>MMS</group>
+    </sharedTo>
+</ListView>

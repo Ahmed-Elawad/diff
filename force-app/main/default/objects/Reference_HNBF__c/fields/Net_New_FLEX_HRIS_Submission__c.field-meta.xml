@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Net_New_FLEX_HRIS_Submission__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <formula>IF(AND(NOT(Flock__c),ISPICKVAL(Submission_Type__c,&quot;New Case&quot;)),
+(IF( OR( ISPICKVAL( Approval_Group__c , &quot;Completed&quot;),ISPICKVAL( Approval_Group__c , &quot;N/A&quot;) ) , 1, 0) +
+IF( OR( ISPICKVAL( Current_Invoice__c , &quot;Completed&quot;), ISPICKVAL( Current_Invoice__c , &quot;N/A&quot;) ) , 1, 0) +
+IF( OR( ISPICKVAL( Disclosure__c , &quot;Completed&quot;), ISPICKVAL( Disclosure__c , &quot;N/A&quot;) ) , 1, 0) +
+IF( OR( ISPICKVAL( EE_Apps__c , &quot;Completed&quot;), ISPICKVAL( EE_Apps__c , &quot;N/A&quot;) ) , 1, 0) +
+IF( OR( ISPICKVAL( EE_Designation_of_Class_Codes__c , &quot;Completed&quot;), ISPICKVAL( EE_Designation_of_Class_Codes__c , &quot;N/A&quot;) ) , 1, 0) +
+IF( OR( ISPICKVAL( ER_App__c , &quot;Completed&quot;), ISPICKVAL( ER_App__c , &quot;N/A&quot;) ) , 1, 0) +
+IF( OR( ISPICKVAL( Final_Rates__c , &quot;Completed&quot;), ISPICKVAL( Final_Rates__c , &quot;N/A&quot;) ) , 1, 0) +
+IF( OR( ISPICKVAL( InfoPath__c , &quot;Completed&quot;), ISPICKVAL( InfoPath__c , &quot;N/A&quot;) ) , 1, 0) +
+IF( OR( ISPICKVAL( SBCs__c , &quot;Completed&quot;), ISPICKVAL( SBCs__c , &quot;N/A&quot;) ) , 1, 0) +
+IF( OR( ISPICKVAL( Service_Agreements_POP_COBRA__c , &quot;Completed&quot;), ISPICKVAL( Service_Agreements_POP_COBRA__c , &quot;N/A&quot;) ) , 1, 0) )/10
+,0)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Net New FLEX/HRIS.net Submission</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Currency</type>
+</CustomField>

@@ -1,0 +1,413 @@
+<aura:component controller="WorkQueueController" implements="force:lightningQuickAction,lightning:isUrlAddressable,force:appHostable,flexipage:availableForAllPageTypes" >
+   <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="cadenceTouchpoint" type="object"/>
+    <aura:attribute name = "QueueName" type="string"/>
+    <aura:attribute name = "currentUserProfile" type="string"/>
+    <aura:attribute name = "currentUserID" type="string"/>
+    <!--<aura:attribute name="touchpointTypeWrapper" type="Object" />-->
+    <aura:attribute name="recordLoaded" type="Boolean" default="false" />
+    
+    <!--Filter Attributes-->
+    <aura:attribute name="hasCallbacks" type="Boolean" />
+    <aura:attribute name="workQueueNameFilter" type="string[]" />
+    <aura:attribute name="workQueueTargetTypeFilter" type="string[]" />
+    <aura:attribute name="workQueueTypeFilter" type="string[]" />
+    <aura:attribute name="workQueueCampaignFilter" type="string[]" />
+    <aura:attribute name="workQueueZipFilter" type="string[]" />
+    <aura:attribute name="workQueueTargetListFilter" type="string[]" />
+    <aura:attribute name="workQueueStepFilter" type="string[]" />
+    <aura:attribute name="workQueueTimeZoneFilter" type="string[]" />
+    <aura:attribute name="filterNameSelection" type="string" />
+    <aura:attribute name="filterbyTargetTypeSelection" type="string" />
+    <aura:attribute name="tpDisplaySelection" type="string" default ="Today's List"/>
+
+    <aura:attribute name="filterTypeSelection" type="string" />
+    <aura:attribute name="filterCampaignSelection" type="string" /> 
+    <aura:attribute name="filterZipSelection" type="string" /> 
+    <aura:attribute name="filterTargetListSelection" type="string" />
+    <aura:attribute name="filterStepSelection" type="string" />
+    <aura:attribute name="filterTimeZoneSelection" type="string" />
+    <aura:attribute name="hasTargetFilter" type="boolean" default="false" />
+    <aura:attribute name="containsFilter" type="boolean" default="false" />
+    <aura:attribute name="updateCurrentTp" type="boolean" default="false" />
+    <aura:attribute name="tpList" type="Object" />
+    <aura:attribute name="emailTpList" type="Object" />
+    <aura:attribute name="emailSendList" type="Object" />
+    <aura:attribute name="numEmailTouchpoints" type="string" />
+    <aura:attribute name="tpDisplayList2" type="string" />
+    <aura:attribute name="tpDisplayList" type="Object" />
+
+    <aura:attribute name="tpToDisplay" type="string" default="Today's List"/>
+    <aura:attribute name="sortedTpToDisplay" type="string" default="Recently Contacted"/>
+    <aura:attribute name="tpBtnLabel" type="string" default="Display All Touchpoints"/>
+    <aura:attribute name="sortedTpBtnLabel" type="string" default="Recent Engagements"/>
+    <aura:attribute name="titleDisplay" type="string"/>
+    <aura:attribute name="eventUpdateTouchpoint" type="object"/>
+    <aura:attribute name="showFilter" type="Boolean" default="false"/>
+    <aura:attribute name="device" type="string"/>
+    <aura:attribute name="filterSummary" type="string"/>
+    <aura:attribute name="displayDetail" type="boolean" default = "true"/>
+    <aura:attribute name="allTpButtonStyle" type="string" default="brand-outline" />
+    <aura:attribute name="emailButtonStyle" type="string" default="brand-outline" />
+    <aura:attribute name="reTpButtonStyle" type="string" default="brand-outline" />
+    <aura:attribute name="oeTpButtonStyle" type="string" default="brand-outline" />
+    <aura:attribute name="todayOnlyButtonStyle" type="string" default="Brand" />
+    <aura:attribute name="pocUser" type="boolean" />
+    <aura:attribute name="emailsOnly" type="boolean" default="false" />
+    <aura:attribute name="disabled" type="Boolean" default="false" />
+    <aura:attribute name="emailLimit" type="string"/>
+    <aura:attribute name="emailResponse" type="string"/>
+    <!--Spinner Info-->
+    <aura:attribute name="showSpinner" type="Boolean" default="false" />
+    <aura:if isTrue="{!v.showSpinner}">
+        <lightning:spinner />
+    </aura:if>
+
+    <aura:handler name="updateTouchpointList" event="c:UpdateWorkQueue" action="{!c.handleComponentEvent}"/>
+    
+    <!--Touchpoint Filters -->
+    <aura:if isTrue="{!or(v.showFilter == true, v.device == 'DESKTOP')}" >
+        <lightning:card >
+            <lightning:layout  multipleRows="true">
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="2" padding="around-small">
+                    <lightning:formattedText style="font-size: 16px" value="Filter By" />
+                </lightning:layoutItem>
+                <aura:if isTrue="{!v.hasCallbacks}" >
+                    <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="2" padding="around-small">
+                        <lightning:formattedText style="font-size: 16px; font-color: red; font-weight: bold" value="Callback(s) scheduled for today!" />
+                    </lightning:layoutItem>
+                </aura:if>
+            </lightning:layout>
+            <lightning:layout  multipleRows="true">
+
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="2" padding="around-small">
+                    <lightning:select aura:id="filterbyTargetType" name="filterbyTargetType" label="Target Type:" onchange="{!c.updateFilter }" value="{!v.filterbyTargetTypeSelection}">
+                        <option text="None" value="None"/>
+                        <aura:iteration items="{!v.workQueueTargetTypeFilter}" var="workQueueFilter16">
+                            <option text="{!workQueueFilter16}" value="{!workQueueFilter16}" selected="{!workQueueFilter16 == v.filterbyTargetTypeSelection}" />
+                        </aura:iteration>
+                    </lightning:select>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="2" padding="around-small">
+                    <lightning:select aura:id="filterbyName" name="filterbyName" label="Cadence:" onchange="{!c.updateFilter }" value="{!v.filterNameSelection}">
+                        <option text="None" value="None"/>
+                        <aura:iteration items="{!v.workQueueNameFilter}" var="workQueueFilter1">
+                            <option text="{!workQueueFilter1}" value="{!workQueueFilter1}" selected="{!workQueueFilter1 == v.filterNameSelection}" />
+                        </aura:iteration>
+                    </lightning:select>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="2" padding="around-small">
+                    <lightning:select aura:id="filterType" name="filterType" label="Touchpoint Type:" onchange="{!c.updateFilter}" value="{!v.filterTypeSelection}">
+                        <option text="None" value="None"/>
+                        <aura:iteration items="{!v.workQueueTypeFilter}" var="workQueueFilter2">
+                            <option text="{!workQueueFilter2}" value="{!workQueueFilter2}" selected="{!workQueueFilter2 == v.filterTypeSelection}"/>
+                        </aura:iteration>
+                    </lightning:select>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="2" padding="around-small">
+                    <lightning:select aura:id="filterStepNbr" name="filterStepNbr" label="Step Number:" onchange="{!c.updateFilter}" value="{!v.filterStepSelection}">
+                        <option text="None" value="None"/>
+                        <aura:iteration items="{!v.workQueueStepFilter}" var="workQueueFilter3a">
+                            <option text="{!workQueueFilter3a}" value="{!workQueueFilter3a}" selected="{!workQueueFilter3a == v.filterStepSelection}"/>
+                        </aura:iteration>
+                    </lightning:select>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="2" padding="around-small">
+                    <lightning:select aura:id="filterCamp" name="filterCamp" label="Sales Program:" onchange="{!c.updateFilter}" value="{!v.filterCampaignSelection}">
+                        <option text="None" value="None"/>
+                        <aura:iteration items="{!v.workQueueCampaignFilter}" var="workQueueFilter3">
+                            <option text="{!workQueueFilter3}" value="{!workQueueFilter3}" selected="{!workQueueFilter3 == v.filterCampaignSelection}"/>
+                        </aura:iteration>
+                    </lightning:select>
+                </lightning:layoutItem>
+                <!-- <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="2" padding="around-small">
+                    <lightning:select aura:id="filterZip" name="filterZip" label="Business Zip:" onchange="{!c.updateFilter }" value="{!v.filterZipSelection}" >
+                        <option text="None" value="None"/>
+                        <aura:iteration items="{!v.workQueueZipFilter}" var="workQueueFilter4">
+                            <option text="{!workQueueFilter4}" value="{!workQueueFilter4}" selected="{!workQueueFilter4 == v.filterZipSelection}"/>
+                        </aura:iteration>
+                    </lightning:select>
+                </lightning:layoutItem> -->
+                <aura:if isTrue="{!v.hasTargetFilter}">
+                    <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="2" padding="around-small">
+                        <lightning:select aura:id="filterTarget" name="filterTarget" label="Tag:" onchange="{!c.updateFilter }" value="{!v.filterTargetListSelection}" >
+                            <option text="None" value="None"/>
+                            <aura:iteration items="{!v.workQueueTargetListFilter}" var="workQueueFilter5">
+                                <option text="{!workQueueFilter5}" value="{!workQueueFilter5}" selected="{!workQueueFilter5 == v.filterTargetListSelection}"/>
+                            </aura:iteration>
+                        </lightning:select>
+                    </lightning:layoutItem>
+                </aura:if>
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="2" largeDeviceSize="1" padding="around-small">
+                    <lightning:select aura:id="filterTz" name="filterTimeZone" label="Time Zone:" onchange="{!c.updateFilter }" value="{!v.filterTimeZoneSelection}" >
+                        <option text="None" value="None"/>
+                        <aura:iteration items="{!v.workQueueTimeZoneFilter}" var="workQueueFilter6">
+                            <option text="{!workQueueFilter6}" value="{!workQueueFilter6}" selected="{!workQueueFilter6 == v.filterTimeZoneSelection}"/>
+                        </aura:iteration>
+                    </lightning:select>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="12" padding="around-small">
+                    <div class="slds-align_absolute-center">
+                        <lightning:button label="Clear Filters" variant="brand" onclick="{!c.clearFilters}"/> 
+                    </div>
+                </lightning:layoutItem> 
+            </lightning:layout>
+            <aura:if isTrue="{!v.device != 'DESKTOP'}"> 
+                <div class="slds-align_absolute-center"><lightning:button label="Close Filter List" variant="brand" iconName="utility:close" iconPosition="left" aura:id="closeFilterDisplay" name="closeFilterDisplay" onclick="{!c.closeFilterList}" /></div>
+            </aura:if>
+        </lightning:card>
+    </aura:if>
+    <!-- End Touchpoint Filters-->
+    <!--Desktop Settings-->
+    <aura:if isTrue="{!v.device == 'DESKTOP'}" >
+        <lightning:card> 
+            <div class="c-container">
+                <lightning:layout>
+                    <lightning:layoutItem  size="12"  mediumDeviceSize="5" largeDeviceSize="4" padding="around-medium">                    
+                       
+                            <aura:if isTrue="{!v.pocUser == true}" >
+                                <lightning:select aura:id="tpDisplayList2" name="tpDisplayList2" label="Touchpoint List:" onchange="{!c.updateTpDisplay }" >
+                                    <option text="Today's TouchPoints" value="Today's List" selected="{!v.tpDisplayList2 == 'Today\'s TouchPoints'}"/>
+                                    <option text="All Touchpoints" value="All Open Touchpoints"/>
+                                    <option text="Batch Email Steps" value="Batch Email Steps"/>
+                                    <option text="Recent Engagements" value="Recent Touchpoints"/>
+                                    <option text="Open Engagements" value="Open Engagements"/>
+                                </lightning:select>
+                                <!-- <lightning:button label="Today's Touchpoints" variant="{!v.todayOnlyButtonStyle}"  onclick="{!c.getDueTodayList}"/>
+                                <lightning:button label="All Touchpoints" variant="{!v.allTpButtonStyle}" onclick="{!c.getAllTouchpoints}"/>
+                                <lightning:button label="Batch Email Steps" variant="{!v.emailButtonStyle}" onclick="{!c.getAutoSendEmails}"/> -->
+                                
+                                <aura:set attribute="else">
+                                    <!-- <lightning:button label="Today's Touchpoints" variant="{!v.todayOnlyButtonStyle}"  onclick="{!c.getDueTodayList}"/>
+                                    <lightning:button label="All Touchpoints" variant="{!v.allTpButtonStyle}" onclick="{!c.getAllTouchpoints}"/> -->
+                                    <lightning:select aura:id="tpDisplayList3" name="tpDisplayList3" label="Touchpoint List:" onchange="{!c.updateTpDisplay }" >
+                                        <option text="Today's Touchpoints" value="Today's List"/>
+                                        <option text="All Touchpoints" value="All Open Touchpoints"/>
+                                        <option text="Recent Engagements" value="Recent Touchpoints"/>
+                                        <option text="Open Engagements" value="Open Engagements"/>
+                                    </lightning:select>
+                
+                                    <!-- <div class="slds-grid slds-gutters">
+
+                                        <div class="slds-col">    
+                                            <div class="slds-align_absolute-center">
+                                            <lightning:button label="{!v.tpBtnLabel}" variant="brand" onclick="{!c.updateTouchpointList}"/>
+                                           </div>   
+                                        </div>   
+                                        <div class="slds-col">
+                                            <div class="slds-align_absolute-center">
+                                                <lightning:button label="{!v.sortedTpBtnLabel}" variant="brand" onclick="{!c.changeDefaultSort}"/>
+                                            </div>                            </div>   
+                                    </div> -->
+                                        </aura:set>
+
+                            </aura:if>
+                                    <!-- <lightning:button label="Recent Engagements" variant="{!v.reTpButtonStyle}" onclick="{!c.getRETouchpoints}"/>
+                                    <lightning:button label="Open Engagements" variant="{!v.oeTpButtonStyle}" onclick="{!c.getOETouchpoints}"/>
+                 -->
+                        <lightning:card class="slds-card_boundary">
+                            <aura:if isTrue="{!v.emailsOnly != true}" >
+                                <div class="slds-text-heading_small slds-m-left_x-small">
+                                    {!v.titleDisplay}
+                                </div>
+                            </aura:if>
+                            <aura:if isTrue="{!v.pocUser == true}" >
+                                <div class="slds-text-heading_small slds-m-left_x-small">
+                                    {!v.numEmailTouchpoints}
+                                </div>
+                            </aura:if>
+                            <div class="slds-text-heading_small slds-m-left_x-small">
+                                {!v.filterSummary}
+                            </div>
+                            <div class="slds-text-heading_small slds-m-left_x-small">
+                                 <lightning:button label="Refresh" aura:id="refreshListBtn" variant="brand" name="refreshListBtn" onclick="{!c.refreshList}" />
+                            </div>
+                            <aura:if isTrue="{!v.emailsOnly == true}" >
+                                <div class="slds-text-heading_small slds-align_absolute-center slds-p-bottom_x-small slds-m-top_x-small slds-border_bottom">
+                                    <lightning:button label="Send Emails" aura:id="emailListSend" variant="brand" name="emailListSend" onclick="{!c.sendAllEmails}" />
+                                </div>
+                            </aura:if>
+                            <div class="slds-text-heading_small slds-align_absolute-center slds-p-bottom_x-small slds-m-top_x-small slds-border_bottom">
+                                <aura:if isTrue="{!v.emailsOnly == false}" >
+                                    Click row to view touchpoint details
+                                    <aura:set attribute="else">
+                                        <aura:if isTrue="{!v.cadenceTouchpoint != null}" >
+                                            <b>The ‘Send Emails’ button will email the first {!v.emailLimit} Touchpoints in your list simultaneously with one click!</b>
+                                            <aura:set attribute="else">
+                                                <b>Oops! Check back later – this list will refill as email steps become due.</b>
+                                            </aura:set>
+                                        </aura:if>
+                                    </aura:set>
+                                </aura:if>
+                            </div>
+                            <div class="slds-scrollable" style="height:25rem"> 
+                                <aura:iteration items="{!v.tpDisplayList}" var="Touchpoint">                            
+                                    <div class="slds-text-heading_small ">
+                                        <div class="{!v.cadenceTouchpoint.Id == Touchpoint.Id ? 'activeStyle' : 'hoverStyle'}">
+                                            <div styleClass="cursor: pointer" class="{slds-scrollable slds-border_bottom slds-p-around_xxx-small slds-clearfix}" data-id="{!Touchpoint.Id}" onclick="{!c.viewTouchpoint}" style="text-decoration:none;">
+                                                
+                                                        <lightning:layout multipleRows="true">
+                                                            <lightning:layoutItem class="slds-text-align_left slds-p-bottom_xx-small" size="6" >
+                                                                {!Touchpoint.CarRecord__r.CompanyName__c}
+                                                            </lightning:layoutItem>
+                                                            <lightning:layoutItem class="slds-text-align_right slds-p-bottom_xx-small" size="6">
+                                                                Step :&nbsp;{!Touchpoint.Step_Number__c}&nbsp;-&nbsp;{!Touchpoint.TypeFilter__c}
+                                                            </lightning:layoutItem>
+                                                            <lightning:layoutItem  size="6"  class="slds-text-align_left slds-p-bottom_xx-small">
+                                                                <aura:if isTrue="{!Touchpoint.CarRecord__r.AccountId__r.Type}"> 
+                                                                    {!Touchpoint.CarRecord__r.AccountId__r.Type}
+                                                                </aura:if>
+                                                                <aura:if isTrue="{!Touchpoint.CarRecord__r.ReferralAccount__r.Referral_Source_Business_Type__c}"> 
+                                                                    {!Touchpoint.CarRecord__r.ReferralAccount__r.Referral_Source_Business_Type__c}
+                                                                </aura:if>
+                                                               
+                                                                <aura:if isTrue="{!Touchpoint.CarRecord__r.LeadId__c}"> 
+                                                                 Lead
+                                                                </aura:if>
+                                                                
+                                                            </lightning:layoutItem>
+                                                            <lightning:layoutItem size="6" class="slds-text-align_right slds-p-bottom_xx-small" >
+                                                                <div class="{!Touchpoint.Past_Due_Date__c ? 'slds-scrollable slds-text-color_error ' : 'slds-scrollable '}" >
+                                                                    <lightning:formattedDateTime value="{!Touchpoint.Due_Date__c}" year="2-digit" month="numeric" day="numeric" hour="numeric" minute="2-digit" hour12="true"/></div>
+                                                            </lightning:layoutItem>
+                                                                                                                  
+                                                    </lightning:layout>
+                                        
+
+                                             <!--  <lightning:layout multipleRows="true">
+                                                   
+                                                    <lightning:layoutItem size="6" padding="horizontal-small">
+                                                        {!Touchpoint.CarRecord__r.CompanyName__c}
+                                                    </lightning:layoutItem>
+                                                    <lightning:layoutItem size="12" mediumDeviceSize="12" largeDeviceSize="4" padding="horizontal-small" >
+                                                        Step :&nbsp;{!Touchpoint.Step_Number__c}&nbsp;-&nbsp;{!Touchpoint.TypeFilter__c}
+                                                    </lightning:layoutItem>
+                                                    <lightning:layoutItem size="12" mediumDeviceSize="12" largeDeviceSize="5" padding="horizontal-small">
+                                                        <div class="{!Touchpoint.Past_Due_Date__c ? 'slds-scrollable slds-text-color_error slds-border_bottom slds-p-around_x-small ' : 'slds-scrollable slds-border_bottom slds-p-around_x-small'}"><lightning:formattedDateTime value="{!Touchpoint.Due_Date__c}" year="2-digit" month="numeric" day="numeric" hour="numeric" minute="2-digit" hour12="true"/></div>
+                                                    </lightning:layoutItem>
+                                                    
+                                                     <lightning:layoutItem size="12" mediumDeviceSize="12" largeDeviceSize="3" padding="horizontal-small">
+                                                        {!Touchpoint.CarRecord__r.ParentZipCode__c}
+                                                    </lightning:layoutItem>
+                                                </lightning:layout> -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--</aura:if>-->
+                                </aura:iteration>
+                            </div>
+                        </lightning:card>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="12"  mediumDeviceSize="7" largeDeviceSize="8" padding="around-medium">
+                        <aura:if isTrue="{!v.recordLoaded}"> 
+                            <c:Cadence_Touchpoint_Detail cadenceTouchpoint="{!v.cadenceTouchpoint}" device="{!v.device}" currentUserId="{!v.currentUserID}"/>
+                            <aura:set attribute="else">
+                                <div class="slds-align_absolute-center slds-text-heading_large slds-m-top_xx-large" style="padding:0.5rem">
+                                    <b>No Touchpoints available under selected filters. </b>
+                                </div>
+                            </aura:set>
+                        </aura:if>
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </div>
+        </lightning:card>
+    </aura:if>
+    <!--End Desktop Settings-->
+    <!--Mobile Settings-->
+    <aura:if isTrue="{!v.device != 'DESKTOP'}" >
+        <aura:if isTrue="{!v.showFilter == false}" >
+            <aura:if isTrue="{!v.displayDetail == false}" > 
+                <lightning:card>
+                    <div class="slds-align_absolute-center">
+                        <div class="slds-m-left_small slds-text-title">
+                            <lightning:button label="Filters" variant="brand" iconName="utility:filterList" iconPosition="left" aura:id="filters" name="filters" onclick="{!c.openFilterList}" />                      
+                        </div>
+                        <div class="slds-m-left_small slds-text-title">
+                            <aura:if isTrue="{!v.pocUser == true}" >
+                                <lightning:select aura:id="tpDisplayList2" name="tpDisplayList2" label="Touchpoint List:" onchange="{!c.updateTpDisplay }" >
+                                    <option text="Today's Touchpoints" value="Today's List" selected="{!v.tpDisplayList2 == 'Today\'s List'}"/>
+                                    <option text="All Touchpoints" value="All Open Touchpoints"/>
+                                    <option text="Batch Email Steps" value="Batch Email Steps"/>
+                                    <option text="Recent Engagements" value="Recent Touchpoints"/>
+                                    <option text="Open Engagements" value="Open Engagements"/>
+                                </lightning:select>
+                                <!-- <lightning:button label="Today's Touchpoints" variant="{!v.todayOnlyButtonStyle}"  onclick="{!c.getDueTodayList}"/>
+                                <lightning:button label="All Touchpoints" variant="{!v.allTpButtonStyle}" onclick="{!c.getAllTouchpoints}"/>
+                                <lightning:button label="Batch Email Steps" variant="{!v.emailButtonStyle}" onclick="{!c.getAutoSendEmails}"/> -->
+                                
+                                <aura:set attribute="else">
+                                    <!-- <lightning:button label="Today's Touchpoints" variant="{!v.todayOnlyButtonStyle}"  onclick="{!c.getDueTodayList}"/>
+                                    <lightning:button label="All Touchpoints" variant="{!v.allTpButtonStyle}" onclick="{!c.getAllTouchpoints}"/> -->
+                                    <lightning:select aura:id="tpDisplayList3" name="tpDisplayList3" label="TouchPoint List:" onchange="{!c.updateTpDisplay }" >
+                                        <option text="Today's Touchpoints" value="Today's List"/>
+                                        <option text="All Touchpoints" value="All Open Touchpoints"/>
+                                        <option text="Recent Engagements" value="Recent Touchpoints"/>
+                                        <option text="Open Engagements" value="Open Engagements"/>
+                                    </lightning:select>
+                
+                                    <!-- <div class="slds-grid slds-gutters">
+
+                                        <div class="slds-col">    
+                                            <div class="slds-align_absolute-center">
+                                            <lightning:button label="{!v.tpBtnLabel}" variant="brand" onclick="{!c.updateTouchpointList}"/>
+                                           </div>   
+                                        </div>   
+                                        <div class="slds-col">
+                                            <div class="slds-align_absolute-center">
+                                                <lightning:button label="{!v.sortedTpBtnLabel}" variant="brand" onclick="{!c.changeDefaultSort}"/>
+                                            </div>                            </div>   
+                                    </div> -->
+                                        </aura:set>
+
+                            </aura:if>
+                            <!-- <lightning:button label="{!v.tpBtnLabel}" variant="brand" onclick="{!c.updateTouchpointList}"/> 
+                            <lightning:button label="{!v.tpBtnLabel}" variant="brand" onclick="{!c.updateTouchpointList}"/>  -->
+                        </div>
+                    </div>
+                    <div class="slds-text-title slds-m-left_x-small slds-m-top_small slds-border_top">
+                        {!v.titleDisplay}
+                    </div>
+                    <div class="slds-text-title slds-m-left_x-small slds-m-top_x-small slds-border_bottom">
+                        {!v.filterSummary}
+                    </div> 
+                    <div class="slds-text-heading_x-small slds-m-top_x-small slds-align_absolute-center">
+                        Click row to view touchpoint details
+                    </div>
+                    <aura:iteration items="{!v.tpList}" var="Touchpoint">
+                                <aura:if isTrue="{!and(and(or(v.filterTypeSelection == null, v.filterTypeSelection == Touchpoint.TypeFilter__c)
+                                                 ,or(v.filterNameSelection == null, v.filterNameSelection == Touchpoint.Cadence__r.Name)
+                                                 ,or(v.filterStepSelection == null, v.filterNameSelection == Touchpoint.Cadence_Touchpoint_Step__r.Step_Number__c)
+                                                 ,or(v.filterTargetListSelection == null, v.filterTargetListSelection == Touchpoint.CarRecord__r.TargetList__c)),
+                                                 and(or(v.filterCampaignSelection == null, v.filterCampaignSelection == Touchpoint.CarRecord__r.Sales_Program__c)
+                                                 ,or(v.filterZipSelection == null, v.filterZipSelection == Touchpoint.CarRecord__r.ParentZipCode__c)))}">   
+                            <div class="{!Touchpoint.Past_Due_Date__c ? 'slds-text-color_error slds-border_bottom slds-p-around_x-small' : 'slds-text-color_default slds-border_bottom slds-p-around_x-small'}" data-id="{!Touchpoint.Id}" onclick="{!c.viewTouchpoint}" style="text-decoration:none;">
+                                <div>{!Touchpoint.CarRecord__r.CompanyName__c}</div>
+                                <lightning:tile  label="">
+                                    <ul class="slds-list_horizontal slds-has-dividers_right">
+                                        <li class="slds-item"><b>Due Date :&nbsp;</b><div><lightning:formattedDateTime value="{!Touchpoint.Due_Date__c}" year="2-digit" month="numeric" day="numeric" hour="numeric" minute="2-digit" hour12="true"/></div></li>                          
+                                        <li class="slds-item"><b>Step :&nbsp;</b>{!Touchpoint.Step_Number__c}&nbsp;-&nbsp;{!Touchpoint.Cadence_Touchpoint_Step__r.Touchpoint_Type__c}</li>
+                                    </ul>
+                                </lightning:tile>
+                            </div>
+                        </aura:if>
+                    </aura:iteration>
+                </lightning:card>
+            </aura:if>
+            <aura:if isTrue="{!v.recordLoaded}"> 
+                <lightning:card>
+                    <aura:set attribute="actions">
+                        <lightning:button iconName="utility:forward" iconPosition="right" label="Back to Touchpoint List" onclick="{!c.openTouchpointList}"/>
+                    </aura:set>
+                    <lightning:tile class="slds-p-horizontal_small slds-border_bottom" label="{!v.cadenceTouchpoint.Name}">
+                        <ul class="slds-list_horizontal slds-has-dividers_right">
+                            <li class="slds-item"><b>Due Date :&nbsp;</b><div><lightning:formattedDateTime value="{!v.cadenceTouchpoint.Due_Date__c}" year="2-digit" month="numeric" day="numeric" hour="numeric" minute="2-digit" hour12="true"/></div></li>
+                            <li class="slds-item"><b>Step :&nbsp;</b>{!v.cadenceTouchpoint.Step_Number__c}&nbsp;-&nbsp;{!v.cadenceTouchpoint.TypeFilter__c}</li>
+                        </ul>
+                    </lightning:tile>
+                    <c:Cadence_Touchpoint_Detail cadenceTouchpoint="{!v.cadenceTouchpoint}" device="{!v.device}" filterSummary="{!v.filterSummary}" currentUserId="{!v.currentUserID}" />
+                </lightning:card>
+            </aura:if>
+        </aura:if>
+    </aura:if>
+    <!--End Mobile Settings-->
+</aura:component>

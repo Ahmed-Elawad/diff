@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Matched</fullName>
+    <columns>NAME</columns>
+    <columns>AccountName__c</columns>
+    <columns>BisId__c</columns>
+    <columns>Account__c</columns>
+    <columns>Finished__c</columns>
+    <columns>LastMatchAttempt__c</columns>
+    <columns>NbrMatchAttempts__c</columns>
+    <columns>LAST_UPDATE</columns>
+    <columns>BisIdUpdated__c</columns>
+    <columns>MatchBy__c</columns>
+    <columns>UPDATEDBY_USER</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Finished__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <filters>
+        <field>Account__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>LAST_UPDATE</field>
+        <operation>equals</operation>
+        <value>LAST_N_DAYS:7</value>
+    </filters>
+    <label>Matched</label>
+</ListView>

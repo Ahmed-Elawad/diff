@@ -1,0 +1,429 @@
+<!-- Page to help with the NSS Audit object.
+
+   History
+   -------
+   08/12/2014 Dan Carmen      Created 
+   10/31/2014 Dan Carmen      Added additional filter criteria
+ -->
+<apex:page controller="NSSAuditView"
+      tabStyle="NSS_Sales_View__tab">
+
+<apex:includeScript value="{!$Resource.selectCheckboxesJs}" />
+<apex:stylesheet value="{!URLFOR($Resource.jQueryDataTablesZip, 'css/jquery.dataTables.css')}"/>
+<style type="text/css">
+.sorting {
+    background: #f2f3f3 url('{! URLFOR($Resource.jQueryDataTablesZip, 'images/sort_both.png') }') no-repeat center right !important;
+    padding-right: 20px !important;
+}
+.sorting_asc {
+    background: #f2f3f3 url('{! URLFOR($Resource.jQueryDataTablesZip, 'images/sort_asc.png') }') no-repeat center right !important;
+    padding-right: 20px !important;
+}
+.sorting_desc {
+    background: #f2f3f3 url('{! URLFOR($Resource.jQueryDataTablesZip, 'images/sort_desc.png') }') no-repeat center right !important;
+    padding-right: 20px !important;
+}
+.sorting_asc_disabled {
+    background: #f2f3f3 url('{! URLFOR($Resource.jQueryDataTablesZip, 'images/sort_asc_disabled.png') }') no-repeat center right !important;
+    padding-right: 20px !important;
+}
+.sorting_desc_disabled {
+    background: #f2f3f3 url('{! URLFOR($Resource.jQueryDataTablesZip, 'images/sort_desc_disabled.png') }') no-repeat center right !important;
+    padding-right: 20px !important;
+}
+table.dataTable tr.odd { background-color: white; }
+table.dataTable tr.even { background-color: white; }
+table.dataTable tr.odd td.sorting_1 { background-color: white; }
+table.dataTable tr.odd td.sorting_2 { background-color: white; }
+table.dataTable tr.odd td.sorting_3 { background-color: white; }
+table.dataTable tr.even td.sorting_1 { background-color: white; }
+table.dataTable tr.even td.sorting_2 { background-color: white; }
+table.dataTable tr.even td.sorting_3 { background-color: white; }
+.dataTables_length, .dataTables_filter, .dataTables_info, .dataTables_paginate {
+    padding: 3px;
+}
+</style>
+
+
+   <apex:form >
+   
+   <apex:pageBlock id="recordBlock" >
+     <apex:pageMessages />
+     <apex:pageBlockButtons rendered="{!hasDisplayList}">
+        <apex:commandButton rendered="{!recTypeOpps}" value="Create NSS Sales Records for Selected Opportunities" action="{!saveAuditRecords}" />
+        <apex:commandButton rendered="{!recTypePending}" value="Move Selected Sales to {!$Label.NSS_Sales_View_Default_Status}" action="{!savePendingSales}" />
+        <apex:commandButton rendered="{!recTypePending}" value="Move Selected Sales to Cancelled" action="{!cancelPendingSales}" />
+        <apex:commandButton rendered="{!recTypeSales}" value="Move Selected To Bad Match" action="{!moveSelectedToBadMatch}" />
+        <apex:commandButton rendered="{!recTypeSales}" value="Save Selected Sales Record" action="{!saveAuditRecords}" />
+     </apex:pageBlockButtons>
+     
+     <!--  *************  if signing in as other than an NSR, allow to put in another name ********************** -->
+     <apex:pageBlockSection id="PromptForUserSection" rendered="{!promptForUser}" columns="1" title="Audit As">
+        <apex:pageBlockSectionItem rendered="{!adminControl.hasSupervisorOptions}">
+           <apex:outputLabel value="Supervisor"/>
+           <apex:selectList value="{!adminControl.selectedSupervisorFrom}" title="Select a Supervisor" size="1">
+              <apex:selectOptions value="{!adminControl.supervisorOptions}"/>
+              <apex:actionSupport event="onchange" action="{!supervisorSelected}" rerender="recordBlock" status="changeUserStatus"/>
+           </apex:selectList>
+        </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem rendered="{!hasNssUserOptions}">
+           <apex:outputLabel value="User To Audit As"/>
+           <apex:selectList value="{!selectedNssUser}" title="Select a User" size="1">
+              <apex:selectOptions value="{!nssUserOptions}"/>
+               <apex:actionSupport event="onchange" action="{!askForUserChanged}" rerender="recordBlock" status="changeUserStatus"/>
+           </apex:selectList>
+        </apex:pageBlockSectionItem>
+            <!-- 
+        <apex:outputPanel >
+           <b>Audit As</b><br/>
+            <apex:selectList value="{!selectedNssUser}" title="Select a User" size="1">
+               <apex:selectOptions value="{!nssUserOptions}"/>
+               <apex:actionSupport event="onchange" action="{!askForUserChanged}" rerender="recordBlock" status="changeUserStatus"/>
+            </apex:selectList>
+           <apex:inputField value="{!askForUser.NSR_Name__c}" >
+             <apex:actionSupport event="onchange" rerender="recordBlock" action="{!askForUserChanged}" status="changeUserStatus" />
+           </apex:inputField>
+        </apex:outputPanel>
+            -->
+        <apex:actionStatus startText="Changing to new user..." id="changeUserStatus"/>
+     </apex:pageBlockSection>
+     
+     <apex:pageBlockSection rendered="{!nssSalesUserSelected}" id="recordSelectionSection" title="Record Selection Criteria" columns="1" >
+        <apex:pageBlockSectionItem >
+           <apex:outputLabel value="View" />
+           <apex:selectList value="{!selectedRecType}" title="What do you want to view?" size="1" id="recordTypeField">
+              <apex:selectOptions value="{!recTypeOptions}"/>
+              <apex:actionSupport event="onchange" rerender="recordBlock" action="{!setRecType}" status="changeRecordTypeStatus" />
+           </apex:selectList>
+        </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem rendered="{!recTypeOpps}">
+           <apex:outputLabel value="Opportunity Filter"/>
+           <apex:selectList value="{!selectedOppType}" title="Select the Status to filter on" size="1" id="oppStatusFilterField">
+              <apex:selectOptions value="{!oppTypeOptions}"/>
+           </apex:selectList>
+        </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem rendered="{!recTypeOpps}">
+           <apex:outputLabel value="Filter Dates"/>
+           <apex:outputPanel >
+              <apex:outputLabel value="Start Date"/>
+              &nbsp;
+              <apex:inputField value="{!nssView.StartDate__c}" />
+              &nbsp;&nbsp;
+              <apex:outputLabel value="End Date"/>
+              &nbsp;
+              <apex:inputField value="{!nssView.EndDate__c}" />
+           </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem rendered="{!recTypeSales}">
+           <apex:outputLabel value="Filter Dates"/>
+           <apex:outputPanel >
+              &nbsp;
+              <apex:outputLabel value="Start Date"/>
+              &nbsp;
+              <apex:inputField value="{!salesDates.StartDate__c}" />
+              &nbsp;&nbsp;
+              <apex:outputLabel value="End Date"/>
+              &nbsp;
+              <apex:inputField value="{!salesDates.EndDate__c}" />
+           </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem rendered="{!recTypeSales}">
+           <apex:outputLabel value="Product Name Filter"/>
+           <apex:selectList value="{!selectedProductNames}" title="Select the Product Name to filter on" multiselect="true" size="6" id="productNameFilterField">
+              <apex:selectOptions value="{!prodNameOptions}"/>
+           </apex:selectList>
+        </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem rendered="{!recTypeSales}">
+           <apex:outputLabel value="Product Type Filter" />
+           <apex:selectList value="{!selectedProductType}" title="Select the Product Type to filter on" size="1" id="productTypeFilterField">
+              <apex:selectOptions value="{!prodTypeOptions}"/>
+           </apex:selectList>
+        </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem rendered="{!recTypeOpps}">
+           <apex:outputLabel value="Opportunity Sales Rep Filter" />
+           <apex:inputField value="{!salesRepFilter.NSR_Name__c}"/>
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockSectionItem rendered="{!recTypeOpps}">
+           <apex:outputLabel value="Opportunity/Prospect-Client Name Filter" />
+           <apex:inputText value="{!nameFilter}"/>
+        </apex:pageBlockSectionItem>
+      </apex:pageBlockSection>
+      
+      <apex:pageBlockSection id="findRecordsBtnSection" rendered="{!nssSalesUserSelected}" columns="1">
+        <apex:outputPanel >
+        <!-- 
+           <apex:commandButton value="Apply Filters" action="{!applyFilters}" rerender="recordBlock" status="applyFilterStatus"/>
+           <apex:actionStatus startText="Applying Filters..." id="applyFilterStatus"/>
+ -->
+           <apex:commandButton value="Find Records" action="{!findRecords}" rerender="recordBlock" status="findRecordsStatus"/>
+           <apex:actionStatus startText="Finding Records..." id="findRecordsStatus"/>        
+           <apex:actionStatus startText="Querying records..." id="changeRecordTypeStatus"/>
+
+        
+        </apex:outputPanel>
+     </apex:pageBlockSection>
+     
+     <!--  ************   Opportunity Section  ***************** -->
+     <apex:pageBlockSection rendered="{!searchedForRecords}" id="OpportunitySection" title="Opportunities for {!nssSalesUser.Name}" columns="1" collapsible="false">
+     
+     <!-- 
+        <apex:outputPanel >
+           <b>Filter Status</b>
+           &nbsp;
+            <apex:selectList rendered="{!hasStatusOptions}" value="{!selectedStatusOption}" title="Select the Status to filter on" size="1" id="statusFilterField">
+               <apex:selectOptions value="{!statusOptions}"/>
+               <apex:actionSupport event="onchange" rerender="recordBlock" status="applyStatusFilterStatus" />
+            </apex:selectList>
+            <apex:outputText rendered="{!NOT(hasStatusOptions)}" value="{!selectedStatusOption}" />
+        </apex:outputPanel>
+ -->
+        
+
+        <apex:outputPanel rendered="{!NOT(hasDisplayList)}" >
+           <h1><b><font color="red">No Data was found!</font></b></h1>
+        </apex:outputPanel>
+
+        <apex:outputPanel rendered="{!AND(hasDisplayList,recTypeSales)}">
+           <apex:outputText style="color:RED; font-weight: bold;" value="*New*" />
+           &nbsp;
+           Indicates that the NSS Sale record does not exist yet in the database.
+        </apex:outputPanel>
+
+        <apex:pageBlockTable rendered="{!hasDisplayList}" id="OpportunityTable" value="{!displayList}" var="rec" styleClass="dataTable" >
+        <!-- 
+            <apex:facet name="header">
+               <apex:panelGrid columns="1" width="100%" border="0" cellPadding="0" cellSpacing="0" rules="none">
+                  <apex:outputPanel >
+                     <CENTER>
+                     <apex:commandButton disabled="{!NOT(hasPrevious)}" value="<" action="{!previous}" rerender="recordBlock" title="Previous Page"/>
+                     &nbsp;
+                     <apex:commandButton disabled="{!NOT(hasNext)}" value=">" action="{!next}" rerender="recordBlock" title="Next Page"/>      
+                     <apex:outputText rendered="{!hasNext}" value="More Opportunities Exist" />
+                     </CENTER>
+                  </apex:outputPanel>
+               </apex:panelGrid>   
+            </apex:facet>
+            <apex:facet name="footer">
+               <apex:panelGrid columns="1" width="100%" border="0" cellPadding="0" cellSpacing="0" rules="none">
+                  <apex:outputPanel >
+                     <CENTER>
+                     <apex:commandButton disabled="{!NOT(hasPrevious)}" value="<" action="{!previous}" rerender="recordBlock" title="Previous Page"/>
+                     &nbsp;
+                     <apex:commandButton disabled="{!NOT(hasNext)}" value=">" action="{!next}" rerender="recordBlock" title="Next Page"/>      
+                     <apex:outputText rendered="{!hasNext}" value="More Opportunities Exist" />
+                     </CENTER>
+                  </apex:outputPanel>
+               </apex:panelGrid>   
+            </apex:facet>
+         -->
+            <apex:facet name="header">
+               <apex:panelGrid columns="3" width="100%" border="0" cellPadding="0" cellSpacing="0" rules="none">
+                  <apex:outputText >
+                     {!(selectedController.pageNumber * selectedController.pageSize)+1-selectedController.pageSize}-{!IF((selectedController.pageNumber * selectedController.pageSize)>selectedController.resultSize, selectedController.resultSize,(selectedController.pageNumber * selectedController.pageSize))} of {!selectedController.resultSize}
+                  </apex:outputText>
+                  <apex:outputPanel >
+                     <CENTER>
+                     <apex:commandButton disabled="{!NOT(selectedController.hasPrevious)}" value="|<" action="{!firstPage}" rerender="recordBlock" title="First Page"/>  
+                     <apex:commandButton disabled="{!NOT(selectedController.hasPrevious)}" value="<" action="{!previous}" rerender="recordBlock" title="Previous Page"/>
+                     &nbsp;
+                     <apex:commandButton disabled="{!NOT(selectedController.hasNext)}" value=">" action="{!next}" rerender="recordBlock" title="Next Page"/>      
+                     <apex:commandButton disabled="{!NOT(selectedController.hasNext)}" value=">|" action="{!lastPage}" rerender="recordBlock" title="Last Page"/>
+                     </CENTER>
+                  </apex:outputPanel>
+                  <apex:outputText style="text-align:right;">
+                    <CENTER>
+                     Page {!selectedController.pageNumber} of {!numOfPages}
+                     </CENTER>
+                  </apex:outputText>      
+               </apex:panelGrid>   
+            </apex:facet>
+            <apex:facet name="footer">
+               <apex:panelGrid columns="3" width="100%" border="0" cellPadding="0" cellSpacing="0" rules="none">
+                  <apex:outputText >
+                     {!(selectedController.pageNumber * selectedController.pageSize)+1-selectedController.pageSize}-{!IF((selectedController.pageNumber * selectedController.pageSize)>selectedController.resultSize, selectedController.resultSize,(selectedController.pageNumber * selectedController.pageSize))} of {!selectedController.resultSize}
+                  </apex:outputText>
+                  <apex:outputPanel >
+                     <CENTER>
+                     <apex:commandButton disabled="{!NOT(selectedController.hasPrevious)}" value="|<" action="{!firstPage}" rerender="recordBlock" title="First Page"/>  
+                     <apex:commandButton disabled="{!NOT(selectedController.hasPrevious)}" value="<" action="{!previous}" rerender="recordBlock" title="Previous Page"/>
+                     &nbsp;
+                     <apex:commandButton disabled="{!NOT(selectedController.hasNext)}" value=">" action="{!next}" rerender="recordBlock" title="Next Page"/>      
+                     <apex:commandButton disabled="{!NOT(selectedController.hasNext)}" value=">|" action="{!lastPage}" rerender="recordBlock" title="Last Page"/>
+                     </CENTER>
+                  </apex:outputPanel>
+                  <apex:outputText style="text-align:right;">
+                    <CENTER>
+                     Page {!selectedController.pageNumber} of {!numOfPages}
+                     </CENTER>
+                  </apex:outputText>      
+               </apex:panelGrid>   
+            </apex:facet>
+
+
+            <apex:column >
+               <apex:facet name="header">Selected
+                  <apex:inputCheckbox value="{!selectAllOption}" id="ownerSelectAll" title="Select All" onclick="selectAll('selectOppCheckbox',this)">
+                  </apex:inputCheckbox>
+               </apex:facet>
+
+               <apex:inputCheckbox disabled="{!NOT(rec.nssAuditIsEditable)}" id="selectOppCheckbox" value="{!rec.selected}" >
+               </apex:inputCheckbox>
+               <apex:outputText rendered="{!AND(recTypeSales,rec.auditIsNew)}" style="color:RED; font-weight: bold;" value="*New*" />
+            </apex:column>
+
+           <apex:column >
+                <apex:facet name="header">
+                   <apex:outputText styleClass="header" value="Product"/>
+                </apex:facet>
+                <apex:inputField rendered="{!rec.nssAuditIsEditable}" style="white-space:nowrap;" value="{!rec.nssAudit.Product__c}"/>
+                <apex:outputField rendered="{!NOT(rec.nssAuditIsEditable)}" style="white-space:nowrap;" value="{!rec.nssAudit.Product__c}"/>
+           </apex:column>
+
+           <apex:column rendered="{!recTypeSales}">
+                <apex:facet name="header">
+                   <apex:outputText styleClass="header" value="Sales Product"/>
+                </apex:facet>
+                <apex:outputField style="white-space:nowrap;" value="{!rec.oppLink.NSSSalesProduct__c}"/>
+           </apex:column>
+
+           <apex:column >
+                <apex:facet name="header">
+                   <!-- <apex:outputText styleClass="header" value="{!$ObjectType.NSSAudit__c.Fields.Run_Submit_Date__c.Label}"/>  -->
+                   <apex:outputText styleClass="header" value="Product Date" />
+                </apex:facet>
+                <apex:inputField rendered="{!rec.nssAuditIsEditable}" style="white-space:nowrap;" value="{!rec.nssAudit.Run_Submit_Date__c}"/>
+                <apex:outputField rendered="{!NOT(rec.nssAuditIsEditable)}" style="white-space:nowrap;" value="{!rec.nssAudit.Run_Submit_Date__c}"/>
+           </apex:column>
+
+           <apex:column rendered="{!recTypeSales}">
+                <apex:facet name="header">
+                   <apex:outputText styleClass="header" value="{!$ObjectType.NSSSalesProduct__c.Fields.FirstRunDate__c.Label}"/>
+                </apex:facet>
+                <apex:outputField style="white-space:nowrap;" value="{!rec.oppLink.NSSSalesProduct__r.FirstRunDate__c}"/>
+           </apex:column>
+
+           <apex:column rendered="{!recTypeSales}">
+                <apex:facet name="header">
+                   <apex:outputText styleClass="header" value="{!$ObjectType.NSSAudit__c.Fields.Status__c.Label}"/>
+                </apex:facet>
+                <apex:inputField rendered="{!rec.nssAuditIsEditable}" style="white-space:nowrap;" value="{!rec.nssAudit.Status__c}"/>
+                <apex:outputField rendered="{!NOT(rec.nssAuditIsEditable)}" style="white-space:nowrap;" value="{!rec.nssAudit.Status__c}"/>
+           </apex:column>
+
+           <apex:column rendered="{!recTypeSales}">
+                <apex:facet name="header">
+                   <apex:outputText styleClass="header" value="Sales Client"/>
+                </apex:facet>
+                <apex:outputField style="white-space:nowrap;" value="{!rec.oppLink.NSSSalesClient__c}"/>
+           </apex:column>
+
+           <apex:column >
+                <apex:facet name="header">
+                   <apex:outputText styleClass="header" value="Opportunity Name"/>
+                </apex:facet>
+                <apex:outputField style="white-space:nowrap;" value="{!rec.nssView.Opportunity__c}"/>
+           </apex:column>
+
+           <apex:column >
+                <apex:facet name="header">Prospect-Client</apex:facet>
+                <apex:outputField style="white-space:nowrap;" value="{!rec.oppty.AccountId}"/>
+           </apex:column>
+
+           <apex:column rendered="{!NOT(recTypeSales)}">
+                <apex:facet name="header">Client Number</apex:facet>
+                <apex:outputField style="white-space:nowrap;" value="{!rec.oppty.Account.AccountNumber}"/>
+           </apex:column>
+
+           <apex:column rendered="{!NOT(recTypeSales)}" >
+                <apex:facet name="header">Status</apex:facet>
+                <apex:outputField style="white-space:nowrap;" value="{!rec.oppty.StageName}"/>
+           </apex:column>
+
+           <apex:column rendered="{!NOT(recTypeSales)}" >
+                <apex:facet name="header">
+                   <apex:outputText styleClass="header" value="Run-Effective Date" />
+                </apex:facet>
+                <!-- 
+                <apex:outputField style="white-space:nowrap;" value="{!rec.oppty.CloseDate}"/>
+                 -->
+                <apex:outputText value="{!rec.formattedDate}" />
+           </apex:column>
+
+           <apex:column rendered="{!NOT(recTypeSales)}">
+                <apex:facet name="header">Created Date</apex:facet>
+                <apex:outputField style="white-space:nowrap;" value="{!rec.oppty.CreatedDate}"/>
+           </apex:column>
+
+           <apex:column rendered="{!recTypeSales}">
+                <apex:facet name="header">Commission Start</apex:facet>
+                <apex:outputField style="white-space:nowrap;" value="{!rec.oppLink.Prospect_Ownership__r.CommissionStart__c}"/>
+           </apex:column>
+
+           <apex:column >
+                <apex:facet name="header">Sales Rep</apex:facet>
+                <apex:outputField rendered="{!NOT(recTypeSales)}" style="white-space:nowrap;" value="{!rec.oppty.OwnerId}"/>
+                <apex:outputField rendered="{!AND(recTypeSales,rec.hasProductSalesRep)}" style="white-space:nowrap;" value="{!rec.oppLink.NSSSalesProduct__r.SalesRep__c}"/>
+                <apex:outputField rendered="{!AND(recTypeSales,NOT(rec.hasProductSalesRep))}" style="white-space:nowrap;" value="{!rec.oppLink.NSSSalesProduct__r.SalesRepName__c}"/>
+           </apex:column>
+
+           <apex:column rendered="{!recTypeSales}">
+                <apex:facet name="header">Product Type</apex:facet>
+                <apex:outputField style="white-space:nowrap;" value="{!rec.oppLink.NSSSalesProduct__r.ProductType__c}"/>
+           </apex:column>
+
+           <apex:column rendered="{!recTypeSales}">
+                <apex:facet name="header">Prospect Ownership</apex:facet>
+                <apex:outputField style="white-space:nowrap;" value="{!rec.oppLink.Prospect_Ownership__c}"/>
+           </apex:column>
+
+           <apex:column rendered="{!recTypeSales}">
+                <apex:facet name="header">Other Sales</apex:facet>
+                <apex:outputText style="white-space:nowrap;" value="{!rec.otherSales}"/>
+           </apex:column>
+
+           <apex:column rendered="{!AND(recTypeSales,$Label.NSSViewShowOtherLinks='Y')}">
+                <apex:facet name="header">Other Links</apex:facet>
+                <apex:outputField rendered="{!rec.linkHasOtherInfo}" style="white-space:nowrap;" value="{!rec.oppLink.OtherLinkInfo__c}"/>
+           </apex:column>
+
+           <apex:column rendered="{!NOT(recTypeSales)}">
+                <apex:facet name="header">District</apex:facet>
+                <apex:outputField style="white-space:nowrap;" value="{!rec.oppty.Owner.District__c}"/>
+           </apex:column>
+        </apex:pageBlockTable>
+        
+        
+     </apex:pageBlockSection>
+
+   <script type="text/javascript" language="javascript" src="{!URLFOR($Resource.jQueryDataTablesZip, 'js/jquery.js')}"></script>
+<script type="text/javascript" language="javascript" src="{!URLFOR($Resource.jQueryDataTablesZip, 'js/jquery.dataTables.js')}"></script>
+<script type="text/javascript" language="javascript">
+var j$ = jQuery.noConflict();
+j$('table.dataTable').dataTable({
+ "paging":   false,
+ "ordering": true,
+ "info":     false,
+ "filter":   false,
+ "order" : [[{!sortColumn}, "asc"]]
+ ,"columnDefs": [
+   { "orderable": false, "targets" : [0,1,2]}
+]
+});
+</script>
+
+   </apex:pageBlock>
+   
+   
+   </apex:form>
+   
+
+
+</apex:page>

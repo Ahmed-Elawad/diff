@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MMS_Ops_Lockdown_New_Load_Audit_MMS003</fullName>
+    <active>true</active>
+    <description>Prevents the New Load Audit MMS003 field from being updated multiple times.</description>
+    <errorConditionFormula>AND(
+( ISCHANGED(New_Load_Audit_MMS003__c) ),  (PRIORVALUE(New_Load_Audit_MMS003__c)) &gt; DATEVALUE(&quot;2000-01-01&quot;)
+)</errorConditionFormula>
+    <errorDisplayField>New_Load_Audit_MMS003__c</errorDisplayField>
+    <errorMessage>The New Load Audit MMS003 field can only be modified one time.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Ascentis_Email_Case_Queue_Case</fullName>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>CASES.LAST_UPDATE</columns>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>NAME</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <filterScope>Queue</filterScope>
+    <filters>
+        <field>CASES.CREATED_DATE_DATE_ONLY</field>
+        <operation>greaterThan</operation>
+        <value>4/2/2017 12:00 AM</value>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Cancelled,Closed,Complete,Completed,Solved</value>
+    </filters>
+    <label>Ascentis Email Case Queue</label>
+    <queue>Ascentis_Email_Case_Queue</queue>
+    <sharedTo>
+        <group>OS_Analysts</group>
+        <group>OS_Trainers</group>
+        <roleAndSubordinates>HROnlineManager</roleAndSubordinates>
+        <roleAndSubordinates>MyStaffingPro_Account_Manager</roleAndSubordinates>
+        <roleAndSubordinates>MyStaffingPro_Client_Service_Manager</roleAndSubordinates>
+    </sharedTo>
+</ListView>

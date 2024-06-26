@@ -1,0 +1,26 @@
+<aura:component controller="ReferralContacts" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+	<!-- attributes -->
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    <!-- handlers-->
+    <aura:attribute name="hasPermission" type="Boolean" default="false"/>
+
+    <aura:attribute name="CurrentUser" type="Object"/>
+<force:recordData recordId="{!$SObjectType.CurrentUser.Id}"
+                  fields="Profile.Name"
+                  targetFields="{!v.CurrentUser}"/>
+                 
+
+
+   
+<aura:if isTrue="{!and(or(v.CurrentUser.Profile.Name == 'System Administrator' || v.CurrentUser.Profile.Name == 'Sales Enablement' || $Label.c.Accountant_Program_Require_Permission == 'No' || $Label.c.Accountant_Program_Require_Permission == 'NO' || v.hasPermission == true))}">
+    <lightning:card title="Active Accountant Program Contacts">
+    	<lightning:datatable
+                keyField="id"
+                data="{!v.data}"
+                columns="{!v.columns}"
+                hideCheckboxColumn="true"/>
+    </lightning:card>
+</aura:if>
+</aura:component>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Description_Required_on_Service_Now_Case</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(OR(ISNEW(), PRIORVALUE(Send_Case_to_Service_Now__c ) = false)
+, Send_Case_to_Service_Now__c = TRUE, ISBLANK(Description))</errorConditionFormula>
+    <errorDisplayField>Description</errorDisplayField>
+    <errorMessage>In order to send a case to Service Now you must complete the Description field.</errorMessage>
+</ValidationRule>

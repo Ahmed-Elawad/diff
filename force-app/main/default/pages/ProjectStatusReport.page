@@ -1,0 +1,140 @@
+<apex:page id="StatusReport" standardController="project_cloud__Project__c" extensions="ProjectStatusReportController" title="Project Status Report - {!project_cloud__Project__c.Name}"
+    renderAs="pdf" applyHtmlTag="false" applyBodyTag="false" showHeader="false" docType="HTML-5.0">
+
+    <head>
+        <apex:styleSheet value="{!URLFOR($Resource.statusReport, 'style.css')}"/>
+    </head>
+    <body>
+        <table class="page-header">
+            <tr>
+                <td style="width:30%">
+                    <apex:image styleClass="logo" url="{!URLFOR($Resource.statusReport, 'Pay_Logo.png')}" />
+                </td>
+                <td style="text-align:right; width:70%; vertical-align:bottom;">
+                    <h1 class="logo" style="text-align:right;">{!project_cloud__Project__c.Name}</h1>
+                </td>
+            </tr>
+        </table>
+        <apex:pageBlock >
+            <apex:pageBlockSection columns="1">
+                <apex:outputPanel >
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="boldfont" scope="col" style="width: 10%;">
+                                    <div title="Project Manager" style="color:#ffffff; text-align: center">Project Manager</div>
+                                </th>
+                                <th class="boldfont" scope="col" style="width: 10%;">
+                                    <div title="Duration" style="color:#ffffff; text-align: center">Duration</div>
+                                </th>
+                                <th class="boldfont" scope="col" style="width: 10%;">
+                                    <div title="Start Date" style="color:#ffffff; text-align: center">Start Date</div>
+                                </th>
+                                <th class="boldfont" scope="col" style="width: 10%;">
+                                    <div title="Project Type" style="color:#ffffff; text-align: center">End Date</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td scope="row" style="padding: 3px; text-align: center">
+                                    <apex:outputField value="{!project_cloud__Project__c.Owner.Name }" />
+                                </td>
+                                <td scope="row" style="padding: 3px; text-align: center">
+                                    <apex:outputField value="{!project_cloud__Project__c.project_cloud__Duration__c}" />
+                                </td>
+                                <td scope="row" style="padding: 3px; text-align: center">
+                                    <apex:outputText value="{0,date, MM/dd/yyyy}">
+                                        <apex:param value="{!project_cloud__Project__c.project_cloud__Start__c}"/>
+                                    </apex:outputText>
+                                </td>
+                                <td scope="row" style="padding: 3px; text-align: center">
+                                    <apex:outputText value="{0,date, MM/dd/yyyy}">
+                                        <apex:param value="{!project_cloud__Project__c.project_cloud__End__c}"/>
+                                    </apex:outputText>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+            <h1 class="headerbold">
+                Executive Summary
+            </h1>
+            <apex:pageBlockSection columns="1">
+                <apex:outputPanel >
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="boldfont" scope="col" style="width: 10%;">
+                                    <div title="Project Status" style=" color:#ffffff; text-align: center">Project Status</div>
+                                </th>
+                                <th class="boldfont" scope="col" style="width: 10%;">
+                                    <div title="Health" style="color:#ffffff; text-align: center">Health</div>
+                                </th>
+                                <th class="boldfont" scope="col" style="width: 10%;">
+                                    <div title="Completion %" style="color:#ffffff; text-align: center">Completion %</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td scope="row" style="padding: 3px; text-align: center">
+                                    <apex:outputField value="{!project_cloud__Project__c.project_cloud__Status__c}" />
+                                </td>
+                                <td scope="row" style="padding: 3px; text-align: center">
+                                    <apex:outputField value="{!project_cloud__Project__c.project_cloud__Health_Image__c}" />
+                                </td>
+                                <td scope="row" style="padding: 3px; text-align: center">
+                                    <apex:outputField value="{!project_cloud__Project__c.project_cloud__Completed_Percent__c}"
+                                    />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td scope="row" style="padding: 3px; text-align: center" colspan="3">
+                                    <apex:outputText escape="false" value="{!project_cloud__Project__c.Executive_Summary__c}"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+            <h1 class="headerbold">
+                Product Scorecard
+            </h1>
+            <apex:pageBlockSection columns="1">
+                <apex:pageBlockTable style="-fs-table-paginate: paginate;" value="{!phases}" var="Phase" columnsWidth="200px, 100px, 100px, 200px, 200px">
+                    <apex:column headerClass="boldfont" styleClass="spacing" value="{!Phase.Name}" headerValue="Name" />
+                    <apex:column headerClass="boldfont" styleClass="spacing" value="{!Phase.project_cloud__Completed_Percent__c}" headerValue="Completion %"/>
+                    <apex:column headerClass="boldfont" styleClass="spacing" value="{!Phase.Project_Phase_Health__c}" headerValue="Health" 
+                    style="padding: 3px; color: #ffffff; text-align: center; background-color:
+                                                       {!IF(Phase.Project_Phase_Health__c == 'Green','#008000', 
+                                                       IF(Phase.Project_Phase_Health__c == 'Yellow','#f6a800', 
+                                                       IF(Phase.Project_Phase_Health__c == 'Red', '#ff0000','#d3d3d3')))} !important"/>
+                    <apex:column headerClass="boldfont" styleClass="spacing" value="{!Phase.Health_Reason__c}" headerValue="Health Reason" />
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+            <h1 class="headerbold">
+                Tickets 
+            </h1>
+            <apex:pageBlockSection columns="1">
+                <apex:pageBlockTable style="-fs-table-paginate: paginate;" value="{!tickets}" var="Ticket" columnsWidth="100px, 100px, 100px, 100px, 100px, 100px, 200px">
+                    <apex:column headerClass="boldfont" styleClass="spacing" value="{!Ticket.project_cloud__Ticket_Name__c}" headerValue="Name"/>
+                    <apex:column headerClass="boldfont" styleClass="spacing" value="{!Ticket.INC__c}" headerValue="INC#"/>
+                    <apex:column headerClass="boldfont" styleClass="spacing" value="{!Ticket.APR__c}" headerValue="APR#"/>
+                    <apex:column headerClass="boldfont" styleClass="spacing" value="{!Ticket.Owner.Name}" headerValue="Assigned To"/>
+                    <apex:column headerClass="boldfont" styleClass="spacing" value="{!Ticket.project_cloud__Status__c}" headerValue="Status"/>
+                    <apex:column headerClass="boldfont" styleClass="spacing" headerValue="Created Date">
+                        <apex:outputText value="{0,date,MM/dd/yyyy}">
+                            <apex:param value="{!Ticket.CreatedDate}" />
+                        </apex:outputText>
+                    </apex:column>
+                    <apex:column headerClass="boldfont" styleClass="spacing" headerValue="Description">
+                        <apex:outputText escape="false" value="{!Ticket.project_cloud__Description__c }"/>
+                    </apex:column>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </body>
+</apex:page>

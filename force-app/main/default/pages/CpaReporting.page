@@ -1,0 +1,628 @@
+<apex:page controller="MyAccountStatusCtrl" lightningStylesheets="false" showheader="false" standardStylesheets="false"> 
+    <head>
+        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+        <style>
+            @font-face{
+                font-family: 'GraphikRegular';
+                src: url("{!URLFOR($Resource.PaychexFont, '/Font_Graphik-Publico-Web/Graphik-Regular-Web.woff')}") format('woff'); ;
+            }
+            
+            .tooltip {
+            position: relative;
+            display: inline-block;
+            /* border-bottom: 1px dotted black; */
+        }
+
+        /* .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            left: 115px;
+
+            *** Position the tooltip ****
+            position: absolute;
+            z-index: 1;
+        } */
+
+        /* .tooltip:hover .tooltiptext {
+            visibility: visible;
+        } */
+            .dataTables_filter{
+                margin-right: 11%;
+                font-family: 'GraphikRegular';
+                font-weight: 500;
+            }
+            .dataTables_length{
+                margin-left: 6%;
+                font-family: 'GraphikRegular';
+                font-weight: 500;
+            }
+            .dataTables_info{
+                margin-left: 5%;
+                font-family: 'GraphikRegular';  
+                font-weight: 500;
+            }
+            .dataTables_paginate{
+                margin-right: 3.5%;
+                font-family: 'GraphikRegular';
+                font-weight: 500;
+            }
+            #customers {
+            font-family: Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            width: 90%;
+            align: center;
+            }
+            
+            #customers td, #customers th {
+            border: 1px solid white;
+            padding: 8px;
+            }
+            body{
+                font-family: 'GraphikRegular';
+            }
+            #customers tr:nth-child(even){background-color: #f2f2f2;}
+            
+            #customers tr:hover {background-color: #ddd;}
+            @font-face{
+                font-family: 'GraphikRegular';
+                src: url("{!URLFOR($Resource.PaychexFont, '/Font_Graphik-Publico-Web/Graphik-Regular-Web.woff')}") format('woff'); ;
+            }
+            @font-face{
+                font-family: 'PublicoBanner';
+                src: url("{!URLFOR($Resource.PaychexFont, '/Font_Graphik-Publico-Web/PublicoBanner-Bold-Web.woff')}") format('woff'); ;
+            }
+            #customers th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: white;
+            color: black;
+            }
+            #customers1 th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: white;
+            color: black;
+            }
+            
+            .customPopup{
+            background-color: white;
+            border-width: 2px;
+            background: rgba(255, 255, 255, 1.0);
+            opacity: 2;
+            border-style: solid black;
+            z-index: 9999;
+            left: 50%;
+            padding:10px;
+            position: absolute;        
+            margin-left: -15%;
+            top:250px;
+            width: 25%;
+            height: auto;
+            border-radius: 4px;
+            }
+            .popupBackground{
+            background-color:black;
+            opacity: 0.85;
+            position: absolute;
+            width: 100%;
+            height: 2000px;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+            }
+            .cmdButtonBt{
+            background-color: #0059a2;
+            border: 0;
+            border-radius: 30px;
+            box-shadow: rgb(0 0 0 / 30%) 0 5px 15px;
+            box-sizing: border-box;
+            color: #fff;
+            cursor: pointer;
+            font-family: Arial,sans-serif;
+            font-size: .9em;
+            margin: 5px;
+            padding: 10px 15px;
+            text-align: center;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            /* margin-left: 46.5% */
+            }
+            .cancelButtonBt{
+            background-color: #0059a2 ;
+            border: 0;
+            border-radius: 30px;
+            box-shadow: rgb(0 0 0 / 30%) 0 5px 15px;
+            box-sizing: border-box;
+            color: #fff;
+            cursor: pointer;
+            font-family: Arial,sans-serif;
+            font-size: .9em;
+            margin: 5px;
+            padding: 10px 15px;
+            text-align: center;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            }
+           table#customers tr:nth-child(even){
+                background-color:#f2f4f7;
+            }
+            table#customers tr:nth-child(odd){
+                background-color:#FFFFFF;
+            }
+            table#customers1 tr:nth-child(even){
+                background-color:#f2f4f7;
+            }
+            table#customers1 tr:nth-child(odd){
+                background-color:#FFFFFF;
+            }
+
+            body{
+                overflow: auto;
+                height: 2000px;
+            }
+        </style>
+    </head>
+   <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
+    <script type="text/javascript">
+        function openDashboard(clicked_id) {
+        if(clicked_id.includes('logout')){
+            console.log('Logout clicked');
+            var logoutLink = "{!$Label.CPA_logout_link}";
+            //window.open("https://paychex--fullsandbx.sandbox.my.site.com//secur/logout.jsp","_self");
+            window.open(logoutLink,"_self");
+        }
+    }
+    </script>
+    
+    <apex:form id="form1">
+        <div class="TestPopup">
+            <apex:outputpanel id="TestPopup" rendered="{!acceptTermAndCondition == false}">
+                <apex:outputpanel layout="block" rendered="{!isShowModelPopup == true}" styleclass="popupBackground">
+                    <div style="background-color: white; display:block;">
+                        <apex:outputpanel layout="block" rendered="{!isShowModelPopup}" styleclass="customPopup">
+                            <!-- <apex:inputCheckbox value="{!acceptTermAndCondition}">
+<apex:actionSupport event="onchange" action="{!hideModelPopup}"/>
+</apex:inputCheckbox> -->
+                            <div class="tandCError" >
+                                <apex:pageMessages />  
+                            </div>
+                            <!--<label><b>Accept terms and conditions.</b></label>
+                            <br/>
+                            <apex:commandButton styleClass="slds-button--neutral" value="I, Accept" action="{!hideModelPopup}" ></apex:commandButton>
+                            -->
+                            <div class='tncContent' style="margin-top: 8%;">
+                                <apex:inputCheckbox id="ackCheckbox" value="{!acceptTermAndCondition}">
+                                </apex:inputCheckbox>
+                                <label><b>I Accept the&nbsp;
+                                    <apex:outputLink value="{!$Label.CPA_TermsAndConditions_Doc}" id="theLink">Terms and Conditions</apex:outputLink>
+                                    </b>
+                                </label>
+                            </div>
+                            <div class="cmdButton" style="margin-top: 10%;">
+                                <apex:commandButton styleClass="cancelButtonBt" id="logout" value="Cancel" oncomplete="openDashboard(this.id);"></apex:commandButton>
+                                <apex:commandButton styleClass="cmdButtonBt" id="letsStart" value="Let's Get Started" action="{!hideModelPopup}"></apex:commandButton>
+                            </div>
+                        </apex:outputpanel>
+                    </div>
+                </apex:outputpanel>
+            </apex:outputpanel>
+        </div>
+        <body style="background: #F2F4F7; font-family: 'GraphikRegular';">
+            
+            
+            <br/><br/>
+            <table width="78%" align="center">
+                <tr>
+                    <td style="color:black; width:850px; padding-right: 20px;">
+                        <font Style="font-size:40px" face="PublicoBanner" color="black"><b>{!$Label.CPAReporting_Main}</b></font><br/>
+                        <div style="padding-top:5px;"> 
+                            <apex:outputLabel escape="false" value="{!$Label.CPAReporting_Subtitle}"/>
+                        </div>
+                        
+                    </td>
+                   <!--Test tier {!wrapperDataObj.mutualClientNextTier !=null}: {!wrapperDataObj.mutualClientNextTier}-->
+                    <apex:outputPanel rendered="{!wrapperDataObj.mutualClientTier !=null}">
+                        <td style="background:white; padding-left:20px;border-radius: 10px; width: 750px; height:180px;">
+                            <img src="{!URLFOR($Resource.MyAcctStatus_Core2)}" style="width: 126px;height: 70px; padding-top:20px; display: {!wrapperDataObj.coreDisplay};" align="left"/> 
+                            <img src="{!URLFOR($Resource.MyAcctStatus_Signature2)}" style="width: 126px;height: 70px; padding-top:20px; display: {!wrapperDataObj.signatureDisplay};" align="left"/>
+                            <img src="{!URLFOR($Resource.MyAcctStatus_Elite2)}" style="width: 126px;height: 70px; padding-top:20px; display: {!wrapperDataObj.eliteDisplay};" align="left"/> <div style="padding-left:165px;">
+                                <font size="5" face="GraphikRegular" color="black"><b>You are currently in the {!wrapperDataObj.mutualClientTier} Tier</b></font><br/>
+                                <apex:outputPanel rendered="{!wrapperDataObj.mutualClientTier !='Elite'}">
+                                    <!-- <font size="2" color="black"><b>&nbsp;Unlock the Next Tier</b></font><br/> -->
+                                    <div style="padding-top:10px;">
+                                        <!-- <span style="height: 65px; width: 65px; background-color: #0059a2; border-radius: 50%; display: inline-block; color:white; float: left;">
+                                            <div  style="Text-align:center; font-size:35px; padding-top:10px;">
+                                                <b style="tefont-size: 36px">{!wrapperDataObj.mutualClientNextTier}</b>
+                                            </div>
+                                        </span> -->
+                                        <apex:outputPanel rendered="{!wrapperDataObj.mutualClientNextTier > 1}">
+                                            <div style="font-size: 14px; padding-top:8px;  float:left;">
+
+                                                With more shared clients you will unlock<br/> additional tiers and benefits.
+                                                {!wrapperDataObj.mutualClientNextTier} more will <br/>unlock  the benefits or our 
+                                               <!-- &nbsp;&nbsp;<a href="#servicetable">{!unlockTier} Tier!</a> -->
+                                               <apex:commandLink action="{!$Site.BaseUrl}/s/myaccountstatus"  style="font-size:14px;">{!unlockTier} Tier</apex:commandLink>.<br/>
+                                               To refer a client now, &nbsp;
+                                               <apex:commandLink action="{!$Site.BaseUrl}/s/referaclient"  style="font-size:14px;">click here!</apex:commandLink> 
+
+                                                <!-- &nbsp;&nbsp;<a href="#servicetable">{!unlockTier} Tier!</a> -->
+                                            </div>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!wrapperDataObj.mutualClientNextTier = 1}">
+                                            <div style="font-size: 14px; padding-top:8px; float:left;">
+                                                <!-- &nbsp;&nbsp;You are currently in the {!wrapperDataObj.mutualClientTier} Tier<br/> -->
+                                                With more shared clients you will unlock<br/> additional tiers and benefits.
+                                                {!wrapperDataObj.mutualClientNextTier} more will <br/>unlock  the benefits or our 
+                                                <!-- &nbsp;&nbsp;<a href="#servicetable">{!unlockTier} Tier!</a> -->
+                                                <apex:commandLink action="{!$Site.BaseUrl}/s/myaccountstatus"  style="font-size:14px;">{!unlockTier} Tier</apex:commandLink>.<br/>
+                                                To refer a client now, &nbsp;
+                                                <apex:commandLink action="{!$Site.BaseUrl}/s/referaclient"  style="font-size:14px;">click here!</apex:commandLink> 
+
+                                            </div>
+                                        </apex:outputPanel>
+                                    </div>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!wrapperDataObj.mutualClientTier =='Elite'}">
+                                    <div style="font-size: 15px; padding-top:8px;">
+                                        Thank you for working with Paychex.  For any questions on your Elite Benefits please reach <br/> out to your Sales Representative. 
+
+                                    </div>
+                                </apex:outputPanel>
+                            </div>
+                        </td>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!wrapperDataObj.mutualClientTier == null}">
+                        <td style="background:white; padding-left:0px;border-radius: 10px; width: 500px; height:180px;">
+                            
+                            <div style="padding-left:70px;">
+                                <font size="5" face="PublicoBanner" color="black"><b> Benefits Tier</b></font><br/>
+                                <font size="2" color="black"><b>&nbsp;Unlock the Next Tier</b></font><br/>
+                                <div style="padding-top:10px;">
+                                    <!-- <span style="height: 65px; width: 65px; background-color: #0059a2; border-radius: 50%; display: inline-block; color:white; float: left;">
+                                        <div  style="padding-left:25px; font-size:40px; padding-top:10px;">
+                                            <b>1</b>
+                                        </div>
+                                    </span> -->
+                                    <div style="font-size: 15px; padding-top:8px;">
+                                        With more shared clients you will unlock<br/> additional tiers and benefits.
+                                        {!wrapperDataObj.mutualClientNextTier} more will <br/>unlock  the benefits or our 
+                                       <!-- &nbsp;&nbsp;<a href="#servicetable">{!unlockTier} Tier!</a> -->
+                                       <apex:commandLink action="{!$Site.BaseUrl}/s/myaccountstatus"  style="font-size:14px;">Core Tier</apex:commandLink>.<br/>
+                                       To refer a client now, &nbsp;
+                                       <apex:commandLink action="{!$Site.BaseUrl}/s/referaclient"  style="font-size:14px;">click here!</apex:commandLink> 
+
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </td>
+                    </apex:outputPanel>
+                </tr>
+            </table>
+            <br/><br/>
+            
+            <apex:outputPanel rendered="{!NOT(isShowModelPopup)}">
+                
+                <table width="78%" align="center" style="background: white; border-radius: 10px;">
+                    <tr>
+                        <td align="center" style="color: black;">
+                            <br/>
+                            <font size="6" face="PublicoBanner" color="black"><b>Shared Clients Report</b></font><br/><br/>
+                            <!-- <span style="font-size: 14px;">
+                                View custom reports on the status of your referrals and benefits
+                                from the Paychex in English or Spanish.    
+                            </span> -->
+                            <br/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <!-- <br/> -->
+                             <!--apex:outputPanel id="outerDiv-->
+                            <apex:outputPanel rendered="{!acctWrapperList.SIZE > 0}" id="acctTable" style="overflow-x: auto;display: block; margin-bottom:55px;">
+                                <table id="customers">
+                                    <thead>
+                                    <tr style="font-size:14px;">
+                                        <th>Client Name</th>
+                                        <th>Partner Name</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <apex:repeat value="{!acctWrapperList}" var="acct">
+                                    <!--apex:repeat value="{!acctWarpperListWith10}" var="acct"-->
+                                        <tr>
+                                            <div>
+                                                <td style="font-size:14px;">{!acct.acctName}</td>
+                                                <!--<td style="font-size:10px;">
+                                                    <apex:outputText value="{0,date,yyyy/MM/dd}">
+                                                        <apex:param value="{!acct.lastmodifiedDate}"/>
+                                                    </apex:outputText>
+                                                </td>-->
+                                                <td style="font-size:14px;">
+                                                    {!acct.rcName}
+                                                </td>
+                                            </div>
+                                            
+                                        </tr>
+                                    </apex:repeat>
+                                </tbody>
+                                </table>
+                                
+                              <!--  <apex:outputPanel >
+                                    <apex:repeat var="pgno" value="{!acctPagination.pageNumberList}">
+                                        <apex:commandLink reRender="acctTable"  action="{!hanldeAcctPageNumber}">{!pgno}
+                                            <apex:param name="cmd" value="{!pgno}" assignTo="{!acctPagination.pagenumber}"/>
+                                        </apex:commandLink>&nbsp;&nbsp;
+                                        
+                                    </apex:repeat>
+                                    <apex:commandLink reRender="acctTable" rendered="{!acctPagination.isNext}" action="{!handleAcctIsNext}">Next</apex:commandLink>&nbsp;&nbsp;
+                                    <apex:selectList size="1" value="{!acctPagination.defaultValue}" onchange="{!loadAcctMoreResult}">
+                                        <apex:selectOptions value="{!acctPagination.pageSizeList}"></apex:selectOptions>
+                                        <apex:actionSupport action="{!loadAcctMoreResult}"  reRender="acctTable" event="onchange" />
+                                    </apex:selectList>
+                                </apex:outputPanel> -->
+                                
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!acctWrapperList.SIZE = 0}">
+                                <font style="color:red;size:10px; align:center"><b>No mutual clients are found</b></font>
+                            </apex:outputPanel> 
+                        </td>
+                        
+                    </tr>
+                </table>
+                <br/><br/>
+                
+                <br/><br/>
+                
+                <table width="78%" align="center" style="background: white; border-radius: 10px;">
+                    <tr>
+                        <td>
+                            <table width="100%" align="center">
+                                <tr>
+                                    <td align="center" style="color: black;" width="40%">
+                                        <br/>
+                                        <font size="6" face="PublicoBanner" color="black"><b>Referrals Report</b></font><br/>
+                                        View your currently referred clients.  Any referral who converts to a shared client will appear in the Shared Clients Report above.<br/><br/>
+<br/><br/>
+                                        <div> 
+                                            <br/>
+                                            <apex:commandLink action="{!redirectToReferClientPage}" style="text-decoration:none;padding-left:50px;padding-right:50px;padding-top:16px;padding-bottom:16px;background-color: #0059a2; border-radius: 30px; color: white; font-size: 17px;">
+                                        	<span style="font-family: Arial"> 
+                                                Refer a Client </span>
+                                        </apex:commandLink>
+
+                                    </div>
+                                       
+                                        <br/>
+                                        <br/>
+                                        <br/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <!-- <table align="center" style="border: 1px solid #E7E6E9; border-radius: 10px; height:40px; width:500px; align:center;" celspacing="0" celpadding="0">
+                                            <tr>
+                                                <td style="background: #E7E6E9; height:40px; width:500px; font-size:15px;border-radius: 10px;" align="center" colspan="2">
+                                                    <b>At a Glance</b>
+                                                </td>
+                                            </tr>
+                                            <tr align="center">
+                                                <td>
+                                                    <br/>
+                                                    <b>Accepted<br/>___________________</b>
+                                                </td>
+                                                <td>
+                                                    <br/>
+                                                    <b>Successful<br/>___________________</b>
+                                                </td>
+                                            </tr>
+                                            
+                                            <tr align="center">
+                                                <td>
+                                                    <b>{!wrapperDataObj.acceptedOpp}</b>
+                                                </td>
+                                                <td>
+                                                    <b>{!wrapperDataObj.successfullOpp}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <br/>
+                                                </td>
+                                            </tr>
+                                        </table> -->
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center">
+                                        <br/><br/>
+                                        <apex:outputPanel rendered="{!oppWrapperList.SIZE > 0}" id="oppTable" style="overflow-x: auto;display: block;">
+                                            <table id="customers">
+                                                <thead>
+                                                <tr style="font-size:14px;">
+                                                    <th width="700px;">Business Name</th>
+                                                    <th>Submitted on</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <apex:repeat value="{!oppWrapperList}" var="opp" >
+                                                        <tr style="font-size:14px;">
+                                                            <td>{!opp.oppName}</td>
+                                                            <td>
+                                                                <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                                                    
+                                                                    <apex:param value="{!opp.leadSubmittedDate}"/>
+                                                                    
+                                                                </apex:outputText>
+                                                            </td>
+                                                        </tr>
+                                                    </apex:repeat>
+                                                </tbody>
+                                            </table>
+                                            <apex:outputPanel >
+                                                <apex:repeat var="pgno" value="{!oppPagination.pageNumberList}">
+                                                	<apex:commandLink reRender="oppTable"  action="{!hanldeOppPageNumber}">{!pgno}
+                                                        <apex:param name="cmd" value="{!pgno}" assignTo="{!oppPagination.pagenumber}"/>
+                                                    </apex:commandLink>&nbsp;&nbsp;
+                                                    
+                                                </apex:repeat>
+                                                    <apex:commandLink reRender="oppTable" rendered="{!oppPagination.isNext}" action="{!handleOppIsNext}">Next</apex:commandLink>&nbsp;&nbsp;
+                                                    <apex:selectList size="1" value="{!oppPagination.defaultValue}" onchange="{!loadOppMoreResult}">
+                                                        <apex:selectOptions value="{!oppPagination.pageSizeList}"></apex:selectOptions>
+                                                        <apex:actionSupport action="{!loadOppMoreResult}"  reRender="oppTable" event="onchange" />
+                                                    </apex:selectList>
+                                            </apex:outputPanel>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!oppWrapperList.SIZE = 0}">
+                                            <font style="color:red;size:10px; align:center"><b>No referrals have been found</b></font>
+                                        </apex:outputPanel>
+                                    </td>
+                                </tr>
+                            </table>
+                            <br/><br/><br/>
+                        </td>
+                    </tr>
+                </table>
+                <br/><br/>
+                
+                <!-- <table width="78%" align="center" style="background: white; border-radius: 10px;">
+                    <tr>
+                        <td align="center" style="color: black;">
+                            <br/>
+                            <div style="width:700px;">
+                                <font style="font-size:26px;" face="PublicoBanner" color="black"><b>{!$Label.ServiceTableTitle}</b></font><br/>
+                                <p align="center" style="font-size:13px;" >{!$Label.Servicesubtitle}</p><br/>
+                            </div>
+                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table width="70%" align="center" id="customers" style="border:1px solid red;margin-bottom:55px;">
+                                <tr>
+                                    <th style="width:270px;vertical-align: top; border-bottom: 2px solid #B5B5B6; text-align:left;">
+                                        <br/>
+                                        <div style="padding-top:20px;">
+                                            <b><font style="font-size:11px;">Better serve your clients.<br/>
+                                                Gain access to execlusive services, technology, and benefits.
+                                            </font></b>
+                                        </div>
+                                        
+                                        <br/><br/><br/><br/>
+                                        <p style="font-size:12px; font-weight:normal">To better serivce your clients, you get:</p>
+                                    </th>
+                                    <th  style="width:60px;border-bottom: 2px solid MediumSeaGreen;text-align:center;">
+                                        <img class="slds-align_absolute-center" src="{!URLFOR($Resource.MyAcctStatus_Core)}" style="width: 130px; height: 75px;  padding-left:0px;padding-bottom:10px; text-align:center"/>
+                                        <div style="text-align: center">
+                                            <font style="font-size:16px; " face="PublicoBanner">Core</font><br/>
+                                            <font style="font-size:10px; font-weight:normal;">1-4 Shared Clients</font>
+                                        </div>
+                                    </th>
+                                    <th style="width:60px;border-bottom: 2px solid #5DADE2; text-align:center;" align="center">
+                                        <img class="slds-align_absolute-center" src="{!URLFOR($Resource.MyAcctStatus_Signature)}" style="width: 130px; height: 75px;  padding-bottom:10px;padding-left:0px; text-align:center"/>
+                                        <div style="text-align: center">
+                                            <font style="font-size:16px;" face="PublicoBanner">Signature</font><br/>
+                                            <font style="font-size:10px; font-weight:normal;">5-19 Shared Clients</font>
+                                        </div>
+                                        
+                                    </th>
+                                    <th style="width:60px;border-bottom: 2px solid #1F1478; text-align:center;" align="center">
+                                        <img class="slds-align_absolute-center" src="{!URLFOR($Resource.MyAcctStatus_Elite)}" style="width: 130px; height: 75px;  padding-bottom:10px; padding-left:0px; text-align:center"/>
+                                        <div style="text-align: center">
+                                            <font style="font-size:16px;" face="PublicoBanner">Elite</font><br/>
+                                            <font style="font-size:10px; font-weight:normal;">20+ Shared Clients</font>
+                                        </div>
+                                    </th>
+                                </tr>
+                                <apex:repeat value="{!wrapperDataObj.acctStatusTableDataList}" var="acctStatusTableData" >
+                                    <tr >
+                                        <td style="width:300px;">              
+                                            <div  style="display: block;" class='tooltip'>
+                                                <img src="{!URLFOR($Resource.info_alt)}" title="{!acctStatusTableData.ToolTipText__c}" style="width: 15px; height: 15px; display: block;" align="left"/>
+                                                <!-- <span class="tooltiptext">{!acctStatusTableData.ToolTipText__c}</span> 
+                                                <c:InfoTooltip helpText="{!acctStatusTableData.ToolTipText__c}"/>
+                                            </div>
+                                            <div style="padding-left:20px;">
+                                                <font style="font-size:13px;">{!acctStatusTableData.Service__c}</font>
+                                            </div>
+                                        </td>
+                                        <td align="center">
+                                            <apex:pageBlock rendered="{!acctStatusTableData.IsCore__c}">
+                                                <div style="text-align:center;width:10px;height:10px;background-color: MediumSeaGreen;border-radius: 50%;display: inline-block;}">
+                                                </div>
+                                            </apex:pageBlock>
+                                        </td>
+                                        <td align="center">
+                                            <apex:pageBlock rendered="{!acctStatusTableData.IsSignature__c}">
+                                                <div style="text-align:center;width:10px;height:10px;background-color: #5DADE2;border-radius: 50%;display: inline-block;}">
+                                                </div>
+                                            </apex:pageBlock>
+                                        </td>
+                                        
+                                        <td align="center">
+                                            <apex:pageBlock rendered="{!acctStatusTableData.IsElite__c}">
+                                                <div style="text-align:center;width:10px;height:10px;background-color:#1F1478;border-radius: 50%;display: inline-block;}">
+                                                </div>
+                                            </apex:pageBlock>
+                                        </td>
+                                        
+                                        <!--  <td style="width:60px;text-align:center;">{!acctStatusTableData.IsElite__c}</td>
+                                        <!--  <td style="width:60px;text-align:center;">{!acctStatusTableData.IsSignature__c}</td>
+                                    </tr>
+                                </apex:repeat>
+                            </table>
+                            
+                        </td>
+                    </tr>
+                </table> -->
+            </apex:outputPanel>
+            <div id="servicetable">
+                <br/>
+            </div>
+        </body>       
+    </apex:form>
+   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js" />
+    <apex:stylesheet value="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" /> 
+    <script>
+       // let table = new DataTable('#j_id0:form1:acctTable:customers1');
+       //$('[id$=customers1]').DataTable();
+      
+       $(document).ready(function() {
+        $('#customers').DataTable( {
+			"language":{
+                "decimal":        "",
+                "emptyTable":     "No data available in table",
+                "info":           "Showing _START_ to _END_ of _TOTAL_ clients",
+                "infoEmpty":      "Showing 0 to 0 of 0 clients",
+                "infoFiltered":   "(filtered from _MAX_ total clients)",
+                "infoPostFix":    "",
+                "thousands":      ",",
+                "lengthMenu":     "Show _MENU_ clients",
+                "loadingRecords": "Loading...",
+                "processing":     "",
+                "search":         "Search:",
+                "zeroRecords":    "No matching clients found",
+                "paginate": {
+                    "first":      "First",
+                    "last":       "Last",
+                    "next":       "Next",
+                    "previous":   "Previous"
+                },
+                "aria": {
+                    "sortAscending":  ": activate to sort column ascending",
+                    "sortDescending": ": activate to sort column descending"
+                }
+            }
+        });
+        });
+    </script> 
+</apex:page>

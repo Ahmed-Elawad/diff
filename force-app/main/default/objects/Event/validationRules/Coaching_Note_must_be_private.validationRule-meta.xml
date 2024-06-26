@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Coaching_Note_must_be_private</fullName>
+    <active>false</active>
+    <description>Coaching Events with a Type of &apos;Coaching Note&apos; must be marked private for confidentiality.</description>
+    <errorConditionFormula>AND(
+RecordTypeId = &apos;0120g000000grtC&apos;,
+ISPICKVAL(Type, &quot;Coaching Note&quot;),
+IsPrivate = false)</errorConditionFormula>
+    <errorDisplayField>IsPrivate</errorDisplayField>
+    <errorMessage>Coaching Notes must be marked private.</errorMessage>
+</ValidationRule>

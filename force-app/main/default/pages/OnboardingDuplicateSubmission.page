@@ -1,0 +1,170 @@
+<!-- Duplicate Submission Onboarding page.  Used by Sales to Handle Duplicate submissions of Client Profiles
+ * History
+ * -------
+ *  10/14/2022  Eric Porter Created
+ *  
+-->
+<apex:page controller="OnboardingController" showHeader="false" standardStylesheets="true" sidebar="true" applyHtmlTag="true" applyBodyTag="false" docType="html-5.0"> 
+    <head>
+        <title>Paychex Onboarding</title>
+        <script>
+        function saveConfirmation()
+        {alert('Your changes have been saved.\nYou will be redirected back to the Opportunity');}
+        function submitConfirmation()
+        {alert('Your client profile has been successfully submitted to client transition. You will receive notification of the status shortly.');}
+        </script> 
+    </head>
+    <body>
+        <style type="text/css">
+            .banner {
+            background-color: #000000;
+            height : 65px;
+            padding: 0px 0px 0px 24px;
+            }
+            .black_font{
+            font-color: #000000;
+            }
+            .black_background{
+            background-color: #000000;
+            }
+            .brand_background2{
+            background-color: rgb(243,233,219);
+            }
+            .brand_background{
+            background-color: rgb(250,247,241);
+            }
+            .header1 {
+            text-align: left;
+            color: #ffffff;
+            font-family: Georgia, serif;
+            font-size: 16px;
+            }
+            .header2 {
+            text-align: left;
+            color: #000000;
+            font-weight: bold;
+            font-family: Georgia, serif;
+            font-size: 20px;
+            }
+            .header3 {
+            text-align: left;
+            color: #000000;
+            font-family: Georgia, serif;
+            font-size: 14px;
+            }
+            .label1 {
+            color: #000000;
+            font-family: Arial, serif;
+            font-size: 16px;
+            }
+            @media (min-device-width: 641px)
+            {
+            .textBox1 {
+            width: 300px;
+            font-color: #000000;
+            font-family: Arial, serif;
+            }
+            .bannerHeader
+            {
+            color: #ffffff;
+            font-family: Georgia, serif;
+            font-size: 20px;
+            font-weight: bold;
+            }
+            }
+            @media (max-device-width: 640px)
+            {
+            .textBox1 {
+            width: 250px;
+            }
+            .bannerHeader
+            {
+            color: #ffffff;
+            font-family: Helvetica, sans-serif;
+            font-size: 12px;
+            font-weight: bold;
+            }
+            }
+        </style>
+        <apex:slds />
+        <div class="slds-scope " xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            
+            <div class="banner slds-grid slds-grid_vertical-align-center slds-grid_align-center">  
+                <div class="bannerHeader"><apex:image url="{!$Resource.ReBrand_Paychex_Logo_White}"  alt="Paychex Inc"/></div>
+                <div class="bannerHeader">Test Page Duplication</div>
+            </div>
+            <div class="slds-p-around_small brand_background">
+                
+                <apex:outputPanel id="errorMessage">
+                    <apex:actionRegion rendered="{!IF(hasAccess, false, true)}">
+                        <apex:outputText ><font color="red" size="3px"><b>In order to permform this action, you must either own the Opportunity or be an Opportunity Team Member.</b></font>
+                        </apex:outputText>
+                    </apex:actionRegion>
+                </apex:outputPanel>
+                
+                <apex:form id="onboarding" rendered="{!IF(hasAccess, true, false)}"> 
+                    
+                    <apex:outputPanel Id="onboardingType">
+                        <apex:actionRegion rendered="{!AND(IF(typeSelected, false, true), isChildOnboardingRec == false, onboardingType == 'Doc Desk', hasPayrollProduct)}">
+                            <label class="control-label">Is this MPSC or NCO?</label>
+                            <apex:selectRadio value="{!onboardingRecord.Form_Type__c}" layout="pageDirection">
+                                <apex:selectOption itemValue="NCO" itemLabel="NCO"/>
+                                <apex:selectOption itemValue="MPSC" itemLabel="MPSC"/>
+                            </apex:selectRadio>
+                            
+                            <apex:commandButton styleClass="slds-button--neutral" value="Continue" action="{!continueClicked}"/>
+                        </apex:actionRegion>
+                    </apex:outputPanel>
+                    
+                    <apex:outputPanel rendered="{!OR(IF(typeSelected, true, false), isChildOnboardingRec == true, onboardingType == 'HR Solutions')}" Id="onboardingInfo">
+                    <div>
+                        <div class="header2" title="Prospect-Client">{!onboardingOpp.Account.Name}</div>
+                        <div class="header3 slds-p-bottom_small">Opportunity • {!onboardingOpp.Name}</div>
+                        <!--<label class="header3 slds-p-bottom_small">{!IF(onboardingOpp.SBQQ__PrimaryQuote__c != null, 'Primary Steelbrick Quote Number • ' + onboardingOpp.SBQQ__PrimaryQuote__r.Name + '        ', '')}</label>-->
+						<label class="header3 slds-p-bottom_small">{!IF(onboardingOpp.Primary_Oracle_Quote__c != null, 'Primary Oracle Quote Number • ' + onboardingOpp.Primary_Oracle_Quote__r.Name, 'Primary Quote Number • NO PRIMARY QUOTE FOUND')}</label>
+                        <!--<label class="header3 slds-p-bottom_small">{!IF(AND(onboardingOpp.Primary_Oracle_Quote__c == null, onboardingOpp.SBQQ__PrimaryQuote__c == null), 'Primary Quote Number • NO PRIMARY QUOTE FOUND', '')}</label>-->
+                    </div>
+                   
+                     <!--
+                    <apex:outputPanel id="docDesk">
+                        <apex:actionRegion rendered="{!IF(AND(onboardingType == 'Doc Desk', isChildOnboardingRec == false), 'false', 'false')}"  >
+                            <c:Onboarding_DocDesk />
+                        </apex:actionRegion>
+                    </apex:outputPanel>
+                    -->
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <apex:outputPanel id="duplicateSubmissionSection">
+                        <apex:actionRegion >
+                            <label class="label1">Client Transition is already working this submission. Are you looking to provide updated information?</label><br/>
+                            <apex:inputField style="width: 175px;" value="{!onboardingRecord.Update_Submission__c}">
+                                <apex:actionSupport event="onchange" action="{!duplicatePageRedirect}" reRender="duplicateSubmissionSection,displayFSSButton"/>
+                            </apex:inputField>
+                            <br/>
+                        </apex:actionRegion>
+                        <apex:actionRegion >
+                            <br/>
+                            <div style="display:{!If(onboardingRecord.Update_Submission__c == '' || onboardingRecord.Update_Submission__c != 'Yes', 'none','block')}">
+                                <label class="label1"><b>Update Notes: </b>
+                                    <br/><apex:outputText ><font color = 'Blue'>What did you change?</font></apex:outputText>
+                                </label><br/>
+                                <apex:inputField style="width: 175px;" value="{!onboardingRecord.Update_Notes__c}">
+                                    <apex:actionSupport event="onchange" action="{!Validate}" reRender="displayFSSButton"/>
+                                </apex:inputField>
+                                <div>
+                                    <apex:commandButton styleClass="slds-button--neutral" value="Cancel" action="{!duplicatePageCancelRedirect}"  />
+                                    <apex:commandButton styleClass="slds-button--neutral" value="Submit Update" action="{!submitUpdateChatterPost}" /> 
+                                 </div>
+                                
+                            </div>
+
+                        </apex:actionRegion>
+                    </apex:outputPanel>
+                    </apex:outputPanel>
+                </apex:form>
+            </div>
+        </div>
+    </body>   
+</apex:page>

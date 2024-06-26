@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SOQLNullOkay__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <formula>OR( AND(ISPICKVAL( FieldType__c , &quot;Number&quot;), OR (ISPICKVAL( Operator__c, &quot;Less Than&quot;), ISPICKVAL( Operator__c, &quot;Less Than Equals&quot;)))
+   ,AND(ISPICKVAL( FieldType__c , &quot;Number&quot;), ISPICKVAL( Operator__c, &quot;Equals&quot;), Number1__c=0)
+   ,AND(ISPICKVAL( FieldType__c , &quot;Number Range&quot;), Number1__c=0)
+   )</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>Is a null value okay for this check?</inlineHelpText>
+    <label>SOQL Null Okay</label>
+    <securityClassification>Internal</securityClassification>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

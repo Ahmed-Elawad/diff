@@ -1,0 +1,82 @@
+<apex:page id="thepage" standardController="Case" extensions="SalesHelpRequestFormController" tabStyle="Case" lightningStyleSheets="true" sidebar="false" showHeader="false">
+    
+    <!-- CSS needed to remove horizontal scrollbar in utility bar component -->
+    <style type="text/css">
+        form { width: 99%; height: 100%; }
+    </style>
+    
+    <!-- ********** JavaScript for receiving URL from Aura Component ********** -->
+    <script type="text/javascript">
+    var lexOrigin = '{!$Label.Domain_Name_Lightning_App}';
+    window.addEventListener("message", function(event) {
+        if(event.origin !== lexOrigin) {
+            return;
+        }
+        document.getElementById('thepage:urlForm:urlpageBlock:urlPageBlockSection:currentURL').value = event.data;
+    }, false);
+    </script>
+    <!-- ********** End JavaScript ********** -->
+    
+    <!-- ********** Apex Page Start ********** -->
+    <apex:form id="urlForm" rendered="{!isForm}">
+    <apex:pageBlock id="urlpageBlock">
+        
+        
+         
+        <apex:pageBlockSection id="urlPageBlockSection" columns="1" showHeader="false">
+                
+                <apex:inputField value="{!newCase.RecordTypeId}" rendered="false"/>
+                <apex:actionRegion immediate="true">
+                    <apex:pageMessages escape="false" id="messages"/>  
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel for="type" value="Type"/>
+                        <apex:inputField value="{!newCase.Type}" id="type" required="true"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel for="sub-type" value="Sub-Type"/>
+                        <apex:inputField id="sub-type" value="{!newCase.Sub_Type__c}" required="true">
+                            <apex:actionSupport event="onchange" action="{!checkShowMessage}" id="checkForMessage" status="Sub-TypeStatus" rerender="messages"/>
+                        </apex:inputField>
+                    </apex:pageBlockSectionItem>
+                    <apex:actionStatus startText="Loading additional details, please wait ..." id="Sub-TypeStatus"/>
+                </apex:actionRegion>
+                <!--Current Url = <apex:outputLabel value="{!currentURL}" />-->
+                <apex:inputField value="{!newCase.Description}" required="true"/>
+                <apex:inputField value="{!newCase.Due_Date__c}" required="true"/>
+                <apex:inputField value="{!newCase.IsEscalated}"/>
+                <apex:inputField value="{!newCase.Alternate_Contact__c}"/>
+                <label class="text1" for="attachment1">Attachments:</label>
+                <apex:inputFile id="attachment1" value="{!attach1}" fileName="{!attach1Label}"/>
+                <apex:inputFile id="attachment2" value="{!attach2}" fileName="{!attach2Label}"/>
+                <apex:inputFile id="attachment3" value="{!attach3}" fileName="{!attach3Label}"/>
+                <apex:inputHidden id="currentURL" value="{!currentURL}" />
+        </apex:pageBlockSection>  
+        <apex:pageBlockButtons location="bottom">
+            <apex:commandButton value="Save" action="{!customSave}"/>
+            <!--<apex:commandButton value="Cancel" action="{!cancel}"/>-->
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+    </apex:form>
+    
+    <apex:form rendered="{!NOT(isForm)}">    
+        <apex:pageBlock >
+            <apex:pageBlockSection columns="1" showHeader="false">
+                <apex:outputText value="Case {!newCase.CaseNumber} has been created successfully!"/>
+            </apex:pageBlockSection>
+            <!--
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Submit another case" action="{!resetForm}"/>
+            </apex:pageBlockButtons>
+            -->
+        </apex:pageBlock>
+    </apex:form>
+    
+    <!-- ********** Apex Page End **********
+    
+    <!-- ********** JavaScript to tell the Aura Component the VF has loaded ********** -->
+    <script type="text/javascript">
+    var message = "loaded";
+    parent.postMessage(message, lexOrigin);
+    </script>
+    
+</apex:page>

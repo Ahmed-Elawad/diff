@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>YTD_Checks_Detail</fullName>
+    <active>true</active>
+    <errorConditionFormula>(ISPICKVAL(YTD_Checks__c , &quot;Yellow: 150000 - 1999999&quot;) ||
+ISPICKVAL(YTD_Checks__c , &quot;Red: 200000 +&quot;))&amp;&amp;
+
+OR(
+ISBLANK( YTD_Checks_Detail__c ))</errorConditionFormula>
+    <errorDisplayField>YTD_Checks_Detail__c</errorDisplayField>
+    <errorMessage>YTD Checks Detail is required when YTD Checks is Selected as Yellow or Red</errorMessage>
+</ValidationRule>

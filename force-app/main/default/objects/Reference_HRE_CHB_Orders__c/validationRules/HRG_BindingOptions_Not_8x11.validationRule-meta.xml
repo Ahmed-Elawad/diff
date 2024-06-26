@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRG_BindingOptions_Not_8x11</fullName>
+    <active>true</active>
+    <description>B11 - if 8 1/2 x 11 = False, then 8 1/2 x 11 Binding Options Field must be Null</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;Handbook HR Solutions Order Record Type&quot; ), 
+( NOT(X8_x_11__c) ), 
+( NOT(ISPICKVAL(X8_x_11_Options__c, &apos;&apos;)) ), 
+(Historical_Order_Indicator__c = 0), 
+(NOT(BEGINS($Profile.Name,&quot;HR Essentials&quot;))), 
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))) 
+)</errorConditionFormula>
+    <errorDisplayField>X8_x_11_Options__c</errorDisplayField>
+    <errorMessage>You must NOT select a 8 ½ x 11 Binding Options value when NOT checking the 8 1/2 x 11 field.</errorMessage>
+</ValidationRule>

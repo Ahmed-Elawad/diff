@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cannot_Change_Lead_Source</fullName>
+    <active>false</active>
+    <description>Cannot change lead source if NSS source = inbound and Qualified Type = SQL</description>
+    <errorConditionFormula>ISCHANGED(LeadSource) &amp;&amp; ISPICKVAL(NSS_Source__c, &quot;Inbound&quot;)&amp;&amp; ISPICKVAL(Qualified_Type__c, &quot;SQL&quot;)&amp;&amp; !ISCHANGED(acd_name__c) &amp;&amp; NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))</errorConditionFormula>
+    <errorMessage>You cannot change the Lead Source if the NSS Source is Inbound and Qualified Type equals SQL</errorMessage>
+</ValidationRule>

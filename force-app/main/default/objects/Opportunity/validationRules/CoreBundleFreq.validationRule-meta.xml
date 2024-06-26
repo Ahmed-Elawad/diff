@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CoreBundleFreq</fullName>
+    <active>false</active>
+    <description>Verifies record does not have a Qtrly, Semi or Annual pay freq</description>
+    <errorConditionFormula>AND(
+ OR( Enhanced_Package__c ,  Entrepreneur_Package__c ,  Essentials_Package__c ),
+ OR(
+ ISPICKVAL( Frequency__c , &apos;4&apos;),
+ ISPICKVAL( Frequency__c , &apos;2&apos;),
+ ISPICKVAL( Frequency__c , &apos;1&apos;) ))</errorConditionFormula>
+    <errorMessage>*** YOU MAY NOT SELL THIS PACKAGE FOR QTRLY, SEMI OR ANNUAL FREQ ***</errorMessage>
+</ValidationRule>

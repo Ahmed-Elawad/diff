@@ -1,0 +1,31 @@
+<aura:component >
+	
+	<aura:attribute name="activityType" type="String" />
+	<aura:attribute name="isFollowUpActivity" type="Boolean" />
+	<aura:attribute name="shouldCloseModal" type="Boolean" />
+	<aura:attribute name="isVisible" type="Boolean" />
+
+	<lightning:card >
+
+		<aura:if isTrue="{!not(v.isFollowUpActivity)}">
+			<div class="success-message">
+				<ui:outputText value="{!'The ' + v.activityType + ' has been successfully created!'}"/>
+			</div>
+
+			<aura:set attribute="else">
+				<div class="success-message">
+					<ui:outputText value="{!'The follow-up ' + v.activityType + ' has been successfully created!'}"/>
+				</div>
+			</aura:set>
+		</aura:if>
+		<aura:set attribute="footer">
+
+            <aura:if isTrue="{!and(not(v.isFollowUpActivity), not(v.shouldCloseModal))}">
+                <lightning:button label="Create Follow Up" class="slds-m-top--medium" variant="neutral" onclick="{!c.returnToFollowUpActivityCreation}"/>
+            </aura:if>
+            <lightning:button label="Close" class="slds-m-top--medium" variant="neutral" onclick="{!c.closeQuickAction}"/>
+
+		</aura:set>
+
+	</lightning:card>
+</aura:component>

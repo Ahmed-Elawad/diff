@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <description>used for Flock</description>
+        <name>Open_Enrollment_Closed</name>
+        <label>Open Enrollment Closed</label>
+        <locationX>50</locationX>
+        <locationY>516</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <elementReference>OpenEnrollmentEnded</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>54.0</apiVersion>
+    <decisions>
+        <description>the Open Enrollment End Date equal today&apos;s date</description>
+        <name>OE_End_Date_Today</name>
+        <label>OE End Date Today</label>
+        <locationX>182</locationX>
+        <locationY>276</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Equals_Today</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Open_Enrollment_OE_End_Date__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>$Flow.CurrentDate</elementReference>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Open_Enrollment_OE_End_Date__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Reference HNBF</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Current_Step</targetReference>
+            </connector>
+            <label>Equals Today</label>
+        </rules>
+    </decisions>
+    <description>runs daily to evaluate Open Enrollment Closed Date</description>
+    <interviewLabel>ReferenceAgency Daily {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>ReferenceAgency Daily</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Update_Current_Step</name>
+        <label>Update Current Step</label>
+        <locationX>50</locationX>
+        <locationY>396</locationY>
+        <connector>
+            <targetReference>Open_Enrollment_Closed</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Current_Step__c</field>
+            <value>
+                <stringValue>Open Enrollment Completed</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>OE_End_Date_Today</targetReference>
+        </connector>
+        <object>Reference_HNBF__c</object>
+        <schedule>
+            <frequency>Daily</frequency>
+            <startDate>2022-03-24</startDate>
+            <startTime>00:00:00.000Z</startTime>
+        </schedule>
+        <triggerType>Scheduled</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <name>OpenEnrollmentEnded</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>{!$Record.Name} Open enrollment has been completed for {!$Record.Prospect_Client_Name__c}. The reporting elections are now available to be pulled from Flock.
+@[{!$Record.Sales_Rep__c}] @[{!$Record.Sales_SDA__c}] @[{!$Record.IC_Rep_Assigned__c}]</text>
+    </textTemplates>
+</Flow>

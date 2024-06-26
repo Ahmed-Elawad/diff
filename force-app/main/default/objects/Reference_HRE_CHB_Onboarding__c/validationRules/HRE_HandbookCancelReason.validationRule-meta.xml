@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRE_HandbookCancelReason</fullName>
+    <active>true</active>
+    <description>The Handbook Lost Reason field cannot be populated until the  Cancel Requested On field has a date.</description>
+    <errorConditionFormula>AND( 
+(isblank(Cancel_Requested_On__c)),
+Not((ISPICKVAL(Handbook_Lost_Reason__c, &apos;&apos;))),
+($UserRole.Name &lt;&gt; &quot;HRE Handbook Supervisor team 1&quot;), 
+($UserRole.Name &lt;&gt; &quot;HRE Handbook Supervisor team 2&quot;), 
+($UserRole.Name &lt;&gt; &quot;HRE Handbook Supervisor team 3&quot;), 
+($UserRole.Name &lt;&gt; &quot;System Administrator&quot;) 
+)</errorConditionFormula>
+    <errorDisplayField>Cancel_Requested_On__c</errorDisplayField>
+    <errorMessage>Before the Cancel Requested On field can be modified, you need to enter a value for Handbook Lost Reason field.</errorMessage>
+</ValidationRule>

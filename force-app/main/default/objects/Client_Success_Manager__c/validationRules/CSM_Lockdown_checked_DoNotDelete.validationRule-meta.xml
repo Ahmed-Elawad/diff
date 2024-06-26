@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CSM_Lockdown_checked_DoNotDelete</fullName>
+    <active>true</active>
+    <description>Prevent the unchecking of a checked Do Not Delete field</description>
+    <errorConditionFormula>AND( 
+( ISCHANGED( Do_Not_Delete__c ) ), 
+( Do_Not_Delete__c = FALSE), 
+(NOT(BEGINS($Profile.Name,&quot;2008-09 Operations Administration&quot;))),
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))) 
+)</errorConditionFormula>
+    <errorDisplayField>Do_Not_Delete__c</errorDisplayField>
+    <errorMessage>You cannot uncheck a checked Do Not Delete field. Please contact your Salesforce.com Business Unit Representative for assistance.</errorMessage>
+</ValidationRule>

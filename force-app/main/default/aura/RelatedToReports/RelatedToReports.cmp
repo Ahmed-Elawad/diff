@@ -1,0 +1,28 @@
+<aura:component description ="RelatedToReports" implements="flexipage:availableForAllPageTypes,force:hasRecordId" controller="RelatedToReportsController" >
+	<aura:attribute name="recordId" type="Id"/> 
+	<aura:attribute name="listOfReports" type="RelatedToReports__c[]"/> 
+   
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+		 
+	<lightning:card iconName="standard:report">
+		<aura:set attribute="title">
+			Related Reports
+		</aura:set>
+
+			<div class="report-item-container">
+				<aura:if isTrue="{!empty(v.listOfReports)}">
+
+					<div class="report-item">
+						There are no related reports for this record
+					</div>
+	
+					<aura:set attribute="else">
+						<aura:iteration var="reportItem" items="{!v.listOfReports}"> 
+							<c:RelatedToReportsListItem reportItem="{!reportItem}" recordId="{!v.recordId}"/>
+						</aura:iteration>
+					</aura:set>
+				</aura:if>
+			</div>
+
+	</lightning:card>
+</aura:component>

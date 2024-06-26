@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Tax_Wage_and_Bal_Mandatory</fullName>
+    <active>true</active>
+    <description>Tax, Wage and Balance Set-up: Mandatory equals Yes and Tax, Wage and Balance Set-up fields populate</description>
+    <errorConditionFormula>ISPICKVAL( Tax_Wage_and_Balance_Manatory__c,&quot;No&quot;) 
+&amp;&amp; 
+(NOT(ISNULL(Prior_Quarter_Wages__c)) ||
+NOT(ISNULL(Prior_Quarter_Balanced__c)) || 
+NOT(ISNULL(Current_Quarter_Wages__c))&amp;&amp; 
+NOT(ISNULL(Current_Quarter_Balanced__c)) || QTD_YTD_Data_Load_of_Wages__c ||
+NOT(ISNULL(Quarter_1_Liabilities_Complete__c)) || 
+NOT(ISNULL(Quarter_2_Liabilities_Complete__c)) || 
+NOT(ISNULL(Quarter_3_Liabilities_Complete__c)) ||  
+NOT(ISNULL(Quarter_4_Liabilities_Complete__c)))</errorConditionFormula>
+    <errorDisplayField>Tax_Wage_and_Balance_Manatory__c</errorDisplayField>
+    <errorMessage>***** Tax, Wage and Balance Set-up is indicated as not mandatory *****</errorMessage>
+</ValidationRule>

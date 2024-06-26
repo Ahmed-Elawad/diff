@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SharingRules xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sharingCriteriaRules>
+        <fullName>Sales_Contact_For_All</fullName>
+        <accessLevel>Edit</accessLevel>
+        <label>Sales Contact For All</label>
+        <sharedTo>
+            <roleAndSubordinates>SystemAdministrator</roleAndSubordinates>
+        </sharedTo>
+        <criteriaItems>
+            <field>Sales_Contact__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <includeRecordsOwnedByAll>false</includeRecordsOwnedByAll>
+    </sharingCriteriaRules>
+    <sharingOwnerRules>
+        <fullName>Contact_Write_Senior_VP_Sales</fullName>
+        <accessLevel>Edit</accessLevel>
+        <label>Contact Write Senior VP Sales</label>
+        <sharedTo>
+            <group>Share_Ctct_Write</group>
+        </sharedTo>
+        <sharedFrom>
+            <roleAndSubordinatesInternal>SeniorVPSales</roleAndSubordinatesInternal>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>HNBF_Opportunities</fullName>
+        <accessLevel>Read</accessLevel>
+        <description>Expand HPP team access to adjust Opportunities as needed</description>
+        <label>HNBF Opportunities</label>
+        <sharedTo>
+            <roleAndSubordinates>HNBFDIRECTOR</roleAndSubordinates>
+        </sharedTo>
+        <sharedFrom>
+            <roleAndSubordinates>SeniorVPSales</roleAndSubordinates>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>NSS_Inbound</fullName>
+        <accessLevel>Edit</accessLevel>
+        <label>NSS Inbound</label>
+        <sharedTo>
+            <role>NSS_Inbound_Rep</role>
+        </sharedTo>
+        <sharedFrom>
+            <roleAndSubordinates>NSS_Inbound</roleAndSubordinates>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>Survey_Site_User</fullName>
+        <accessLevel>Read</accessLevel>
+        <label>Survey Site User</label>
+        <sharedTo>
+            <group>Survey_Site_User</group>
+        </sharedTo>
+        <sharedFrom>
+            <allInternalUsers></allInternalUsers>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>Virtual_Contact_Sharing</fullName>
+        <accessLevel>Edit</accessLevel>
+        <description>Allows Virtual to manage records owned by Virtual Sales generic user</description>
+        <label>Virtual Contact Sharing</label>
+        <sharedTo>
+            <roleAndSubordinates>Virtual_Sales_and_NSS</roleAndSubordinates>
+        </sharedTo>
+        <sharedFrom>
+            <role>VIRTUAL_SALES_ZONE_30</role>
+        </sharedFrom>
+    </sharingOwnerRules>
+</SharingRules>

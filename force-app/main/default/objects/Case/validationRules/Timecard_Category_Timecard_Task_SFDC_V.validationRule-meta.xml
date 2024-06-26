@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Timecard_Category_Timecard_Task_SFDC_V</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( 
+RecordTypeId = &quot;0120g000000EAp7&quot;, 
+OR( 
+ISPICKVAL( Timecard_Category__c ,&quot;Development&quot;)&amp;&amp; 
+OR( 
+ISPICKVAL( Timecard_Task__c ,&quot;Personal Development&quot;) , 
+ISPICKVAL( Timecard_Task__c ,&quot;Cross Training&quot;)), 
+
+OR( 
+ISPICKVAL( Timecard_Category__c ,&quot;Meeting&quot;)&amp;&amp; 
+OR( 
+ISPICKVAL( Timecard_Task__c ,&quot;Other&quot;)) , 
+
+OR( 
+ISPICKVAL( Timecard_Category__c ,&quot;Ongoing Projects&quot;)&amp;&amp; 
+OR( 
+ISPICKVAL( Timecard_Task__c ,&quot;Other&quot;)) , 
+
+OR( 
+ISPICKVAL( Timecard_Category__c ,&quot;Management Request/Escalation&quot;)&amp;&amp; 
+OR( 
+ISPICKVAL( Timecard_Task__c ,&quot;*Enterprise&quot;) , 
+ISPICKVAL( Timecard_Task__c ,&quot;*QEYE&quot;) , 
+ISPICKVAL( Timecard_Task__c ,&quot;*Audit&quot;) , 
+ISPICKVAL( Timecard_Task__c ,&quot;*Import&quot;), 
+ISPICKVAL( Timecard_Task__c ,&quot;Other&quot;)), 
+
+OR( 
+ISPICKVAL( Timecard_Category__c ,&quot;Enterprise&quot;)&amp;&amp; 
+OR( 
+ISPICKVAL( Timecard_Task__c ,&quot;Other&quot;)))))))) &amp;&amp; 
+
+
+ISBLANK( Timing_Notes__c )</errorConditionFormula>
+    <errorMessage>Timing Notes must not be blank</errorMessage>
+</ValidationRule>

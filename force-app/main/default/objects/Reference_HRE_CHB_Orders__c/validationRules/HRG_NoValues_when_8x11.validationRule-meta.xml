@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRG_NoValues_when_8x11</fullName>
+    <active>true</active>
+    <description>C5 &amp; C15 - if 8 1/2 x 11 = True, then Binder Color and Binder Template fields can NOT be populated.</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;Handbook HR Solutions Order Record Type&quot; ), 
+( X8_x_11__c ),
+( (NOT(ISPICKVAL(Outside_Color__c, &apos;&apos;))) || (NOT(ISPICKVAL(Template__c, &apos;&apos;))) ),
+(Historical_Order_Indicator__c = 0), 
+(NOT(BEGINS($Profile.Name,&quot;HR Essentials&quot;))),
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)))
+)</errorConditionFormula>
+    <errorDisplayField>X8_x_11__c</errorDisplayField>
+    <errorMessage>You can NOT select a Binder Color or a Binder Template value when checking the 8 1/2 x 11 field.</errorMessage>
+</ValidationRule>

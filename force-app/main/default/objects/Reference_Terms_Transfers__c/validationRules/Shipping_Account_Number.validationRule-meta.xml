@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Shipping_Account_Number</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND
+(
+ISPICKVAL( Who_Is_Paying__c , &quot;Recipient&quot; ),
+ ISBLANK( Shipping_Account_Number__c ),
+OR 
+( 
+ RecordType.Name = &quot;401k Overnight Request&quot; 
+) 
+)</errorConditionFormula>
+    <errorDisplayField>Who_Is_Paying__c</errorDisplayField>
+    <errorMessage>The Shipping Account is required when ‘Who is Paying’=Recipient</errorMessage>
+</ValidationRule>

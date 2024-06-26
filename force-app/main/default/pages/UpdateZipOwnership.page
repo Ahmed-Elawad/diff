@@ -1,0 +1,118 @@
+<!-- Allow the users to rerun the zip assignment by user or zip code
+
+   History
+   -------
+   12/10/2009 Dan Carmen   Created 
+   10/22/2010 Dan Carmen   Added option to select which ownership field to set.
+   07/11/2011 Dan Carmen   Remove normalize options. Cleaned up ownership options.
+   06/25/2012 Dan Carmen   Changes for the new Zip Code object.
+   06/09/2016 Dan Carmen   Change to display the link to the zip segment
+ -->
+<apex:page controller="UpdateZipOwnershipController"
+           showHeader="true"
+           id="thePage">
+
+  <apex:pageMessages />
+  <apex:form >
+
+  <!--  Select a user -->
+   <apex:pageBlock id="selectUserBlock" title="Step 1: Enter Search Criteria." >
+   <!-- 
+      <apex:outputText value="Enter a User, A Zip Code, and/or a Range of Zip Codes to update ownership."/>
+       -->
+         <apex:pageBlockSection columns="1" title="Enter a User, A Zip Code, and/or a Range of Zip Codes to update ownership.">
+            <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Select a User "/>
+               <apex:inputField value="{!za.User__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Zip Code Range Start "/>
+               <apex:inputText value="{!zip1}" size="5" maxlength="5" />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Zip Code Range End "/>
+               <apex:inputText value="{!zip2}" size="5" maxlength="5" />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Ownership Field to Update" />
+               <apex:selectList value="{!ownershipOption}" title="Ownership Field" size="1">
+                  <apex:selectOptions value="{!ownershipOptions}"/>
+               </apex:selectList>
+            </apex:pageBlockSectionItem>
+      <apex:outputPanel >
+        <apex:commandButton action="{!searchZips}" value="Search Zip Codes" styleClass="btn" />
+      </apex:outputPanel>
+         </apex:pageBlockSection>      
+  </apex:pageBlock>
+  
+  <apex:pageBlock rendered="{!showSearchResults}" title="Step 2: Verify Records to Update">
+    <apex:pageBlockSection columns="1" id="zipsToUpdate" title="Results Found For {!searchMsg}">  
+       <apex:commandButton action="{!changeChangesDisplayed}" value="{!displayButtonTitle}" styleClass="btn" rerender="zipsToUpdate" />
+     <br/>
+    <apex:pageBlockTable rendered="{!changesDisplayed}" value="{!zips}" var="zip" cellPadding="4" border="1">
+          <apex:column headerValue="Zip Code"> 
+            <apex:outputField value="{!zip.Name}"/>
+          </apex:column>
+          <apex:column headerValue="User"> 
+            <apex:outputField value="{!zip.User__c}"/>
+          </apex:column>
+          <apex:column headerValue="Sales Org"> 
+            <apex:outputField value="{!zip.Sales_Org__c}"/>
+          </apex:column>
+          <apex:column headerValue="Segment"> 
+            <apex:outputField value="{!zip.Zip_Segment__c}"/>
+          </apex:column>
+    </apex:pageBlockTable>
+     </apex:pageBlockSection>
+  </apex:pageBlock>
+  
+    <apex:pageBlock rendered="{!showSearchResults}" id="searchResults" title="Step 3: Mark the Records to Update">
+     <apex:pageBlockSection >
+    <apex:outputText value="Number of zip codes to be marked for update: {!numberChanges}" />
+    </apex:pageBlockSection>
+    <apex:pageBlockSection >
+       <apex:commandButton action="{!saveChanges}" value="Click To Mark the Zip Codes for Ownership Update" styleClass="btn" />
+    </apex:pageBlockSection>
+  </apex:pageBlock>
+  
+   <!-- 
+  <apex:pageBlock rendered="{!showJobInfo}" id="jobInfo" title="Process Launched!">
+   <apex:outputText value="An email will be sent to you when the Ownership update is completed." />
+    <apex:pageBlockSection title="Job Information">
+       <apex:outputField value="{!jobInfo.Status}"/>
+       <apex:outputField value="{!jobInfo.JobItemsProcessed}"/>
+       <apex:outputField value="{!jobInfo.TotalJobItems}"/>
+       <apex:outputField value="{!jobInfo.NumberOfErrors}"/>
+    </apex:pageBlockSection>
+    <br/>
+    <apex:outputPanel >
+       <apex:commandButton value="Click To Refresh the Job Info" styleClass="btn" rerender="jobInfo" />
+    </apex:outputPanel>
+  </apex:pageBlock>
+     -->
+  
+   <apex:pageBlock rendered="{!isSystemAdmin}" id="runBatchJob" title="Run a Batch Job">
+      <apex:outputPanel rendered="{!NOT(changesPending)}">
+         <apex:outputText value="No Pending Zip Code Change Records Exist." />
+       </apex:outputPanel>
+
+       <apex:outputPanel rendered="{!changesPending}">
+          <apex:outputText value="Pending Zip Code Change Records exist!" />
+       </apex:outputPanel>
+   
+      <apex:pageBlockSection title="Run Batch Job" columns="1">
+         <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Batch Type"/>
+            <apex:selectList value="{!selectedBatchOption}" title="Batch Type" size="1">
+               <apex:selectOptions value="{!batchOptions}"/>
+            </apex:selectList>
+         </apex:pageBlockSectionItem>
+         <apex:outputPanel >
+            <apex:commandButton action="{!runBatchJob}" value="Run the Batch Job" styleClass="btn" />
+         </apex:outputPanel>
+      </apex:pageBlockSection>
+   </apex:pageBlock>
+  
+  </apex:form>
+  
+</apex:page>

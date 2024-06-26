@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reassign_Category_3_for_401K_Product</fullName>
+    <active>true</active>
+    <description>If Product = 401k, Reassign-Category 1 = Website, Reassign-Category 2 = 3(16) Web Access, Reassign-Category 3 needs to be filled in before the case can be saved. Reassign-Category 3 cannot be blank in this case</description>
+    <errorConditionFormula>AND(
+ISPICKVAL(Product__c,&quot;401K&quot;),
+ISPICKVAL(Reassign_Category_1__c,&quot;Website&quot;),
+ISPICKVAL(Reassign_Category_2__c,&quot;3(16) Web Access&quot;),
+ISPICKVAL(Reassign_Category_3__c,&quot;&quot;))</errorConditionFormula>
+    <errorDisplayField>Reassign_Category_3__c</errorDisplayField>
+    <errorMessage>Please enter values for Reassign Category 3</errorMessage>
+</ValidationRule>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_Escalation_within_1_Hour</fullName>
+    <active>true</active>
+    <description>Prevent this case from being Manager Escalated within 1 hour of creation</description>
+    <errorConditionFormula>Manager_Escalation_Needed__c &amp;&amp; 
+OR (ISCHANGED(Manager_Escalation_Needed__c) &amp;&amp; 
+IF(IF(NOW() - CreatedDate &gt; 0 , 
+(NOW() - CreatedDate)*24*60,0)&lt; 60,TRUE,FALSE), 
+ISNEW())</errorConditionFormula>
+    <errorDisplayField>Manager_Escalation_Needed__c</errorDisplayField>
+    <errorMessage>You must wait at least 1 hour before you can escalate this case.</errorMessage>
+</ValidationRule>

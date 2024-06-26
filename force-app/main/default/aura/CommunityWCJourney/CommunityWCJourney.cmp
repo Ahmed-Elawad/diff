@@ -1,0 +1,120 @@
+<aura:component >
+    
+    <aura:handler name='init' value='{!this}' action='{!c.init}' />
+    
+    <!-- Peo Onbaording Record attributes -->
+    <aura:attribute name='Checklist' type='Map' />
+    
+    <!-- Accounts Attributes -->
+    <aura:attribute name='Account' type='Map' />
+    <aura:attribute name='AllAccounts' type='List' />
+    
+    <!-- user attributes -->
+    <aura:attribute name='isComunityUser' type='Boolean' />
+    <aura:attribute name='User' type='Map' />
+    
+    <!-- Industry Specific -->
+    <aura:attribute name='FoundIndustryQuestions' type='Boolean' />
+    <aura:attribute name='loadingSPinner' type='String' />
+    <aura:attribute name='industryAnsChanged' type='Boolean' />
+    <aura:attribute name='policyPerChanged' type='Boolean' />
+    <aura:attribute name='industryNames' type='String[]' />
+    <aura:attribute name='noIndustryFound' type='Boolean' />
+    
+    <!-- WC QUestionnaire -->
+    <aura:attribute name='reqFastPass' type='Boolean' />
+    
+    <!-- FIle upload WC -->
+    <aura:attribute name='disableUpload' type='String' />
+    <aura:attribute name='medRequested' type='Boolean' />
+    <aura:attribute name='lossRunsRequired' type='Boolean' />
+    <aura:attribute name='suiRequired' type='Boolean' />
+    <aura:attribute name='wcDecRequired' type='Boolean' />
+    <aura:attribute name='wcRtNPrcReqd' type='boolean' default="false"/>
+    <aura:attribute name='misWCReqd' type='Boolean' />
+    
+    <!-- covid -->
+    <aura:attribute name='showCovidQuestionnaire' type='Boolean' />
+    
+    <!-- form functionality -->
+    <aura:attribute name='tabType' type='String' />
+    <aura:attribute name='activeTab' type='String' default='WC' />
+    <aura:attribute name="currTabId" type="String"/>
+    <aura:attribute name='readOnly' type='Boolean' />
+    <aura:attribute name='lockWcSection' type='Boolean' />
+    <aura:attribute name='requestedFastPass' type='String' />
+    <aura:attribute name='lockMessageString' type='String' />
+    <aura:attribute name='readOnlyString' type='String' />
+    <aura:attribute name='activeTabLabel' type='String' />
+    
+    <!-- form nav atttr -->
+    <aura:attribute name='currentTabs' type='String' />
+    <aura:registerEvent name='communityFormsTabNavigate' type='c:communityFormsTabNavigate' />
+
+	<div>
+        <div>
+            <h1 class="tabHeader_title" >{!v.activeTabLabel}</h1>
+            <h3 class='tabHeader_supportText'>Please add or update any of the information below.</h3>
+        </div>
+    </div>
+    
+    <lightning:tabset variant="{!v.tabType}" selectedTabId="{!v.activeTab}">
+        <lightning:tab label="Workers' Compensation" id="WC" onactive="{!c.setActiveTab}">
+            <c:workersCompQuestionnaire user='{!v.User}'
+                                        readOnly='{!or(v.lockWcSection,v.readOnly)}'
+                                        readOnlyString='{!v.readOnlyString}'
+                                        PEOChecklist="{!v.Checklist}"
+                                        FastPassRequired="{!v.reqFastPass}"
+                                        account='{!v.Account}' 
+                                        activeTab='{!v.activeTab}'
+                                        parentTabs='{!v.currentTabs}'/>
+        </lightning:tab><!--wcQ-->
+        <aura:if isTrue="{!v.noIndustryFound != true}">
+            <lightning:tab label="Industry Specific Questionnaire" id="industry" onactive="{!c.setActiveTab}">
+                <c:IndustrySpecificIndustrySelect readOnly='{!or(v.lockWcSection,v.readOnly)}' 
+                                                  user='{!v.User}' 
+                                                  parentRecId="{!v.Account.Id}" 
+                                                  PEOChecklist="{!v.Checklist}" 
+                                                  communityUser="{!v.isComunityUser}" 
+                                                  answersChanged="{!v.industryAnsChanged}" 
+                                                  parentAccount="{!v.Account}" 
+                                                  policyPeriodChanged="{!v.policyPerChanged}" 
+                                                  allAccounts="{!v.AllAccounts}"
+                                                  industries = "{!v.industryNames}"
+                                                  noMatchingQuestions = "{!v.FoundIndustryQuestions}"
+                                                  loadingSpin = "{!v.loadingSPinner}"
+                                                  activeWcCompTab='{!v.activeTab}'
+                                                  wcCompTabs='{!v.currentTabs}'/>
+            </lightning:tab>
+        </aura:if >
+        <aura:if isTrue="{! v.showCovidQuestionnaire }" >
+            <lightning:tab label="COVID-19 Questionnaire" id="covidQuestionnaire" onactive="{!c.setActiveTab}">
+                <c:CovidQuestionnaire user='{!v.User}'
+                                      readOnly='{!or(v.lockWcSection,v.readOnly)}'
+                                      parentRecId="{!v.Account.Id}"
+                                      PEOChecklist="{!v.Checklist}"
+                                      account='{!v.Account}'
+                                      activeTab='{!v.activeTab}'
+                                      parentTabs='{!v.currentTabs}'/>
+            </lightning:tab>
+        </aura:if>
+        <lightning:tab label="Required Documents" id="fileUploadWC" onactive="{!c.setActiveTab}">
+            <c:UploadFiles checklist="{!v.Checklist}"
+                           parentAccountToCurrentAccount='{!v.Account}'
+                           disableFilesUpload="{!v.disableUpload}"
+                           WCFastPassSelected="{!v.reqFastPass}" 
+                           isCommunityUser="{!v.isComunityUser}" misMedReqd = "{!v.medRequested}"
+                           lossRunsReqd = "{!v.lossRunsRequired}" 
+                           suiReqd = "false"
+                           wcDecReqd = "{!v.wcDecRequired}" 
+                           wcRtNPrcReqd ="{!v.wcRtNPrcReqd}"
+                           misWCReqd='True' 
+                           currentAccount='{!v.Account}'
+                           wcReqd="false"
+                           />
+            <c:communityFormNavButtons parentTabsetUsesIteration='true'
+                                       allPossibleParents='{!v.currentTabs}'
+                                       activeParent='{!v.activeTab}' />              
+        </lightning:tab>
+    </lightning:tabset>	
+</aura:component>

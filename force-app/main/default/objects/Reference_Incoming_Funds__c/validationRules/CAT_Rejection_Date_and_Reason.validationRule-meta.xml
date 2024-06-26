@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CAT_Rejection_Date_and_Reason</fullName>
+    <active>true</active>
+    <description>Both fields are required if one is filled in.</description>
+    <errorConditionFormula>AND(NOT(CONTAINS($Profile.Name,&apos;System Admin&apos;)),$RecordType.Name=&apos;Manual Collection&apos;,
+OR(
+AND(NOT(ISBLANK( CAT_Rejected_Date__c )),ISBLANK(TEXT(CAT_Rejected_Reason__c))),
+AND(NOT(ISBLANK(TEXT(CAT_Rejected_Reason__c))),ISBLANK(CAT_Rejected_Date__c))))</errorConditionFormula>
+    <errorMessage>CAT Rejected Date and Reason must be filled out together.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,102 @@
+<template>
+    <div if:true={isloaded}>
+        <lightning-spinner alternative-text="Loading..." variant="brand">
+        </lightning-spinner>
+    </div>
+
+    
+
+    <div if:false={isloaded} class="slds-modal__container">
+        <div class="slds-box">
+            <lightning-quick-action-panel header="Edit Fields Action">
+
+                <lightning-record-edit-form record-id={recordId} object-api-name="Account" onsuccess={handleSuccess}
+                    onsubmit={handleSubmit}>
+                    <div if:true={qualifiedMSG} class="slds-box slds-box_small  slds-theme_shade slds-text-heading_small"> 
+                        <p>Alert : Please ensure there is a qualified contact prior to Qualifying the Account.</p>
+                            </div>
+                    <div class="slds-grid slds-p-left_x-small slds-wrap">
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="Name">
+                            </lightning-input-field>
+                        </div>
+
+
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="Type" required="true">
+                            </lightning-input-field>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="Industry" required="true">
+                            </lightning-input-field>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="Employees__c" required="true">
+                            </lightning-input-field>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="Current_Prior_Method__c" required="true">
+                            </lightning-input-field>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="Profiled__c" onchange={troughQualified}>
+                            </lightning-input-field>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="Profiled_Date__c">
+                            </lightning-input-field>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="Profiled_Expiration_Date__c">
+                            </lightning-input-field>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="Target_List__c">
+                            </lightning-input-field>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="Any_401k__c">
+                            </lightning-input-field>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="Any_H_B__c">
+                            </lightning-input-field>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="Any_Handbook__c">
+                            </lightning-input-field>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="Insurance_Broker_Name_Ref__c">
+                            </lightning-input-field>
+                        </div>
+
+                    </div>
+                    <div class="slds-grid slds-p-left_x-small slds-wrap">
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-button variant="brand" type="submit" name="update" label="Update">
+                            </lightning-button>
+                        </div>
+                    </div>
+                </lightning-record-edit-form>
+
+                <!-- </div>     -->
+            </lightning-quick-action-panel>
+        </div>
+
+    <div if:false={childLoad}>
+        <!-- contact details  -->
+        <c-related-list record-id={recordId} sobject-api-name="Contact" related-field-api-name="AccountId"
+            sorted-by="Name, Profiled__c" fields="Id, Name, Title, Email, Profiled__c, Phone"
+            columns={contactColumns} account-record-pass-id={recordId}>
+        </c-related-list>
+
+        <!-- Business Profile  -->
+        <c-related-list record-id={recordId} sobject-api-name="Business_Profile__c"
+            related-field-api-name="Prospect_Client__c" sorted-by="Name"
+            fields="Id, Name, Key_Influencer__c, Key_Influencer__r.Name, Decision_Maker__c, Decision_Maker__r.Name, Products_Currently_Utilizing1__c"
+            columns={businessProfileColumns} if:false={isloaded}> 
+        </c-related-list>
+    </div>
+    </div>
+</template>

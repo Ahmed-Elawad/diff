@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sales_Help_Dialsource_Manager</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+$RecordType.Name = &apos;Sales Help Request Case&apos;,
+ISPICKVAL(Type,&apos;DialSource Request&apos;),
+NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+NOT(CONTAINS($User.Title,&apos;Manager&apos;)),
+NOT(CONTAINS($User.Title,&apos;Supervisor&apos;)),
+ISNEW(),
+OR(
+ISPICKVAL(Sub_Type__c,&apos;Disposition Add/Remove Request&apos;),
+ISPICKVAL(Sub_Type__c,&apos;New Report Request&apos;),
+ISPICKVAL(Sub_Type__c,&apos;New Dashboard Request&apos;)
+))</errorConditionFormula>
+    <errorMessage>You do not have access to the Request Type/Sub-Type selected. Please work with your Manager to submit it.</errorMessage>
+</ValidationRule>

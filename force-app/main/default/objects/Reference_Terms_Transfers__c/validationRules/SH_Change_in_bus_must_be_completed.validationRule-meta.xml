@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SH_Change_in_bus_must_be_completed</fullName>
+    <active>true</active>
+    <description>If the field Safe Harbor is Yes, and the field Was this plan out of compliance is Yes, the field SH Change in Bus. Structure/Hardship must be completed</description>
+    <errorConditionFormula>NOT (ISPICKVAL(SH_Change_in_Business_Structure_Hardship__c, &quot;Yes&quot;))  &amp;&amp;
+NOT (ISPICKVAL(SH_Change_in_Business_Structure_Hardship__c, &quot;No&quot;))&amp;&amp;
+( 
+ISPICKVAL(Safe_Harbor__c, &quot;Yes&quot; )  &amp;&amp;
+ISPICKVAL( Was_this_plan_out_of_Compliance__c , &quot;Yes&quot;) )</errorConditionFormula>
+    <errorMessage>If a plan is safe harbor and the plan is out of compliance you must add a value in SH Change in Bus Structure/Hardship</errorMessage>
+</ValidationRule>

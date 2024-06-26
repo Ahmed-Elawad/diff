@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Check_Sunday</fullName>
+    <active>false</active>
+    <description>Check Sunday&apos;s values</description>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+OR( Sunday_1__c &gt;= Sunday_2__c , Sunday_1__c  &gt;=  Sunday_3__c ,Sunday_1__c &gt;= Sunday_4__c , Sunday_2__c  &gt;= Sunday_3__c ,Sunday_2__c  &gt;=  Sunday_4__c , Sunday_3__c  &gt;=  Sunday_4__c 
+))</errorConditionFormula>
+    <errorMessage>Sunday needs to have valid times!</errorMessage>
+</ValidationRule>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRG_BinderValues_whenTypeOfRequestBinder</fullName>
+    <active>true</active>
+    <description>C25 - if Type of Request = &apos;Binders Only&apos;, then the Binder Color,  Binder Cover Option and  Binder Template  fields must NOT be blank</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;Handbook HR Solutions Order Record Type&quot;), 
+( (ISPICKVAL(Type_of_Request__c, &apos;Binders Only&apos;)) ), 
+( (ISPICKVAL(Outside_Color__c, &apos;&apos;)) || (ISPICKVAL(Art__c, &apos;&apos;)) || (ISPICKVAL(Template__c, &apos;&apos;)) ), 
+(NOT(BEGINS($Profile.Name,&quot;HR Essentials&quot;))), 
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))) 
+)</errorConditionFormula>
+    <errorDisplayField>Type_of_Request__c</errorDisplayField>
+    <errorMessage>The Binder Color, Binder Cover Option and Binder Template fields CAN NOT be blank when selecting &apos;Binders Only&apos; for the Type of Request field.</errorMessage>
+</ValidationRule>

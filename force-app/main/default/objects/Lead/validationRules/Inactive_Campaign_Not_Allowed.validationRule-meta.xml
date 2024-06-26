@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Inactive_Campaign_Not_Allowed</fullName>
+    <active>true</active>
+    <description>APR0154581 - Not allow LatestCampaign__c to be set with inactive Campaign</description>
+    <errorConditionFormula>AND(
+NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)),
+ISCHANGED( LatestCampaign__c ),
+LatestCampaign__r.IsActive  = false
+)</errorConditionFormula>
+    <errorDisplayField>LatestCampaign__c</errorDisplayField>
+    <errorMessage>Campaign not found. Please select an active Campaign.</errorMessage>
+</ValidationRule>

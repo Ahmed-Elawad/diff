@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ESR_Low_Priority</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( OR(RecordType.Name=&apos;Service Support ESR Case&apos; ,RecordType.Name=&apos;Service Onboarding ESR Case&apos;,
+RecordType.Name=&apos;Service Support ESR Dedicated Service Case&apos;),
+
+NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),NOT(ISBLANK(TEXT(Type))), ISPICKVAL(Priority,&apos;Low&apos;))</errorConditionFormula>
+    <errorDisplayField>Type</errorDisplayField>
+    <errorMessage>If the Priority is Low, the Type field should be blank</errorMessage>
+</ValidationRule>

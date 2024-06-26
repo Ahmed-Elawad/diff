@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Merge_Name_and_Hold_Outs</fullName>
+    <active>true</active>
+    <description>You can&apos;t set the Merge Name if there is a Hold Out on this contact</description>
+    <errorConditionFormula>ISCHANGED(Merge_Name__c) &amp;&amp; 
+NOT(IsBlank(Merge_Name__c)) &amp;&amp; 
+Hold_Out__c</errorConditionFormula>
+    <errorDisplayField>Merge_Name__c</errorDisplayField>
+    <errorMessage>You can not populate Merge Name if this record has a Hold Out set.</errorMessage>
+</ValidationRule>

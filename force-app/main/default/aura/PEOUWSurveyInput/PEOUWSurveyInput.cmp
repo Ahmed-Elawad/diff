@@ -1,0 +1,161 @@
+<aura:component controller="CommunitiesAccountUpdateController" implements="forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable,lightning:utilityItem,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:appHostable" access="global">
+    
+    <aura:attribute name="feedbacktext" type="string"/>
+    <aura:attribute name="Questiontext" type="string" />
+    <aura:attribute name="Rating" type="Decimal" />
+    <aura:attribute name="truthy" type="Boolean" default='false'/>
+    <aura:attribute name="showFeedBack" type="Boolean" default='false'/>
+    <aura:attribute name="loaded" type="Boolean" default="false" />
+    <aura:attribute name="firstQuestion" type="String" default="Thank you for submitting your information to Paychex through our portal!" />
+    <aura:attribute name="firstQuestioncompli" type="String" default=" We would appreciate you taking a moment to provide feedback on your experience."/>
+     <aura:attribute name="firstQuestionActual" type="String" default="It was easy for me to submit my information and documents to Paychex." />
+    <aura:attribute name="secondQuestion" type="String" default="What could we have done to make it easier for you?" />
+    <aura:handler name="init" value="{!this}" action="{!c.myAction}" />
+    <aura:attribute name="showMessage" type="Boolean"/>
+    <aura:attribute name="no1" type="boolean" default="false"/>
+    <aura:attribute name="no2" type="boolean" default="false"/>
+    <aura:attribute name="no3" type="boolean" default="false"/>
+    <aura:attribute name="no4" type="boolean" default="false"/>
+    <aura:attribute name="no5" type="boolean" default="false"/>
+    <aura:attribute name="no6" type="boolean" default="false"/>
+    <aura:attribute name="no7" type="boolean" default="false"/>
+    
+    <div class="exampleHolder">
+        <aura:if isTrue="{! v.loaded }">
+            <lightning:spinner alternativeText="Loading" />
+        </aura:if>
+    </div>
+    
+    <lightning:card > 
+        <div class="slds slds-m-bottom_medium">
+            <!--<aura:if isTrue="{!(!v.showFeedBack)}">-->
+                <div class="slds-align_absolute-center" onclick="{!c.handleOutsideClick}">
+                    <p class ="slds-text-align_center">
+                        
+                        {!v.firstQuestion}
+                        <br></br>
+                        <aura:if isTrue="{!v.showFeedBack}">
+                        {!v.firstQuestioncompli}
+                            <br></br>
+                            <br></br>
+                            <div style='font-size: 12pt;'>
+                                <b>{!v.firstQuestionActual}</b>
+                            </div>
+                            
+                        </aura:if>
+                        
+                    </p>
+                </div> 
+          <!--  </aura:if>-->
+            <aura:if isTrue="{!v.showFeedBack}">
+                <div class="slds-list_horizontal slds-align_absolute-center" role="toolbar" aria-label="Toolbar with button groups">
+                    <div class="" role="group" aria-label="First group">
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-7">
+                                <!-- <div class="slds-grid slds-grid_vertical">-->
+                                <lightning:card>
+                                    <div class="slds-col">
+                                        <lightning:button class="slds-button slds-button_brand slds-button_stretch" aura:id="1" label="1" onclick="{!c.getRating}" disabled='{!v.no1}'/>
+                                    </div>
+                                    <div class="slds-col slds-text-align_center">
+                                        Strongly Disagree
+                                    </div>
+                                </lightning:card>
+                                <!-- </div>-->
+                            </div>
+                            <div class="slds-col slds-size_1-of-7">
+                                <!--  <div class="slds-grid slds-grid_vertical">-->
+                                <lightning:card>
+                                    <div class="slds-col">
+                                        <lightning:button class="slds-button slds-button_brand slds-button_stretch" aura:id="2" label="2" onclick="{!c.getRating}" disabled='{!v.no2}'/>
+                                    </div>
+                                    <div class="slds-col slds-text-align_center">
+                                        Disagree
+                                    </div>
+                                </lightning:card>
+                                <!-- </div>-->
+                            </div>
+                            <div class="slds-col slds-size_1-of-7">
+                                <!-- <div class="slds-grid slds-grid_vertical">-->
+                                <lightning:card>
+                                    <div class="slds-col">
+                                        <lightning:button class="slds-button slds-button_brand slds-button_stretch" aura:id="3" label="3" onclick="{!c.getRating}" disabled='{!v.no3}'/>
+                                    </div>
+                                    <div class="slds-col slds-text-align_center">
+                                        <span>Somewhat Disagree</span>
+                                    </div>
+                                </lightning:card>
+                                <!--</div>-->
+                            </div>
+                            <div class="slds-col slds-size_1-of-7">
+                                <!-- <div class="slds-grid slds-grid_vertical">-->
+                                <lightning:card>
+                                    <div class="slds-col">
+                                        <lightning:button class="slds-button slds-button_brand slds-button_stretch" aura:id="4" label="4" onclick="{!c.getRating}" disabled='{!v.no4}'/>
+                                    </div>
+                                    <div class="slds-col slds-text-align_center">
+                                        Neither Agree or Disagree
+                                    </div>
+                                </lightning:card>
+                                <!--</div>-->
+                            </div>
+                            <div class="slds-col slds-size_1-of-7">
+                                <!-- <div class="slds-grid slds-grid_vertical">-->
+                                <lightning:card>
+                                    <div class="slds-col">
+                                        <lightning:button variant="Success" class="slds-button slds-button_stretch seven" aura:id="5" label="5" onclick="{!c.getRating}" disabled='{!v.no5}'/>
+                                    </div>
+                                    <div class="slds-col slds-text-align_center">
+                                        Somewhat Agree
+                                    </div>
+                                </lightning:card>
+                                <!-- </div>-->
+                            </div>
+                            <div class="slds-col slds-size_1-of-7">
+                                <!-- <div class="slds-grid slds-grid_vertical">-->
+                                <lightning:card>
+                                    <div class="slds-col">
+                                        <lightning:button variant="Success" class="slds-button slds-button_stretch seven" aura:id="6" label="6" onclick="{!c.getRating}" disabled='{!v.no6}'/>
+                                    </div>
+                                    <div class="slds-col slds-text-align_center">
+                                        Agree
+                                    </div>
+                                </lightning:card>
+                                <!--</div>-->
+                            </div>
+                            <div class="slds-col slds-size_1-of-7">
+                               <!-- <div class="slds-grid slds-grid_vertical">-->
+                                   <lightning:card>
+                                    <div class="slds-col" >
+                                        <lightning:button variant="Success" class="slds-button slds-button_stretch seven" aura:id="7" label="7" onclick="{!c.getRating}" disabled='{!v.no7}'/>
+                                    </div>
+                                    <div class="slds-col slds-text-align_center">
+                                        Strongly Agree
+                                    </div>
+                                </lightning:card>
+                               <!-- </div>-->
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+            </aura:if>
+        </div>
+        
+        <aura:if isTrue="{!v.showFeedBack}">
+            <aura:if isTrue="{!v.truthy}">
+                <div class="slds-align_absolute-center">
+                    <p style="height: 1rem;">
+                        <div style='font-size: 12pt;'>
+                       <b> {!v.secondQuestion}</b>
+                        </div>
+                    </p>
+                </div>
+                <lightning:textarea name="input1" label="" value="{!v.feedbacktext}" />
+            </aura:if> 
+            
+            <lightning:button label="Submit" class="slds-align_absolute-center slds-button slds-button_brand" onclick="{!c.doSubmit}"/>
+        </aura:if>
+    </lightning:card> 
+    
+    
+</aura:component>

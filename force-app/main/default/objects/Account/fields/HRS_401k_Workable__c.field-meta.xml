@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRS_401k_Workable__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <formula>IF(ISPICKVAL(Restricted_Industry__c,&apos;CRB&apos;),false,
+AND(Do_Not_Call__c = false
+	, Email_Opt_Out__c = false
+	, NOT(ISPICKVAL(Type,&apos;HROi Client&apos;))
+	, NOT(ISPICKVAL(Permanent_Hold_Out_Description__c,&apos;Ecommerce&apos;))
+	, Out_of_Business__c = false
+        , Benetrac_Indicator__c = false
+	, (RecordType.DeveloperName =&quot;CoreAccountRecordType&quot; || RecordType.DeveloperName = &quot;MMSAccountRecordType&quot;)
+	, (ISBLANK( CPA_Name_Ref__c ) || CPA_Name_Ref__r.Sensitivity_401_k__c = false)
+	, (ISBLANK( Banker_Name_Ref__c) || Banker_Name_Ref__r.Sensitivity_401_k__c = false)
+	, (ISBLANK( Referral_National_Account__c ) || Referral_National_Account__r.Sensitivity_401_k__c = false)
+	, (ISBLANK( Broker_Name_Ref__c) || Broker_Name_Ref__r.Sensitivity_401_k__c = false)
+	, (ISBLANK( Insurance_Broker_Name_Ref__c) || Insurance_Broker_Name_Ref__r.Sensitivity_401_k__c = false)
+	, (ISBLANK( Insurance_Broker_Name_Ref__c) || Insurance_Broker_Name_Ref__r.Sensitivity_BenAdmin__c = false)
+	, X401_k__c = false
+	, NOT(AdvancedPartnerClients__c)
+	)
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>If this box is checked, this prospect is workable for 401k.
+non HROi client
+Do Not Call = False
+Email Opt Out = False
+Out of Business = False
+Product Sensitivities = False
+PAYX 401k = False</inlineHelpText>
+    <label>401k Workable</label>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

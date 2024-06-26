@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Payroll_Shell_P_SLA__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>The value in this field will be &quot;Inside SLA&quot; if the following conditions are true: 
+[Shell Loaded] is blank AND NOW() is less than or equal to the [Payroll Shell (P) Target Time]
+The value in this field will be &quot;Outside SLA&quot; if the following conditions are true:
+[Shell Loaded] is blank AND NOW() is greater than the [Payroll Shell (P) Target Time]</description>
+    <externalId>false</externalId>
+    <formula>IF(ISBLANK(Shell_Loaded__c) &amp;&amp; (NOW() &lt;=  Payroll_Shell_P_Target_Time__c  ), &quot;Inside SLA&quot;, IF(ISBLANK(Shell_Loaded__c) &amp;&amp; (NOW() &gt; Payroll_Shell_P_Target_Time__c), &quot;Outside SLA&quot;, &quot;&quot;) )</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Payroll Shell (P) SLA</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

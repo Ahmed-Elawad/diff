@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Required_Fields_Solved_Case</fullName>
+    <active>true</active>
+    <description>Exporting Reporting Utilized” and “Complexity” Needs to be required fields before a GL Onboarding case can be changed to solved</description>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)), 
+ISPICKVAL(Current_Step__c  , &apos;Set Up Complete&apos;),OR( ISBLANK(TEXT(Complexity__c)), ISBLANK(TEXT( Exporting_Reporting_Utilized__c )) ))</errorConditionFormula>
+    <errorMessage>&apos;Exporting Reporting Utilized&apos; and &apos;Complexity&apos; are required before completing Set Up.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,36 @@
+<!-- The component to print messages at the top of a visual force page.
+
+   History
+   -------
+   12/10/2010 Dan Carmen   Created 
+ -->
+<apex:component controller="PageMessageController" allowDML="true">
+
+   <apex:panelGrid id="PageMsgTable" columns="1">
+      <apex:panelGrid id="PageMsgTableDisplay" rendered="{!hasMsgs}" columns="1">
+         <style>
+            .msgTableBg { background-color: lightgrey; color:black;
+                          background-image:none}
+         </style>
+         <hr width="100%" />
+         <apex:form >
+           <apex:actionRegion >
+            <apex:dataTable value="{!msgs}" var="msg" cellPadding="4" border="0" styleClass="msgTableBg">
+               <apex:column rendered="{!hasOptOut}" >
+                  <apex:commandLink rendered="{!msg.Allow_Opt_Out__c}" action="{!doNotShow}" rerender="PageMsgTable">Do Not Show This Again
+                     <apex:param name="msgId" value="{!msg.Id}"/>
+                     <apex:param name="userId" value="{!$User.Id}"/>
+                  </apex:commandLink>
+            
+               </apex:column>
+               <apex:column > 
+                  <apex:outputField value="{!msg.Message__c}"/>
+               </apex:column>
+            </apex:dataTable>
+           </apex:actionRegion>
+         </apex:form>
+         <hr width="100%" />
+      </apex:panelGrid>
+   </apex:panelGrid>
+   
+</apex:component>

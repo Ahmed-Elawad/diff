@@ -1,0 +1,183 @@
+<apex:page ><!-- showHeader="false" sidebar="false" cache="false" contentType="text/xml" controller="MMSProposalHorizontalGroupController">
+    <apex:repeat value="{!groupLines}" var="groupLine">
+        <block>
+            <table table-layout="fixed" width="100%" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid" margin-bottom="30">
+                <table-body>
+                    <!-- ONE TIME SETUP FEE TOTAL ROW BEGIN
+                    <table-row>
+                        <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" padding-left="3">
+                            <block text-align="left" font-size="10" font-family="Helvetica" font-weight="bold">
+                                <apex:outputText value="{!groupLine.groupName}"/>
+                            </block>
+                        </table-cell>
+                        <!--<table-cell display-align="right" border-top-style="solid" border-bottom-style="solid" padding-left="3">
+                            <block text-align="right" font-size="10" font-family="Helvetica">
+                                One Time Setup Fee = 
+                            </block>
+                        </table-cell>
+                        <table-cell display-align="left" border-top-style="solid" border-bottom-style="solid" padding-left="3">
+                            <block text-align="left" font-size="10" font-family="Helvetica">
+                                {!groupLine.oneTimeSetupFeeNetTotal}
+                            </block>
+                        </table-cell>-->
+                        <!--<table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" padding-left="3">
+                            <block text-align="left" font-size="9">
+                                <apex:outputText >&nbsp;</apex:outputText>
+                            </block>
+                        </table-cell>
+                        <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-right-style="solid" padding-left="3">
+                            <block text-align="left" font-size="9">
+                                <apex:outputText >&nbsp;</apex:outputText>
+                            </block>
+                        </table-cell>
+                    </table-row>
+                    <!-- ONE TIME SETUP FEE TOTAL ROW END-->
+                    <!-- COLUMN HEADERS ROW BEGIN
+                    <table-row border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid">
+                        <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid"  padding-left="3">
+                            <block text-align="left" font-weight="bold" font-size="9">
+                                <apex:outputText value="Service"></apex:outputText>
+                            </block>
+                        </table-cell>
+                        <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid"  padding-left="3">
+                            <block text-align="left" font-weight="bold" font-size="9">
+                                <apex:outputText value="Units"></apex:outputText>
+                            </block>
+                        </table-cell>
+                        <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid"  padding-left="3" padding-right="3">
+                            <block text-align="left" font-weight="bold" font-size="9">
+                                <apex:outputText value="Base Fee"></apex:outputText>
+                            </block>
+                        </table-cell>
+                        <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid"  padding-left="3" padding-right="3">
+                            <block text-align="left" font-weight="bold" font-size="9">
+                                <apex:outputText value="Per Unit Fee"></apex:outputText>
+                            </block>
+                        </table-cell>
+                        <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid"  padding-left="3" padding-right="3">
+                            <block text-align="left" font-weight="bold" font-size="9">
+                                <apex:outputText value="Total"></apex:outputText>
+                            </block>
+                        </table-cell>
+                    </table-row>
+                    <!-- COLUMN HEADERS ROW END-->
+                    <!-- PRICING TYPE ROWS BEGIN
+                    <apex:repeat var="pricingTypeLine" value="{!groupLine.pricingTypeLines}">
+                        <!-- PRICING TYPE TITLE ROW BEGIN
+                        <table-row>
+                            <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" padding-left="3">
+                                <block text-align="left" font-size="9">
+                                    <apex:outputText >&nbsp;</apex:outputText>
+                                </block>
+                            </table-cell>
+                            <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" padding-left="3">
+                                <block text-align="left" font-size="9">
+                                    <apex:outputText >&nbsp;</apex:outputText>
+                                </block>
+                            </table-cell>
+                            <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" padding-left="3">
+                                <block text-align="center" font-size="10" font-family="Helvetica" font-weight="bold">
+                                    <apex:outputText value="{!IF(pricingTypeLine.showHeader,pricingTypeLine.pricingType,'')}"></apex:outputText>
+                                </block>
+                            </table-cell>
+                            
+                            <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" padding-left="3">
+                                <block text-align="right" font-size="10" font-family="Helvetica" font-weight="normal">
+                                    <apex:outputText value="{!IF(pricingTypeLine.showFrequency,'Frequency = ','')}"></apex:outputText>
+                                </block>
+                            </table-cell>
+                            <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" padding-left="3">
+                                <block text-align="left" font-size="10" font-family="Helvetica" font-weight="normal">
+                                    <apex:outputText value="{!IF(pricingTypeLine.showFrequency,pricingTypeLine.payRollFrequency,'')}"></apex:outputText>
+                                </block>
+                            </table-cell>
+                            
+                            <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" padding-left="3">
+                                <block text-align="left" font-size="9">
+                                    <apex:outputText >&nbsp;</apex:outputText>
+                                </block>
+                            </table-cell>
+                            <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-right-style="solid" padding-left="3">
+                                <block text-align="left" font-size="9">
+                                    <apex:outputText >&nbsp;</apex:outputText>
+                                </block>
+                            </table-cell>
+                        </table-row>
+                        <!-- PRICING TYPE TITLE ROW END-->
+                        <!-- QUOTE LINE ROWS BEGIN
+                        <apex:repeat var="ql" value="{!pricingTypeLine.quoteLines}">
+                            <table-row>
+                                <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid"  padding-left="3">
+                                    <block text-align="left" font-size="9">
+                                        <apex:outputText value="{!ql.productName}"></apex:outputText>
+                                    </block>
+                                </table-cell>
+                                <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid" padding-right="3">
+                                    <block text-align="right" font-size="9">
+                                    <apex:outputText value="{0, number}">
+                                        <apex:param value="{!ql.quantity}"/>
+                                    </apex:outputText>
+                                    </block>
+                                </table-cell>
+                                <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid" padding-right="3">
+                                    <block text-align="right" font-size="9">
+                                    <apex:outputText value="{0, number, currency}">
+                                        <apex:param value="{!ql.baseFeeUnitPrice}"/>
+                                    </apex:outputText>
+                                    </block>
+                                </table-cell>
+                                <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid" padding-right="3">
+                                    <block text-align="right" font-size="9">
+                                    <apex:outputText value="{0, number, currency}">
+                                        <apex:param value="{!ql.unitPrice}"/>
+                                    </apex:outputText>
+                                    </block>
+                                </table-cell>
+                                <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" border-right-style="solid" padding-right="3">
+                                    <block text-align="right" font-size="9">
+                                    <apex:outputText value="{0, number, currency}">
+                                        <apex:param value="{!ql.netTotal}"/>
+                                    </apex:outputText>
+                                    </block>
+                                </table-cell>
+                            </table-row>
+                        </apex:repeat>
+                        <!-- QUOTE LINE ROWS END-->
+                        <!-- PRICING TYPE TOTAL ROW BEGIN
+                        <table-row>
+                            <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" border-left-style="solid" padding-left="3">
+                                <block text-align="left" font-size="9">
+                                    <apex:outputText >&nbsp;</apex:outputText>
+                                </block>
+                            </table-cell>
+                            <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" padding-left="3">
+                                <block text-align="left" font-size="9">
+                                    <apex:outputText >&nbsp;</apex:outputText>
+                                </block>
+                            </table-cell>
+                            <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" padding-left="3">
+                                <block text-align="left" font-size="9">
+                                    <apex:outputText >&nbsp;</apex:outputText>
+                                </block>
+                            </table-cell>
+                            <table-cell display-align="center" border-top-style="solid" border-bottom-style="solid" padding-left="3">
+                                <block text-align="left" font-size="9">
+                                    <apex:outputText >&nbsp;</apex:outputText>
+                                </block>
+                            </table-cell>
+                            <table-cell display-align="right" border-top-style="solid" border-bottom-style="solid" border-right-style="solid" padding-right="3">
+                                <block text-align="right" font-size="10" font-family="Helvetica" font-weight="bold">
+                                    <apex:outputText value="{0, number, currency}">
+                                        <apex:param value="{!pricingTypeLine.total}"/>
+                                    </apex:outputText>
+                                </block>
+                            </table-cell>
+                        </table-row>
+                        <!-- PRICING TYPE TOTAL ROW END
+                    </apex:repeat>
+                    <!-- PRICING TYPE ROWS END
+                </table-body>
+            </table>
+        </block>
+    </apex:repeat>-->
+</apex:page>

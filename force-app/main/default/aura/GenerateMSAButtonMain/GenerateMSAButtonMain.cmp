@@ -1,0 +1,7 @@
+<aura:component controller="GenerateMSAButton" implements="flexipage:availableForAllPageTypes,force:hasRecordId">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="csoTracking" type="CSO_Tracking__c"/>
+    <aura:if isTrue="{!and(!v.csoTracking.User_Validated__c,!v.csoTracking.Account_Eligible__c)}">
+    <c:GenerateMSAButton recordId="{!v.recordId}" />
+    </aura:if>
+</aura:component>

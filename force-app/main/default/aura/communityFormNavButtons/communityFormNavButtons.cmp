@@ -1,0 +1,103 @@
+<aura:component >
+    <!-- this is the event that is triggered from this compoennt to navigate any parent tabs -->
+    <aura:registerEvent name='communityFormsTabNavigate' type='c:communityFormsTabNavigate' />
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/> 
+    
+    <!-- MAY BE USELESS -->
+    <lightning:workspaceAPI aura:id="workspace"/>
+    
+    <!-- The save functionality to run when hitting save and next -->
+    <aura:attribute name='saveFunc' type='Object' />
+    
+    <!-- Following attributes are assumed to be the parent component tabs that this component is rendered to -->
+    <!-- ie;  
+   Parent Tab1:(communityForms level tab)
+     (No granparents)
+      Tab 1 : Tab 2: tab 3 (attributes are for this level)(Parents)
+       CommunityFormsNavComponent
+ -->
+    <aura:attribute name='tabNameList' type='String[]' />
+    <aura:attribute name='currentPos' type='String' />
+    
+    <!-- Following attributes are assumed to be tabs that are the granparents of the component this 
+    component is rendered to -->
+    <!-- ie;
+   CommunityAccountEditForm: (communityForms level tab)
+     Acc1(activetab) : acc2: acc3: <- component checks this level second(granparents)
+      Company Information : about your business <- component checks this level first(Parents)
+        CommunityFormsNavComponent
+ -->
+    <aura:attribute name='parentTabsetUsesIteration' type='Boolean' /> <!-- this set to true means mid level tabs exist -->
+    <aura:attribute name='activeParent' type='String' /> <!-- the ID of the active parent tab -->
+    <aura:attribute name='allPossibleParents' type='String[]' /> <!-- a list of all the possible parent tab IDs -->
+    
+    <!-- boolean variables to manage navigation at runtime -->
+    <!-- dynamic label for the save and next button -->
+    <!-- boolean to either show or hide back button -->
+    <aura:attribute name='hideBackButton' type='Boolean' />
+    
+    <!-- Dynamic label for next button. Either it will be Save & Next or just next if no save func is provided-->
+    <aura:attribute name='forwardButtonLabel' type='String' default='Next' />  <!--Rename as per story SFDC-14128-->
+    
+    <!-- locks the ability to go forward or back based on if a save is in progress -->
+    <aura:attribute name='saveOperationInProgress' type='Boolean' />
+    <aura:attribute name='progressRate' type='Integer' default='0' />
+    
+    <!-- useful to skip the save operation. Can be used when two tabs are dependent. Passed in by paretn -->
+    <aura:attribute name='skipSaveEvt' type='Boolean' default='false'/>
+    
+    <!-- skip validation event for the form -->
+    <aura:attribute name='skipValidation' type='Boolean' default='false'/>
+    
+    <!--Start SFDC-14128 -->
+    <aura:attribute name='SaveButtonLabel' type='String' default='Save' />
+    <!-- SFDC-14128 End-->
+    
+    <aura:attribute name="nmbrOfAttchments" type="Integer" default="0"/>
+    <aura:attribute name="skipNumber" type="Integer" default="0"/>
+    <aura:handler  name="change" value="{!v.currentPos}" action="{!c.resetValues}"/>
+    <aura:attribute name='isUploadSection' type='boolean' default="false"/>
+    <aura:attribute name='isCommunityUser' type='boolean' default="false"/>
+    <aura:attribute name='benchMarkPos' type='String' />
+    <aura:attribute name='section' type='String'/>
+    <aura:attribute name='benchMarkTabRequired' type='Boolean' default='false'/>
+    <aura:attribute name="parent" type="Aura.Component"/>
+    <aura:attribute name='temp' type='boolean' default="false"/>
+  	<aura:attribute name='UploadDocsList' type='Object[]' /> 
+    <!--JDA SPA-->
+    <aura:attribute name='displayFinish' type='Boolean' default="false"/>
+    <aura:attribute name='requiredDocsUploaded' type='Boolean' default="false" />
+    <aura:handler name="change" value="{!v.currentPos}" action="{!c.handleChange}" />
+    <aura:attribute name="isLastTab" type="Boolean" default="false"/>
+    <div aura:id="applyCSS" >
+    <aura:if isTrue="{!v.saveOperationInProgress}">
+        <lightning:progressRing value="{!v.progressRate}" variant="active-step" direction="drain"/>
+    </aura:if>
+    <!-- SFDC-14128 Start -->
+    <lightning:button 
+                      class="slds-m-top_small"
+                      variant="brand"
+                      name="Save_and_Next"
+                      label='{!v.SaveButtonLabel}'                     
+                      onclick="{!c.handleSave}" /> 
+    
+    <!--SFDC-14128 End-->
+    <!--SFDC-22352: Hide Next button on the last upload bin -->
+        <aura:if isTrue='{! not(and(v.isLastTab, v.isUploadSection))}'>
+            <lightning:button disabled='{!v.saveOperationInProgress}'
+                              class="slds-m-top_small"
+                              variant="brand"
+                              name="Save_and_Next"
+                              label='{!v.forwardButtonLabel}'
+                              onclick="{!c.handleNext}" />   
+        </aura:if>          
+    <aura:if isTrue='{! not(v.hideBackButton)}'>
+        <lightning:button disabled='{!v.saveOperationInProgress}'
+                          class="Navbtn_back slds-m-top_small"
+                          name="Back"
+                          label='Back'
+                          onclick="{!c.handlePrevious}" />   
+        
+    </aura:if>
+    </div>	
+</aura:component>

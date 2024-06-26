@@ -1,0 +1,484 @@
+<!-- 11/17/2016 Lynn Michels   Created
+     08/07/2018 Lynn Michels Edited for mobile use
+ -->
+ <apex:page showHeader="false" docType="html-5.0" standardController="Reference_PEO__c" extensions="ReferencePEODealPhasesController">
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+    <!--CLASSIC-->
+  
+    <apex:form rendered="{!$User.UITheme == 'Theme3' || $User.UITheme == 'Theme4d'}" style="padding: 15px">
+    <style type="text/css">
+    body{
+        font-family: Arial,Helvetica,sans-serif;;
+        font-size: 55%
+    }
+    h1{
+        color: #4a4a56;
+        font-size: 115%;
+    }
+    .diagramContainer{
+        height: 100px;
+        padding-top: 10px;
+    }
+    .initalsetupContainer{
+        width: 94px;
+        height: 90px;
+        float: left;
+    }
+    .circle {
+        float: left;
+        width: 45px;
+        height: 40px;
+        background: #AFAFAF;
+        -moz-border-radius: 25px;
+        -webkit-border-radius: 25px;
+        border-radius: 25px;
+    }
+    .container{
+        width: 59px;
+        height: 42px;
+        margin-top: 19px;
+        text-align:left;
+    }
+    .chevronContainer{
+        width: 65px;
+        height: 90px;
+        float: left;
+    }
+    .chevron {
+      position: relative;
+      text-align: center;
+      padding: 12px;
+      margin-bottom: 6px;
+      height: 1px;
+      width: 35px;
+    }
+    .gray.chevron:before,.gray.chevron:after {
+    background-color: {!colorGray};
+    }
+    .green.chevron:before,.green.chevron:after {
+    background-color: {!colorGreen};
+    }
+    .yellow.chevron:before,.yellow.chevron:after{
+    background: {!colorYellow};
+    }
+    .red.chevron:before,.red.chevron:after{
+    background: {!colorRed};
+    }
+    .chevron:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 80%;
+      width: 90%;
+      background: inherit;
+      -webkit-transform: skew(25deg, 0deg);
+      -moz-transform: skew(25deg, 0deg);
+      -ms-transform: skew(25deg, 0deg);
+      -o-transform: skew(25deg, 0deg);
+      transform: skew(25deg, 0deg);
+    }
+    .chevron:after {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 0px;
+      height: 80%;
+      width: 90%;
+      background: inherit;
+      -webkit-transform: skew(-25deg, -0deg);
+      -moz-transform: skew(-25deg, -0deg);
+      -ms-transform: skew(-25deg, -0deg);
+      -o-transform: skew(-25deg, -0deg);
+      transform: skew(-25deg, -0deg);
+    }​​
+    
+    </style>
+
+
+    <h1>Initial Client Setup Phase Milestones</h1>
+    <apex:outputPanel id="clientSetupMilestones" layout="block" styleClass="diagramContainer">
+        <apex:outputPanel id="initalSetup" layout="block" styleClass="initalsetupContainer">
+            <apex:outputPanel layout="block" styleClass="circle" style="background: {!initialSetupCircleColor}"></apex:outputPanel>
+            <apex:outputPanel layout="block" styleClass="{!initialSetupColor} chevron" style="margin-left: 30px"></apex:outputPanel>
+            <apex:outputPanel layout="block" styleClass="container" style="margin-left: auto; margin-right: auto; font-weight: {!initialSetupFontWeight}; font-size: {!initialSetupFontSize}">Initial Setup</apex:outputPanel>
+        </apex:outputPanel>
+        
+        <apex:outputPanel id="empDataRecd" layout="block" styleClass="chevronContainer">
+            <apex:outputPanel layout="block" styleClass="{!empDataRecdColor} chevron"></apex:outputPanel> 
+            <apex:outputPanel layout="block" styleClass="container" style="font-weight: {!empDataRecdFontWeight}; font-size: {!empDataRecdFontSize}">Employee Data Rec'd</apex:outputPanel> 
+        </apex:outputPanel>
+        
+        <apex:outputPanel id="workcompReview" layout="block" styleClass="chevronContainer"> 
+            <apex:outputPanel layout="block" styleClass="{!workCompColor} chevron"></apex:outputPanel>
+            <apex:outputPanel layout="block" styleClass="container" style="font-weight: {!workCompFontWeight}; font-size: {!workCompFontSize}">WorkComp UW Review</apex:outputPanel>
+        </apex:outputPanel>
+        
+        <apex:outputPanel id="benefitsSetup" layout="block" styleClass="chevronContainer">
+            <apex:outputPanel layout="block" styleClass="{!benefitsSetupColor} chevron" ></apex:outputPanel>
+            <apex:outputPanel layout="block" styleClass="container" style="font-weight: {!benefitsSetupFontWeight}; font-size: {!benefitsSetupFontSize}">Benefits Setup</apex:outputPanel>
+        </apex:outputPanel>
+        
+        <apex:outputPanel id="eeloadsetup" layout="block" styleClass="chevronContainer">
+            <apex:outputPanel layout="block" styleClass="{!eeLoadColor} chevron"></apex:outputPanel>
+            <apex:outputPanel layout="block" styleClass="container" style="font-weight: {!eeLoadFontWeight}; font-size: {!eeLoadFontSize}">EE Load WC Setup</apex:outputPanel>
+        </apex:outputPanel>
+        
+        <apex:outputPanel id="eeOnboarding" layout="block" styleClass="chevronContainer">
+            <apex:outputPanel layout="block" styleClass="{!eeOnboardingColor} chevron"></apex:outputPanel>
+            <apex:outputPanel layout="block" styleClass="container" style="font-weight: {!eeOnboardingFontWeight}; font-size: {!eeOnboardingFontSize}">EE Onboarding</apex:outputPanel>
+        </apex:outputPanel>
+        
+        <apex:outputPanel id="onboardComplete" layout="block" styleClass="chevronContainer">
+            <apex:outputPanel layout="block" styleClass="{!onboardingCompleteColor} chevron"></apex:outputPanel> 
+            <apex:outputPanel layout="block" styleClass="container" style="font-weight: {!onboardingCompleteFontWeight}; font-size: {!onboardingCompleteFontSize}">Onboarding Complete</apex:outputPanel>
+        </apex:outputPanel>
+        
+        <apex:outputPanel id="medApproval" layout="block" styleClass="chevronContainer">
+            <apex:outputPanel layout="block" styleClass="{!medUVApprovalColor} chevron"></apex:outputPanel>
+            <apex:outputPanel layout="block" styleClass="container" style="font-weight: {!medUVApprovalFontWeight}; font-size: {!medUVApprovalFontSize}">Med UW Approval</apex:outputPanel>
+        </apex:outputPanel>
+        
+        <apex:outputPanel id="setupComplete" layout="block" styleClass="chevronContainer">
+            <apex:outputPanel layout="block" styleClass="{!approvedPassColor} chevron"></apex:outputPanel>
+            <apex:outputPanel layout="block" styleClass="container" style="font-weight: {!approvedPassFontWeight}; font-size: {!approvedPassFontSize}">Approved Pass to New Loads</apex:outputPanel>
+        </apex:outputPanel>
+        
+        <apex:outputPanel id="initalSetupComplete" layout="block" styleClass="initalsetupContainer">
+            <apex:outputPanel layout="block" styleClass="{!setupCompleteColor} chevron" ></apex:outputPanel>
+            <apex:outputPanel layout="block" styleClass="circle" style="margin-left: 48px; position: relative; top: -31px; left: -27px; background: {!setupCompleteCircleColor}"></apex:outputPanel>
+            <apex:outputPanel layout="block" styleClass="container" style="position: relative; top: -27px; font-weight: {!setupCompleteFontWeight}; font-size: {!setupCompleteFontSize}">Initial Setup Complete</apex:outputPanel> 
+        </apex:outputPanel> 
+    </apex:outputPanel>
+    
+    
+    
+    <h1>Payroll Conversion Phase Milestones</h1>
+    <apex:outputPanel id="payrollConversionMilestones" layout="block" styleClass="diagramContainer">
+        <apex:outputPanel id="conversionSetup" layout="block" styleClass="initalsetupContainer">
+            <apex:outputPanel layout="block" styleClass="circle" style="background: {!payrollConversionSetupCircleColor}"></apex:outputPanel>
+            <apex:outputPanel layout="block" styleClass="{!payrollConversionSetupColor} chevron" style="margin-left: 30px"></apex:outputPanel>
+            <apex:outputPanel layout="block" styleClass="container" style="margin-left: auto; margin-right: auto;font-weight: {!payrollConversionSetupFontWeight}; font-size: {!payrollConversionSetupFontSize}">Payroll Conversion Setup</apex:outputPanel>
+        </apex:outputPanel>
+        
+        <apex:outputPanel id="eeVerified" layout="block" styleClass="chevronContainer">
+            <apex:outputPanel layout="block" styleClass="{!eeVerificationColor} chevron"></apex:outputPanel>
+            <apex:outputPanel layout="block" styleClass="container" style="font-weight: {!eeVerificationFontWeight}; font-size: {!eeVerificationFontSize}">EE Verified and QC'd</apex:outputPanel>  
+        </apex:outputPanel> 
+        
+        <apex:outputPanel id="holdsRemoved" layout="block" styleClass="chevronContainer">
+            <apex:outputPanel layout="block" styleClass="{!holdsRemovedColor} chevron"></apex:outputPanel>
+            <apex:outputPanel layout="block" styleClass="container" style="font-weight: {!holdsRemovedFontWeight}; font-size: {!holdsRemovedFontSize}">Holds Removed</apex:outputPanel>
+        </apex:outputPanel>
+        
+        <apex:outputPanel id="readyToRun" layout="block" styleClass="chevronContainer">
+            <apex:outputPanel layout="block" styleClass="{!readyToRunColor} chevron" ></apex:outputPanel> 
+            <apex:outputPanel layout="block" styleClass="container" style="font-weight: {!readyToRunFontWeight}; font-size: {!readyToRunFontSize}">Ready to Run</apex:outputPanel>
+        </apex:outputPanel>
+        
+        <apex:outputPanel id="payrollProcessing" layout="block" styleClass="chevronContainer">
+            <apex:outputPanel layout="block" styleClass="{!payrollProcessingColor} chevron"></apex:outputPanel>
+            <apex:outputPanel layout="block" styleClass="container" style="font-weight: {!payrollProcessingFontWeight}; font-size: {!payrollProcessingFontSize}">Payroll Processing</apex:outputPanel>
+        </apex:outputPanel>
+        
+        <apex:outputPanel id="payrollComplete" layout="block" styleClass="initalsetupContainer">
+            <apex:outputPanel layout="block" styleClass="{!processingCompleteColor} chevron" ></apex:outputPanel>
+            <apex:outputPanel layout="block" styleClass="circle" style="margin-left: 48px; position: relative; top: -31px; left: -27px; background: {!processingCompleteCircleColor}"></apex:outputPanel>
+            <apex:outputPanel layout="block" styleClass="container" style="position: relative; top: -27px; font-weight: {!processingCompleteFontWeight}; font-size: {!processingCompleteFontSize}">1st Payroll Complete</apex:outputPanel> 
+        </apex:outputPanel> 
+    </apex:outputPanel>
+    </apex:form>
+
+    
+    
+<!--LIGHTNING AND SF MOBILE-->
+    <apex:form rendered="{!$User.UITheme == 'Theme4t'}" style="padding: 15px">
+    <style type="text/css">
+    
+    .slds-scope .slds-icon_small, .slds-scope .slds-icon--small{
+    padding: 4px
+    }
+    .test-id__field-label-container{
+    display: none
+    }
+    div.test-id__field-label-container{
+    display: none
+    }
+    .slds-scope ul{
+    margin-bottom: 15px
+    }
+    .slds-scope .slds-media__body{
+    padding-top: 6px
+    }
+    .slds-scope h1{
+    color: #4a4a56;
+    padding-bottom: 4px;
+    font-size: .8rem
+    }
+    .slds-scope .slds-timeline__icon
+    {
+    border: none;
+    margin-bottom: 3px
+    }
+    .slds-scope .slds-icon_container{
+    margin-right: 5px}
+    
+    .gray.slds-icon_container {
+    background-color: {!colorGray};
+    }
+    .green.slds-icon_container {
+    background-color: {!colorGreen};
+    }
+    .yellow.slds-icon_container{
+    background: {!colorYellow};
+    }
+    .red.slds-icon_container{
+    background: {!colorRed};
+    }
+    
+    </style>
+
+<apex:slds >
+<div class="slds-scope">
+<h1>INITIAL CLIENT SETUP MILESTONES</h1>
+<ul class="slds-timeline" style="font-size: 75%">
+  <li>
+    <div>
+      <div class="slds-media" >
+          <div class="{!initialSetupColor} slds-icon_container slds-timeline__icon" title="call">
+              <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                <use xlink:href="{!initialSetupIconUrl}"></use> 
+              </svg>
+          </div>
+          <div class="slds-media__body" >
+            <p style="font-weight: {!initialSetupFontWeight}; font-size: {!initialSetupFontSize}">Initial Setup</p>   
+          </div>
+      </div>
+    </div>
+  </li>
+  <li>
+    <div>
+      <div class="slds-media" >
+          <div class="{!empDataRecdColor} slds-icon_container slds-timeline__icon" title="call" >
+              <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                <use xlink:href="{!empDataRecdIconUrl}"></use>
+              </svg>
+          </div>
+          <div class="slds-media__body" >
+            <p style="font-weight: {!empDataRecdFontWeight}; font-size: {!empDataRecdFontSize}">Employee Data Received</p>   
+          </div>
+      </div>
+    </div>
+  </li>
+  <li>
+    <div>
+      <div class="slds-media" >
+          <div class="{!workCompColor} slds-icon_container slds-timeline__icon" title="call" >
+              <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                <!-- use xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/utility-sprite/svg/symbols.svg#error')}"></use-->
+                <use xlink:href="{!workCompIconUrl}"></use>
+              </svg>
+          </div>
+          <div class="slds-media__body">
+            <p style="font-weight: {!workCompFontWeight}; font-size: {!workCompFontSize}">WorkComp UW Review</p>   
+          </div>
+      </div>
+    </div>
+  </li>
+  <li>
+    <!-- >div class="slds-timeline__item_expandable" -->
+    <div>
+      <div class="slds-media" >
+     <!--slds-current-color - fill - red-->
+          <div class="{!benefitsSetupColor} slds-icon_container slds-timeline__icon" title="call" >
+              <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                <!--use xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/utility-sprite/svg/symbols.svg#clock')}"></use-->
+                <use xlink:href="{!benefitsSetupIconUrl}"></use>
+              </svg>
+          </div>
+          <div class="slds-media__body" >
+            <p style="font-weight: {!benefitsSetupFontWeight}; font-size: {!benefitsSetupFontSize}">Benefits Setup</p>   
+          </div>
+      </div>
+    </div>
+  </li>
+  <li>
+    <div>
+      <div class="slds-media">
+          <div class="{!eeLoadColor} slds-icon_container slds-timeline__icon" title="call" >
+              <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                <use xlink:href="{!eeLoadIconUrl}"></use>
+              </svg>
+          </div>
+          <div class="slds-media__body" >
+            <p style="font-weight: {!eeLoadFontWeight}; font-size: {!eeLoadFontSize}">EE Load WC Setup</p>   
+          </div>
+      </div>
+    </div>
+  </li>
+  <li>
+    <div>
+      <div class="slds-media">
+          <div class="{!eeOnboardingColor} slds-icon_container slds-timeline__icon" title="call" >
+              <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                <use xlink:href="{!eeOnboardingIconUrl}"></use>
+              </svg>
+          </div>
+          <div class="slds-media__body" >
+            <p style="font-weight: {!eeOnboardingFontWeight}; font-size: {!eeOnboardingFontSize}">EE Onboarding</p>   
+          </div>
+      </div>
+    </div>
+  </li>
+  <li>
+    <div>
+      <div class="slds-media">
+          <div class="{!onboardingCompleteColor} slds-icon_container slds-timeline__icon" title="call" >
+              <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                <use xlink:href="{!onboardingCompleteIconUrl}"></use>
+              </svg>
+          </div>
+          <div class="slds-media__body" >
+            <p style="font-weight: {!onboardingCompleteFontWeight}; font-size: {!onboardingCompleteFontSize}">Onboarding Complete</p>   
+          </div>
+      </div>
+    </div>
+  </li>
+  <li>
+    <div>
+      <div class="slds-media">
+          <div class="{!medUVApprovalColor} slds-icon_container slds-timeline__icon" title="call" >
+              <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                <use xlink:href="{!medUVApprovalIconUrl}"></use>
+              </svg>
+          </div>
+          <div class="slds-media__body" >
+            <p style="font-weight: {!medUVApprovalFontWeight}; font-size: {!medUVApprovalFontSize}">Med UW Approval</p>   
+          </div>
+      </div>
+    </div>
+  </li>
+  <li>
+    <div>
+      <div class="slds-media">
+          <div class="{!approvedPassColor} slds-icon_container slds-timeline__icon" title="call" >
+              <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                <use xlink:href="{!approvedPassIconUrl}"></use>
+              </svg>
+          </div>
+          <div class="slds-media__body" >
+            <p style="font-weight: {!approvedPassFontWeight}; font-size: {!approvedPassFontSize}">Approved Pass to New Loads</p>   
+          </div>
+      </div>
+    </div>
+  </li>
+  <li>
+    <div>
+      <div class="slds-media">
+          <div class="{!setupCompleteColor} slds-icon_container slds-timeline__icon" title="call" >
+              <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                <use xlink:href="{!setupCompleteIconUrl}"></use>
+              </svg>
+          </div>
+          <div class="slds-media__body" >
+            <p style="font-weight: {!setupCompleteFontWeight}; font-size: {!setupCompleteFontSize}">Initial Setup Complete</p>   
+          </div>
+      </div>
+    </div>
+  </li>
+  
+ </ul>
+
+<h1>PAYROLL CONVERSION MILESTONES</h1>
+<ul class="slds-timeline" style="font-size: 75%">
+  <li>
+    <div>
+      <div class="slds-media" >
+          <div class="{!payrollConversionSetupColor} slds-icon_container slds-timeline__icon" title="call">
+              <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                <use xlink:href="{!payrollConversionSetupIconUrl}"></use>
+              </svg>        
+          </div>
+          <div class="slds-media__body" >
+            <p style="font-weight: {!payrollConversionSetupFontWeight}; font-size: {!payrollConversionSetupFontSize}">Payroll Conversion Setup</p>   
+          </div>
+      </div>
+    </div>
+  </li>
+  <li>
+    <div>
+      <div class="slds-media" >
+          <div class="{!eeVerificationColor} slds-icon_container slds-timeline__icon" title="call" >
+              <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                <use xlink:href="{!eeVerificationIconUrl}"></use>
+              </svg>
+          </div>
+          <div class="slds-media__body" >
+            <p style="font-weight: {!eeVerificationFontWeight}; font-size: {!eeVerificationFontSize}">EE Verified and QC'd</p>   
+          </div>
+      </div>
+    </div>
+  </li>
+  <li>
+    <div>
+      <div class="slds-media" >
+          <div class="{!holdsRemovedColor} slds-icon_container slds-timeline__icon" title="call" >
+              <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                <use xlink:href="{!holdsRemovedIconUrl}"></use>
+              </svg>
+          </div>
+          <div class="slds-media__body">
+            <p style="font-weight: {!holdsRemovedFontWeight}; font-size: {!holdsRemovedFontSize}">Holds Removed</p>   
+          </div>
+      </div>
+    </div>
+  </li>
+  <li>
+    <div>
+      <div class="slds-media" >
+          <div class="{!readyToRunColor} slds-icon_container slds-timeline__icon" title="call" >
+              <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                <use xlink:href="{!readyToRunIconUrl}"></use>
+              </svg>
+          </div>
+          <div class="slds-media__body" >
+            <p style="font-weight: {!readyToRunFontWeight}; font-size: {!readyToRunFontSize}">Ready to Run</p>   
+          </div>
+      </div>
+    </div>
+  </li>
+  <li>
+    <div>
+      <div class="slds-media">
+          <div class="{!payrollProcessingColor} slds-icon_container slds-timeline__icon" title="call" >
+              <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                <use xlink:href="{!payrollProcessingIconUrl}"></use>
+              </svg>
+          </div>
+          <div class="slds-media__body" >
+            <p style="font-weight: {!payrollProcessingFontWeight}; font-size: {!payrollProcessingFontSize}">Payroll Processing</p>   
+          </div>
+      </div>
+    </div>
+  </li>
+  <li>
+    <div>
+      <div class="slds-media">
+          <div class="{!processingCompleteColor} slds-icon_container slds-timeline__icon" title="call" >
+              <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                <use xlink:href="{!processingCompleteIconUrl}"></use>
+              </svg>
+          </div>
+          <div class="slds-media__body" >
+            <p style="font-weight: {!processingCompleteFontWeight}; font-size: {!processingCompleteFontSize}">1st Payroll Complete</p>   
+          </div>
+      </div>
+    </div>
+  </li>
+ </ul>
+ 
+</div>
+</apex:slds>
+</apex:form>
+</html>
+</apex:page>

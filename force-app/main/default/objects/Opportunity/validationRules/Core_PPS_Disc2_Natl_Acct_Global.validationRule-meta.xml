@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Core_PPS_Disc2_Natl_Acct_Global</fullName>
+    <active>false</active>
+    <description>Only PPS, National Account or Global</description>
+    <errorConditionFormula>AND((NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))), Payroll_Processing_Services_Package__c ||  Payroll_Processing_Services_Plus_Package__c ,
+ ISPICKVAL( Discount2_Type__c , &apos;WIN&apos;)
+)</errorConditionFormula>
+    <errorMessage>***Discount 2*** can only be *National Account* or *Global for Payroll Processing Services Package</errorMessage>
+</ValidationRule>

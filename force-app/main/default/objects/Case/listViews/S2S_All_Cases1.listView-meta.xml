@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>S2S_All_Cases1</fullName>
+    <booleanFilter>(1 OR 5) AND 2 AND 3 AND 4</booleanFilter>
+    <columns>Initial_Client_Contact_Completed__c</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>CASES.PRIORITY</columns>
+    <columns>OWNER_NAME</columns>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>CREATEDBY_USER.ALIAS</columns>
+    <columns>Created_By_Title__c</columns>
+    <columns>NAME</columns>
+    <columns>Product__c</columns>
+    <columns>CASES.RECORDTYPE</columns>
+    <columns>Prospect_Client_Number__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.Sales_to_Service_Communication_Case</value>
+    </filters>
+    <filters>
+        <field>Product__c</field>
+        <operation>equals</operation>
+        <value>Payroll</value>
+    </filters>
+    <filters>
+        <field>OWNER_NAME</field>
+        <operation>notContain</operation>
+        <value>UC,flex forward</value>
+    </filters>
+    <filters>
+        <field>CASES.CLOSED</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>CASES.SUBJECT</field>
+        <operation>contains</operation>
+        <value>Client Issue to be Completed - Immediate Action Required</value>
+    </filters>
+    <label>S2S:MPSC/Preview Payroll Cases (Open)</label>
+</ListView>

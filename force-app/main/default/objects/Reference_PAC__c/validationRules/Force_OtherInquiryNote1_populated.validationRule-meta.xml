@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_OtherInquiryNote1_populated</fullName>
+    <active>true</active>
+    <description>Force users to populate the Other Inquiry Note 1 field, depending on specific PSST/CSPAC Reason 1 picklist values.</description>
+    <errorConditionFormula>AND( 
+ ($RecordType.Name = &quot;Reference PAC Record Type&quot; ), 
+ (ISPICKVAL(PSST_CSPAC_Reason_1__c, &apos;Other Inquiry&apos;)), 
+ (ISBLANK(Other_Inquiry_Note_1__c))
+)</errorConditionFormula>
+    <errorDisplayField>Other_Inquiry_Note_1__c</errorDisplayField>
+    <errorMessage>You must enter a value in the Other Inquiry Note 1 field, when selecting a PSST/CSPAC Reason 1  of Other Inquiry.</errorMessage>
+</ValidationRule>

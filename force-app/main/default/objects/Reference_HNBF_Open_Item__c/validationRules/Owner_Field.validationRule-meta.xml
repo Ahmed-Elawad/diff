@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Owner_Field</fullName>
+    <active>true</active>
+    <description>If Status=”Resolved” require Owner field to be populated</description>
+    <errorConditionFormula>ISPICKVAL( Status__c , &quot;Resolved&quot;) &amp;&amp;  ISNULL(TEXT( Owner__c) )</errorConditionFormula>
+    <errorMessage>If the status is resolved you must enter a value in the owner field</errorMessage>
+</ValidationRule>

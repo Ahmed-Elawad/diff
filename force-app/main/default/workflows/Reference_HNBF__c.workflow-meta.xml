@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Date_Received</fullName>
+        <field>Date_Received__c</field>
+        <formula>TODAY()</formula>
+        <name>Date Received</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Direct_To_Employee_Timestamp</fullName>
+        <field>Direct_To_Employee_Timestamp__c</field>
+        <formula>NOW()</formula>
+        <name>Direct To Employee Timestamp</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>ESR_Cancel_Date_Time_Stamp</fullName>
+        <field>ESR_Cancel_Date_Timestamp__c</field>
+        <formula>NOW()</formula>
+        <name>ESR Cancel Date Time Stamp</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>HNBF_Update_Start_Date_Of_Current_Step</fullName>
+        <field>Start_Date_Of_Current_Step__c</field>
+        <formula>Today()</formula>
+        <name>HNBF Update Start Date Of Current Step</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Set_Direct_To_Employee_Timestamp_to_NOW</fullName>
+        <field>Direct_To_Employee_Timestamp__c</field>
+        <formula>NOW()</formula>
+        <name>Set Direct To Employee Timestamp to NOW</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Submitted_to_NC</fullName>
+        <field>Submitted_to_NC__c</field>
+        <formula>TODAY()</formula>
+        <name>Submitted to NC</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Filed_Date</fullName>
+        <field>IRS_Extension_Filed_Timestamp__c</field>
+        <formula>NOW()</formula>
+        <name>Update Filed Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Filing_Timestamp</fullName>
+        <field>Filing_Stage_Timestamp__c</field>
+        <formula>NOW()</formula>
+        <name>Update Filing Timestamp</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_IRS_Notice_Received_Timestamp</fullName>
+        <description>Update field with the current Date and Time</description>
+        <field>IRS_Notice_Received_Timestamp__c</field>
+        <formula>NOW()</formula>
+        <name>Update IRS Notice Received Timestamp</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Date Received</fullName>
+        <actions>
+            <name>Date_Received</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_HNBF__c.Current_Step__c</field>
+            <operation>equals</operation>
+            <value>Onboarding Started</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_HNBF__c.Date_Received__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <description>Populates Date Received when Onboarding Status is changed to Onboarding Started</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Direct To Employee Timestamp</fullName>
+        <actions>
+            <name>Direct_To_Employee_Timestamp</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>ISCHANGED( Direct_To_Employee__c) &amp;&amp;
+RecordType.Name = &apos;Reference ESR Dedicated Service Record Type&apos;</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Direct To Employee is set or changed</fullName>
+        <actions>
+            <name>Set_Direct_To_Employee_Timestamp_to_NOW</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Capture the date/time whenever the Direct To Employee field is set or changed.</description>
+        <formula>ISCHANGED( Direct_To_Employee__c )</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Fill in Filling Stage Timestamp</fullName>
+        <actions>
+            <name>Update_Filing_Timestamp</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>AND( OR(RecordType.Name = &apos;Reference ESR Dedicated Service Record Type&apos;,RecordType.Name = &apos;Reference Benetrac ESR Dedicated Service Record Type&apos;),ISCHANGED( Filing_Stage__c ))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>HNBF Update Start Date Of Current Step</fullName>
+        <actions>
+            <name>HNBF_Update_Start_Date_Of_Current_Step</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>ISCHANGED(Current_Step__c)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>IRS Extension</fullName>
+        <actions>
+            <name>Update_Filed_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_HNBF__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Reference ESR Dedicated Service Record Type,Reference Benetrac ESR Dedicated Service Record Type</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_HNBF__c.IRS_Extension_Filed__c</field>
+            <operation>equals</operation>
+            <value>Yes</value>
+        </criteriaItems>
+        <description>Case 23891231</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ref Agency%3A update IRS Notice Received Timestamp</fullName>
+        <actions>
+            <name>Update_IRS_Notice_Received_Timestamp</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Update the IRS Notice Received Timestamp field with the current date and time when the Notice Count Field is updated</description>
+        <formula>AND( (RecordType.Name = &apos;Reference ESR Dedicated Service Record Type&apos;) || (RecordType.Name = &apos;Reference Benetrac ESR Dedicated Service Record Type&apos;),ISCHANGED( Notice_Count__c ))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Reference Agency%3A ESR Cancel Date Timestamp</fullName>
+        <actions>
+            <name>ESR_Cancel_Date_Time_Stamp</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>ISCHANGED(ESR_Cancel_Date__c)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Submitted to NC</fullName>
+        <actions>
+            <name>Submitted_to_NC</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_HNBF__c.Current_Step__c</field>
+            <operation>equals</operation>
+            <value>Sent to New Case</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_HNBF__c.Submitted_to_NC__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <description>Populates Date Received when Onboarding Status is changed to Onboarding Started</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

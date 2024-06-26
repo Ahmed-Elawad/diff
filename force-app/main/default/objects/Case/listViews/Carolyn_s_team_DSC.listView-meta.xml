@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Carolyn_s_team_DSC</fullName>
+    <booleanFilter>(1 AND 2 AND 3 AND 4) OR (5 AND 6 AND 7)</booleanFilter>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>OWNER_NAME</columns>
+    <columns>BeneTrac_Site_ID__c</columns>
+    <columns>BeneTrac_Category_1__c</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>BeneTrac_Sponsor_ID__c</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>CASES.PRIORITY</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>Team__c</columns>
+    <columns>Case_Age__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Cancelled,Closed,Closed - Duplicate,Complete,Completed,Solved</value>
+    </filters>
+    <filters>
+        <field>CASES.SUBJECT</field>
+        <operation>notContain</operation>
+        <value>ESR</value>
+    </filters>
+    <filters>
+        <field>Team__c</field>
+        <operation>equals</operation>
+        <value>Client Service - DSC</value>
+    </filters>
+    <filters>
+        <field>CORE.USERS.ALIAS</field>
+        <operation>equals</operation>
+        <value>fcruz,dmorg,rlusk,dleig</value>
+    </filters>
+    <filters>
+        <field>Onboarding_Type__c</field>
+        <operation>equals</operation>
+        <value>Renewal</value>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Cancelled,Closed,Closed - Duplicate,Complete,Completed,Solved</value>
+    </filters>
+    <filters>
+        <field>CORE.USERS.ALIAS</field>
+        <operation>equals</operation>
+        <value>fcruz,dmorg,rlusk,dleig</value>
+    </filters>
+    <label>Carolyn&apos;s Team - DSC</label>
+    <sharedTo>
+        <group>BeneTrac_Carrier_Support</group>
+        <group>BeneTrac_Client_Service</group>
+        <group>BeneTrac_EDI</group>
+        <group>BeneTrac_Tech_Ops</group>
+    </sharedTo>
+</ListView>

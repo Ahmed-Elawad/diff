@@ -1,0 +1,105 @@
+<!-- 
+* 08/30/2017 Lynn Michels   Created
+* 11/22/2017 Lynn Michels   Added an HRG List if signed in as an Area Manager
+* 05/24/2018 Lynn Michels   Adding options for Client list or controlled ownership selection
+* 09/30/2020 Jake Hinds     Removing HR Admin
+* 02/08/2024 Reetesh Pandey	APR0153637 Changed code to check for HRG Name
+ -->
+ 
+<apex:page standardController="Reference_HRS_Termination_Transfer__c" extensions="ClientListController" id="ClientList" > 
+    <apex:form style="padding: 15px"> 
+        <apex:includeScript value="{!$Resource.selectCheckboxesJs}" />
+        <apex:includeScript value="{!$Resource.jQuery2_0_3}" /> 
+        
+        <script> 
+        
+        //the addition and removal of the disabled attribute on the buttons
+        function buttonsEnabled(enable) {
+            var $buttons = jQuery('.btn'); // find all buttons in the page
+            if (enable === false) {
+                $buttons.toggleClass('btnDisabled', true).attr('disabled', 'disabled');
+            } else {
+                $buttons.toggleClass('btnDisabled', false).attr('disabled', null);
+            } 
+        }
+        
+        //provide confirmation pop up
+        function confirmProcessClients() {
+            if (confirm("You will now create a Case and Reference Termination/Transfer record for all of the Prospect-Clients that you have selected. Do you want to continue?")) {
+                return jsProcessSelected();
+            }
+            return buttonsEnabled(true);
+            
+        }
+        
+        </script>
+        
+        <apex:pageBlock rendered="{!NOT(cont)}">
+            <h2 style="color: red">{!alert}</h2>
+            <p><apex:commandButton value="Cancel" immediate="true" action="{!cancel}" /></p>
+        </apex:pageBlock>
+        
+        <apex:actionFunction action="{!displayClientList}" name="jsDisplayClientList" />
+        
+        <!-- allow the user to choose if they want their Client Base or Controlled Ownership listed-->    
+        <apex:pageBlock rendered="{!NOT(selectionChosen) && cont && NOT(userIdIsSet) && isControlledOwnership}">
+            <!--<apex:outputText rendered="{!OR(isAreaManager,isHRAdmin)}">-->
+            <apex:outputText rendered="{!isAreaManager}">
+                <h2>Choose which client list to display for <span style="text-transform: uppercase">{!hrgName}</span>:</h2><br /><br />
+            </apex:outputText>
+            
+            <!--<apex:outputText rendered="{!AND(NOT(isAreaManager),NOT(isHRAdmin))}">-->
+            <apex:outputText rendered="{!NOT(isAreaManager)}">
+                <h2>Choose which client list to display:</h2><br /><br />
+            </apex:outputText>
+                <apex:selectRadio layout="pageDirection" 
+                                    required="true" 
+                                    value="{!chosenList}"
+                                    title="Choose which group of clients to select from:">
+                    <apex:selectOptions value="{!clientListOptions}"/>
+                </apex:selectRadio>
+            <p><apex:commandButton value="Next" onclick="buttonsEnabled(false);return jsDisplayClientList();"/>
+            <apex:commandButton value="Cancel" immediate="true" action="{!cancel}" /></p>
+        </apex:pageBlock> 
+        
+        <!----         -------------------------------------------------------------------------------------------------------------------------------------    -->
+        
+        <apex:pageBlock rendered="{!acctsFound && cont && userIdIsSet && selectionChosen}">
+            <apex:outputText rendered="{!isAreaManager}">
+                <h2>Currently displaying clients where <span style="text-transform: uppercase">{!hrgName}</span> is on the Paychex Account Team as the HR Generalist.</h2><br /><br />
+            </apex:outputText>
+            <apex:actionFunction action="{!processSelected}" name="jsProcessSelected" />
+            <h1><b>Choose the clients to be coded lost</b></h1> 
+            <p> 
+                <apex:outputText ><b>Number of Clients:</b> {!numAccounts} </apex:outputText>
+            </p> 
+            <p><apex:commandButton value="Process {!thisBranchClientNum} & any add'l IDs selected" onclick="buttonsEnabled(false);return confirmProcessClients();"/>
+                <apex:commandButton value="Cancel" immediate="true" action="{!cancel}" />
+            </p>          
+            
+        </apex:pageBlock>
+        <apex:pageBlock rendered="{!acctsFound && cont && userIdIsSet && selectionChosen}">
+            <apex:pageBlockTable id="accList" value="{!acctWrapperList}" var="a" cellPadding="2" border="1">
+                <apex:column > 
+                    <apex:facet name="header">  
+                        <apex:inputCheckbox value="{!selectAll}" id="selectAllBoxes" title="Select All" onclick="selectAll('checkedone',this)" >
+                        </apex:inputCheckbox>
+                    </apex:facet>
+                    <apex:inputCheckbox disabled="false" value="{!a.selected}" id="checkedone"/> 
+                </apex:column>
+                
+                <apex:column >
+                    <apex:facet name="header">Prospect-Client Name</apex:facet>
+                    <apex:outputText style="white-space:nowrap;" value="{!a.acct.Name} - {!a.acct.AccountNumber}" />
+                </apex:column>  
+                <apex:column >
+                    <apex:facet name="header">HRG Name</apex:facet>
+                    <apex:outputText style="white-space:nowrap;" value="{!a.acct.HR_Generalist__r.Name}" />
+                </apex:column>   
+            </apex:pageBlockTable>    
+            
+            
+        </apex:pageBlock>
+        
+    </apex:form>
+</apex:page>

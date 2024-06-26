@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>LeadSourceDefault__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>CASE( TEXT(Referral_Account__r.Referral_Source_Business_Type__c)
+,&quot;Accounting Firm&quot;,IF( TEXT(AICPA_Enrolled__c)==&quot;Y&quot;,&quot;Referral-CPA-AICPA&quot;,&quot;Referral-CPA-Non-AICPA&quot;)
+,&quot;Broker&quot;,&quot;Referral-Financial Advisor&quot;
+,&quot;Broker Dealer&quot;,&quot;Referral-Financial Advisor&quot;
+,&quot;Broker Dealer Branch&quot;,&quot;Referral-Financial Advisor&quot;
+,&quot;Financial Services&quot;,&quot;Referral-Bank Referral&quot;
+,&quot;Insurance Broker&quot;,&quot;Referral-Independent Ins. Agent&quot;
+,&quot;Insurance Carrier&quot;,&quot;Referral-Independent Ins. Agent&quot;
+,&quot;National Account&quot;,&quot;Referral - National Account HQ&quot;
+,&quot;Strategic Account&quot;,&quot;Referral-Strategic Account&quot;
+,&quot;Paychex Co&quot;,IF( TEXT(Referral_Account__r.ReferralSourceSubType__c)==&quot;Advance Partners&quot;,&quot;Referral-Internal-Advance Partners&quot;,&quot;&quot;)
+,&quot;&quot;)</formula>
+    <inlineHelpText>The default lead source to use on the opportunity when this is used as a referral contact</inlineHelpText>
+    <label>Lead Source Default</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

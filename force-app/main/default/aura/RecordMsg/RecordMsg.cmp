@@ -1,0 +1,19 @@
+<aura:component controller="CheckRecordAura" implements="force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:hasSObjectName">
+
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+    <aura:attribute name="recordId" type="Id" default="0062F000001fVsfQAE" />
+    <aura:attribute name="messages" type="CheckRecordMsg[]"/>
+
+        
+    <table width="60%">
+    <aura:iteration var="msg" items="{!v.messages}">
+        <tr>
+            <td style="{!msg.labelStyle}">{!msg.label}</td>
+           <td style="{!msg.msgStyle}"> {!msg.message}</td>
+         </tr>
+    </aura:iteration>
+    </table>
+
+</aura:component>

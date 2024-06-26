@@ -1,0 +1,278 @@
+<apex:component controller="ClientReferenceRequestController" allowDML="true">
+<!-- create another output panel for SF1 and use render=SF1 -->  
+    <apex:form id="referenceForm"> 
+
+    <apex:includeScript value="{!URLFOR($Resource.iOSFix)}"/> 
+  
+     
+   <apex:outputPanel id="Vforce">
+       <apex:outputPanel > 
+           <apex:outputPanel id="Desktop" rendered="true">  
+           <style type="text/css">
+                .tableStyle {border-collapse:collapse;border: 1px solid black; width:80%;padding:0px;spacing:1px;}
+                .nameHeaderCell { font-weight: bold;padding:0px;width:20%; color:blue;}
+                .timeHeaderCell { padding:0px;width:7%; }
+                .freeCell { padding:0px;height:8px;background-color:white;}
+                .busyCell { padding:0px;height:8px;background-color:#FA5858; font-weight: bold}
+                .tableRowHeader { vertical-align:center;padding:0px;padding-bottom:0px }
+                .tableRow { vertical-align:center;padding:0px;border-top: #BDBDBD solid thin; padding-bottom:0px}
+           </style>
+
+          <apex:sectionHeader title="Client Reference Requests" subtitle="{!opty.Name}" />
+          
+          <!-- ****************** Search Criteria ********************* -->   
+          <apex:outputPanel id="FilterPanel" title="Please select your filter criteria">
+            <apex:pageMessages />
+            <apex:outputText id="warningMsg" value="{!limitWarning}" rendered="{!isLimitWarning}" />
+            <apex:pageBlock id="FilterBlock"> 
+            
+                <apex:pageBlockButtons location="top">
+                    <apex:commandButton value="Search"  action="{!runSearch}" />
+                    <apex:commandButton value="Reset Search"  action="{!resetFilter}" />
+                    <apex:commandButton value="Cancel" immediate="true" action="{!cancel}" />
+                    <apex:commandButton value="Submit References for Approval and Return to Opportunity" action="{!returnToOpty}" />
+                </apex:pageBlockButtons>
+                
+                <apex:pageBlockSection columns="2"  title="Please select your filter criteria"> 
+                    
+                    <apex:selectList label="Payroll Type" value="{!selectedAcctType}"  id="acctType"  size="1" > 
+                        <apex:selectOptions value="{!acctTypeOptions}"/> 
+                    </apex:selectList>
+                    <!-- <apex:inputField label="PR Active EE Category" value="{!filterClientRef.PR_Active_EE_Categories__c}" />  -->
+                    <apex:inputText label="Minimum Active Employees" value="{!eeMin}" />
+                    <apex:inputField label="Business Type 1" value="{!filterClientRef.Business_Type_1__c}" />
+                    <apex:inputText label="Maximum Active Employees" value="{!eeMax}" />
+                    <apex:inputField label="Business Type 2" value="{!filterClientRef.Business_Type_2__c}" />
+                    <apex:inputField label="Previous Method Level 2" value="{!filterClientRef.Previous_Method_Level_2__c}" />                                   
+                    <apex:inputField label="Years of Service" value="{!filterClientRef.Years_of_Service__c}" />                 
+                    <apex:inputText label="State" title="2 char state codes separated by ," value="{!state}" />
+                    <apex:inputText label="Zip Code" title="5 digit zips separated by ," value="{!zip}" />
+                    
+                    <apex:inputCheckbox label="Preview to Flex Migration" value="{!filterPreviewtoFlex}" />                 
+                    <apex:selectList label="Flex Hiring" value="{!selectedFlexHiring}"  id="fh"  size="5" multiselect="true" > 
+                        <apex:selectOptions value="{!flexHiringOptions}"/> 
+                    </apex:selectList>
+                    <apex:selectList label="Time and Attendance" value="{!selectedTAA}"  id="taa"  size="1" > 
+                        <apex:selectOptions value="{!taaOptions}"/> 
+                    </apex:selectList>
+                    <!-- <apex:inputCheckbox label="Time Off Accrual" value="{!filterTOA}" />  -->
+                    <apex:selectList label="Benefits Administration" value="{!selectedBenetrac}"  id="benetrac"  size="1" > 
+                        <apex:selectOptions value="{!benetracOptions}"/> 
+                    </apex:selectList> 
+                    <apex:inputCheckbox label="HRO (HR Online)" value="{!filterHROnline}" />
+                    
+                    <apex:selectList label="Accounting Software" value="{!selectedAcctSftwr}"  id="as"  size="1" > 
+                        <apex:selectOptions value="{!acctSftwrOptions}"/> 
+                    </apex:selectList>
+                    <apex:selectList label="General Ledger" value="{!selectedGL}"  id="gl"  size="1" > 
+                        <apex:selectOptions value="{!glOptions}"/> 
+                    </apex:selectList>
+                    <apex:inputCheckbox label="PAYX 401k" value="{!filterX401k}" />
+                    <apex:inputCheckbox label="Labor Distribution" value="{!filterLabor}" />
+                    <apex:inputCheckbox label="PAYX H&B" value="{!filterMedical}" />
+                    <apex:inputCheckbox label="Job Costing" value="{!filterJobCosting}" />
+                    <apex:inputCheckbox label="PAYX SimpleIRA" value="{!filterSimpleIRA}" />
+                    <apex:inputCheckbox label="Certified Payroll" value="{!filterCertPayroll}" />                    
+                    <apex:inputCheckbox label="PAYX FSA" value="{!filterFSA}" />
+                    <apex:inputField label="HRIS Current-Prior Method" value="{!filterAcct.HRIS_Current_Prior_Method__c}" />                    
+                    <apex:inputCheckbox label="PAYX POP" value="{!filterPOP}" />
+                    <apex:inputCheckbox label="Multi ID" title="Identifies clients that have multiple IDs" value="{!filterMultiId}" />
+                    <apex:inputField label="ATS Current-Prior Method" value="{!filterAcct.ATS_Current_Prior_Method__c}" />
+                    <apex:inputCheckbox label="PAYX WCPS" value="{!filterWCPS}" />
+                    <apex:selectList label="Strategic Acct" value="{!selectedStrategicAcct}"  id="sa"  size="1" > 
+                        <apex:selectOptions value="{!strategicAcctOptions}"/> 
+                    </apex:selectList>
+                    
+ 
+                                
+                </apex:pageBlockSection>
+                
+            </apex:PageBlock> 
+          </apex:outputPanel>  
+
+          <!-- ****************** Search Results ********************* -->
+          <apex:outputPanel id="ResultsPanel" rendered="{!isSearch}">
+            <apex:PageBlock >
+                 <apex:pageBlockSection collapsible="false" id="ResultsSection" title="Query results. Please select your references" columns="1">
+                     <apex:pageBlockTable id="ReferenceTable" value="{!resultList}" var="rslt">
+                        <apex:column >
+                           <apex:facet name="header">Selected</apex:facet>
+                           <apex:inputCheckbox value="{!rslt.selected}" >
+                             <apex:actionSupport event="onclick" action="{!markSelected}" />      
+                           </apex:inputCheckbox>
+                        </apex:column>
+                        <!-- 
+                        <apex:column>
+                            <apex:facet name="header">Prospect-Client</apex:facet>
+                            <apex:outputText value="{!rslt.acctName}" />
+                        </apex:column>
+                        -->
+                        <apex:column style="white-space:nowrap;">
+                            <apex:facet name="header">Company</apex:facet>
+                            <apex:commandLink value="{!rslt.acctName}" onclick="window.open('/' + '{!rslt.acctId}')">
+                                <apex:param name="detailId" value="{!rslt.acctId}" assignTo="{!detailId}"/>
+                            </apex:commandLink>
+                        </apex:column>
+                        <!--
+                        <apex:column >
+                            <apex:facet name="header">P-C Number</apex:facet>
+                            <apex:outputText value="{!rslt.acctNumber}" />
+                        </apex:column>
+                        -->
+                        <apex:column >
+                            <apex:facet name="header">Product Reference</apex:facet>
+                            <apex:outputText value="{!rslt.prodReference}" />
+                        </apex:column>
+                        <!--
+                        <apex:column >
+                            <apex:facet name="header">Contact</apex:facet>
+                            <apex:outputText value="{!rslt.ctctName}" />
+                        </apex:column>
+                        --> 
+                        <apex:column >
+                            <apex:facet name="header">Industry</apex:facet>
+                            <apex:outputText value="{!rslt.acctIndustry}" />
+                        </apex:column>
+                        <!--
+                        <apex:column >
+                            <apex:facet name="header">Previous Method Level 2</apex:facet>
+                            <apex:outputText value="{!rslt.prevMethod2}" />
+                        </apex:column>
+                        -->
+                        <apex:column >
+                            <apex:facet name="header">Type</apex:facet>
+                            <apex:outputText value="{!rslt.acctType}" />
+                        </apex:column>
+                        <!--
+                        <apex:column >
+                            <apex:facet name="header">Package</apex:facet>
+                            <apex:outputText value="{!rslt.acctCurrPkg}" />
+                        </apex:column>
+                        -->
+                        <apex:column >
+                            <apex:facet name="header">Comments</apex:facet>
+                            <apex:outputText value="{!rslt.surveyComments}" />
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">Billing State</apex:facet>
+                            <apex:outputText value="{!rslt.acctState}" />
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">Zip Code</apex:facet>
+                            <apex:outputText value="{!rslt.acctZip}" />
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">Employees</apex:facet>
+                            <apex:outputText value="{!rslt.acctEmp}" />
+                        </apex:column>
+                        <!--
+                        <apex:column >
+                            <apex:facet name="header">Notes to store on record</apex:facet>
+                            <apex:inputText size="100" value="{!inputValue}" id="inputNotes"/>
+                        </apex:column>
+                        -->
+                        <!--
+                        <apex:column > 
+                            <apex:facet name="header">Bis ID</apex:facet>
+                            <apex:outputText value="{!rslt.BisId}" />
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">Respondent ID</apex:facet>
+                            <apex:outputText value="{!rslt.respondentId}" />
+                        </apex:column>
+                        -->
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+                <!--
+                <apex:pageBlockButtons location="bottom" >
+                    <apex:commandButton value="Save Selected References" immediate="true" action="{!saveSelected}" />
+                    <apex:commandButton value="Cancel" immediate="true" action="{!cancel}" />
+                </apex:pageBlockButtons>
+                -->
+            </apex:PageBlock> 
+          </apex:outputPanel>
+             
+          <!-- ****************** Selected References ********************* -->
+          <apex:outputPanel id="SelectedPanel" rendered="{!showSelected}">
+            <apex:PageBlock >
+                 <apex:pageBlockSection collapsible="false" id="SelectedSection" title="References you have selected." columns="1">
+                     <apex:pageBlockTable id="SelectedTable" value="{!selectedList}" var="slct"> 
+                        <apex:column >
+                           <apex:facet name="header">Selected</apex:facet>
+                           <apex:inputCheckbox title="unCheck this box to remove this entry from selected list" value="{!slct.selected}" >
+                             <apex:actionSupport event="onclick" action="{!unmarkSelected}" />      
+                           </apex:inputCheckbox>
+                        </apex:column>
+                        <!-- 
+                        <apex:column>
+                            <apex:facet name="header">Prospect-Client</apex:facet>
+                            <apex:outputText value="{!slct.acctName}" />
+                        </apex:column>
+                        -->
+                        <apex:column style="white-space:nowrap;">
+                            <apex:commandLink value="{!slct.acctName}" onclick="window.open('/' + '{!slct.acctId}')">
+                                <apex:param name="detailId" value="{!slct.acctId}" assignTo="{!detailId}"/>
+                            </apex:commandLink>
+                        </apex:column>
+                        <!--
+                        <apex:column >
+                            <apex:facet name="header">P-C Number</apex:facet>
+                            <apex:outputText value="{!slct.acctNumber}" />
+                        </apex:column>
+                        -->
+                        <apex:column >
+                        <apex:facet name="header">Product Reference</apex:facet>
+                        <apex:outputText value="{!slct.prodReference}" />
+                        </apex:column>
+                        <apex:column >
+                        <apex:facet name="header">Notes</apex:facet>
+                        <apex:inputText value="{!slct.notes}" />
+                        </apex:column>
+                        <!-- 
+                        <apex:column >
+                            <apex:facet name="header">Contact</apex:facet>
+                            <apex:outputText value="{!slct.ctctName}" />
+                        </apex:column>
+                         -->
+                        <apex:column >
+                            <apex:facet name="header">Industry</apex:facet>
+                            <apex:outputText value="{!slct.acctIndustry}" />
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">Payroll Current/Prior Method</apex:facet>
+                            <apex:outputText value="{!slct.acctCurrPriorMethod}" />
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">Billing State</apex:facet>
+                            <apex:outputText value="{!slct.acctState}" />
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">Zip Code</apex:facet>
+                            <apex:outputText value="{!slct.acctZip}" />
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">Employees</apex:facet>
+                            <apex:outputText value="{!slct.acctEmp}" />
+                        </apex:column> 
+                        <!-- 
+                        <apex:column > 
+                            <apex:facet name="header">Bis ID</apex:facet>
+                            <apex:outputText value="{!slct.BisId}" />
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">Respondent ID</apex:facet>
+                            <apex:outputText value="{!slct.respondentId}" />
+                        </apex:column>
+                         -->
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+            </apex:PageBlock> 
+          </apex:outputPanel>
+                    
+         </apex:outputPanel>
+       </apex:outputPanel>
+     </apex:outputPanel>
+
+  </apex:form>
+              
+</apex:component>

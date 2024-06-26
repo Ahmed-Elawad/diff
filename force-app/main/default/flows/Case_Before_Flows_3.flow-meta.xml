@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>57.0</apiVersion>
+    <decisions>
+        <name>Do_we_need_to_update_Business_Critical_Date</name>
+        <label>Do we need to update Business Critical Date?</label>
+        <locationX>182</locationX>
+        <locationY>395</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Business_Critical_Date_empty</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Business_Critical_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Business_Critical_Date</targetReference>
+            </connector>
+            <label>Business Critical Date empty</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>APR0169378</description>
+        <name>email_to_case_Criteria</name>
+        <label>email to case Criteria</label>
+        <locationX>710</locationX>
+        <locationY>395</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>met_criteria</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Owner:Group.Id</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>00G4u0000053zsCEAQ</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>New</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Origin</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Email-to-Case</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Pre_sale</targetReference>
+            </connector>
+            <label>met criteria</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Which_Record_Type</name>
+        <label>Which Record Type?</label>
+        <locationX>644</locationX>
+        <locationY>287</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Consumer_Privacy</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Consumer Privacy</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Do_we_need_to_update_Business_Critical_Date</targetReference>
+            </connector>
+            <label>Consumer Privacy</label>
+        </rules>
+        <rules>
+            <name>Flex_Gl_Presale</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Support GL Case</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>email_to_case_Criteria</targetReference>
+            </connector>
+            <label>Flex Gl Presale</label>
+        </rules>
+    </decisions>
+    <description>APR0169378</description>
+    <environments>Default</environments>
+    <formulas>
+        <description>Populate case opened + 40 calendar days</description>
+        <name>BusinessCriticalDate</name>
+        <dataType>DateTime</dataType>
+        <expression>{!$Record.CreatedDate}+20</expression>
+    </formulas>
+    <interviewLabel>Case Before Flow 3 {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Case Before Flows 3</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Set_Pre_sale</name>
+        <label>Set Pre-sale</label>
+        <locationX>578</locationX>
+        <locationY>503</locationY>
+        <inputAssignments>
+            <field>Pre_Sale__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Business_Critical_Date</name>
+        <label>Update Business Critical Date</label>
+        <locationX>50</locationX>
+        <locationY>503</locationY>
+        <inputAssignments>
+            <field>Business_Critical_Date__c</field>
+            <value>
+                <elementReference>BusinessCriticalDate</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>518</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Which_Record_Type</targetReference>
+        </connector>
+        <object>Case</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Draft</status>
+</Flow>

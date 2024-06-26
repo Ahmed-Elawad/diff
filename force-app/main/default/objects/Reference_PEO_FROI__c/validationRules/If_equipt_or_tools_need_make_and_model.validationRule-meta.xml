@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>If_equipt_or_tools_need_make_and_model</fullName>
+    <active>true</active>
+    <description>If IW was using equip/tools then you need to enter the make and model number of the tools used.</description>
+    <errorConditionFormula>AND
+
+(ISPICKVAL(  Was_the_IW_using_any_equip_tools__c 
+, &quot;Yes&quot;) ,  ISBLANK(  Make_and_Model_Number_of_Tools__c )  )</errorConditionFormula>
+    <errorDisplayField>Make_and_Model_Number_of_Tools__c</errorDisplayField>
+    <errorMessage>If IW was using equip/tools then you need to enter the make and model number of the tools used.</errorMessage>
+</ValidationRule>

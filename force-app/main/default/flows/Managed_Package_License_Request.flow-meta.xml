@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Chatter_Approved_Other</name>
+        <label>Chatter Approved Other</label>
+        <locationX>1370</locationX>
+        <locationY>431</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <elementReference>ApprovedOther</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Chatter_Record_Approved_Docusign</name>
+        <label>Chatter Record Approved Docusign</label>
+        <locationX>1106</locationX>
+        <locationY>431</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <elementReference>ApprovedDocusign</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Chatter_Record_Created</name>
+        <label>Chatter Record Created</label>
+        <locationX>556</locationX>
+        <locationY>431</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <connector>
+            <targetReference>Who_Is_it_owned_by</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <elementReference>RecordCreatedChatter</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Chatter_Request_Rejected</name>
+        <label>Chatter Request Rejected</label>
+        <locationX>1634</locationX>
+        <locationY>431</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <elementReference>RequestRejected</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Chatter_Sales_Stewards</name>
+        <label>Chatter Sales Stewards</label>
+        <locationX>490</locationX>
+        <locationY>863</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <elementReference>PostToSalesEnablement</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Post_to_COE_Group</name>
+        <label>Post to COE Group</label>
+        <locationX>50</locationX>
+        <locationY>863</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <elementReference>PostToCOE</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>60.0</apiVersion>
+    <decisions>
+        <name>Check_for_the_Group</name>
+        <label>Check for the Group</label>
+        <locationX>622</locationX>
+        <locationY>755</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_the_Sales_Stewards_Group_there</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Check_for_Sales_Stewards</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Chatter_Sales_Stewards</targetReference>
+            </connector>
+            <label>Is the Sales Stewards Group there?</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Is_the_chatter_group_there</name>
+        <label>Is the chatter group there?</label>
+        <locationX>182</locationX>
+        <locationY>755</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Do_we_have_the_group</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Check_for_COE_License_Request_Group</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Post_to_COE_Group</targetReference>
+            </connector>
+            <label>Do we have the group?</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>What_do_we_do</name>
+        <label>What do we do?</label>
+        <locationX>1227</locationX>
+        <locationY>323</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Record_Created</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Request_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Submitted for Approval</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Requestor__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.User_Name__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Chatter_Record_Created</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Record Created</label>
+        </rules>
+        <rules>
+            <name>Record_Approved_Docusign</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Request_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Approved</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Package_Name__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Docusign</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.User_Name__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Requestor__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Chatter_Record_Approved_Docusign</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Record Approved - Docusign</label>
+        </rules>
+        <rules>
+            <name>Record_Approved_Other</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Request_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Approved</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Approved_By__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Package_Name__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Docusign</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Chatter_Approved_Other</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Record Approved - Other</label>
+        </rules>
+        <rules>
+            <name>Record_Rejected</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Request_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Rejected</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Rejection_Reason__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Chatter_Request_Rejected</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Record Rejected</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Who_Is_it_owned_by</name>
+        <label>Who Is it owned by</label>
+        <locationX>556</locationX>
+        <locationY>539</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Owned_by_SFDC</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.OwnerId</leftValueReference>
+                <operator>StartsWith</operator>
+                <rightValue>
+                    <stringValue>00G70000001l4jk</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Check_for_COE_License_Request_Group</targetReference>
+            </connector>
+            <label>Owned by SFDC</label>
+        </rules>
+        <rules>
+            <name>Owned_By_Data_Stewards</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.OwnerId</leftValueReference>
+                <operator>StartsWith</operator>
+                <rightValue>
+                    <stringValue>00G0g0000049OVr</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Check_for_Sales_Stewards</targetReference>
+            </connector>
+            <label>Owned By Data Stewards</label>
+        </rules>
+    </decisions>
+    <description>Chatter message for the Managed Package requests</description>
+    <environments>Default</environments>
+    <interviewLabel>Managed Package License Request {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Managed Package License Request</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Check_for_COE_License_Request_Group</name>
+        <label>Check for COE License Request Group</label>
+        <locationX>182</locationX>
+        <locationY>647</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Is_the_chatter_group_there</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>0F94u000000Xkpr</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>CollaborationGroup</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Check_for_Sales_Stewards</name>
+        <label>Check for Sales Stewards</label>
+        <locationX>622</locationX>
+        <locationY>647</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_for_the_Group</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>0F90g000000g044</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>CollaborationGroup</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>1101</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>What_do_we_do</targetReference>
+        </connector>
+        <object>Manage_Package_License__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <name>ApprovedDocusign</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Hello @[{!$Record.Requestor__c}]!
+We have approved your request to grant a Docusign license to @[{!$Record.User_Name__c}]. {!$Record.User_Name__r.FirstName}} will receive an automated email and will need to take action within 24 hours. If {!$Record.User_Name__r.FirstName}} runs into a problem, report the issue by using the Sales Help Request Form.
+Please note that the license will be deactivated after 90 days of non-use.
+Thank you,
+Sales Enablement Team</text>
+    </textTemplates>
+    <textTemplates>
+        <name>ApprovedOther</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Hello @[{!$Record.Requestor__c}]!
+@[{!$Record.User_Name__c}] has been set up with a {!$Record.Package_Name__c} license. If {!$Record.User_Name__r.FirstName} runs into a problem, report the issue by using the Sales Help Request Form.
+Thank you,
+Sales Enablement Team</text>
+    </textTemplates>
+    <textTemplates>
+        <name>PostToCOE</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>@[0F94u000000Xkpr],
+@[{!$Record.Requestor__c}] has submitted a request for access to {!$Record.Package_Name__c} for @[{!$Record.User_Name__c}]. Please review this submission.</text>
+    </textTemplates>
+    <textTemplates>
+        <name>PostToSalesEnablement</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>@[0F90g000000g044],
+@[{!$Record.Requestor__c}] has submitted a request for access to {!$Record.Package_Name__c} for @[{!$Record.User_Name__c}]. Please review this submission.</text>
+    </textTemplates>
+    <textTemplates>
+        <name>RecordCreatedChatter</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Hello @[{!$Record.Requestor__c}]!
+We have received your request to grant a {!$Record.Package_Name__c} license to @[{!$Record.User_Name__c}].  Please allow five business days for us to review your request and get it set up.
+Thank you,
+Sales Enablement Team</text>
+    </textTemplates>
+    <textTemplates>
+        <name>RequestRejected</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Hello @[{!$Record.Requestor__c}]!
+We are not able to grant a {!$Record.Package_Name__c} license to @[{!$Record.User_Name__c}] and your request has been rejected.
+Rejection Reason: {!$Record.Rejection_Reason__c}
+If you have any questions, report the issue by using the Sales Help Request Form.
+Thank you,
+Sales Enablement Team</text>
+    </textTemplates>
+</Flow>

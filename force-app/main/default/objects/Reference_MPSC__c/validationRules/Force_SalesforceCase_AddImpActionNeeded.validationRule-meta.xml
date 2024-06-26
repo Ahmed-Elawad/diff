@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_SalesforceCase_AddImpActionNeeded</fullName>
+    <active>true</active>
+    <description>If Additional Implementation action needed? = Yes, then force the Salesforce Case # field to be populated.</description>
+    <errorConditionFormula>AND( 
+ISPICKVAL(Additional_Implementation_action_needed__c,&quot;Yes&quot;), 
+ISBLANK(Salesforce_Case__c), 
+$Profile.Name &lt;&gt;&quot;System Administrator&quot; 
+)</errorConditionFormula>
+    <errorDisplayField>Salesforce_Case__c</errorDisplayField>
+    <errorMessage>You must populate the Salesforce Case # field, when setting If Additional Implementation action needed? = Yes.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Client_Referral_Required</fullName>
+    <active>true</active>
+    <description>need client name when 96 Three for Free Lead Source is used</description>
+    <errorConditionFormula>AND(OR(ISPICKVAL(LeadSource, &quot;Referral - External - Three for Free&quot;),ISPICKVAL(LeadSource, &quot;Referral-Client-Solicited&quot;), ISPICKVAL(LeadSource, &quot;Referral - Client&quot;)),(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))),Client_Referral__c = &quot;&quot;,OR($RecordType.DeveloperName =&quot;CoreLeadRecordType&quot;, $RecordType.DeveloperName =&quot;MMSLeadRecordType&quot;, $RecordType.DeveloperName =&quot;HRSLeadRecordType&quot;))</errorConditionFormula>
+    <errorDisplayField>Client_Referral__c</errorDisplayField>
+    <errorMessage>*** You Must Enter The Client Name ***
+Remember to click the Magnifying Glass icon to complete the selection</errorMessage>
+</ValidationRule>

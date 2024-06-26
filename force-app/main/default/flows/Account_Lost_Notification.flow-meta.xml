@@ -1,0 +1,1159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <processMetadataValues>
+            <name>textJson</name>
+            <value>
+                <stringValue>{&quot;mentions&quot;:[],&quot;message&quot;:&quot;@[{![Account].OwnerId}],@[{![Account].Owner.ManagerId}],\n\n*** LOST CLIENT NOTIFICATION *** \n\n!THIS IS A SYSTEM GENERATED COMMUNICATION. DO NOT REPLY TO THIS COMMUNICATION, IF YOU HAVE ANY QUESTIONS PLEASE CONTACT YOUR BRANCH PERSONNEL! \n\nThe following Prospect-Client has been updated to Lost Client. \nClient Number: {![Account].AccountNumber}\nCompany: {![Account].Name}\nShipping-Delivery Address: \n{![Account].ShippingStreet}\n{![Account].ShippingCity}, {![Account].ShippingState} {![Account].ShippingPostalCode}\n\nBilling Address: \n{![Account].BillingStreet}\n{![Account].BillingCity}, {![Account].BillingState} {![Account].BillingPostalCode}\n\nPhone: {![Account].Phone}\n\nLost Date: {![Account].Lost_Date__c} \nReason Lost: {![Account].Reason_Lost__c} \n\nClick on the link to access the Prospect-Client directly: https://paychex.my.salesforce.com/{![Account].Id}\n\n\nLost Code Definitions: \n*Note- Any code not list below is a branch specific code, please contact the branch manager or designate for the definition. \nA - Price/Value \nE - Other Services \nF - Bank Affiliation \nG - Dissatisfaction \nH - Merger \nI - Out of Business \nJ - Sold and Replaced \nK - In House Computer \nL - Term. for non-payment \nN - Sold and Not Replaced \nP - Prsnal/Business Relationship \nR - Accountant \nT - Transfer \nU - Employee Leasing (non-Payx) \nV - Change of Entity \nW - Reload \nX - Zero Employees - Not Hiring \nY - Lost Due to ENS Cancellation&quot;}</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>myRule_1_A1</name>
+        <label>Chatter Post</label>
+        <locationX>100</locationX>
+        <locationY>200</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <connector>
+            <targetReference>myRule_1_A2</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <stringValue>@[{!myVariable_current.OwnerId}],@[{!myVariable_current.Owner.ManagerId}],
+
+*** LOST CLIENT NOTIFICATION *** 
+
+!THIS IS A SYSTEM GENERATED COMMUNICATION. DO NOT REPLY TO THIS COMMUNICATION, IF YOU HAVE ANY QUESTIONS PLEASE CONTACT YOUR BRANCH PERSONNEL! 
+
+The following Prospect-Client has been updated to Lost Client. 
+Client Number: {!myVariable_current.AccountNumber}
+Company: {!myVariable_current.Name}
+Shipping-Delivery Address: 
+{!myVariable_current.ShippingStreet}
+{!myVariable_current.ShippingCity}, {!myVariable_current.ShippingState} {!myVariable_current.ShippingPostalCode}
+
+Billing Address: 
+{!myVariable_current.BillingStreet}
+{!myVariable_current.BillingCity}, {!myVariable_current.BillingState} {!myVariable_current.BillingPostalCode}
+
+Phone: {!myVariable_current.Phone}
+
+Lost Date: {!myVariable_current.Lost_Date__c} 
+Reason Lost: {!myVariable_current.Reason_Lost__c} 
+
+Click on the link to access the Prospect-Client directly: https://paychex.my.salesforce.com/{!myVariable_current.Id}
+
+
+Lost Code Definitions: 
+*Note- Any code not list below is a branch specific code, please contact the branch manager or designate for the definition. 
+A - Price/Value 
+E - Other Services 
+F - Bank Affiliation 
+G - Dissatisfaction 
+H - Merger 
+I - Out of Business 
+J - Sold and Replaced 
+K - In House Computer 
+L - Term. for non-payment 
+N - Sold and Not Replaced 
+P - Prsnal/Business Relationship 
+R - Accountant 
+T - Transfer 
+U - Employee Leasing (non-Payx) 
+V - Change of Entity 
+W - Reload 
+X - Zero Employees - Not Hiring 
+Y - Lost Due to ENS Cancellation</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>type</name>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>myVariable_current.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <processMetadataValues>
+            <name>textJson</name>
+            <value>
+                <stringValue>{&quot;mentions&quot;:[],&quot;message&quot;:&quot;@[{![Account].Premier_PBS_Account_Owner__c}],@[{![Account].Premier_PBS_Account_Owner__r.ManagerId}],@[{![Account].Premier_PBS_Account_Owner__r.DSA_FSS__c}],\n\n*** LOST CLIENT NOTIFICATION *** \n\n!THIS IS A SYSTEM GENERATED COMMUNICATION. DO NOT REPLY TO THIS COMMUNICATION, IF YOU HAVE ANY QUESTIONS PLEASE CONTACT YOUR BRANCH PERSONNEL! \n\nThe following Prospect-Client has been updated to Lost Client. \nClient Number: {![Account].AccountNumber}\nCompany: {![Account].Name}\nShipping-Delivery Address: \n{![Account].ShippingStreet}\n{![Account].ShippingCity}, {![Account].ShippingState} {![Account].ShippingPostalCode}\n\nBilling Address: \n{![Account].BillingStreet}\n{![Account].BillingCity}, {![Account].BillingState} {![Account].BillingPostalCode}\n\nPhone: {![Account].Phone}\n\nLost Date: {![Account].Lost_Date__c} \nReason Lost: {![Account].Reason_Lost__c} \n\nClick on the link to access the Prospect-Client directly: https://paychex.my.salesforce.com/{![Account].Id}\n\n\nLost Code Definitions: \n*Note- Any code not list below is a branch specific code, please contact the branch manager or designate for the definition. \nA - Price/Value \nE - Other Services \nF - Bank Affiliation \nG - Dissatisfaction \nH - Merger \nI - Out of Business \nJ - Sold and Replaced \nK - In House Computer \nL - Term. for non-payment \nN - Sold and Not Replaced \nP - Prsnal/Business Relationship \nR - Accountant \nT - Transfer \nU - Employee Leasing (non-Payx) \nV - Change of Entity \nW - Reload \nX - Zero Employees - Not Hiring \nY - Lost Due to ENS Cancellation&quot;}</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>myRule_5_A1</name>
+        <label>Chatter Post</label>
+        <locationX>500</locationX>
+        <locationY>200</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <connector>
+            <targetReference>myRule_5_A2</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <stringValue>@[{!myVariable_current.Premier_PBS_Account_Owner__c}],@[{!myVariable_current.Premier_PBS_Account_Owner__r.ManagerId}],@[{!myVariable_current.Premier_PBS_Account_Owner__r.DSA_FSS__c}],
+
+*** LOST CLIENT NOTIFICATION *** 
+
+!THIS IS A SYSTEM GENERATED COMMUNICATION. DO NOT REPLY TO THIS COMMUNICATION, IF YOU HAVE ANY QUESTIONS PLEASE CONTACT YOUR BRANCH PERSONNEL! 
+
+The following Prospect-Client has been updated to Lost Client. 
+Client Number: {!myVariable_current.AccountNumber}
+Company: {!myVariable_current.Name}
+Shipping-Delivery Address: 
+{!myVariable_current.ShippingStreet}
+{!myVariable_current.ShippingCity}, {!myVariable_current.ShippingState} {!myVariable_current.ShippingPostalCode}
+
+Billing Address: 
+{!myVariable_current.BillingStreet}
+{!myVariable_current.BillingCity}, {!myVariable_current.BillingState} {!myVariable_current.BillingPostalCode}
+
+Phone: {!myVariable_current.Phone}
+
+Lost Date: {!myVariable_current.Lost_Date__c} 
+Reason Lost: {!myVariable_current.Reason_Lost__c} 
+
+Click on the link to access the Prospect-Client directly: https://paychex.my.salesforce.com/{!myVariable_current.Id}
+
+
+Lost Code Definitions: 
+*Note- Any code not list below is a branch specific code, please contact the branch manager or designate for the definition. 
+A - Price/Value 
+E - Other Services 
+F - Bank Affiliation 
+G - Dissatisfaction 
+H - Merger 
+I - Out of Business 
+J - Sold and Replaced 
+K - In House Computer 
+L - Term. for non-payment 
+N - Sold and Not Replaced 
+P - Prsnal/Business Relationship 
+R - Accountant 
+T - Transfer 
+U - Employee Leasing (non-Payx) 
+V - Change of Entity 
+W - Reload 
+X - Zero Employees - Not Hiring 
+Y - Lost Due to ENS Cancellation</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>type</name>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>myVariable_current.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>49.0</apiVersion>
+    <decisions>
+        <processMetadataValues>
+            <name>index</name>
+            <value>
+                <numberValue>0.0</numberValue>
+            </value>
+        </processMetadataValues>
+        <name>myDecision</name>
+        <label>myDecision</label>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>myDecision4</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>default</defaultConnectorLabel>
+        <rules>
+            <name>myRule_1</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>formula_myRule_1</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>myRule_1_pmetdec</targetReference>
+            </connector>
+            <label>Account Lost - Payroll Recipient</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <processMetadataValues>
+            <name>index</name>
+            <value>
+                <numberValue>1.0</numberValue>
+            </value>
+        </processMetadataValues>
+        <name>myDecision4</name>
+        <label>myDecision4</label>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>default</defaultConnectorLabel>
+        <rules>
+            <name>myRule_5</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>formula_myRule_5</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>myRule_5_pmetdec</targetReference>
+            </connector>
+            <label>Account Lost PEO-ASO</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>myRule_1_pmetdec</name>
+        <label>Previously Met Decision</label>
+        <locationX>100</locationX>
+        <locationY>100</locationY>
+        <defaultConnector>
+            <targetReference>myRule_1_A1</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Not Previously Met</defaultConnectorLabel>
+        <rules>
+            <name>myRule_1_pmetnullrule</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>myVariable_old</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>myRule_1_A1</targetReference>
+            </connector>
+            <label>Previously Met - Null</label>
+        </rules>
+        <rules>
+            <name>myRule_1_pmetrule</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>formula_myRule_1_pmetrule</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <label>Previously Met - Prev</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>myRule_5_pmetdec</name>
+        <label>Previously Met Decision</label>
+        <locationX>500</locationX>
+        <locationY>100</locationY>
+        <defaultConnector>
+            <targetReference>myRule_5_A1</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Not Previously Met</defaultConnectorLabel>
+        <rules>
+            <name>myRule_5_pmetnullrule</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>myVariable_old</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>myRule_5_A1</targetReference>
+            </connector>
+            <label>Previously Met - Null</label>
+        </rules>
+        <rules>
+            <name>myRule_5_pmetrule</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>formula_myRule_5_pmetrule</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <label>Previously Met - Prev</label>
+        </rules>
+    </decisions>
+    <description>cmf 6/10/18 case 28747494 add DSA to post, cmf 10/31/18 fix bug where PEO owner is blank jc fix INC2757751</description>
+    <formulas>
+        <processMetadataValues>
+            <name>originalFormula</name>
+            <value>
+                <stringValue>TODAY()</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>formula_2_myRule_1_A2_2414349535</name>
+        <dataType>Date</dataType>
+        <expression>TODAY()</expression>
+    </formulas>
+    <formulas>
+        <processMetadataValues>
+            <name>originalFormula</name>
+            <value>
+                <stringValue>&apos;This task was generated as a receipt. Sent to rep: &apos;+[Account].Owner.FirstName +&apos; &apos;+[Account].Owner.LastName</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>formula_3_myRule_1_A2_3592854527</name>
+        <dataType>String</dataType>
+        <expression>&apos;This task was generated as a receipt. Sent to rep: &apos;+{!myVariable_current.Owner.FirstName} +&apos; &apos;+{!myVariable_current.Owner.LastName}</expression>
+    </formulas>
+    <formulas>
+        <processMetadataValues>
+            <name>originalFormula</name>
+            <value>
+                <stringValue>TODAY()</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>formula_6_myRule_5_A2_6117348898</name>
+        <dataType>Date</dataType>
+        <expression>TODAY()</expression>
+    </formulas>
+    <formulas>
+        <processMetadataValues>
+            <name>originalFormula</name>
+            <value>
+                <stringValue>&apos;This task was generated as a receipt. Sent to rep: &apos;+[Account].Premier_PBS_Account_Owner__c.FirstName  +&apos; &apos;+[Account].Premier_PBS_Account_Owner__c.LastName</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>formula_7_myRule_5_A2_9709020714</name>
+        <dataType>String</dataType>
+        <expression>&apos;This task was generated as a receipt. Sent to rep: &apos;+{!myVariable_current.Premier_PBS_Account_Owner__r.FirstName}  +&apos; &apos;+{!myVariable_current.Premier_PBS_Account_Owner__r.LastName}</expression>
+    </formulas>
+    <formulas>
+        <processMetadataValues>
+            <name>originalFormula</name>
+            <value>
+                <stringValue>
+AND([Account].Lost_Date__c &gt; TODAY()-7 ,
+PRIORVALUE([Account].Lost_Date__c) != [Account].Lost_Date__c,
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;SFDC Data&apos;),
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;Michael McCarthy&apos;),
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;Suzanne Vickery&apos;),
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;Operations Owner&apos;),
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;Lonny Ostrander&apos;),
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;Neil Rohrer&apos;),
+NOT(BEGINS([Account].Owner.FirstName,&apos;Unassigned&apos;)),
+NOT(Contains([Account].Owner.LastName,&apos;-T&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;T Transfer (Non Loss)&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;V Change of Entity (Non Loss)&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;W Reload (Non Loss)&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;T&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;V&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;W&apos;)),
+
+NOT(ISPICKVAL([Account].Type,&apos;HR Solutions FLEX Client&apos;)),
+NOT(ISPICKVAL([Account].Type,&apos;HR Solutions Preview Client&apos;)),
+NOT(ISPICKVAL([Account].Type,&apos;HR Solutions NPR Client&apos;)),
+NOT(ISPICKVAL([Account].Type,&apos;PEO Client&apos;))
+)</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>formula_myRule_1</name>
+        <dataType>Boolean</dataType>
+        <expression>
+AND({!myVariable_current.Lost_Date__c} &gt; TODAY()-7 ,
+PRIORVALUE({!myVariable_current.Lost_Date__c}) != {!myVariable_current.Lost_Date__c},
+NOT({!myVariable_current.Owner.FirstName}+&apos; &apos;+{!myVariable_current.Owner.LastName} = &apos;SFDC Data&apos;),
+NOT({!myVariable_current.Owner.FirstName}+&apos; &apos;+{!myVariable_current.Owner.LastName} = &apos;Michael McCarthy&apos;),
+NOT({!myVariable_current.Owner.FirstName}+&apos; &apos;+{!myVariable_current.Owner.LastName} = &apos;Suzanne Vickery&apos;),
+NOT({!myVariable_current.Owner.FirstName}+&apos; &apos;+{!myVariable_current.Owner.LastName} = &apos;Operations Owner&apos;),
+NOT({!myVariable_current.Owner.FirstName}+&apos; &apos;+{!myVariable_current.Owner.LastName} = &apos;Lonny Ostrander&apos;),
+NOT({!myVariable_current.Owner.FirstName}+&apos; &apos;+{!myVariable_current.Owner.LastName} = &apos;Neil Rohrer&apos;),
+NOT(BEGINS({!myVariable_current.Owner.FirstName},&apos;Unassigned&apos;)),
+NOT(Contains({!myVariable_current.Owner.LastName},&apos;-T&apos;)),
+NOT(ISPICKVAL({!myVariable_current.Reason_Lost__c},&apos;T Transfer (Non Loss)&apos;)),
+NOT(ISPICKVAL({!myVariable_current.Reason_Lost__c},&apos;V Change of Entity (Non Loss)&apos;)),
+NOT(ISPICKVAL({!myVariable_current.Reason_Lost__c},&apos;W Reload (Non Loss)&apos;)),
+NOT(ISPICKVAL({!myVariable_current.Reason_Lost__c},&apos;T&apos;)),
+NOT(ISPICKVAL({!myVariable_current.Reason_Lost__c},&apos;V&apos;)),
+NOT(ISPICKVAL({!myVariable_current.Reason_Lost__c},&apos;W&apos;)),
+
+NOT(ISPICKVAL({!myVariable_current.Type},&apos;HR Solutions FLEX Client&apos;)),
+NOT(ISPICKVAL({!myVariable_current.Type},&apos;HR Solutions Preview Client&apos;)),
+NOT(ISPICKVAL({!myVariable_current.Type},&apos;HR Solutions NPR Client&apos;)),
+NOT(ISPICKVAL({!myVariable_current.Type},&apos;PEO Client&apos;))
+)</expression>
+    </formulas>
+    <formulas>
+        <processMetadataValues>
+            <name>originalFormula</name>
+            <value>
+                <stringValue>
+AND([Account].Lost_Date__c &gt; TODAY()-7 ,
+PRIORVALUE([Account].Lost_Date__c) != [Account].Lost_Date__c,
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;SFDC Data&apos;),
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;Michael McCarthy&apos;),
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;Suzanne Vickery&apos;),
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;Operations Owner&apos;),
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;Lonny Ostrander&apos;),
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;Neil Rohrer&apos;),
+NOT(BEGINS([Account].Owner.FirstName,&apos;Unassigned&apos;)),
+NOT(Contains([Account].Owner.LastName,&apos;-T&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;T Transfer (Non Loss)&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;V Change of Entity (Non Loss)&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;W Reload (Non Loss)&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;T&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;V&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;W&apos;)),
+
+NOT(ISPICKVAL([Account].Type,&apos;HR Solutions FLEX Client&apos;)),
+NOT(ISPICKVAL([Account].Type,&apos;HR Solutions Preview Client&apos;)),
+NOT(ISPICKVAL([Account].Type,&apos;HR Solutions NPR Client&apos;)),
+NOT(ISPICKVAL([Account].Type,&apos;PEO Client&apos;))
+)</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>formula_myRule_1_pmetrule</name>
+        <dataType>Boolean</dataType>
+        <expression>
+AND({!myVariable_old.Lost_Date__c} &gt; TODAY()-7 ,
+PRIORVALUE({!myVariable_old.Lost_Date__c}) != {!myVariable_old.Lost_Date__c},
+NOT({!myVariable_old.Owner.FirstName}+&apos; &apos;+{!myVariable_old.Owner.LastName} = &apos;SFDC Data&apos;),
+NOT({!myVariable_old.Owner.FirstName}+&apos; &apos;+{!myVariable_old.Owner.LastName} = &apos;Michael McCarthy&apos;),
+NOT({!myVariable_old.Owner.FirstName}+&apos; &apos;+{!myVariable_old.Owner.LastName} = &apos;Suzanne Vickery&apos;),
+NOT({!myVariable_old.Owner.FirstName}+&apos; &apos;+{!myVariable_old.Owner.LastName} = &apos;Operations Owner&apos;),
+NOT({!myVariable_old.Owner.FirstName}+&apos; &apos;+{!myVariable_old.Owner.LastName} = &apos;Lonny Ostrander&apos;),
+NOT({!myVariable_old.Owner.FirstName}+&apos; &apos;+{!myVariable_old.Owner.LastName} = &apos;Neil Rohrer&apos;),
+NOT(BEGINS({!myVariable_old.Owner.FirstName},&apos;Unassigned&apos;)),
+NOT(Contains({!myVariable_old.Owner.LastName},&apos;-T&apos;)),
+NOT(ISPICKVAL({!myVariable_old.Reason_Lost__c},&apos;T Transfer (Non Loss)&apos;)),
+NOT(ISPICKVAL({!myVariable_old.Reason_Lost__c},&apos;V Change of Entity (Non Loss)&apos;)),
+NOT(ISPICKVAL({!myVariable_old.Reason_Lost__c},&apos;W Reload (Non Loss)&apos;)),
+NOT(ISPICKVAL({!myVariable_old.Reason_Lost__c},&apos;T&apos;)),
+NOT(ISPICKVAL({!myVariable_old.Reason_Lost__c},&apos;V&apos;)),
+NOT(ISPICKVAL({!myVariable_old.Reason_Lost__c},&apos;W&apos;)),
+
+NOT(ISPICKVAL({!myVariable_old.Type},&apos;HR Solutions FLEX Client&apos;)),
+NOT(ISPICKVAL({!myVariable_old.Type},&apos;HR Solutions Preview Client&apos;)),
+NOT(ISPICKVAL({!myVariable_old.Type},&apos;HR Solutions NPR Client&apos;)),
+NOT(ISPICKVAL({!myVariable_old.Type},&apos;PEO Client&apos;))
+)</expression>
+    </formulas>
+    <formulas>
+        <processMetadataValues>
+            <name>originalFormula</name>
+            <value>
+                <stringValue>AND([Account].Lost_Date__c &gt; TODAY()-7 ,
+ISNULL(PRIORVALUE([Account].Lost_Date__c)),
+NOT(ISNULL([Account].Lost_Date__c)),
+[Account].Premier_PBS_Account_Owner__c &lt;&gt; &apos;&apos;,
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;SFDC Data&apos;),
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;Michael McCarthy&apos;),
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;Suzanne Vickery&apos;),
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;Operations Owner&apos;),
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;Lonny Ostrander&apos;),
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;Neil Rohrer&apos;),
+NOT(BEGINS([Account].Owner.FirstName,&apos;Unassigned&apos;)),
+NOT(Contains([Account].Owner.LastName,&apos;-T&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;T Transfer (Non Loss)&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;V Change of Entity (Non Loss)&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;W Reload (Non Loss)&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;T&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;V&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;W&apos;)),
+OR(
+ISPICKVAL([Account].Type,&apos;HR Solutions FLEX Client&apos;),
+ISPICKVAL([Account].Type,&apos;HR Solutions Preview Client&apos;),
+ISPICKVAL([Account].Type,&apos;HR Solutions NPR Client&apos;),
+ISPICKVAL([Account].Type,&apos;PEO Client&apos;)))</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>formula_myRule_5</name>
+        <dataType>Boolean</dataType>
+        <expression>AND({!myVariable_current.Lost_Date__c} &gt; TODAY()-7 ,
+ISNULL(PRIORVALUE({!myVariable_current.Lost_Date__c})),
+NOT(ISNULL({!myVariable_current.Lost_Date__c})),
+{!myVariable_current.Premier_PBS_Account_Owner__c} &lt;&gt; &apos;&apos;,
+NOT({!myVariable_current.Owner.FirstName}+&apos; &apos;+{!myVariable_current.Owner.LastName} = &apos;SFDC Data&apos;),
+NOT({!myVariable_current.Owner.FirstName}+&apos; &apos;+{!myVariable_current.Owner.LastName} = &apos;Michael McCarthy&apos;),
+NOT({!myVariable_current.Owner.FirstName}+&apos; &apos;+{!myVariable_current.Owner.LastName} = &apos;Suzanne Vickery&apos;),
+NOT({!myVariable_current.Owner.FirstName}+&apos; &apos;+{!myVariable_current.Owner.LastName} = &apos;Operations Owner&apos;),
+NOT({!myVariable_current.Owner.FirstName}+&apos; &apos;+{!myVariable_current.Owner.LastName} = &apos;Lonny Ostrander&apos;),
+NOT({!myVariable_current.Owner.FirstName}+&apos; &apos;+{!myVariable_current.Owner.LastName} = &apos;Neil Rohrer&apos;),
+NOT(BEGINS({!myVariable_current.Owner.FirstName},&apos;Unassigned&apos;)),
+NOT(Contains({!myVariable_current.Owner.LastName},&apos;-T&apos;)),
+NOT(ISPICKVAL({!myVariable_current.Reason_Lost__c},&apos;T Transfer (Non Loss)&apos;)),
+NOT(ISPICKVAL({!myVariable_current.Reason_Lost__c},&apos;V Change of Entity (Non Loss)&apos;)),
+NOT(ISPICKVAL({!myVariable_current.Reason_Lost__c},&apos;W Reload (Non Loss)&apos;)),
+NOT(ISPICKVAL({!myVariable_current.Reason_Lost__c},&apos;T&apos;)),
+NOT(ISPICKVAL({!myVariable_current.Reason_Lost__c},&apos;V&apos;)),
+NOT(ISPICKVAL({!myVariable_current.Reason_Lost__c},&apos;W&apos;)),
+OR(
+ISPICKVAL({!myVariable_current.Type},&apos;HR Solutions FLEX Client&apos;),
+ISPICKVAL({!myVariable_current.Type},&apos;HR Solutions Preview Client&apos;),
+ISPICKVAL({!myVariable_current.Type},&apos;HR Solutions NPR Client&apos;),
+ISPICKVAL({!myVariable_current.Type},&apos;PEO Client&apos;)))</expression>
+    </formulas>
+    <formulas>
+        <processMetadataValues>
+            <name>originalFormula</name>
+            <value>
+                <stringValue>AND([Account].Lost_Date__c &gt; TODAY()-7 ,
+ISNULL(PRIORVALUE([Account].Lost_Date__c)),
+NOT(ISNULL([Account].Lost_Date__c)),
+[Account].Premier_PBS_Account_Owner__c &lt;&gt; &apos;&apos;,
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;SFDC Data&apos;),
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;Michael McCarthy&apos;),
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;Suzanne Vickery&apos;),
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;Operations Owner&apos;),
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;Lonny Ostrander&apos;),
+NOT([Account].Owner.FirstName+&apos; &apos;+[Account].Owner.LastName = &apos;Neil Rohrer&apos;),
+NOT(BEGINS([Account].Owner.FirstName,&apos;Unassigned&apos;)),
+NOT(Contains([Account].Owner.LastName,&apos;-T&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;T Transfer (Non Loss)&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;V Change of Entity (Non Loss)&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;W Reload (Non Loss)&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;T&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;V&apos;)),
+NOT(ISPICKVAL([Account].Reason_Lost__c,&apos;W&apos;)),
+OR(
+ISPICKVAL([Account].Type,&apos;HR Solutions FLEX Client&apos;),
+ISPICKVAL([Account].Type,&apos;HR Solutions Preview Client&apos;),
+ISPICKVAL([Account].Type,&apos;HR Solutions NPR Client&apos;),
+ISPICKVAL([Account].Type,&apos;PEO Client&apos;)))</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>formula_myRule_5_pmetrule</name>
+        <dataType>Boolean</dataType>
+        <expression>AND({!myVariable_old.Lost_Date__c} &gt; TODAY()-7 ,
+ISNULL(PRIORVALUE({!myVariable_old.Lost_Date__c})),
+NOT(ISNULL({!myVariable_old.Lost_Date__c})),
+{!myVariable_old.Premier_PBS_Account_Owner__c} &lt;&gt; &apos;&apos;,
+NOT({!myVariable_old.Owner.FirstName}+&apos; &apos;+{!myVariable_old.Owner.LastName} = &apos;SFDC Data&apos;),
+NOT({!myVariable_old.Owner.FirstName}+&apos; &apos;+{!myVariable_old.Owner.LastName} = &apos;Michael McCarthy&apos;),
+NOT({!myVariable_old.Owner.FirstName}+&apos; &apos;+{!myVariable_old.Owner.LastName} = &apos;Suzanne Vickery&apos;),
+NOT({!myVariable_old.Owner.FirstName}+&apos; &apos;+{!myVariable_old.Owner.LastName} = &apos;Operations Owner&apos;),
+NOT({!myVariable_old.Owner.FirstName}+&apos; &apos;+{!myVariable_old.Owner.LastName} = &apos;Lonny Ostrander&apos;),
+NOT({!myVariable_old.Owner.FirstName}+&apos; &apos;+{!myVariable_old.Owner.LastName} = &apos;Neil Rohrer&apos;),
+NOT(BEGINS({!myVariable_old.Owner.FirstName},&apos;Unassigned&apos;)),
+NOT(Contains({!myVariable_old.Owner.LastName},&apos;-T&apos;)),
+NOT(ISPICKVAL({!myVariable_old.Reason_Lost__c},&apos;T Transfer (Non Loss)&apos;)),
+NOT(ISPICKVAL({!myVariable_old.Reason_Lost__c},&apos;V Change of Entity (Non Loss)&apos;)),
+NOT(ISPICKVAL({!myVariable_old.Reason_Lost__c},&apos;W Reload (Non Loss)&apos;)),
+NOT(ISPICKVAL({!myVariable_old.Reason_Lost__c},&apos;T&apos;)),
+NOT(ISPICKVAL({!myVariable_old.Reason_Lost__c},&apos;V&apos;)),
+NOT(ISPICKVAL({!myVariable_old.Reason_Lost__c},&apos;W&apos;)),
+OR(
+ISPICKVAL({!myVariable_old.Type},&apos;HR Solutions FLEX Client&apos;),
+ISPICKVAL({!myVariable_old.Type},&apos;HR Solutions Preview Client&apos;),
+ISPICKVAL({!myVariable_old.Type},&apos;HR Solutions NPR Client&apos;),
+ISPICKVAL({!myVariable_old.Type},&apos;PEO Client&apos;)))</expression>
+    </formulas>
+    <interviewLabel>Account_Lost_Notification-9_InterviewLabel</interviewLabel>
+    <label>Account Lost Notification</label>
+    <processMetadataValues>
+        <name>ObjectType</name>
+        <value>
+            <stringValue>Account</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>ObjectVariable</name>
+        <value>
+            <elementReference>myVariable_current</elementReference>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OldObjectVariable</name>
+        <value>
+            <elementReference>myVariable_old</elementReference>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>TriggerType</name>
+        <value>
+            <stringValue>onAllChanges</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Workflow</processType>
+    <recordCreates>
+        <name>myRule_1_A2</name>
+        <label>Create Task</label>
+        <locationX>100</locationX>
+        <locationY>300</locationY>
+        <inputAssignments>
+            <processMetadataValues>
+                <name>dataType</name>
+                <value>
+                    <stringValue>Date</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isRequired</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideLabel</name>
+                <value>
+                    <stringValue>Due Date Only</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideReferenceTo</name>
+                <value>
+                    <stringValue></stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>rightHandSideType</name>
+                <value>
+                    <stringValue>Formula</stringValue>
+                </value>
+            </processMetadataValues>
+            <field>ActivityDate</field>
+            <value>
+                <elementReference>formula_2_myRule_1_A2_2414349535</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <processMetadataValues>
+                <name>dataType</name>
+                <value>
+                    <stringValue>String</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isRequired</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideLabel</name>
+                <value>
+                    <stringValue>Description</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideReferenceTo</name>
+                <value>
+                    <stringValue></stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>rightHandSideType</name>
+                <value>
+                    <stringValue>Formula</stringValue>
+                </value>
+            </processMetadataValues>
+            <field>Description</field>
+            <value>
+                <elementReference>formula_3_myRule_1_A2_3592854527</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <processMetadataValues>
+                <name>dataType</name>
+                <value>
+                    <stringValue>ID</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isRequired</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideLabel</name>
+                <value>
+                    <stringValue>Assigned To ID</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>rightHandSideType</name>
+                <value>
+                    <stringValue>ID</stringValue>
+                </value>
+            </processMetadataValues>
+            <field>OwnerId</field>
+            <value>
+                <stringValue>00530000000y8c8</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <processMetadataValues>
+                <name>dataType</name>
+                <value>
+                    <stringValue>Picklist</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isRequired</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideLabel</name>
+                <value>
+                    <stringValue>Priority</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>rightHandSideType</name>
+                <value>
+                    <stringValue>Picklist</stringValue>
+                </value>
+            </processMetadataValues>
+            <field>Priority</field>
+            <value>
+                <stringValue>Normal</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <processMetadataValues>
+                <name>dataType</name>
+                <value>
+                    <stringValue>ID</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isRequired</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideLabel</name>
+                <value>
+                    <stringValue>Task Record Type ID</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideReferenceTo</name>
+                <value>
+                    <stringValue>RecordType</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>rightHandSideType</name>
+                <value>
+                    <stringValue>ID</stringValue>
+                </value>
+            </processMetadataValues>
+            <field>RecordTypeId</field>
+            <value>
+                <stringValue>012500000000rTP</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <processMetadataValues>
+                <name>dataType</name>
+                <value>
+                    <stringValue>Picklist</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isRequired</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideLabel</name>
+                <value>
+                    <stringValue>Status</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>rightHandSideType</name>
+                <value>
+                    <stringValue>Picklist</stringValue>
+                </value>
+            </processMetadataValues>
+            <field>Status</field>
+            <value>
+                <stringValue>Completed</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <processMetadataValues>
+                <name>dataType</name>
+                <value>
+                    <stringValue>String</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isRequired</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideLabel</name>
+                <value>
+                    <stringValue>Subject</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideReferenceTo</name>
+                <value>
+                    <stringValue></stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>rightHandSideType</name>
+                <value>
+                    <stringValue>String</stringValue>
+                </value>
+            </processMetadataValues>
+            <field>Subject</field>
+            <value>
+                <stringValue>Lost Email Sent</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <processMetadataValues>
+                <name>dataType</name>
+                <value>
+                    <stringValue>ID</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isRequired</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideLabel</name>
+                <value>
+                    <stringValue>Related To ID</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideReferenceTo</name>
+                <value>
+                    <stringValue>APXTConga4__Composer_QuickMerge__c;APXTConga4__Conga_Email_Staging__c;APXTConga4__Conga_Email_Template__c;Account;Account_Manager_Tracking__c;Asset;AssetRelationship;Batch_Job_Tracking__c;CRMfusionDBR101__Duplicate_Warning__c;CSA_Inquiries__c;Campaign;Case;Client_Retention_Strategy__c;Client_Success_Manager__c;Contract;ContractLineItem;End_User_Issue_Tracker__c;Enterprise_Service_Challenges__c;Enterprise_Service_Implementation_Delays__c;Entitlement;HRS_4S_Clt_Support_Discrepancy__c;HRS_4S_Discrepancy__c;HR_Action_Plan__c;HR_Assessment__c;HR_Services_Poster__c;IncludeExcludeServices__c;OS_Outages__c;Opportunity;Order;PartnerReferral__c;Product2;ReferenceHRGActivity__c;Reference_401k_S125__c;Reference_ASO__c;Reference_Account_Management__c;Reference_Acct_Mgmt_Notice_Outreach__c;Reference_Acct_Mgmt_Retention_Outreach__c;Reference_Adoption_Agreement_Review__c;Reference_Advisor_Select__c;Reference_BeneTrac_Discrepancy__c;Reference_BeneTrac_Onboarding__c;Reference_Client_Relations_Details__c;Reference_Client_Relations__c;Reference_Core_Payroll__c;Reference_Credit_Risk__c;Reference_DNC_Email_List__c;Reference_Do_Not_Contact__c;Reference_ES_Action_Plan__c;Reference_ES_Client_Concern_Projects__c;Reference_ES_ERR_Contact__c;Reference_ES_Potential_Products__c;Reference_ES_Preview_to_Flex_Needs__c;Reference_ES_Products_at_Risk__c;Reference_Enterprise_Service__c;Reference_GL__c;Reference_HNBF_Open_Item__c;Reference_HNBF_Policy_Type__c;Reference_HNBF__c;Reference_HRE_CHB_Onboarding__c;Reference_HRE_CHB_Orders__c;Reference_HRG__c;Reference_HRO__c;Reference_HRS_AM_Forecast__c;Reference_HRS_Product__c;Reference_HRS_Retention_Discrepancy__c;Reference_HRS_Termination_Transfer__c;Reference_Incoming_Funds__c;Reference_KAS__c;Reference_MMS_Payroll__c;Reference_MPSC_BenAdmin_Essentials__c;Reference_MPSC_Client_Training_Request__c;Reference_MPSC_Escalations__c;Reference_MPSC__c;Reference_PAC_Warranty_Late_Payment__c;Reference_PAC__c;Reference_PEO_Candidates__c;Reference_PEO_Client_Satisfaction_Call__c;Reference_PEO_Discrepancy__c;Reference_PEO_No_Start__c;Reference_PEO__c;Reference_Payroll_Fulfillment__c;Reference_S125_Onboarding__c;Reference_TAA__c;Reference_Terms_Transfers__c;Referral_Account__c;Referral_Contact__c;Referral_Partner__c;RightAnswersAttached__c;S125_Discrepancy__c;SBQQ__QuoteDocument__c;SBQQ__QuoteTerm__c;SBQQ__Quote__c;SBQQ__WebQuote__c;ServiceContract;Solution;State__c;Strategic_Business_Analysis__c;Transfer_Tracking__c;X401k_Discrepancy__c;dsfs__DocuSign_Recipient_Status__c;dsfs__DocuSign_Status__c;mkto_si__Get_Method_Argus__c;qbdialer__UserStatusLog__c</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>rightHandSideType</name>
+                <value>
+                    <stringValue>Reference</stringValue>
+                </value>
+            </processMetadataValues>
+            <field>WhatId</field>
+            <value>
+                <elementReference>myVariable_current.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Task</object>
+    </recordCreates>
+    <recordCreates>
+        <name>myRule_5_A2</name>
+        <label>Create Task</label>
+        <locationX>500</locationX>
+        <locationY>300</locationY>
+        <inputAssignments>
+            <processMetadataValues>
+                <name>dataType</name>
+                <value>
+                    <stringValue>Date</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isRequired</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideLabel</name>
+                <value>
+                    <stringValue>Due Date Only</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideReferenceTo</name>
+                <value>
+                    <stringValue></stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>rightHandSideType</name>
+                <value>
+                    <stringValue>Formula</stringValue>
+                </value>
+            </processMetadataValues>
+            <field>ActivityDate</field>
+            <value>
+                <elementReference>formula_6_myRule_5_A2_6117348898</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <processMetadataValues>
+                <name>dataType</name>
+                <value>
+                    <stringValue>String</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isRequired</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideLabel</name>
+                <value>
+                    <stringValue>Description</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideReferenceTo</name>
+                <value>
+                    <stringValue></stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>rightHandSideType</name>
+                <value>
+                    <stringValue>Formula</stringValue>
+                </value>
+            </processMetadataValues>
+            <field>Description</field>
+            <value>
+                <elementReference>formula_7_myRule_5_A2_9709020714</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <processMetadataValues>
+                <name>dataType</name>
+                <value>
+                    <stringValue>ID</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isRequired</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideLabel</name>
+                <value>
+                    <stringValue>Assigned To ID</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>rightHandSideType</name>
+                <value>
+                    <stringValue>ID</stringValue>
+                </value>
+            </processMetadataValues>
+            <field>OwnerId</field>
+            <value>
+                <stringValue>00530000000y8c8</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <processMetadataValues>
+                <name>dataType</name>
+                <value>
+                    <stringValue>Picklist</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isRequired</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideLabel</name>
+                <value>
+                    <stringValue>Priority</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>rightHandSideType</name>
+                <value>
+                    <stringValue>Picklist</stringValue>
+                </value>
+            </processMetadataValues>
+            <field>Priority</field>
+            <value>
+                <stringValue>Normal</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <processMetadataValues>
+                <name>dataType</name>
+                <value>
+                    <stringValue>ID</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isRequired</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideLabel</name>
+                <value>
+                    <stringValue>Task Record Type ID</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideReferenceTo</name>
+                <value>
+                    <stringValue>RecordType</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>rightHandSideType</name>
+                <value>
+                    <stringValue>ID</stringValue>
+                </value>
+            </processMetadataValues>
+            <field>RecordTypeId</field>
+            <value>
+                <stringValue>012500000000rTP</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <processMetadataValues>
+                <name>dataType</name>
+                <value>
+                    <stringValue>Picklist</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isRequired</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideLabel</name>
+                <value>
+                    <stringValue>Status</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>rightHandSideType</name>
+                <value>
+                    <stringValue>Picklist</stringValue>
+                </value>
+            </processMetadataValues>
+            <field>Status</field>
+            <value>
+                <stringValue>Completed</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <processMetadataValues>
+                <name>dataType</name>
+                <value>
+                    <stringValue>String</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isRequired</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideLabel</name>
+                <value>
+                    <stringValue>Subject</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideReferenceTo</name>
+                <value>
+                    <stringValue></stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>rightHandSideType</name>
+                <value>
+                    <stringValue>String</stringValue>
+                </value>
+            </processMetadataValues>
+            <field>Subject</field>
+            <value>
+                <stringValue>Lost Email Sent</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <processMetadataValues>
+                <name>dataType</name>
+                <value>
+                    <stringValue>ID</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isRequired</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideLabel</name>
+                <value>
+                    <stringValue>Related To ID</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideReferenceTo</name>
+                <value>
+                    <stringValue>APXTConga4__Composer_QuickMerge__c;APXTConga4__Conga_Email_Staging__c;APXTConga4__Conga_Email_Template__c;Account;Account_Manager_Tracking__c;Asset;AssetRelationship;Batch_Job_Tracking__c;CRMfusionDBR101__Duplicate_Warning__c;CSA_Inquiries__c;Campaign;Case;Client_Retention_Strategy__c;Client_Success_Manager__c;Contract;ContractLineItem;End_User_Issue_Tracker__c;Enterprise_Service_Challenges__c;Enterprise_Service_Implementation_Delays__c;Entitlement;HRS_4S_Clt_Support_Discrepancy__c;HRS_4S_Discrepancy__c;HR_Action_Plan__c;HR_Assessment__c;HR_Services_Poster__c;IncludeExcludeServices__c;OS_Outages__c;Opportunity;Order;PartnerReferral__c;Product2;ReferenceHRGActivity__c;Reference_401k_S125__c;Reference_ASO__c;Reference_Account_Management__c;Reference_Acct_Mgmt_Notice_Outreach__c;Reference_Acct_Mgmt_Retention_Outreach__c;Reference_Adoption_Agreement_Review__c;Reference_Advisor_Select__c;Reference_BeneTrac_Discrepancy__c;Reference_BeneTrac_Onboarding__c;Reference_Client_Relations_Details__c;Reference_Client_Relations__c;Reference_Core_Payroll__c;Reference_Credit_Risk__c;Reference_DNC_Email_List__c;Reference_Do_Not_Contact__c;Reference_ES_Action_Plan__c;Reference_ES_Client_Concern_Projects__c;Reference_ES_ERR_Contact__c;Reference_ES_Potential_Products__c;Reference_ES_Preview_to_Flex_Needs__c;Reference_ES_Products_at_Risk__c;Reference_Enterprise_Service__c;Reference_GL__c;Reference_HNBF_Open_Item__c;Reference_HNBF_Policy_Type__c;Reference_HNBF__c;Reference_HRE_CHB_Onboarding__c;Reference_HRE_CHB_Orders__c;Reference_HRG__c;Reference_HRO__c;Reference_HRS_AM_Forecast__c;Reference_HRS_Product__c;Reference_HRS_Retention_Discrepancy__c;Reference_HRS_Termination_Transfer__c;Reference_Incoming_Funds__c;Reference_KAS__c;Reference_MMS_Payroll__c;Reference_MPSC_BenAdmin_Essentials__c;Reference_MPSC_Client_Training_Request__c;Reference_MPSC_Escalations__c;Reference_MPSC__c;Reference_PAC_Warranty_Late_Payment__c;Reference_PAC__c;Reference_PEO_Candidates__c;Reference_PEO_Client_Satisfaction_Call__c;Reference_PEO_Discrepancy__c;Reference_PEO_No_Start__c;Reference_PEO__c;Reference_Payroll_Fulfillment__c;Reference_S125_Onboarding__c;Reference_TAA__c;Reference_Terms_Transfers__c;Referral_Account__c;Referral_Contact__c;Referral_Partner__c;RightAnswersAttached__c;S125_Discrepancy__c;SBQQ__QuoteDocument__c;SBQQ__QuoteTerm__c;SBQQ__Quote__c;SBQQ__WebQuote__c;ServiceContract;Solution;State__c;Strategic_Business_Analysis__c;Transfer_Tracking__c;X401k_Discrepancy__c;dsfs__DocuSign_Recipient_Status__c;dsfs__DocuSign_Status__c;mkto_si__Get_Method_Argus__c;qbdialer__UserStatusLog__c</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>rightHandSideType</name>
+                <value>
+                    <stringValue>Reference</stringValue>
+                </value>
+            </processMetadataValues>
+            <field>WhatId</field>
+            <value>
+                <elementReference>myVariable_current.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Task</object>
+    </recordCreates>
+    <startElementReference>myDecision</startElementReference>
+    <status>Obsolete</status>
+    <variables>
+        <name>myVariable_current</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Account</objectType>
+    </variables>
+    <variables>
+        <name>myVariable_old</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Account</objectType>
+    </variables>
+</Flow>

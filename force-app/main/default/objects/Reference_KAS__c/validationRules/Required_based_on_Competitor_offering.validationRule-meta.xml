@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Required_based_on_Competitor_offering</fullName>
+    <active>true</active>
+    <errorConditionFormula>OR
+( 
+AND(INCLUDES(  Competitor_Offerings__c  , &quot;Free W2&apos;s&quot;),ISPICKVAL( Free_W2_s__c ,&quot;&quot;)),
+AND(INCLUDES( Competitor_Offerings__c, &quot;Discount&quot;),ISPICKVAL(  Discount__c  ,&quot;&quot;)),
+AND(INCLUDES( Competitor_Offerings__c , &quot;Free Month&quot;),ISPICKVAL(  Free_Months__c ,&quot;&quot;)),
+AND(INCLUDES( Competitor_Offerings__c , &quot;Better Technology&quot;),ISBLANK(  Better_Technology__c)),
+AND(INCLUDES( Competitor_Offerings__c, &quot;Better Bundle&quot;),ISBLANK( Better_Bundle__c)),
+AND(INCLUDES( Competitor_Offerings__c , &quot;Other&quot;),ISBLANK(  Other__c ))
+)</errorConditionFormula>
+    <errorMessage>Please update the fields corresponding to selections in Competitor Offerings field.</errorMessage>
+</ValidationRule>

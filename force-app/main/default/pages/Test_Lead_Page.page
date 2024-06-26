@@ -1,0 +1,20 @@
+<apex:page standardController="Account">
+   Test Lead Page
+  <div id="renderLightingComponent"/>
+  <apex:includeLightning />
+
+  <script>
+            $Lightning.use("c:NSSMsgHelperApp", function() {
+                $Lightning.createComponent(
+                    "c:NSSMsgHelper",
+                    {recordId:'{!Account.Id}'},
+                    "renderLightingComponent",
+                    function(cmp) {
+                        console.log("Component is created!");
+                        console.log(cmp);
+                    });
+                });
+  </script>
+  
+
+</apex:page>

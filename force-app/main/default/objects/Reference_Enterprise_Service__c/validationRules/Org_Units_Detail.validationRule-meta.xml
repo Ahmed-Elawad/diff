@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Org_Units_Detail</fullName>
+    <active>true</active>
+    <errorConditionFormula>(ISPICKVAL(Org_Units2__c , &quot;Yellow: 500 - 999&quot;) ||
+ISPICKVAL(Org_Units2__c , &quot;Red: 1000 +&quot;))&amp;&amp;
+
+OR(
+ISBLANK( Org_Units_Detail__c ))</errorConditionFormula>
+    <errorDisplayField>Org_Units_Detail__c</errorDisplayField>
+    <errorMessage>Org Units Detail is required when Org Units is selected as Red or Yellow</errorMessage>
+</ValidationRule>

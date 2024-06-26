@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sales_Rep_DSA_Opp_Rec_Type_Validation</fullName>
+    <active>true</active>
+    <description>Keeps MMS rep from saving Opportunity to DSA stage.</description>
+    <errorConditionFormula>AND (
+         OR (
+              ISPICKVAL( StageName, &quot;Sold - Submitted&quot;), 
+              ISPICKVAL( StageName, &quot;Sold - Commissioned&quot;),
+              ISPICKVAL( StageName, &quot;Referred Started&quot;),
+              ISPICKVAL( StageName , &quot;Sold - Started&quot;) ), 
+              $RecordType.Id =&quot;012300000000hQQ&quot;,
+              OR ($Profile.Name =&quot;MMS Sales&quot;,$Profile.Name =&quot;MMS Sales - SB&quot; ,$Profile.Name =&quot;MMS Sales Quote&quot;,$Profile.Name = &apos;MMS SDR&apos;)
+            )</errorConditionFormula>
+    <errorDisplayField>StageName</errorDisplayField>
+    <errorMessage>You have selected an invalid stage for your opportunity type!</errorMessage>
+</ValidationRule>

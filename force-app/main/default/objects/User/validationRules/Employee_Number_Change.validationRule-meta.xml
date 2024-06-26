@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Employee_Number_Change</fullName>
+    <active>true</active>
+    <description>Prevent anyone except system admin for changing Employee Number(HR PersonID)</description>
+    <errorConditionFormula>AND(
+         AND
+           (NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)),NOT(BEGINS($Profile.Name,&quot;Core Zone Administration&quot;)),NOT(BEGINS($Profile.Name,&quot;MMS Sales ZSA&quot;)),NOT(BEGINS($Profile.Name,&quot;HRS Regional Sales Admin&quot;)),NOT(BEGINS($Profile.Name,&quot;HNBF Sales Administration&quot;)), $Profile.Name &lt;&gt;&quot;2008-09 Operations Administration&quot;,$Profile.Name &lt;&gt;&quot;2008-09 MMS Hub Manager - DA&quot;,$Profile.Name &lt;&gt;&quot;HRS PEO Centric Administration&quot;,$Profile.Name &lt;&gt;&quot;2008-09 HRS Premier Support - DA&quot;,$Profile.Name &lt;&gt;&quot;2008-09 HRS Premier Safety Delegated Admin&quot;,$Profile.Name &lt;&gt;&quot;HR Essentials&quot;,$Profile.Name &lt;&gt;&quot;MPSC Profile&quot;,$Profile.Name &lt;&gt;&quot;Field Ops Regional Assistant&quot;,$Profile.Name &lt;&gt;&quot;PEO New Business Delegated Admin&quot;,$Profile.Name &lt;&gt;&quot;PIA Agency Delegated Admin&quot;,$Profile.Name &lt;&gt;&quot;Sales Data Steward&quot;,$Profile.Name&lt;&gt;&quot;Sales Enablement&quot;),$Profile.Name &lt;&gt;&quot;PEO New Business Delegated Admin&quot;,$Profile.Name &lt;&gt;&quot;NSS Manager Admin&quot;, $Profile.Name &lt;&gt; &quot;BeneTrac Operations&quot;,
+ ISCHANGED( EmployeeNumber ))</errorConditionFormula>
+    <errorDisplayField>EmployeeNumber</errorDisplayField>
+    <errorMessage>** This field can only be changed by the System Administrator and Approved Delegated Administrator Personnel **</errorMessage>
+</ValidationRule>

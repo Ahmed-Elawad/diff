@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>StatusStartDate__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <formula>CASE(  TEXT(Ownership_Status__c)
+        ,&quot;Prospecting&quot;,  ProspectingStart__c
+        ,&quot;Lockout&quot;,  LockoutStart__c
+        ,&quot;Workable&quot;,  WorkableStart__c 
+        ,&quot;Wash&quot;,  NFI_WashStart__c 
+        ,&quot;Not Interested&quot;, NFI_WashStart__c
+        ,&quot;Commission Only&quot;, CommissionStart__c
+    ,null)</formula>
+    <inlineHelpText>The start date of the current status</inlineHelpText>
+    <label>Status Start Date</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Date</type>
+</CustomField>

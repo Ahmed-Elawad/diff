@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CSAInq_force_formatted_ClientNumber2</fullName>
+    <active>false</active>
+    <description>The Client Number cannot contain NPR or XXX for records with Request Type = INTERNAL REFERRALS</description>
+    <errorConditionFormula>AND( 
+ISPICKVAL(Request_Type__c,&apos;INTERNAL REFERRALS&apos;), 
+OR ( CONTAINS(Client_Number__c,&quot;NPR&quot;),
+     CONTAINS(Client_Number__c,&quot;XXX&quot;)
+   )
+)</errorConditionFormula>
+    <errorDisplayField>Action_Add_Modify__c</errorDisplayField>
+    <errorMessage>Invalid Format -- The Client Number must be 4 or 8 numbers, and cannot contain dashes, NPR or XXX</errorMessage>
+</ValidationRule>

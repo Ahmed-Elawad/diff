@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CAM_Reaching_10_Business_Days</fullName>
+    <columns>NAME</columns>
+    <columns>OWNER.ALIAS</columns>
+    <columns>SunGard__c</columns>
+    <columns>Amount__c</columns>
+    <columns>Deposit_Date__c</columns>
+    <columns>Ready_for_Trade__c</columns>
+    <columns>Date_Sent_for_Research__c</columns>
+    <columns>Days_Since_Deposit__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Tentative_Trade_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Contribution_Type__c</field>
+        <operation>notEqual</operation>
+        <value>Conversion</value>
+    </filters>
+    <filters>
+        <field>Ready_for_Trade__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Pending_Task__c</field>
+        <operation>notEqual</operation>
+        <value>ACH Pending Approval,Further Research Needed,Closed – No Trade,LDPS Processing</value>
+    </filters>
+    <filters>
+        <field>Days_Since_Deposit__c</field>
+        <operation>greaterThan</operation>
+        <value>9</value>
+    </filters>
+    <label>CAM: Reaching 10 Business Days</label>
+    <sharedTo>
+        <role>HRS4SCAMRepresentativeI</role>
+        <role>HRS4SCAMRepresentativeII</role>
+        <role>HRS4SCAMSupervisorI</role>
+        <role>HRS4SCAMSupervisorII</role>
+    </sharedTo>
+</ListView>

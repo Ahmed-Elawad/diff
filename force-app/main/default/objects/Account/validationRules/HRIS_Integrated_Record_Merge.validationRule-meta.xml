@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRIS_Integrated_Record_Merge</fullName>
+    <active>true</active>
+    <description>HRIS Integrated Records should be marked as Primary1 when merging records</description>
+    <errorConditionFormula>AND( (NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))),
+NOT(BEGINS($Profile.Name,&quot;Sales Enablement&quot;)), NOT( ISNULL( Bis_ID__c ) ) , LEN(  Merge_Name__c )&lt;&gt;0,  LOWER(RIGHT( Merge_Name__c, 8))&lt;&gt;&quot;primary1&quot;, ISCHANGED( Merge_Name__c ) )</errorConditionFormula>
+    <errorDisplayField>Merge_Name__c</errorDisplayField>
+    <errorMessage>*** This is an HRIS Integrated Record and needs to be marked as Primary1 for merging Purposes ***</errorMessage>
+</ValidationRule>

@@ -1,0 +1,377 @@
+<!-- creating the Opportunity and Event from a Contact.
+
+   History
+   -------
+   12/29/2010 Dan Carmen        Created from ConvertLeadWithMeeting and CreateOpportunity pages.
+   02/24/2011 Dan Carmen        Modify to work for all sales forces.
+   08/16/2013 Justin Stouffer   Updated for MSP Sales Org
+   04/06/2016 Justin Stouffer   Rbuilt to display differently in Salesforce1.
+   02/01/2017 Jacob Hinds       Adding existing opportunity table
+   03/16/2017 Jacob Hinds         Making the Add Opportunity button show all the time
+   12/20/2017 Dan Carmen        Added functionality for selecting the Opportunity Type
+   02/08/2018 Dan Carmen        Fixes for SF1
+   12/11/2018 Josh Cartwright       Added UIThemeDisplayed to check for console
+   03/11/2019 Jake Hinds        Adding PEO
+   04/30/2020 Saketh Mysa       US 34010746 Updates
+   10/20/2021 Dan Carmen        Add Product of Interest
+
+   
+ -->
+<apex:page docType="html-5.0" Controller="CreateOppAndMeeting" tabStyle="Opportunity" id="createOppAndMeeting"
+           showHeader="true">
+    <apex:includeScript value="{!URLFOR($Resource.iOSFix)}"/> 
+   <apex:includeScript value="{!$Resource.jQueryJs}" />
+   <apex:includeScript value="{!$Resource.buttonsEnabledJs}" />
+
+    <script>
+        window.onload=function()
+        {
+            //alert('here i am');
+            //doCallout();
+        }
+        function viewAccount(elemID) {
+            var acc_select = document.getElementById(elemID).value;
+            var acc_id = acc_select;
+            
+            if (acc_id == null || acc_id == "" || acc_id == 000000000000000) {
+                alert("You can only view existing accounts.");
+            } else {
+                // psssopWin = window.open('/'+acc_id+'/p',"win","dependent=no,toolbar=1,directories=0,location=0,status=1,menubar=1,scrollbars=1,resizable=1,width=705,height=400");
+                // popWin.focus();
+                printWin('/'+acc_id+'/p');
+            }
+        }
+        function updateEvent(sub,desc,isMobile){
+            console.log('sub:'+sub+' desc:'+desc);
+            var eventDescription;
+            var eventSubject;
+            if(!($User.UIThemeDisplayed == 'Theme4t')){
+                eventDescription = document.getElementById('createOppAndMeeting:OppForm:pageBlock:MeetingComp:meetingCMPId:descPageBlockSection:descPageBlockSectionItem:event_description');
+                eventSubject = document.getElementById('createOppAndMeeting:OppForm:pageBlock:MeetingComp:meetingCMPId:StartEndDateComponent:subjectPageBlockSectionItem:event_subject');
+            }
+            else{
+                console.log('in else');
+                eventDescription = document.getElementById('createOppAndMeeting:OppForm:MeetingCmpSf1:meetingCMPId:event_description2');
+                eventSubject = document.getElementById('createOppAndMeeting:OppForm:MeetingCmpSf1:meetingCMPId:Sbj2');
+            }
+            console.log('domsub:'+eventSubject.value+'\n domdesc:'+eventDescription.value);
+            eventSubject.value = sub;
+            eventDescription.value = desc;
+            
+            //(isSF1 ? rerenderSF1Container():rerenderPageBlock());
+        }
+    </script>
+
+    <apex:include pageName="CreateOppAndMeetingLightning" rendered="{!OR($User.UIThemeDisplayed == 'Theme4d', $User.UIThemeDisplayed == 'Theme4u')}"/>
+
+    <apex:form id="PreQuestions" rendered="{!AND($User.UIThemeDisplayed != 'Theme4d', $User.UIThemeDisplayed != 'Theme4u')}">
+      <apex:pageBlock >
+        <apex:pageBlockSection columns="1">
+           <h1>What Type of Opportunity Are You Creating?</h1>
+           <apex:pageBlockSectionItem >
+              <apex:outputLabel value="Select the Opportunity Type" />
+              <apex:inputField required="true" value="{!oppTemp.OpportunityType__c}" >
+               <apex:actionSupport event="onchange" action="{!selectOppType}" />
+               </apex:inputField>
+           </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+    </apex:form>
+
+    <apex:form id="OppForm" rendered="{!AND($User.UIThemeDisplayed != 'Theme4d', $User.UIThemeDisplayed != 'Theme4u')}">
+
+   <apex:actionFunction action="{!saveOpp}" name="jsSaveOpp" />
+
+    <apex:actionFunction name="doCallout" immediate="true" action="{!setRenderTrue}"  rerender="{!IF(renderVForce,'','Vforce')}" oncomplete="document.getElementById('statusSpinner').style.visibility='hidden'"/>
+    <div id="statusSpinner" style="{!IF(renderVForce,'visibility: hidden','visibility: visible')}">
+        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+            &nbsp;
+        </div>
+        <div style="position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin-top: 30% ;Text-align:center">
+            <div style="display: inline-block; padding: 2px; background-color: #fff; width: 125px;">
+                <img src="/img/loading.gif" style="float: left; margin: 8px;" />
+                <span style="display: inline-block; padding: 10px 0px;">Please Wait...</span>
+            </div>
+        </div>
+   </div>
+   <apex:outputPanel id="Vforce">
+       <apex:outputPanel rendered="{!renderVForce}">
+       <apex:outputPanel id="Desktop" rendered="{!NOT($User.UIThemeDisplayed == 'Theme4t')}">
+           <link href="/dCSS/Theme2/default/common.css" type="text/css" rel="stylesheet"/>
+           <script language="JavaScript1.2" src="/js/functions.js"/>
+            <apex:pageBlock rendered="{!isLeadConvert}" id="pbConvertLead">        
+            <body class="lead "> 
+                <a name="skiplink"><img src="/s.gif" height='1' width='1' alt="Content Starts Here" class="skiplink"/></a>
+                <div class="bPageTitle"><div class="ptBody secondaryPalette">
+                <div class="content"><img src="/s.gif" alt="Lead" class="pageTitleIcon"/>
+                <h1 class="pageType">Convert Lead<span class="titleSeparatingColon">:</span></h1>
+                <h2 class="pageDescription">{!leadToconvert.Name}</h2><div class="blank">&nbsp;</div></div><div class="links">
+                <a href="javascript:openPopupFocusEscapePounds('/help/doc/user_ed.jsp?loc=help&body=%2Fhelp%2Fdoc%2Fen%2Fhelp2.jsp&target=leads_convert.htm&section=Leads', 'Help', 700, 600, 'width=700,height=600,resizable=yes,toolbar=yes,status=no,scrollbars=yes,menubar=yes,directories=no,location=no,dependant=no', false, false);" title="Help for this Page (New Window)"><span class="helpLink">Help for this Page</span><img src="/s.gif" alt="" class="helpImage"/></a></div></div><div class="ptBreadcrumb"></div></div>
+                
+                <table border="0" cellspacing="2" cellpadding="0">
+                    <tr>
+                        <td colspan="4">Converting a lead will create an account, contact, and opportunity as described below.<br/>You should only convert a lead once you have identified it as qualified.<br/>After this lead has been converted, it can no longer be viewed or edited as a lead, but can be viewed in lead reports.<br/><br/>
+                    </td>
+                    </tr>
+                </table>
+            </body>
+        
+                <apex:pageBlockSection columns="1" id="pbSection" title="Convert Lead">
+                    <apex:pageBlockSectionItem id="pbsectionitem1" >
+                        <apex:outputLabel value="Record Owner"/>
+                            <apex:outputPanel styleclass="requiredInput">
+                              <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                                <apex:inputField value="{!leadToconvert.OwnerId}" id="leadOwner"/>   
+                        </apex:outputPanel>                                   
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem id="pbsectionitem2">
+                        <apex:outputLabel value="Prospect-Client Name"/>
+                            <apex:outputPanel styleclass="requiredInput">
+                              <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                              <apex:actionRegion >
+                                <apex:selectList value="{!selectedCompany}"  id="comanyId"  size="1" > 
+                                    <apex:selectOptions value="{!companyList}"/> 
+                                    <apex:actionSupport event="onchange" action="{!findExistingOpps}" rerender="Vforce" status="clientNameStatus"/>
+                                </apex:selectList>   
+                                <a href="javascript: viewAccount('createOppAndMeeting:OppForm:pbConvertLead:pbSection:pbsectionitem2:comanyId');" title="View (New Window)">View</a>   
+                              </apex:actionRegion>              
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:actionStatus startText="Setting Prospect-Client selection" id="clientNameStatus"/>
+                </apex:pageBlockSection>
+              </apex:pageBlock>
+              <apex:pageBlock id="pageBlock" >
+                 <apex:pageBlockButtons >
+        <!--             <apex:commandButton rendered="{!AND(NOT(isLeadConvert),createMeeting)}" action="{!saveOpp}" value="Save and Create Meeting"/>  -->
+        <!-- 
+                    <apex:commandButton rendered="{!AND(NOT(isLeadConvert),createOpportunity,createMeeting)}" action="{!saveOpp}" value="Save Opportunity and Meeting"/>
+                    <apex:commandButton rendered="{!AND(NOT(isLeadConvert),NOT(createOpportunity),createMeeting)}" action="{!saveOpp}" value="Create Meeting with Existing Opp"/>
+                    <apex:commandButton rendered="{!AND(NOT(isLeadConvert),createOpportunity,NOT(createMeeting))}" action="{!saveOpp}" value="Save Opportunity"/>
+                    <apex:commandButton rendered="{!AND(isLeadConvert,createOpportunity,createMeeting)}" action="{!saveOpp}" value="Convert and Save Opportunity and Meeting" />
+                    <apex:commandButton rendered="{!AND(isLeadConvert,NOT(createOpportunity),NOT(createMeeting))}" action="{!saveOpp}" value="Convert"/>
+                    <apex:commandButton rendered="{!AND(isLeadConvert,NOT(createOpportunity),createMeeting)}" action="{!saveOpp}" value="Convert and Create Meeting with Existing Opp"/>
+                    <apex:commandButton rendered="{!AND(isLeadConvert,createOpportunity,NOT(createMeeting))}" action="{!saveOpp}" value="Convert and Save Opportunity" />
+                    <apex:commandButton rendered="{!showSaveOppButton}" action="{!saveOpp}" value="{!saveOppText}-old" />
+                 -->
+                    <apex:commandButton rendered="{!showSaveOppButton}" onclick="buttonsEnabled(false);return jsSaveOpp();" value="{!saveOppText}" />
+                    
+                    <apex:commandButton rendered="{!AND(allowCreateMeeting,NOT(isLeadConvert),createMeeting)}" action="{!saveOppGotoMeeting}" value="Save and Add Invitees"/>
+                    <apex:commandButton rendered="{!AND(allowCreateMeeting,isLeadConvert,createMeeting)}" action="{!saveOppGotoMeeting}" value="Convert and Add Invitees" />
+                    <apex:commandButton action="{!cancel}" value="Cancel" immediate="true"/>   
+                 </apex:pageBlockButtons>   
+                    
+                 <apex:pageBlockSection rendered="{!hasPricebookOptions}" >
+                   <apex:pageBlockSectionItem >
+                     <apex:outputLabel value="Select a Pricebook" />
+                     <apex:selectList value="{!selectedPricebookId}"  id="pricebookSelection"  size="1" > 
+                         <apex:selectOptions value="{!pricebookOptions}"/> 
+                     </apex:selectList>   
+                   </apex:pageBlockSectionItem>
+                 </apex:pageBlockSection>
+      <apex:pageMessages />
+                 <!--<apex:actionFunction name="checkRerender" rerender="createOppCmp"/>
+                     <c:ExistingOpportunity rendered="{!isLeadConvert}" acct="{!acct}" prodName="{!prodName}" salesOrg="{!salesOrg}" existingOpps="{!existingOpps}" storeSelectedOppty="{!storeSelectedOppty}" checkRerender="{!checkRerender}"/>  --> 
+                             
+            <apex:pageBlockSection id="table" rendered="{!AND(NOT($User.UIThemeDisplayed == 'Theme4t'),companySelected,hasExistingOpps)}" columns="1">
+                <h1 class="{!IF(allowCreateOpp,'headerBlack','headerRed')}">{!existingOppMsg}</h1>
+                <apex:actionRegion >
+                    <apex:pageblocktable value="{!existingOpps}" var="wrap">
+                        <apex:column headerValue="Use This One">
+                            <apex:inputCheckbox value="{!wrap.selected}" disabled="{!NOT(allowCreateOpp)}">
+                                <apex:actionSupport event="onchange"
+                                    action="{!storeSelectedOppty}" rerender="pageBlock"
+                                    status="existingOpptyStatus"  >
+                                    <!--  oncomplete="updateEvent({!eventSubject},{!eventDescription},false);"  -->
+                                   <apex:param name="oppId" value="{!wrap.opp.Id}"/>
+                                   <apex:param name="prevValue" value="{!wrap.selected}"/>
+                                </apex:actionSupport>
+                            </apex:inputCheckbox>
+
+                            <apex:actionStatus id="existingOpptyStatus">
+                                <apex:inputCheckbox value="{!wrap.selected}" disabled="false" />
+                            </apex:actionStatus>
+                        </apex:column>
+                        <apex:column headerValue="Opportunity Name">
+                            <apex:outputLink value="{!URLFOR($Action.Opportunity.View, wrap.opp.Id)}">{!wrap.opp.Name}</apex:outputLink>
+                        </apex:column>
+                        <apex:column value="{!wrap.opp.AccountId}" />
+                        <apex:column value="{!wrap.opp.CreatedDate}" />
+                        <apex:column value="{!wrap.opp.OwnerId}" />
+                        <apex:column value="{!wrap.opp.NSS_Source__c}" />
+                        <apex:column value="{!wrap.opp.LeadSource}" />
+                        <apex:column value="{!wrap.opp.StageName}" />
+                        <apex:column value="{!wrap.opp.CloseDate}" />
+                        <apex:column value="{!wrap.opp.OpportunityType__c}" />
+                    </apex:pageblocktable>
+                </apex:actionRegion>
+            </apex:pageBlockSection>
+            
+            
+                     <p/>
+                     <apex:outputPanel id="createOppCmp">
+                     <c:OpportunityAndMeeting createOppty="{!AND(allowCreateOpp,createOpportunity)}" oppty="{!opp}" acct="{!acct}" ctct="{!tempCtct}"
+                                              isCore="{!isCore}" isMMS="{!isMMS}" isHRS="{!isHRS}" isMSP="{!isMSP}" isPEO="{!isPEO}" isTAA="{!isTAA}" isPC="{!isPC}" isMS="{!isMS}" isESR="{!isESR}" isPBA="{!isPBA}" isHNB="{!isHNB}"
+                                              isAncillary="{!isAncillary}" prodName="{!prodName}" salesOrg="{!salesOrg}"
+                                              existingOpps="{!existingOpps}" storeSelectedOppty="{!storeSelectedOppty}"
+                                              companySelected="{!companySelected}" hasExistingOpps="{!hasExistingOpps}"
+                                              eventSubject="{!eventSubject}" eventDescription="{!eventDescription}"
+                                              allowCreateOpp="{!allowCreateOpp}" existingOppMsg="{!existingOppMsg}"
+                                              />             <!-- Updated For myStaffingPro -->   
+                    </apex:outputPanel>
+                 <apex:commandButton rendered="{!AND(allowCreateOpp,createOpportunity)}" immediate="true" action="{!removeOppty}" value="Remove Opportunity" />
+                 <apex:commandButton rendered="{!AND(allowCreateOpp,NOT(createOpportunity))}" immediate="true" action="{!addOppty}" value="Add Opportunity"/>
+                 <apex:commandButton rendered="{!AND(allowCreateMeeting,createMeeting)}" immediate="true" action="{!removeMeeting}" value="Remove Meeting" />
+                 <apex:commandButton rendered="{!AND(allowCreateMeeting,NOT(createMeeting))}" immediate="true" action="{!addMeeting}" value="Add Meeting"/>
+                 <c:Meeting id="MeetingComp" rendered="{!AND(allowCreateMeeting,createMeeting)}" pageController="{!this}" meetingEvent="{!evnt}" />
+                 <apex:actionFunction name="rerenderPageBlock" reRender="pageBlock"/>
+              </apex:pageBlock>
+        </apex:outputPanel>
+        <apex:outputPanel id="SF1" rendered="{!$User.UIThemeDisplayed == 'Theme4t'}">
+    <apex:pageMessages />
+            <apex:stylesheet value="{!URLFOR($Resource.Salesforce1Bootstrap, 'bootstrap-sf1-010-beta15/dist/css/bootstrap-namespaced.css')}"/>
+            <style>
+                .lookupInput input{
+                    width:60%;
+                    border: none !important;
+                    background: none !important;
+                }
+                .lookupInput img {
+                    float: right;
+                }
+            </style>
+            <div class="bootstrap-sf1" style="padding: 10px;" id="bootstrapDivSF1">
+                <apex:outputPanel rendered="{!isLeadConvert}">
+                    <div class="page-header page-header-anchor context-lead">
+                        <h1>Convert Lead: {!leadToconvert.Name}</h1>
+                        <p>Converting a lead will create an account, contact, and opportunity as described below. You should only convert a lead once you have identified it as qualified. After this lead has been converted, it can no longer be viewed or edited as a lead, but can be viewed in lead reports.</p>
+                    </div>
+                    <section class="section">
+                        <h2 class="section-head">
+                            Convert Lead
+                        </h2>
+                        <div id="pbSection" title="Convert Lead">
+                            <div class="form-group has-error" id="pbsectionitem1">
+                                <label class="control-label" for="leadOwner" >Record Owner</label>
+                                <div class="form-control">
+                                    <apex:inputField value="{!leadToconvert.OwnerId}" id="leadOwner"/>
+                                </div>
+                            </div>
+                
+                            <div class="form-group has-error"  id="pbsectionitem2">
+                                <label class="control-label" for="comanyId">Prospect-Client Name</label>
+                                <apex:actionRegion >
+                                    <apex:selectList styleClass="form-control" value="{!selectedCompany}"  id="comanyId"  size="1" > 
+                                        <apex:selectOptions value="{!companyList}"/> 
+                                        <apex:actionSupport event="onchange" action="{!findExistingOpps}" rerender="SF1" status="clientNameStatus_s1"/>
+                                    </apex:selectList>
+                                </apex:actionRegion> 
+                                <a href="javascript: viewAccount('createOppAndMeeting:OppForm:comanyId');" title="View (New Window)">View</a>                                                    
+                            <apex:actionStatus startText="Setting Prospect-Client selection" id="clientNameStatus_s1"/>
+                            </div>    
+                        </div>
+                    </section>
+                </apex:outputPanel>
+
+            <apex:outputPanel id="tableSF1" rendered="{!AND($User.UIThemeDisplayed == 'Theme4t',companySelected,hasExistingOpps)}">
+                <h2 class="section-head">{!existingOppMsg}</h2>
+                <apex:actionRegion >
+                <div style="overflow: scroll; width: 100%; height: 100%;"> 
+                    <table class="table table-hover well table-striped">
+                        <thead>
+                            <tr>
+                                <th>Use</th>
+                                <th>Opportunity Name</th>
+                                <th>Status</th>
+                                <th>Created Date</th>
+                                <th>Run Effective Date</th>
+                                <th>Opportunity Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <apex:repeat value="{!existingOpps}" var="wrap"
+                                id="existingOppsRepeat">
+                                <tr>
+                                    <td><apex:inputCheckbox value="{!wrap.selected}"  disabled="{!NOT(allowCreateOpp)}">
+                                            <apex:actionSupport event="onchange"
+                                                action="{!storeSelectedOppty}"
+                                                rerender="pageBlock"
+                                                status="existingOpptyStatus"
+                                                oncomplete="updateEvent({!eventSubject},{!eventDescription},true);"/>
+                                        </apex:inputCheckbox> <apex:actionStatus id="existingOpptyStatus">
+                                            <apex:inputCheckbox value="{!wrap.selected}" disabled="true" />
+                                        </apex:actionStatus></td>
+                                    <td><apex:outputLink value="{!URLFOR($Action.Opportunity.View, wrap.opp.Id)}">{!wrap.opp.Name}</apex:outputLink>
+                                    </td>
+                                    <td><apex:outputText value="{!wrap.opp.StageName}"/>
+                                    </td>
+                                    <td><apex:outputText value="{0,date,MM/dd/yyyy}"> <apex:param value="{!wrap.opp.CreatedDate}" /> </apex:outputText>
+                                    </td>
+                                    <td><apex:outputText value="{0,date,MM/dd/yyyy}"> <apex:param value="{!wrap.opp.CloseDate}" /> </apex:outputText>
+                                    </td>
+                                    <td><apex:outputText value="{!wrap.opp.OpportunityType__c}"/>
+                                    </td>
+                                </tr>
+                            </apex:repeat>
+                        </tbody>
+                    </table>
+                </div>
+                </apex:actionRegion>
+            </apex:outputPanel>
+
+                <apex:actionFunction name="rerenderSF1Container" reRender="sf1Container"/>
+                <apex:outputPanel id="sf1Container">
+                    <apex:outputPanel rendered="{!hasPricebookOptions}" >
+                       <section class="section">
+                        <h2 class="section-head">
+                            Pricebook Options
+                        </h2>
+                       <div class="form-group" id="pbOptions">
+                         <label class="control-label" for="pricebookSelection">Select a Pricebook</label>
+                             <apex:selectList styleClass="form-control"  value="{!selectedPricebookId}"  id="pricebookSelection"  size="1" > 
+                                 <apex:selectOptions value="{!pricebookOptions}"/> 
+                             </apex:selectList>
+                       </div>
+                       </section>
+                     <hr/>
+                     </apex:outputPanel>
+                     <apex:outputPanel id="createOppCmpSF1">
+                    <c:OpportunityAndMeeting createOppty="{!createOpportunity}" oppty="{!opp}" acct="{!acct}" ctct="{!tempCtct}"
+                                                isCore="{!isCore}" isMMS="{!isMMS}" isHRS="{!isHRS}" isMSP="{!isMSP}" isPEO="{!isPEO}" isTAA="{!isTAA}" isPC="{!isPC}" isMS="{!isMS}" isESR="{!isESR}" isPBA="{!isPBA}" isHNB="{!isHNB}"
+                                                isAncillary="{!isAncillary}" prodName="{!prodName}" salesOrg="{!salesOrg}" isSF1="{!$User.UIThemeDisplayed == 'Theme4t'}"
+                                                existingOpps="{!existingOpps}" storeSelectedOppty="{!storeSelectedOppty}" 
+                                                companySelected="{!companySelected}" hasExistingOpps="{!hasExistingOpps}"
+                                                eventSubject="{!eventSubject}" eventDescription="{!eventDescription}"
+                                                allowCreateOpp="{!allowCreateOpp}" existingOppMsg="{!existingOppMsg}"
+                                                />             <!-- Updated For myStaffingPro --> <!-- isHRS="{!OR(isHRS,isHNB)}" -->
+                    </apex:outputPanel>
+                    <apex:commandButton styleClass="btn btn-lg btn-default" rendered="{!createOpportunity}" immediate="true" action="{!removeOppty}" value="Remove Opportunity" />
+                    <apex:commandButton styleClass="btn btn-lg btn-default" rendered="{!NOT(createOpportunity)}" immediate="true" action="{!addOppty}" value="Add Opportunity"/>
+                    <apex:commandButton styleClass="btn btn-lg btn-default" rendered="{!createMeeting}" immediate="true" action="{!removeMeeting}" value="Remove Meeting"/>
+                    <apex:commandButton styleClass="btn btn-lg btn-default" rendered="{!NOT(createMeeting)}" immediate="true" action="{!addMeeting}" value="Add Meeting"/>
+                    
+                    <c:Meeting id="MeetingCmpSf1" rendered="{!createMeeting}" pageController="{!this}" meetingEvent="{!evnt}" isSF1="{!$User.UIThemeDisplayed == 'Theme4t'}"/>
+                    <hr/>
+                    <div id="buttons" >                                     
+                        <!--<apex:commandButton styleClass="btn btn-lg btn-default" rendered="{!AND(NOT(isLeadConvert),createMeeting)}" action="{!saveOppGotoMeeting}" value="Save and Add Invitees" onclick="document.getElementById('statusSpinner').style.visibility='visible'" />-->
+                        <!--<apex:commandButton styleClass="btn btn-lg btn-default" rendered="{!AND(isLeadConvert,createMeeting)}" action="{!saveOppGotoMeeting}" value="Convert and Add Invitees" onclick="document.getElementById('statusSpinner').style.visibility='visible'"  />-->
+                        <!-- 
+                        <apex:commandButton styleClass="btn btn-lg btn-default" rendered="{!AND(NOT(isLeadConvert),createOpportunity,createMeeting)}" action="{!saveOpp}" value="Save Opportunity & Meeting" onclick="document.getElementById('statusSpinner').style.visibility='visible'" />
+                        <apex:commandButton styleClass="btn btn-lg btn-default" rendered="{!AND(NOT(isLeadConvert),createOpportunity,NOT(createMeeting))}" action="{!saveOpp}" value="Save Opportunity" onclick="document.getElementById('statusSpinner').style.visibility='visible'" />
+                        <apex:commandButton styleClass="btn btn-lg btn-default" rendered="{!AND(isLeadConvert,createOpportunity,createMeeting)}" action="{!saveOpp}" value="Convert-Save Oppty & Meeting" onclick="document.getElementById('statusSpinner').style.visibility='visible'" />
+                        <apex:commandButton styleClass="btn btn-lg btn-default" rendered="{!AND(isLeadConvert,NOT(createOpportunity),NOT(createMeeting))}" action="{!saveOpp}" value="Convert" onclick="document.getElementById('statusSpinner').style.visibility='visible'" />
+                        <apex:commandButton styleClass="btn btn-lg btn-default" rendered="{!AND(isLeadConvert,createOpportunity,NOT(createMeeting))}" action="{!saveOpp}" value="Convert-Save Opportunity"  onclick="document.getElementById('statusSpinner').style.visibility='visible'" />
+                        <apex:commandButton styleClass="btn btn-lg btn-default" rendered="{!AND(NOT(isLeadConvert),NOT(createOpportunity),createMeeting)}" action="{!saveOpp}" value="Create Meeting with Existing Opp" onclick="document.getElementById('statusSpinner').style.visibility='visible'"/>
+                        <apex:commandButton styleClass="btn btn-lg btn-default" rendered="{!AND(isLeadConvert,NOT(createOpportunity),createMeeting)}" action="{!saveOpp}" value="Convert and Create Meeting with Existing Opp" onclick="document.getElementById('statusSpinner').style.visibility='visible'"/>
+                        <apex:commandButton styleClass="btn btn-lg btn-default" rendered="{!showSaveOppButton}" onclick="return jsSaveOpp();" value="{!saveOppText}" />
+                         -->
+                        <apex:commandButton styleClass="btn btn-lg btn-default" rendered="{!showSaveOppButton}" action="{!saveOpp}" value="{!saveOppText}" onclick="document.getElementById('statusSpinner').style.visibility='visible'"/>
+                        <apex:commandButton styleClass="btn btn-lg btn-default" action="{!cancel}" value="Cancel" immediate="true"/>
+                    </div>
+                    <hr/>
+                </apex:outputPanel>
+                </div>
+            </apex:outputPanel>
+        </apex:outputPanel>
+     </apex:outputPanel>
+   </apex:form>
+</apex:page>

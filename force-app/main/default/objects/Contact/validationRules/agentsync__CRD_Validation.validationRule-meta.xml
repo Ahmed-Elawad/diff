@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>agentsync__CRD_Validation</fullName>
+    <active>true</active>
+    <description>Validates that a CRD only accepts numeric values.</description>
+    <errorConditionFormula>AND(
+NOT(ISBLANK( agentsync__CRD__c )),
+OR(
+ISNEW(),
+AND(
+NOT(ISNEW()),
+ISCHANGED( agentsync__CRD__c )
+)
+),
+!REGEX( agentsync__CRD__c ,&apos;^[0-9]*$&apos;)
+)</errorConditionFormula>
+    <errorDisplayField>agentsync__CRD__c</errorDisplayField>
+    <errorMessage>A valid CRD Number must be all digits. Please double check the entered number.</errorMessage>
+</ValidationRule>

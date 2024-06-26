@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Parent_Company_Client_cannot_be_blank</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(RecordTypeId =&quot;012700000001kI1&quot;,
+ISPICKVAL(Paychex_PEO_Issue__c,&quot;Yes&quot;),
+NOT(ISPICKVAL(Status__c,&quot;Pending PAC Review - New Notice Received&quot;)),
+NOT(BEGINS(Text(Closure_Code__c),&quot;Withdrawn&quot;)),
+ISPICKVAL(Parent_Company_Client__c,&quot;&quot;))</errorConditionFormula>
+    <errorMessage>Parent Company Client # in PEO Specific Detail Section cannot be blank</errorMessage>
+</ValidationRule>

@@ -1,0 +1,20 @@
+<aura:component description="BannerEngaged">
+    <aura:attribute name="engagementTextDisplayList" type="Object" />
+
+    <div class="box" title="Open Cases">
+        <div class="banner-header slds-align_absolute-center">
+            <h4 class="slds-item_label slds-text-color_weak slds-truncate slds-text-align_center">Engaged</h4>
+        </div>
+        <div class="banner-body">
+            <div class="slds-item_detail slds-truncate slds-align_absolute-center column" title="Engagement">
+                <aura:if isTrue="{!v.engagementTextDisplayList.length > 0}">
+                    <img src="{!$Resource.BannerIcons + '/LightningIcons/yeild.png'}" />
+
+                    <aura:iteration items="{!v.engagementTextDisplayList}" var="text">
+                        <span>{!text}</span>
+                    </aura:iteration>
+                </aura:if>
+            </div>
+        </div>
+    </div>
+</aura:component>

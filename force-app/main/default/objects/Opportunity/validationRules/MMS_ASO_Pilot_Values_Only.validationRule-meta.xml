@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MMS_ASO_Pilot_Values_Only</fullName>
+    <active>false</active>
+    <description>36545119 - limit selection of the two MMS-ASO Pilot values only to those in the MMS-ASO Pilot.</description>
+    <errorConditionFormula>AND(
+ISCHANGED(Promotion__c),
+OR(
+ISPICKVAL(Promotion__c, &apos;ASO 2 Months Free&apos;),
+ISPICKVAL(Promotion__c, &apos;ASO NPR 2 Months Free&apos;)
+),
+OR(
+$RecordType.Name = &apos;MMS Opportunity (DSA) Record Type&apos;,
+$RecordType.Name = &apos;MMS Opportunity Record Type&apos;),
+NOT(BEGINS($Profile.Name, &apos;System Administrator&apos;)),
+$Permission.MMS_ASO_Pilot = False
+)</errorConditionFormula>
+    <errorMessage>This Promotion is only available for MMS ASO Pilot Users. Please select a different Promotion</errorMessage>
+</ValidationRule>

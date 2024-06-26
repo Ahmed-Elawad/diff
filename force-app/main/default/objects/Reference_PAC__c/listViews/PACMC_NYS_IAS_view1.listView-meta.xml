@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PACMC_NYS_IAS_view1</fullName>
+    <columns>NAME</columns>
+    <columns>Tax_Type__c</columns>
+    <columns>Ticket_Type__c</columns>
+    <columns>PAC_Use_Only_Data_Scrub_Notes__c</columns>
+    <columns>FEIN__c</columns>
+    <columns>Federal_ID_Number__c</columns>
+    <columns>First_Period_Listed__c</columns>
+    <columns>OWNER.ALIAS</columns>
+    <columns>Date_1st_Notice_Received_in_PAC__c</columns>
+    <columns>Date_Notice_Issued__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Tax_Agency__c</field>
+        <operation>equals</operation>
+        <value>OR - OREGON</value>
+    </filters>
+    <filters>
+        <field>OWNER.ALIAS</field>
+        <operation>contains</operation>
+        <value>PAC Group,PAC MPSC</value>
+    </filters>
+    <filters>
+        <field>Status__c</field>
+        <operation>equals</operation>
+        <value>Pending PAC Review - New Notice Received</value>
+    </filters>
+    <filters>
+        <field>PAC_Use_Only_Data_Scrub_Notes__c</field>
+        <operation>notContain</operation>
+        <value>MCNOTOR4Q23</value>
+    </filters>
+    <filters>
+        <field>First_Period_Listed__c</field>
+        <operation>equals</operation>
+        <value>,12/31/2023</value>
+    </filters>
+    <label>PACMC - OR SUI 4Q23 Non FIling</label>
+</ListView>

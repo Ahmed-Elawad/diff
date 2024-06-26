@@ -1,0 +1,157 @@
+<!-- A wizard to manage a New User Request.
+
+   History
+   -------
+   11/26/2012 Dan Carmen   Created 
+   01/22/2013 Dan Carmen   Changes to allow Temporary Emps/Reactivations
+   01/05/2024 Dan Carmen      Changes to use users with New User Profile  
+
+ -->
+<apex:page standardController="NewUserRequest__c" extensions="AddUserController" 
+           tabStyle="NewUserRequest__c"
+           showHeader="true"
+           id="thePage">
+
+ <apex:form >
+   <apex:sectionHeader title="Manage New User Request" subtitle="{!IF(newNur.Contact__r != null,newNur.Contact__r.Name,
+                                                                      IF(newNur.User__r != null,newNur.User__r.Name,
+                                                                         IF(newNur.Temporary_Employee__c,newNur.FirstName__c+' '+newNur.LastName__c,null)))}" />
+   
+   <apex:pageBlock rendered="{!newNur.Request_Complete__c}">
+     <apex:pageBlockSection columns="1">
+        <apex:outputText style="color:BLUE; font-weight: bold;" value="This request is complete!" />
+        <CENTER>
+        <apex:outputPanel >
+           <apex:commandButton rendered="{!requestCompleteOnEntry}" value="Return to Request" action="{!cancel}"/>
+           <apex:commandButton rendered="{!NOT(requestCompleteOnEntry)}" value="Return to Request" action="{!gotoRequest}"/>
+           <apex:commandButton rendered="{!newNur.User__c != null}" value="Go To User" action="{!gotoUser}" />
+        </apex:outputPanel>
+        </CENTER>
+     </apex:pageBlockSection>
+   </apex:pageBlock>
+ 
+   <apex:pageBlock rendered="{!AND(NOT(newNur.Request_Complete__c),NOT(isQueryForm))}" id="SetupUserBlock">
+      <apex:pageMessages />
+      <apex:pageBlockSection id="requestInformation" title="Request Information">
+         <apex:outputField value="{!newNur.User_to_Mirror__c}" />
+         <apex:outputField value="{!newNur.TRR__c}" />
+         
+         <apex:outputField value="{!newNur.Request_Type__c}" />
+         <apex:outputField value="{!newNur.UpgradeFromChatterFree__c}" />
+         
+         <apex:outputField value="{!newNur.Temporary_Employee__c}" />
+         <apex:pageBlockSectionItem />
+         
+         <apex:outputField value="{!newNur.Notes__c}" />
+      </apex:pageBlockSection>
+
+      <apex:pageBlockSection columns="1">
+         <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Approve or Reject this Request?"/>
+            <apex:selectRadio value="{!approveOrReject}" layout="lineDirection">
+               <apex:selectOption itemValue="approve" itemLabel="Approve"/>
+               <apex:selectOption itemValue="reject" itemLabel="Reject"/>
+               <apex:actionSupport event="onclick" action="{!setApproveOrReject}" rerender="SetupUserBlock" />
+            </apex:selectRadio>
+         </apex:pageBlockSectionItem>
+         
+         <apex:pageBlockSectionItem rendered="{!approveOrReject == 'reject'}" >
+            <apex:outputLabel value="Reason for Rejection?" />
+            <apex:inputTextArea value="{!newNur.Approver_Notes__c}" cols="80" rows="3"/>
+         </apex:pageBlockSectionItem>
+         
+
+      </apex:pageBlockSection>
+    
+    <!-- 
+     <c:NewUserRequestCreate rendered="{!approveOrReject == 'approve'}" newNur="{!newNur}"  />
+     -->
+     
+      
+      <apex:PageBlockSection rendered="{!approveOrReject == 'approve'}" id="UserInformationSection" columns="2" title="Verify User Information">
+        
+        <apex:outputText style="color:BLUE; font-weight: bold;" value="When you click Save the {!IF(newNur.User__c != null,'changes to the User record will be saved.','new User record will be created and the password will be sent to the user.')}" />
+        <br/>
+        
+        
+        
+        <apex:inputField value="{!newNur.User__r.FirstName}" />
+        <apex:inputField rendered="{!NOT(isChatterFreeRequest)}" value="{!newNur.User__r.UserRoleId}" />
+        <apex:outputField rendered="{!isChatterFreeRequest}" value="{!newNur.User__r.UserRoleId}" />
+        
+        <apex:inputField value="{!newNur.User__r.LastName}" />
+        <apex:inputField rendered="{!NOT(isChatterFreeRequest)}" value="{!newNur.User__r.ProfileId}" />
+        <apex:outputField rendered="{!isChatterFreeRequest}" value="{!newNur.User__r.ProfileId}" />
+        
+        <apex:outputField value="{!newNur.User__r.Alias}" />
+        <apex:inputField value="{!newNur.User__r.TimeZoneSidKey}" />
+
+        <apex:inputField value="{!newNur.User__r.Email}" />
+        <apex:pageBlockSectionItem rendered="{!NOT(isReactivateRequest)}" />
+        <apex:inputField rendered="{!isReactivateRequest}" value="{!newNur.User__r.IsActive}" />
+
+        <apex:inputField value="{!newNur.User__r.Username}" />
+        <apex:outputText value="" />
+        
+        <apex:outputField value="{!newNur.User__r.CommunityNickname}" />
+        <apex:outputText value="" />
+
+        <apex:inputField value="{!newNur.User__r.Title}" />
+        <apex:outputText value="" />
+
+        <apex:inputField value="{!newNur.User__r.ManagerId}" />
+        <apex:inputField value="{!newNur.User__r.Street}" />
+
+        <apex:inputField value="{!newNur.User__r.Department}" />
+        <apex:inputField value="{!newNur.User__r.City}" />
+        
+        <apex:inputField value="{!newNur.User__r.HR_Person_Id__c}" />
+        <apex:inputField value="{!newNur.User__r.State}" />
+        
+        <apex:inputField rendered="{!NOT(isChatterFreeRequest)}" value="{!newNur.User__r.Sales_Org__c}" />
+        <apex:outputField rendered="{!isChatterFreeRequest}" value="{!newNur.User__r.Sales_Org__c}" />
+        <apex:inputField value="{!newNur.User__r.PostalCode}" />
+
+        <apex:inputField rendered="{!NOT(isChatterFreeRequest)}" value="{!newNur.User__r.Schedule_Indicator__c}" />
+        <apex:outputField rendered="{!isChatterFreeRequest}" value="{!newNur.User__r.Schedule_Indicator__c}" />
+        <apex:inputField value="{!newNur.User__r.Phone}" />
+
+        <apex:outputText value="" />
+        <apex:inputField value="{!newNur.User__r.MobilePhone}" />
+
+        <apex:inputField rendered="{!newNur.Temporary_Employee__c}" value="{!newNur.User__r.Non_Paychex_Employee__c}" />
+        <apex:inputField rendered="{!newNur.Temporary_Employee__c}" value="{!newNur.User__r.Non_Paychex_Employee_User_Type__c}" />
+        
+        <apex:inputField value="{!newNur.User__r.Cost_Center__c}" >
+           <apex:actionSupport event="onchange" action="{!checkOrganization}" rerender="UserInformationSection"/>
+        </apex:inputField>
+        <apex:inputField value="{!newNur.User__r.EmployeeNumber}" />
+
+        <apex:outputField value="{!newNur.User__r.District__c}" />
+        <apex:outputField value="{!newNur.User__r.District_Name__c}" />
+        
+        <apex:outputField value="{!newNur.User__r.Zone__c}" />
+        <apex:outputField value="{!newNur.User__r.Zonetxt__c}" />
+        
+        <apex:outputField value="{!newNur.User__r.Area_Nbr__c}" />
+        <apex:outputField value="{!newNur.User__r.Areatxt__c}" />
+        
+      </apex:PageBlockSection>
+     
+     <CENTER>
+     <apex:outputPanel >
+        <apex:commandButton rendered="{!approveOrReject == 'approve'}" value="Save" action="{!saveUser}" />
+        <!-- 
+        <apex:commandButton rendered="{!approveOrReject == 'approve'}" value="Save and Go To User" action="{!saveGoToUser}">
+        </apex:commandButton>
+        <apex:commandButton rendered="{!approveOrReject == 'approve'}" value="Save and Return to Request" action="{!saveGoToRequest}">
+        </apex:commandButton>
+         -->
+        <apex:commandButton rendered="{!approveOrReject == 'reject'}" value="Save Rejection" action="{!saveRejection}"/>
+        <apex:commandButton value="Cancel" action="{!cancel}"/>
+     </apex:outputPanel>
+     </CENTER>
+     
+   </apex:pageBlock>
+  </apex:form>
+</apex:page>

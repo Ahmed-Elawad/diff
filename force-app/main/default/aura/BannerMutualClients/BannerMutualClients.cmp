@@ -1,0 +1,18 @@
+<aura:component description="BannerMutualClients">
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="mutualClientCount" type="Integer" />
+    <aura:attribute name="objectType" type="String" />
+    <aura:attribute name="businessType" type="String" />
+
+    <div class="box" title="Mutual Clients">
+        <div class="banner-header slds-align_absolute-center">
+            <h4 class="slds-item_label slds-text-color_weak slds-truncate slds-text-align_center">Mutual Prospects &amp; Clients</h4>
+        </div>
+        <div class="banner-body">
+            <div class="{!'slds-item_detail slds-truncate slds-align_absolute-center column ' + (not(empty(v.recordId)) ? ' clickable-banner-item' : '') }"  title="Mutual Prospects &amp; Clients"  onclick="{!c.navigateToRelatedList}">
+                <img src="{!$Resource.BannerIcons + '/LightningIcons/mutual_client.png'}" />
+                <span>{!v.mutualClientCount}</span>
+            </div>
+        </div>
+    </div>
+</aura:component>

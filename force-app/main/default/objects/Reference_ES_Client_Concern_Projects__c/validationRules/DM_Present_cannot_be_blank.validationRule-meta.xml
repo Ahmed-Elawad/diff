@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DM_Present_cannot_be_blank</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND 
+( 
+ISPICKVAL(Type__c,&quot;Call&quot;) || ISPICKVAL(Type__c,&quot;External Status Call&quot;)||ISPICKVAL(Type__c,&quot;Introductory Call&quot;)||ISPICKVAL(Type__c,&quot;Onsite Visit&quot;), 
+
+ISPICKVAL ( DM_Present__c,&quot;&quot;) 
+)</errorConditionFormula>
+    <errorDisplayField>DM_Present__c</errorDisplayField>
+    <errorMessage>DM Present cannot be blank</errorMessage>
+</ValidationRule>

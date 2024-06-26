@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>If_MVA_then_need_Safe_driving_training</fullName>
+    <active>true</active>
+    <description>If MVA is yes then need safe driving training</description>
+    <errorConditionFormula>AND( 
+ISPICKVAL(Was_this_a_result_of_an_MVA__c, &quot;Yes&quot;), 
+ISPICKVAL( IW_Completed_Safe_driving_training__c, &quot;&quot;))</errorConditionFormula>
+    <errorDisplayField>IW_Completed_Safe_driving_training__c</errorDisplayField>
+    <errorMessage>If MVA = Yes then you need to enter if the IW completed safe driving training</errorMessage>
+</ValidationRule>

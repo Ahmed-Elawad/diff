@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reason_for_Delete_is_required</fullName>
+    <active>true</active>
+    <description>‘Reason for Delete’ is required if ‘To Be Deleted’ is checked.</description>
+    <errorConditionFormula>To_Be_Deleted__c = True &amp;&amp; ISPICKVAL(Reason_for_Delete__c, &quot;&quot;) &amp;&amp; NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))</errorConditionFormula>
+    <errorDisplayField>Reason_for_Delete__c</errorDisplayField>
+    <errorMessage>‘Reason for Delete’ is required if ‘To Be Deleted’ is checked.</errorMessage>
+</ValidationRule>

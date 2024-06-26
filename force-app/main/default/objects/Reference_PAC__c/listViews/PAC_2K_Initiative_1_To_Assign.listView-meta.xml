@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PAC_2K_Initiative_1_To_Assign</fullName>
+    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 and 6 and 7</booleanFilter>
+    <columns>Date_1st_Notice_Received_in_PAC__c</columns>
+    <columns>NAME</columns>
+    <columns>OWNER.FIRST_NAME</columns>
+    <columns>Tax_Agency__c</columns>
+    <columns>Tax_Type__c</columns>
+    <columns>Total_Balance_Due_for_Notice__c</columns>
+    <columns>Submitter_approved_collection__c</columns>
+    <columns>Prospect_Client_Number__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_PAC__c.Reference_PAC_Record_Type</value>
+    </filters>
+    <filters>
+        <field>Status__c</field>
+        <operation>equals</operation>
+        <value>Pending PAC Review - New Notice Received</value>
+    </filters>
+    <filters>
+        <field>Total_Balance_Due_for_Notice__c</field>
+        <operation>greaterThan</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Total_Balance_Due_for_Notice__c</field>
+        <operation>lessOrEqual</operation>
+        <value>500</value>
+    </filters>
+    <filters>
+        <field>OWNER.LAST_NAME</field>
+        <operation>contains</operation>
+        <value>weaver,estime,wright,lomax,kimball</value>
+    </filters>
+    <filters>
+        <field>Date_1st_Notice_Received_in_PAC__c</field>
+        <operation>lessOrEqual</operation>
+        <value>1/3/2024</value>
+    </filters>
+    <filters>
+        <field>Paychex_PEO_Issue__c</field>
+        <operation>notEqual</operation>
+        <value>Yes</value>
+    </filters>
+    <label>PAC-2K Initiative-2 (Assigned)</label>
+    <sharedTo>
+        <role>Operating_Risk_Manager</role>
+    </sharedTo>
+</ListView>

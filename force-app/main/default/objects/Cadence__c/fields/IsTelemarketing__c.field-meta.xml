@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>IsTelemarketing__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>For dialer integration with Touchpoint. When checked, the phone number within the Touchpoint screen/Touchpoint Component is clickable and recognized by the dialer</description>
+    <formula>OR( SendToPartner__c=true
+,ISPICKVAL( Cadence_Type__c , &quot;NSS&quot;)
+,ISPICKVAL( Cadence_Type__c , &quot;Inbound-Oasis&quot;)
+,ISPICKVAL( Cadence_Type__c , &quot;Outbound-Oasis&quot;)
+,ISPICKVAL( Cadence_Type__c , &quot;MMS SDR&quot;)
+,ISPICKVAL( Cadence_Type__c , &quot;Virtual SMB&quot;)
+,ISPICKVAL( Cadence_Type__c , &quot;SMB New Business&quot;)
+,ISPICKVAL( Cadence_Type__c , &quot;BusDev&quot;)
+,ISPICKVAL( Cadence_Type__c , &quot;PC&quot;)
+,ISPICKVAL( Cadence_Type__c , &quot;TAA&quot;)
+,ISPICKVAL( Cadence_Type__c , &quot;SMB SA&quot;)
+,ISPICKVAL( Cadence_Type__c , &quot;BPO&quot;)
+,ISPICKVAL( Cadence_Type__c , &quot;Virtual HRS&quot;)
+,ISPICKVAL( Cadence_Type__c , &quot;SMB INB&quot;)
+,ISPICKVAL( Cadence_Type__c , &quot;MS&quot;)
+,ISPICKVAL( Cadence_Type__c , &quot;MC&quot;)
+,ISPICKVAL( Cadence_Type__c , &quot;Inbound-Forms&quot;)
+,ISPICKVAL( Cadence_Type__c , &quot;Virtual HNBF&quot;)
+,ISPICKVAL( Cadence_Type__c , &quot;ASO&quot;)
+,ISPICKVAL( Cadence_Type__c , &quot;401k&quot;)
+,ISPICKVAL( Cadence_Type__c , &quot;CSSR&quot;)
+,ISPICKVAL( Cadence_Type__c , &quot;HNBF&quot;)
+,ISPICKVAL( Cadence_Type__c , &quot;CSM&quot;)
+,ISPICKVAL( Cadence_Type__c , &quot;PEO&quot;)
+,$User.User_Cadence_Type__c = &quot;Virtual SMB&quot;
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>Is this a telemarketing cadence?</inlineHelpText>
+    <label>Is Telemarketing?</label>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

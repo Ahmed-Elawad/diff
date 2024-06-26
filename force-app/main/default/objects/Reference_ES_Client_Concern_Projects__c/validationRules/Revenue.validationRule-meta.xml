@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Revenue</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(ISBLANK(Revenue__c),OR(ISPICKVAL( Product_Status__c , &quot;Sold&quot;),ISPICKVAL( Product_Status__c , &quot;Lost&quot;),ISPICKVAL( Product_Status__c , &quot;Retained&quot;)))</errorConditionFormula>
+    <errorDisplayField>Revenue__c</errorDisplayField>
+    <errorMessage>Revenue field is required when Product Status equals Sold, Lost or Retained</errorMessage>
+</ValidationRule>

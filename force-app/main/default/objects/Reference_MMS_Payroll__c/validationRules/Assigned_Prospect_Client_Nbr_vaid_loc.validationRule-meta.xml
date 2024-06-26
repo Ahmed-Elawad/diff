@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Assigned_Prospect_Client_Nbr_vaid_loc</fullName>
+    <active>true</active>
+    <description>Ensures a validation location portion of the Assigned Propsect-Client Number</description>
+    <errorConditionFormula>NOT(ISBLANK(Assigned_Prospect_Client_Number__c)) &amp;&amp; NOT(CONTAINS(&quot;400-:402-:405-:407-:408-:411-:412-:414-:415-:416-:418-:426-:429-:430-:434-:435-:439-:440-:441-:444-:445-:446-:447-:448-:450-:451-:453-:454-:456-:462-:463-:465-:470-:472-:475-:476-:477-:479-:480-:482-:483-:485-:490-:495-&quot;,LEFT(Assigned_Prospect_Client_Number__c, FIND(&quot;-&quot;, Assigned_Prospect_Client_Number__c))))</errorConditionFormula>
+    <errorDisplayField>Assigned_Prospect_Client_Number__c</errorDisplayField>
+    <errorMessage>**** Invalid location number. Please enter a valid location number ****</errorMessage>
+</ValidationRule>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Profiled_Required_Fields_PAY</fullName>
+    <active>false</active>
+    <description>Employee Count, Frequency, Industry and Payroll Current-Prior Method are required when Profiling a Prospect.  Will only fire when one of these fields are updated.</description>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),Profiled__c = True, RecordTypeId = &apos;012500000000nCj&apos;,OR( ISPICKVAL( Current_Prior_Method__c ,&apos;Unknown&apos; ),ISPICKVAL( Current_Prior_Method__c ,&apos;None&apos; ) ),
+OR(
+ISBLANK(NumberOfEmployees), ISBLANK(TEXT(Frequency__c)),
+ISBLANK(TEXT(Industry)), ISBLANK(TEXT(Current_Prior_Method__c)))
+)</errorConditionFormula>
+    <errorMessage>Employee Count, Frequency, Industry and Payroll Current-Prior Method are required when Qualifying a Prospect.</errorMessage>
+</ValidationRule>

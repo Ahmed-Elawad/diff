@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Parent_Records</fullName>
+    <active>true</active>
+    <description>when setting two records for merge, ensures the correct record is marked to survive</description>
+    <errorConditionFormula>!(ISNULL(Merge_Name__c))&amp;&amp;
+!(CONTAINS(Merge_Name__c, &quot;primary1&quot;))&amp;&amp; 
+SalesBroker_Primary_Record__c</errorConditionFormula>
+    <errorMessage>If a record has a value in the SaleBroker Primary Record Field it must be marked as a surviving record</errorMessage>
+</ValidationRule>

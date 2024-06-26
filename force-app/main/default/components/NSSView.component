@@ -1,0 +1,902 @@
+<!-- Component to display compiled NSS information
+
+   History
+   -------
+   11/09/2016 Dan Carmen        Created
+   01/17/2017 Dan Carmen        Added Javascript remoting to retrieve referral partners
+   02/21/2017 Cindy Freeman     changed to use Employees__c instead of NumberOfEmployees
+   10/27/2017 Dan Carmen         Changes for lightning UI
+ -->
+<apex:component controller="NSSViewController" allowDML="true" extensions="NSSViewRemoteActions">
+
+   <apex:attribute name="recordId"
+      type="String"
+      required="true"
+      assignto="{!recId}"
+      description="The Id of the record we are coming from"
+      />
+
+   <apex:attribute name="popUp"
+      type="Boolean"
+      required="false"
+      assignto="{!isPopup}"
+      description="Is this a pop-up screen or embedded in the main window?"
+      />
+
+   <apex:attribute name="UITheme"
+      type="String"
+      required="false"
+      assignTo="{!userTheme}"
+      description="The UI theme the user is using"
+      default="Theme4d"
+      />
+
+    <style>
+      tr.dataRow {
+         background-color:white;
+      }
+      tr.dataRow:hover {
+         background-color: #e3f3ff;
+      }
+    </style>
+
+    <apex:includeScript value="{!$Resource.buttonsEnabledJs}" />
+    <script type="text/javascript">
+
+       handleGetPartners = function() {
+          // get the id to send
+          var idToSend = "{!objectId}";
+          var listType = document.getElementById("partnerCheckbox").checked;
+          //alert("idToSend="+idToSend+" listType="+listType);
+          // call the @RemoteAction method
+          document.getElementById("responseErrors").innerHTML = "Loading Territory Reps...";
+          Visualforce.remoting.Manager.invokeAction( '{!$RemoteAction.NSSViewRemoteActions.getReferralPartners}', idToSend,listType, handlePartnerResult );
+
+       } // handleGetPartners
+
+       handlePartnerResult = function(results, event) {
+          // make sure @RemoteAction has completed - event.status should be true
+          if (event.status) {
+             if (event.type == "exception") {
+                document.getElementById("responseErrors").innerHTML = event.message;
+             } else {
+                document.getElementById("responseErrors").innerHTML = "";
+                var instanceURL = document.getElementById("instanceURL").value+"/";
+                var header = document.getElementById("partnerTableHeader"), headerHtml=[];
+                headerHtml.push("<tr><th>Partner Type</th><th>Refer To</th><th>Phone</th><th>email</th></tr>");
+                header.innerHTML = headerHtml.join("");
+                
+                var container = document.getElementById("partnerResultsTable"), html=[];
+                for (var i=0, j=results.length; i<j; i++) {
+                   html.push("<tr class='dataRow'>");
+                   html.push("<td class='dataCell'>"+results[i].partnerType+"</td>");
+                   if (results[i].referToId != '') {
+                      html.push("<td class='dataCell'><a href='"+instanceURL+results[i].referToId+"'>"+results[i].referTo+"</a></td>");
+                   } else {
+                      html.push("<td class='dataCell'>"+results[i].referTo+"</td>");
+                   }
+                   html.push("<td class='dataCell'>"+results[i].phone+"</td>");
+                   html.push("<td class='dataCell'>"+results[i].email+"</td>");
+                   html.push("</tr>");
+                } // for
+                container.innerHTML = html.join("");
+             }
+          }
+       } // handlePartnerResult
+
+       checkActiveProds = function() {
+          //alert ("getActiveProductCount checked="+document.getElementById("activeProdCheckbox").checked == true);
+          if (document.getElementById("activeProdCheckbox").checked == true) {
+             var idToSend = "{!objectId}";
+             var activeOrInactive = 'Active';
+             //alert ("getActiveProductCount idToSend="+idToSend);
+             document.getElementById("assetStatusSection").innerHTML = "Getting Active Product Count...";
+             Visualforce.remoting.Manager.invokeAction( '{!$RemoteAction.NSSViewRemoteActions.getAssets}', idToSend,activeOrInactive, handleActiveProdsResult );
+          } else {
+             document.getElementById("activeProdTableHeader").innerHTML = "";
+             document.getElementById("activeProdTableBody").innerHTML = "";
+          }
+       } // checkActiveProds
+       
+       handleActiveProdsResult = function(results, event) {
+          if (event.status) {
+             if (event.type == "exception") {
+                document.getElementById("assetStatusSection").innerHTML = event.message;
+             } else {
+                document.getElementById("assetStatusSection").innerHTML = "";
+                var header = document.getElementById("activeProdTableHeader"), headerHtml=[];
+                var instanceURL = document.getElementById("instanceURL").value+"/";
+                headerHtml.push("<tr><th>Name</th><th>Plan Code</th><th>Start Date</th><th>Nbr Participants</th><th>Bundle</th></tr>");
+                header.innerHTML = headerHtml.join("");
+
+                var container = document.getElementById("activeProdTableBody"), html=[];
+                for (var i=0, j=results.length; i<j; i++) {
+                   html.push("<tr class='dataRow'>");
+                   html.push("<td class='dataCell'><a href='"+instanceURL+results[i].id+"'>"+results[i].name+"</a></td>");
+                   html.push("<td class='dataCell'>"+results[i].planCode+"</td>");
+                   html.push("<td class='dataCell'>"+results[i].startDate+"</td>");
+                   html.push("<td class='dataCell'>"+results[i].nbrParticipants+"</td>");
+                   html.push("<td class='dataCell'>"+results[i].bundle+"</td>");
+                   html.push("</tr>");
+                } // for
+                container.innerHTML = html.join("");
+             }
+          } // if (event.status
+       } // handleActiveProdsResult
+
+       checkInactiveProds = function() {
+          if (document.getElementById("inactiveProdCheckbox").checked == true) {
+             var idToSend = "{!objectId}";
+             var activeOrInactive = 'Inactive';
+             //alert ("getActiveProductCount idToSend="+idToSend);
+             document.getElementById("assetStatusSection").innerHTML = "Getting Inactive Product Count...";
+             Visualforce.remoting.Manager.invokeAction( '{!$RemoteAction.NSSViewRemoteActions.getAssets}', idToSend,activeOrInactive, handleInactiveProdsResult );
+          } else {
+             document.getElementById("inactiveProdTableHeader").innerHTML = "";
+             document.getElementById("inactiveProdTableBody").innerHTML = "";
+          }
+       } // checkInactiveProds
+       
+       handleInactiveProdsResult = function(results, event) {
+          if (event.status) {
+             if (event.type == "exception") {
+                document.getElementById("assetStatusSection").innerHTML = event.message;
+             } else {
+                document.getElementById("assetStatusSection").innerHTML = "";
+                var header = document.getElementById("inactiveProdTableHeader"), headerHtml=[];
+                var instanceURL = document.getElementById("instanceURL").value+"/";
+                headerHtml.push("<tr><th>Name</th><th>Plan Code</th><th>Start Date</th><th>Nbr Participants</th><th>Bundle</th><th>Lost Date</th><th>Lost Reason</th></tr>");
+                header.innerHTML = headerHtml.join("");
+
+                var container = document.getElementById("inactiveProdTableBody"), html=[];
+                for (var i=0, j=results.length; i<j; i++) {
+                   html.push("<tr class='dataRow'>");
+                   html.push("<td class='dataCell'><a href='"+instanceURL+results[i].id+"'>"+results[i].name+"</a></td>");
+                   html.push("<td class='dataCell'>"+results[i].planCode+"</td>");
+                   html.push("<td class='dataCell'>"+results[i].startDate+"</td>");
+                   html.push("<td class='dataCell'>"+results[i].nbrParticipants+"</td>");
+                   html.push("<td class='dataCell'>"+results[i].bundle+"</td>");
+                   html.push("<td class='dataCell'>"+results[i].lostDate+"</td>");
+                   html.push("<td class='dataCell'>"+results[i].lostReason+"</td>");
+                   html.push("</tr>");
+                } // for
+                container.innerHTML = html.join("");
+             }
+          } // if (event.status
+       } // handleInactiveProdsResult
+
+       checkOpps = function() {
+          var idToSend = "{!objectId}";
+          //alert ("checkOpps idToSend="+idToSend);
+          document.getElementById("oppStatusSection").innerHTML = "Getting Opportunities...";
+          Visualforce.remoting.Manager.invokeAction( '{!$RemoteAction.NSSViewRemoteActions.getOpps}', idToSend, handleOppsResult );
+       } // checkOpps
+       
+       handleOppsResult = function(results, event) {
+          if (event.status) {
+             if (event.type == "exception") {
+                document.getElementById("oppStatusSection").innerHTML = event.message;
+             } else {
+                document.getElementById("oppStatusSection").innerHTML = "";
+                var instanceURL = document.getElementById("instanceURL").value+"/";
+                var header = document.getElementById("oppTableHeader"), headerHtml=[];
+                headerHtml.push("<tr><th>Name</th><th>Stage</th><th>Run-Effective Date</th><th>Owner</th><th>Created Date</th><th>Created By</th><th>Source</th></tr>");
+                header.innerHTML = headerHtml.join("");
+
+                var container = document.getElementById("oppTableBody"), html=[];
+                for (var i=0, j=results.length; i<j; i++) {
+                   html.push("<tr class='dataRow'>");
+                   html.push("<td class='dataCell'><a href='"+instanceURL+results[i].id+"'>"+results[i].name+"</a></td>");
+                   html.push("<td class='dataCell'>"+results[i].stage+"</td>");
+                   html.push("<td class='dataCell'>"+results[i].runDate+"</td>");
+                   html.push("<td class='dataCell'>"+results[i].owner+"</td>");
+                   html.push("<td class='dataCell'>"+results[i].createDate+"</td>");
+                   html.push("<td class='dataCell'>"+results[i].createBy+"</td>");
+                   html.push("<td class='dataCell'>"+results[i].source+"</td>");
+                   html.push("</tr>");
+                } // for
+                container.innerHTML = html.join("");
+             }
+          } // if (event.status
+       } // handleOppsResult
+
+       checkOtherCtcts = function() {
+          var objectType = "{!ctctObjectType}";
+          var idToSend = document.getElementById("ctctRootIdFld").value; //"{!ctctRootId}";
+          var selectedId = document.getElementById("primaryIdFld").value; //"{!primaryId}";
+          var nbrRecs = document.getElementById("otherCtctCurCount").value;
+          var maxRecs = "{!nbrOtherCtcts}";
+          
+          //alert("checkOtherCtcts objectType"+objectType+" idToSend="+idToSend+" selectedId="+selectedId+" nbrRecs="+nbrRecs+" maxRecs="+maxRecs);
+          document.getElementById("otherCtctStatusSection").innerHTML = "Getting Other Contacts...";
+          Visualforce.remoting.Manager.invokeAction( '{!$RemoteAction.NSSViewRemoteActions.getOtherCtcts}', objectType, idToSend, selectedId, nbrRecs, maxRecs, handleOtherCtctResult );
+       } // checkOtherCtcts
+       
+       handleOtherCtctResult = function(results, event) {
+          if (event.status) {
+             if (event.type == "exception") {
+                document.getElementById("otherCtctStatusSection").innerHTML = event.message;
+             } else {
+                var readOnly = "{!readOnly}";
+
+                document.getElementById("otherCtctStatusSection").innerHTML = "";
+                document.getElementById("otherCtctCurCount").value=results.length;
+                
+                var instanceURL = document.getElementById("instanceURL").value+"/";
+                
+                var header = document.getElementById("otherCtctTableHeader"), headerHtml=[];
+                headerHtml.push("<tr><th>Name</th><th>Title</th><th>Phone</th><th>Do Not Call</th><th>Significant</th><th>Last Modified</th><th>Last Activity</th></tr>");
+                header.innerHTML = headerHtml.join("");
+
+                var container = document.getElementById("otherCtctTableBody"), html=[];
+                for (var i=0, j=results.length; i<j; i++) {
+                   html.push("<tr class='dataRow'>");
+                   html.push("<td class='dataCell'><a href='"+instanceURL+results[i].id+"'>"+results[i].name+"</a></td>");
+                   html.push("<td class='dataCell'>"+results[i].title+"</td>");
+                   html.push("<td class='dataCell'>"+results[i].phone+"</td>");
+                   if (results[i].doNotCall == "true") {
+                      //alert("handleOtherCtctResult doNotCall is true: "+results[i].doNotCall);
+                      html.push("<td class='dataCell'><input type='checkbox' disabled='disabled' checked='checked'></td>");
+                   } else if (results[i].doNotCall == "false") {
+                      //alert("handleOtherCtctResult doNotCall is false: "+results[i].doNotCall);
+                      html.push("<td class='dataCell'><input type='checkbox' disabled='disabled' value='0'></td>");
+                      //html.push("<td class='dataCell'>"+results[i].doNotCall+"</td>");
+                   }
+                   if (readOnly == "false" && results[i].significant == "false") {
+                      //html.push("<td class='dataCell'><a href='"+instanceURL+results[i].id+"'>Make Significant</a></td>");
+                      var checkboxStr = "<td class='dataCell'><input type='checkbox' value='false' onclick='setSignificant(\""+results[i].id+"\");'></input>Make Significant</td>";
+                      //alert("checkboxStr="+checkboxStr);
+                      html.push(checkboxStr);
+                   } else if (readOnly == "true" && results[i].significant == "false") {
+                      html.push("<td class='dataCell'><input type='checkbox' disabled='disabled' value='0'></td>");
+                   } else {
+                      html.push("<td class='dataCell'><input type='checkbox' disabled='disabled' checked='checked'></td>");
+                   }
+                   html.push("<td class='dataCell'>"+results[i].lastModified+"</td>");
+                   html.push("<td class='dataCell'>"+results[i].lastActivity+"</td>");
+                   html.push("</tr>");
+                } // for
+                container.innerHTML = html.join("");
+             }
+          } // if (event.status
+       } // handleOtherCtctResult
+       
+       setSignificant = function(v_significantId) {
+          document.getElementById("otherCtctStatusSection").innerHTML = "Changing Significant Contact...";
+          //document.getElementById("otherCtctTableBody").innerHTML = "";
+          //alert("significantId="+document.getElementById("significantId").value);
+          changeSignificanceJS(v_significantId);
+       }
+
+    </script>
+
+    <script type="text/javascript" rendered="{!AND(showMainForm,NOT(showSubmitReferralForm))}" >
+       document.addEventListener("DOMContentLoaded", function(event) {
+          handleGetPartners();
+       });
+    </script>
+
+    <script type="text/javascript" rendered="{!AND(hasOtherCtcts,NOT(showSubmitReferralForm))}" >
+       document.addEventListener("DOMContentLoaded", function(event) {
+          checkOtherCtcts();
+       });
+    </script>
+    
+    <script type="text/javascript" rendered="{!AND(hasOpps,NOT(showSubmitReferralForm))}">
+       document.addEventListener("DOMContentLoaded", function(event) {
+          checkOpps();
+       });
+    </script>
+
+  <!-- **************** Main Display Block **************** -->
+  <apex:pageBlock id="DisplayBlock" >
+     <apex:pageMessages />
+
+  <apex:form id="displayForm">
+    
+    <apex:actionFunction action="{!submitReferral2}" name="jsSubmitReferral2" />
+        
+        <apex:outputPanel id="redirectPanel" >
+            <apex:outputText rendered="{!shouldRedirect}">
+                <script type="text/javascript">
+                    if ({!$User.UIThemeDisplayed == 'Theme3'}) {
+                      window.top.location.href = '{!redirectUrl}';
+                    } else {
+                      sforce.one.navigateToURL("{!redirectUrl}", false);
+                    }
+                </script>
+            </apex:outputText>
+        </apex:outputPanel>
+
+
+   <apex:actionFunction action="{!changeSignificance}" name="changeSignificanceJS" rerender="DisplayBlock" oncomplete="handleGetPartners(); checkOtherCtcts(); checkOpps();">
+      <apex:param name="SignificantId" assignTo="{!SignificantId}" value="" />
+   </apex:actionFunction>
+
+       <input type="hidden" name="instanceURL" id="instanceURL" value="{!instanceURL}"/>
+
+
+     <!--  ************   Key information  ***************** -->
+      <!--<c:NSSViewKeyInformation />-->
+     <apex:pageBlockSection id="KeyInfo" rendered="{!showKeyInfo}" columns="1" collapsible="false" title="Key Prospect Info">
+        <apex:outputPanel rendered="{!hasOwnershipMsg}">
+           <apex:outputText style="color:black; font-weight: bold; font-size: {!ownershipFontSize}; background-color:{!ownershipColor}" value="{!ownershipMsg}" />
+        </apex:outputPanel>
+
+        <apex:outputPanel rendered="{!hasCallbacks}" >
+           <table id="callbackTable" width="100%">
+           <apex:repeat value="{!callbacks}" var="callback" id="callbackRepeat">
+              <tr>
+              <td style="white-space:nowrap;">
+              <apex:commandLink rendered="{!callback.ownedByRunningUser}" action="{!closeCallback}" value="Complete" immediate="false" rerender="DisplayBlock" status="callbackStatus">
+                           <apex:param name="tskId" value="{!callback.tsk.Id}"/>
+                           <apex:param name="closeStatus" value="Completed" />
+                        </apex:commandLink>
+                        &nbsp;
+              <apex:commandLink rendered="{!callback.ownedByRunningUser}" action="{!closeCallback}" value="Cancel" immediate="false" rerender="DisplayBlock" status="callbackStatus">
+                           <apex:param name="tskId" value="{!callback.tsk.Id}"/>
+                           <apex:param name="closeStatus" value="Cancelled" />
+                        </apex:commandLink>
+               </td><td>
+              <apex:outputText style="color:blue; font-weight: bold;" value="{!callback.callbackInfo}" /></td>
+              <td><apex:outputText style="color:blue;" value="{!callback.tsk.Subject}"/></td>
+              <td><apex:outputText style="color:blue;" value="{!callback.tsk.Description}"/></td>
+              </tr>
+           </apex:repeat>
+           </table>
+           <apex:actionStatus startText="Closing Callback..." id="callbackStatus"/>
+
+        </apex:outputPanel>
+
+         <apex:pageBlockSectionItem rendered="{!hasOptOut}">
+            <apex:outputLabel value="Opt Out"/>
+            <apex:outputText style="color:red; font-weight:bold;" value="{!optOutMsg}" />
+         </apex:pageBlockSectionItem>
+
+         <apex:pageBlockSectionItem rendered="{!isLostClient}">
+            <apex:outputLabel value="Lost Client Date/Reason"/>
+            <apex:outputText value="{!lostInfo}" />
+         </apex:pageBlockSectionItem>
+
+         <apex:pageBlockSectionItem rendered="{!hasSensitivities}">
+            <apex:outputLabel value="Sensitivities"/>
+            <apex:outputText value="{!sensitivityList}" />
+         </apex:pageBlockSectionItem>
+
+        <apex:pageBlockSectionItem rendered="{!hasTimeZone}">
+           <apex:outputLabel value="Business Time Zone" />
+           <apex:outputText value="{!timeZone}"/>
+        </apex:pageBlockSectionItem>
+
+         <apex:pageBlockSectionItem rendered="{!hasLatestCampaign}">
+            <apex:outputLabel value="Latest Campaign"/>
+            <apex:outputText value="{!campaignMsg}" />
+         </apex:pageBlockSectionItem>
+
+         <apex:pageBlockSectionItem rendered="{!showLatestPayOpp}">
+            <apex:outputLabel value="Last Payroll Oppy Created" />
+            <apex:outputText style="color:red; font-weight:bold;" value="{!lastestPayOppDate}" />
+         </apex:pageBlockSectionItem>
+     </apex:pageBlockSection>
+
+     <!--  ************   Display the contact information  ***************** -->
+     <apex:actionRegion >
+
+       <input type="hidden" name="ctctRootIdFld" id="ctctRootIdFld" value="{!ctctRootId}"/>
+       <input type="hidden" name="primaryIdFld" id="primaryIdFld" value="{!primaryId}"/>
+
+     <apex:pageBlockSection id="KeyContactSection" rendered="{!AND(OR(showMainForm,addingNewContact),OR(hasContact,hasLead))}" title="Contact Information" columns="2">
+
+
+        <apex:pageBlockSectionItem >
+           <apex:outputLabel value="First Name" />
+           <apex:outputPanel >
+              
+              <apex:inputField rendered="{!AND(NOT(readOnly),hasContact)}" value="{!ctct.Salutation}" />
+              <apex:inputField rendered="{!AND(NOT(readOnly),hasContact)}" value="{!ctct.FirstName}" />
+              <apex:inputField rendered="{!AND(NOT(readOnly),hasLead)}" value="{!ld.Salutation}" />
+              <apex:inputField rendered="{!AND(NOT(readOnly),hasLead)}" value="{!ld.FirstName}" />
+
+              <apex:outputField rendered="{!AND(readOnly,hasContact)}" value="{!ctct.Salutation}" />
+              <apex:outputField rendered="{!AND(readOnly,hasContact)}" value="{!ctct.FirstName}" />
+              <apex:outputField rendered="{!AND(readOnly,hasLead)}" value="{!ld.Salutation}" />
+              <apex:outputField rendered="{!AND(readOnly,hasLead)}" value="{!ld.FirstName}" />
+           </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasContact)}" value="{!ctct.Title}" />
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasLead)}" value="{!ld.Title}" />
+        <apex:outputField rendered="{!AND(readOnly,hasContact)}" value="{!ctct.Title}" />
+        <apex:outputField rendered="{!AND(readOnly,hasLead)}" value="{!ld.Title}" />
+        <!-- ROW -->
+        
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasContact)}" value="{!ctct.LastName}" />
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasLead)}" value="{!ld.LastName}" />
+        <apex:outputField rendered="{!AND(readOnly,hasContact)}" value="{!ctct.LastName}" />
+        <apex:outputField rendered="{!AND(readOnly,hasLead)}" value="{!ld.LastName}" />
+
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasLead)}" value="{!ld.Phone}" />
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasContact)}" value="{!ctct.Phone}" />
+        <apex:outputField rendered="{!AND(readOnly,hasLead)}" value="{!ld.Phone}" />
+        <apex:outputField rendered="{!AND(readOnly,hasContact)}" value="{!ctct.Phone}" />
+        <!-- ROW -->
+
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasLead,ctctSectionExpanded)}" value="{!ld.Email}" />
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasContact,ctctSectionExpanded)}" value="{!ctct.Email}" />
+        <apex:outputField rendered="{!AND(readOnly,hasLead,ctctSectionExpanded)}" value="{!ld.Email}" />
+        <apex:outputField rendered="{!AND(readOnly,hasContact,ctctSectionExpanded)}" value="{!ctct.Email}" />
+
+        <apex:pageBlockSectionItem rendered="{!AND(NOT(readOnly),ctctSectionExpanded)}"  >
+           <apex:outputLabel value="Significant" />
+           <apex:outputPanel >
+              <apex:outputField rendered="{!AND(hasContact,ctct.SignificantContact__c)}" style="white-space:nowrap;" value="{!ctct.SignificantContact__c}"/>
+              <apex:outputField rendered="{!AND(hasLead,ld.SignificantLead__c)}" style="white-space:nowrap;" value="{!ld.SignificantLead__c}"/>
+              <apex:actionStatus rendered="{!NOT(IF(hasContact,ctct.SignificantContact__c,ld.SignificantLead__c))}" id="changeLeadSignificantStatus">
+                <apex:facet name="stop">
+                <apex:commandLink id="makeSignificantLeadLinkDetail"  action="{!changeSignificance}" value="Make Significant" rerender="KeyContactSection" status="changeLeadSignificantStatus">
+                    <apex:param value="{!IF(hasContact,ctct.Id,ld.Id)}" name="SignificantId"/>
+                </apex:commandLink>
+               </apex:facet>
+               <apex:facet name="start">
+                  <apex:outputText id="makeSignificantLeadLinkDetailDisabled" value="Changing Significance..." />
+               </apex:facet>
+            </apex:actionStatus>
+           </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:outputField rendered="{!AND(readOnly,hasLead,ctctSectionExpanded)}" value="{!ld.SignificantLead__c}" />
+        <apex:outputField rendered="{!AND(readOnly,hasContact,ctctSectionExpanded)}" value="{!ctct.SignificantContact__c}" />
+        <!-- ROW -->
+        
+        
+        
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasLead,ctctSectionExpanded)}" value="{!ld.No_Longer_With_Company__c}" />
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasContact,ctctSectionExpanded)}" value="{!ctct.No_Longer_With_Company__c}" />
+        <apex:outputField rendered="{!AND(readOnly,hasLead,ctctSectionExpanded)}" value="{!ld.No_Longer_With_Company__c}" />
+        <apex:outputField rendered="{!AND(readOnly,hasContact,ctctSectionExpanded)}" value="{!ctct.No_Longer_With_Company__c}" />
+        
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasLead,ctctSectionExpanded)}" value="{!ld.DoNotCall}" />
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasContact,ctctSectionExpanded)}" value="{!ctct.DoNotCall}" />
+        <apex:outputField rendered="{!AND(readOnly,hasLead,ctctSectionExpanded)}" value="{!ld.DoNotCall}" />
+        <apex:outputField rendered="{!AND(readOnly,hasContact,ctctSectionExpanded)}" value="{!ctct.DoNotCall}" />
+        <!-- ROW -->
+
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasLead,ctctSectionExpanded)}" value="{!ld.Referral_Contact__c}" />
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasContact,ctctSectionExpanded)}" value="{!ctct.Referral_Contact__c}" />
+        <apex:outputField rendered="{!AND(readOnly,hasLead,ctctSectionExpanded)}" value="{!ld.Referral_Contact__c}" />
+        <apex:outputField rendered="{!AND(readOnly,hasContact,ctctSectionExpanded)}" value="{!ctct.Referral_Contact__c}" />
+        
+        <apex:pageBlockSectionItem rendered="{!ctctSectionExpanded}" />
+
+        <!-- ROW -->
+        
+        <apex:commandLink id="moreCtctInfo" rendered="{!NOT(ctctSectionExpanded)}" action="{!changeCtctSection}" value="Show More" rerender="KeyContactSection"/>
+        <apex:commandLink id="lessCtctInfo" rendered="{!ctctSectionExpanded}" action="{!changeCtctSection}" value="Show Less" rerender="KeyContactSection"/>
+     </apex:pageBlockSection>
+     
+     <!--  ************   Display the company information  ***************** -->
+
+     <apex:pageBlockSection id="CompanySection" rendered="{!AND(OR(showMainForm,addingNewContact),OR(hasLead,hasAccount))}" title="Company Information" columns="2">
+        <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Company" />
+           <apex:outputPanel >
+              <apex:inputField rendered="{!AND(NOT(readOnly),hasLead)}" required="true" value="{!ld.Company}" />
+              <apex:inputField rendered="{!AND(NOT(readOnly),hasAccount)}" required="true" value="{!acct.Name}" />
+              <apex:outputField rendered="{!AND(readOnly,hasLead)}" value="{!ld.Company}" />
+              <apex:outputField rendered="{!AND(readOnly,hasAccount)}" value="{!acct.Name}" />
+           </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Type" />
+           <apex:outputText value="{!companyType}" />
+        </apex:pageBlockSectionItem>
+        
+        <!--  Line break -->        
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasLead)}" value="{!ld.NumberOfEmployees}" />
+        <!-- <apex:inputField rendered="{!AND(NOT(readOnly),hasAccount)}" value="{!acct.NumberOfEmployees}" /> -->
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasAccount)}" value="{!acct.Employees__c}" />
+        <apex:outputField rendered="{!AND(readOnly,hasLead)}" value="{!ld.NumberOfEmployees}" />
+        <!-- <apex:outputField rendered="{!AND(readOnly,hasAccount)}" value="{!acct.NumberOfEmployees}" /> -->
+        <apex:outputField rendered="{!AND(readOnly,hasAccount)}" value="{!acct.Employees__c}" />
+        
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasLead)}" value="{!ld.Phone}" />
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasAccount)}" value="{!acct.Phone}" />
+        <apex:outputField rendered="{!AND(readOnly,hasLead)}" value="{!ld.Phone}" />
+        <apex:outputField rendered="{!AND(readOnly,hasAccount)}" value="{!acct.Phone}" />
+        <!--  Line break -->        
+
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasLead)}" value="{!ld.Current_Prior_Method__c}" />
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasAccount)}" value="{!acct.Current_Prior_Method__c}" />
+        <apex:outputField rendered="{!AND(readOnly,hasLead)}" value="{!ld.Current_Prior_Method__c}" />
+        <apex:outputField rendered="{!AND(readOnly,hasAccount)}" value="{!acct.Current_Prior_Method__c}" />
+
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasLead)}" value="{!ld.Frequency__c}" />
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasAccount)}" value="{!acct.Frequency__c}" />
+        <apex:outputField rendered="{!AND(readOnly,hasLead)}" value="{!ld.Frequency__c}" />
+        <apex:outputField rendered="{!AND(readOnly,hasAccount)}" value="{!acct.Frequency__c}" />
+
+        <!--  Line break -->        
+        
+        <apex:outputField rendered="{!AND(hasAccount,(acct.AccountNumber != null))}" value="{!acct.AccountNumber}" />
+        <apex:pageBlockSectionItem rendered="{!AND(hasAccount,(acct.AccountNumber = null))}" />
+        
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasAccount)}" value="{!acct.Other_Contact_Phone__c}" />
+        <apex:outputField rendered="{!AND(readOnly,hasAccount)}" value="{!acct.Other_Contact_Phone__c}" />
+
+        <!--  Line break -->        
+        
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasLead,companySectionExpanded)}" value="{!ld.Street}" />
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasAccount,companySectionExpanded)}" value="{!acct.BillingStreet}" />
+        <apex:outputField rendered="{!AND(readOnly,hasLead,companySectionExpanded)}" value="{!ld.Street}" />
+        <apex:outputField rendered="{!AND(readOnly,hasAccount,companySectionExpanded)}" value="{!acct.BillingStreet}" />
+        
+        <apex:pageBlockSectionItem rendered="{!AND(hasLead,companySectionExpanded)}"/>
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasAccount,companySectionExpanded)}" value="{!acct.ShippingStreet}" />
+        <apex:outputField rendered="{!AND(readOnly,hasAccount,companySectionExpanded)}" value="{!acct.ShippingStreet}" />
+        <!--  Line break -->        
+        
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasLead,companySectionExpanded)}" value="{!ld.City}" />
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasAccount,companySectionExpanded)}" value="{!acct.BillingCity}" />
+        <apex:outputField rendered="{!AND(readOnly,hasLead,companySectionExpanded)}" value="{!ld.City}" />
+        <apex:outputField rendered="{!AND(readOnly,hasAccount,companySectionExpanded)}" value="{!acct.BillingCity}" />
+
+        <apex:pageBlockSectionItem rendered="{!AND(hasLead,companySectionExpanded)}" />
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasAccount,companySectionExpanded)}" value="{!acct.ShippingCity}" />
+        <apex:outputField rendered="{!AND(readOnly,hasAccount,companySectionExpanded)}" value="{!acct.ShippingCity}" />
+        <!--  Line break -->        
+        
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasLead,companySectionExpanded)}" value="{!ld.State}" />
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasAccount,companySectionExpanded)}" value="{!acct.BillingState}" />
+        <apex:outputField rendered="{!AND(readOnly,hasLead,companySectionExpanded)}" value="{!ld.State}" />
+        <apex:outputField rendered="{!AND(readOnly,hasAccount,companySectionExpanded)}" value="{!acct.BillingState}" />
+
+        <apex:pageBlockSectionItem rendered="{!AND(hasLead,companySectionExpanded)}" />
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasAccount,companySectionExpanded)}" value="{!acct.ShippingState}" />
+        <apex:outputField rendered="{!AND(readOnly,hasAccount,companySectionExpanded)}" value="{!acct.ShippingState}" />
+        <!--  Line break -->        
+        
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasLead,companySectionExpanded)}" value="{!ld.PostalCode}" />
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasAccount,companySectionExpanded)}" value="{!acct.BillingPostalCode}" />
+        <apex:outputField rendered="{!AND(readOnly,hasLead,companySectionExpanded)}" value="{!ld.PostalCode}" />
+        <apex:outputField rendered="{!AND(readOnly,hasAccount,companySectionExpanded)}" value="{!acct.BillingPostalCode}" />
+
+        <apex:pageBlockSectionItem rendered="{!AND(hasLead,companySectionExpanded)}" />
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasAccount,companySectionExpanded)}" value="{!acct.ShippingPostalCode}" />
+        <apex:outputField rendered="{!AND(readOnly,hasAccount,companySectionExpanded)}" value="{!acct.ShippingPostalCode}" />
+        <!--  Line break -->        
+
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasAccount,companySectionExpanded)}" value="{!acct.Referral_National_Account__c}" />
+        <apex:outputField rendered="{!AND(readOnly,hasAccount,companySectionExpanded)}" value="{!acct.Referral_National_Account__c}" />
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasLead,companySectionExpanded)}" value="{!ld.Referral_National_Account__c}" />
+        <apex:outputField rendered="{!AND(readOnly,hasLead,companySectionExpanded)}" value="{!ld.Referral_National_Account__c}" />
+
+        <apex:inputField rendered="{!AND(NOT(readOnly),hasAccount,companySectionExpanded)}" value="{!acct.CPA_Name_Ref__c}" />
+        <apex:outputField rendered="{!AND(readOnly,hasAccount,companySectionExpanded)}" value="{!acct.CPA_Name_Ref__c}" />
+        <apex:pageBlockSectionItem rendered="{!AND(hasLead,companySectionExpanded)}" />
+
+        <!--  Line break -->        
+
+        <apex:commandLink id="moreAcctInfo" rendered="{!NOT(companySectionExpanded)}" action="{!changeAcctSection}" value="Show More" rerender="CompanySection"/>
+        <apex:commandLink id="lessAcctInfo" rendered="{!companySectionExpanded}" action="{!changeAcctSection}" value="Show Less" rerender="CompanySection"/>
+     </apex:pageBlockSection>
+     
+     <!--  ************  Other Contact Section  ***************** -->
+
+     <!--  ************  Other Contact Section  ***************** -->
+     <apex:pageBlockSection id="OtherContactSection2" rendered="{!AND(showMainForm,hasOtherCtcts,NOT(showSubmitReferralForm))}" title="Other Contacts" columns="1">
+       <div id="otherCtctStatusSection"> </div>
+       <table class="list" cellpadding="0" cellspacing="0">
+          <thead id="otherCtctTableHeader"></thead>
+          <tfoot></tfoot>
+          <tbody id="otherCtctTableBody"></tbody>
+       </table>
+       
+       <input type="hidden" name="otherCtctCurCount" id="otherCtctCurCount" value=""/>
+       <input type="hidden" name="otherCtctTotalCount" id="otherCtctTotalCount" value=""/>
+       
+    </apex:pageBlockSection>
+    <script> twistSection(document.getElementById('{!$Component.DisplayBlock.OtherContactSection2}').getElementsByTagName('img')[0]) </script>
+
+
+     <apex:pageBlockSection id="ButtonSection" rendered="{!AND(showMainForm,NOT(showSubmitReferralForm))}" columns="1">
+         <apex:outputPanel rendered="{!NOT(readOnly)}">
+            <apex:actionStatus id="saveAcctChanges">
+               <apex:facet name="stop">
+                  <apex:commandButton styleClass="slds-button slds-button_neutral" id="acctChangesActive" action="{!saveRecordChanges}" value="Save Changes" status="saveAcctChanges" disabled="false" rerender="DisplayBlock" oncomplete="handleGetPartners(); checkOtherCtcts(); checkOpps();"/>
+               </apex:facet>
+               <apex:facet name="start">
+                  <apex:commandButton styleClass="slds-button" id="acctChangesDisabled" value="Saving Changes..." status="saveAcctChanges" disabled="true" rerender="DisplayBlock" oncomplete="handleGetPartners(); checkOtherCtcts(); checkOpps();"/>
+               </apex:facet>
+            </apex:actionStatus>
+            <apex:commandButton styleClass="slds-button slds-button_neutral" id="newContact" rendered="{!OR(hasAccount,hasLead)}" action="{!addNewContact}" value="New Contact"  rerender="DisplayBlock"/>
+            <apex:outputText rendered="{!AND(allowSubmit,hasAccount,NOT(hasContact))}" style="color:red; font-weight:bold;" value="Must Have Company and Contact information to submit an Opportunity!"/>
+            <apex:commandButton styleClass="slds-button slds-button_neutral" id="submitReferral5" rendered="{!AND(allowSubmit,$User.UIThemeDisplayed == 'Theme3',OR(hasLead,AND(hasAccount,hasContact)))}" action="{!submitReferral2}" value="Submit Opportunity" />
+            <apex:commandButton styleClass="slds-button slds-button_neutral" id="submitReferral6" rendered="{!AND(allowSubmit,$User.UIThemeDisplayed <> 'Theme3',OR(hasLead,AND(hasAccount,hasContact)))}" action="{!submitReferralLightning}" value="Submit Opportunity" />
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!readOnly}">
+            <apex:outputText style="color:red; font-weight:bold;" value="Changes to the record and Submit Opportunity Not Allowed" />
+        </apex:outputPanel>
+     </apex:pageBlockSection>
+     
+     </apex:actionRegion>
+    </apex:form>
+
+     <!--  ************   Submit Referral Section  ***************** -->
+
+     <apex:pageBlockSection columns="1" rendered="{!showSubmitReferralForm}" title="Submit Referral">
+        <c:Referral rendered="{!showSubmitReferralForm}" />    
+     
+     </apex:pageBlockSection>
+     
+     <apex:form >
+     <!--  ************   Campaign Section ***************** -->
+     <apex:actionRegion >
+     <apex:pageBlockSection id="CampaignSection" rendered="{!AND(showMainForm,hasCampaignData)}" title="Campaigns" columns="1">
+        <apex:pageBlockTable id="CampaignTable" value="{!campaignHelper.displayRecs}" var="rec">
+           <apex:column >
+             <apex:facet name="header">Campaign Name</apex:facet>
+             <apex:outputField style="white-space:nowrap;" value="{!rec.campMember.CampaignId}"/>
+           </apex:column>
+
+           <apex:column >
+             <apex:facet name="header">Start Date</apex:facet>
+             <apex:outputField style="white-space:nowrap;" value="{!rec.campMember.Campaign.StartDate}"/>
+           </apex:column>
+
+           <apex:column >
+             <apex:facet name="header">Parent</apex:facet>
+             <apex:outputField style="white-space:nowrap;" value="{!rec.campMember.Campaign.ParentCampaign__c}"/>
+           </apex:column>
+
+           <apex:column >
+             <apex:facet name="header">Product</apex:facet>
+             <apex:outputField style="white-space:nowrap;" value="{!rec.campMember.Campaign.Product__c}"/>
+           </apex:column>
+
+           <apex:column >
+             <apex:facet name="header">Last Modified Date</apex:facet>
+             <apex:outputField style="white-space:nowrap;" value="{!rec.campMember.LastModifiedDate}"/>
+           </apex:column>
+
+
+        </apex:pageBlockTable>
+        <apex:commandLink id="moreCampaigns" rendered="{!campaignHelper.hasMoreRecords}" action="{!campaignHelper.displayMore}" value="Show More>>" rerender="CampaignSection"/>
+
+     </apex:pageBlockSection>
+     </apex:actionRegion>
+     
+     <!--  ************   My Activity Section  ***************** -->
+     <apex:actionRegion >
+     <apex:pageBlockSection id="MyActivitySection" rendered="{!AND(showMainForm,hasMyActivity)}" title="My Activity" columns="1">
+        <apex:pageBlockTable id="MyActivityTable" value="{!myActivityHelper.displayRecs}" var="rec">
+           <apex:column >
+             <apex:facet name="header">Subject</apex:facet>
+             <apex:outputField rendered="{!rec.isEvent}" value="{!rec.evnt.Subject}"/>
+             <apex:outputField rendered="{!rec.isTask}" value="{!rec.tsk.Subject}"/>
+           </apex:column>
+       
+           <apex:column >
+             <apex:facet name="header">Type</apex:facet>
+             <apex:outputField rendered="{!rec.isEvent}" style="white-space:nowrap;" value="{!rec.evnt.Type}"/>
+             <apex:outputField rendered="{!rec.isTask}" style="white-space:nowrap;" value="{!rec.tsk.Type}"/>
+           </apex:column>
+
+           <apex:column >
+             <apex:facet name="header">Task Status</apex:facet>
+             <apex:outputField rendered="{!rec.isTask}" style="white-space:nowrap;" value="{!rec.tsk.Status}"/>
+           </apex:column>
+
+           <apex:column >
+             <apex:facet name="header">Call/Activity Date</apex:facet>
+             <apex:outputField rendered="{!rec.isEvent}" style="white-space:nowrap;" value="{!rec.evnt.ActivityDate}"/>
+             <apex:outputField rendered="{!AND(rec.isTask,rec.hasCallDate)}" style="white-space:nowrap;" value="{!rec.tsk.CallDateTime__c}"/>
+             <apex:outputField rendered="{!AND(rec.isTask,NOT(rec.hasCallDate))}" style="white-space:nowrap;" value="{!rec.tsk.ActivityDate}"/>
+           </apex:column>
+
+           <apex:column >
+             <apex:facet name="header">Assigned To</apex:facet>
+             <apex:outputField rendered="{!rec.isEvent}" style="white-space:nowrap;" value="{!rec.evnt.OwnerId}"/>
+             <apex:outputField rendered="{!rec.isTask}" style="white-space:nowrap;" value="{!rec.tsk.OwnerId}"/>
+           </apex:column>
+
+           <apex:column >
+             <apex:facet name="header">Call Result</apex:facet>
+             <apex:outputField rendered="{!rec.isTask}" style="white-space:nowrap;" value="{!rec.tsk.CallDisposition}"/>
+           </apex:column>
+
+           <apex:column >
+             <apex:facet: name="header">Comments</apex:facet:>
+             <apex:outputText rendered="{!NOT(rec.showLongDesc)}" value="{!rec.shortDesc}" />
+             <apex:outputField rendered="{!AND(rec.showLongDesc,rec.isEvent)}" value="{!rec.evnt.Description}" />
+             <apex:outputField rendered="{!AND(rec.showLongDesc,rec.isTask)}" value="{!rec.tsk.Description}" />
+             <apex:outputPanel rendered="{!rec.hasLongDesc}">
+                &nbsp;
+                <apex:commandLink value="{!IF(rec.showLongDesc,'Collapse Comment','Full Comment')}" action="{!rec.toggleLongDesc}" rerender="MyActivitySection"/>
+             </apex:outputPanel>
+           </apex:column>
+        </apex:pageBlockTable>
+        <apex:commandLink id="moreOpenActivity" rendered="{!myActivityHelper.hasMoreRecords}" action="{!myActivityHelper.displayMore}" value="Show More>>" rerender="MyActivitySection"/>
+     </apex:pageBlockSection>
+     </apex:actionRegion>
+     
+     <!--  ************   Other Activity Section  ***************** -->
+     <apex:pageBlockSection id="OtherActivitySection" rendered="{!AND(showMainForm,hasOtherActivity)}" title="Other Activity" columns="1">
+        <apex:pageBlockTable id="OtherActivityTable" value="{!otherActivityHelper.displayRecs}" var="rec">
+           <apex:column >
+             <apex:facet name="header">Subject</apex:facet>
+             <apex:outputField rendered="{!rec.isEvent}" value="{!rec.evnt.Subject}"/>
+             <apex:outputField rendered="{!rec.isTask}" value="{!rec.tsk.Subject}"/>
+           </apex:column>
+       
+           <apex:column >
+             <apex:facet name="header">Type</apex:facet>
+             <apex:outputField rendered="{!rec.isEvent}" style="white-space:nowrap;" value="{!rec.evnt.Type}"/>
+             <apex:outputField rendered="{!rec.isTask}" style="white-space:nowrap;" value="{!rec.tsk.Type}"/>
+           </apex:column>
+       
+           <apex:column >
+             <apex:facet name="header">Task Status</apex:facet>
+             <apex:outputField rendered="{!rec.isTask}" style="white-space:nowrap;" value="{!rec.tsk.Status}"/>
+           </apex:column>
+
+           <apex:column >
+             <apex:facet name="header">Call/Activity Date</apex:facet>
+             <apex:outputField rendered="{!rec.isEvent}" style="white-space:nowrap;" value="{!rec.evnt.ActivityDate}"/>
+             <apex:outputField rendered="{!AND(rec.isTask,rec.hasCallDate)}" style="white-space:nowrap;" value="{!rec.tsk.CallDateTime__c}"/>
+             <apex:outputField rendered="{!AND(rec.isTask,NOT(rec.hasCallDate))}" style="white-space:nowrap;" value="{!rec.tsk.ActivityDate}"/>
+           </apex:column>
+       
+           <apex:column >
+             <apex:facet name="header">Assigned To</apex:facet>
+             <apex:outputField rendered="{!rec.isEvent}" style="white-space:nowrap;" value="{!rec.evnt.OwnerId}"/>
+             <apex:outputField rendered="{!rec.isTask}" style="white-space:nowrap;" value="{!rec.tsk.OwnerId}"/>
+           </apex:column>
+       
+           <apex:column >
+             <apex:facet: name="header">Comments</apex:facet:>
+             <apex:outputText rendered="{!NOT(rec.showLongDesc)}" value="{!rec.shortDesc}" />
+             <apex:outputField rendered="{!AND(rec.showLongDesc,rec.isEvent)}" value="{!rec.evnt.Description}" />
+             <apex:outputField rendered="{!AND(rec.showLongDesc,rec.isTask)}" value="{!rec.tsk.Description}" />
+             <apex:outputPanel rendered="{!rec.hasLongDesc}">
+                &nbsp;
+                <apex:commandLink value="{!IF(rec.showLongDesc,'Collapse Comment','Full Comment')}" action="{!rec.toggleLongDesc}" rerender="OtherActivitySection"/>
+             </apex:outputPanel>
+           </apex:column>
+        </apex:pageBlockTable>
+        <apex:commandLink id="moreClosedActivity" rendered="{!otherActivityHelper.hasMoreRecords}" action="{!otherActivityHelper.displayMore}" value="Show More>>" rerender="OtherActivitySection"/>
+     </apex:pageBlockSection>
+    <script> twistSection(document.getElementById('{!$Component.DisplayBlock.OtherActivitySection}').getElementsByTagName('img')[0]) </script>
+     
+     <!--  ************   Opportunity Section  ***************** -->
+
+    </apex:form>
+
+    
+     <!--  ************   Opportunity Section  ***************** -->
+     <apex:pageBlockSection id="OpportunitySection2" rendered="{!AND(showMainForm,hasOpps)}" title="Opportunities" columns="1">
+       <div id="oppStatusSection"> </div>
+       <table class="list" cellpadding="0" cellspacing="0">
+          <thead id="oppTableHeader"></thead>
+          <tfoot></tfoot>
+          <tbody id="oppTableBody"></tbody>
+       </table>
+    </apex:pageBlockSection>
+    <script> twistSection(document.getElementById('{!$Component.DisplayBlock.OpportunitySection2}').getElementsByTagName('img')[0]) </script>
+
+     <!--  ************   Asset Section  ***************** -->
+    <apex:pageBlockSection id="AssetSection2" rendered="{!hasAssets2}" title="Products and Services" columns="1">
+    <!-- 
+       <button type="button" onclick="getActiveProductCount();">Product Count</button>
+        -->
+       <div id="assetStatusSection"> </div>
+       <apex:outputPanel >
+          <apex:outputText value="Active Product Count: {!activeProdCnt}" />  
+          &nbsp;
+          <input type="checkbox" id="activeProdCheckbox" value="false" onclick="checkActiveProds();"></input><label for="activeProdCheckbox">Show Active Prods?</label>
+       </apex:outputPanel>
+       
+       <table class="list" cellpadding="0" cellspacing="0">
+          <thead id="activeProdTableHeader"></thead>
+          <tfoot></tfoot>
+          <tbody id="activeProdTableBody"></tbody>
+       </table>
+
+       <apex:outputPanel >
+          <apex:outputText value="Inactive Product Count: {!inactiveProdCnt}" /> 
+          <input type="checkbox" id="inactiveProdCheckbox" value="false" onclick="checkInactiveProds();"></input><label for="inactiveProdCheckbox">Show Inactive Prods?</label>
+       </apex:outputPanel>
+       
+       <table class="list" cellpadding="0" cellspacing="0">
+          <thead id="inactiveProdTableHeader"></thead>
+          <tfoot></tfoot>
+          <tbody id="inactiveProdTableBody"></tbody>
+       </table>
+       
+        <div id="activeProductCnt"> </div>
+        <div id="inactiveProductCnt"> </div>
+
+    </apex:pageBlockSection>
+    <script> twistSection(document.getElementById('{!$Component.DisplayBlock.AssetSection2}').getElementsByTagName('img')[0]) </script>
+    
+    
+    <apex:pageBlockSection rendered="{!AND(showMainForm,NOT(showSubmitReferralForm))}" collapsible="true" id="ReferralPartnerSection2" title="Territory Reps for {!zipCodeToUse}" columns="1">
+        <apex:outputText rendered="{!OR(isObjContact,isObjAccount)}" value="****Note: The shipping zip code determines the rep****" />
+        <apex:outputText id="partnerLoadStatus" value=""/>
+
+       <div id="responseErrors"> </div>
+       <table class="list" cellpadding="0" cellspacing="0">
+          <thead id="partnerTableHeader"></thead>
+          <tfoot></tfoot>
+          <tbody id="partnerResultsTable"></tbody>
+       </table>
+       
+       <input type="checkbox" id="partnerCheckbox" value="false" onclick="handleGetPartners();"></input><label for="partnerCheckbox">Show All Partners?</label>
+    </apex:pageBlockSection>
+    <script> twistSection(document.getElementById('{!$Component.DisplayBlock.ReferralPartnerSection2}').getElementsByTagName('img')[0]) </script>
+    
+    
+    <apex:form id="addNewContactForm">
+     <!--  ************   Adding a new lead as a contact  ***************** -->
+
+    <apex:pageBlockSection id="AddNewleadSection" rendered="{!AND(showAddContactForm,isObjLead)}" title="New Contact Information">
+        <apex:pageBlockSectionItem />
+        <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Significant" />
+           <apex:inputCheckbox value="{!addingSignificantContact}"/>
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockSectionItem >
+           <apex:outputLabel value="First Name" />
+           <apex:outputPanel >
+              <apex:inputField value="{!newLead.Salutation}" />
+              <apex:inputField value="{!newLead.FirstName}" />
+           </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:inputField required="true" value="{!newLead.LastName}" />
+
+        <apex:inputField value="{!newLead.Phone}" />
+        <apex:inputField value="{!newLead.Email}" />
+
+        <apex:inputField value="{!newLead.Title}" />
+        <apex:pageBlockSectionItem />
+        
+    </apex:pageBlockSection>
+
+    <apex:pageBlockSection id="AddNewContactSection" rendered="{!AND(showAddContactForm,OR(isObjAccount,isObjContact))}" title="New Contact Information">
+        <apex:pageBlockSectionItem />
+        <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Significant" />
+           <apex:inputCheckbox value="{!addingSignificantContact}"/>
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockSectionItem >
+           <apex:outputLabel value="First Name" />
+           <apex:outputPanel >
+              <apex:inputField value="{!newContact.Salutation}" />
+              <apex:inputField value="{!newContact.FirstName}" />
+           </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:inputField required="true" value="{!newContact.LastName}" />
+
+        <apex:inputField value="{!newContact.Phone}" />
+        <apex:inputField value="{!newContact.Email}" />
+
+        <apex:inputField value="{!newContact.Title}" />
+        <apex:pageBlockSectionItem />
+        
+    </apex:pageBlockSection>
+
+    <apex:pageBlockSection id="AddNewContactButtons" rendered="{!showAddContactForm}" columns="1" >
+       <apex:outputPanel >
+       <apex:commandButton styleClass="slds-button slds-button_neutral" id="saveNewContact" action="{!saveNewContact}" value="Save New Contact" status="processingStatus" rerender="DisplayBlock"/>
+       <apex:commandButton styleClass="slds-button slds-button_neutral" id="cancelNewContact" action="{!cancelNewContact}" immediate="true" value="Cancel New Contact"  rerender="DisplayBlock"/>
+       <apex:actionStatus startText="Saving New Contact..." id="processingStatus"/>
+       </apex:outputPanel>
+    </apex:pageBlockSection>
+  </apex:form>
+
+  </apex:pageBlock>
+  
+
+  
+</apex:component>

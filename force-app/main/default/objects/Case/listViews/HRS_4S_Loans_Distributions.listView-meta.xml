@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRS_4S_Loans_Distributions</fullName>
+    <booleanFilter>1 AND 2 AND 3</booleanFilter>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>NAME</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>CASES.PRIORITY</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <filterScope>Queue</filterScope>
+    <filters>
+        <field>CASES.CLOSED</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Termination_Transfer_Type__c</field>
+        <operation>notEqual</operation>
+        <value>QDRO</value>
+    </filters>
+    <filters>
+        <field>Termination_Transfer_Type__c</field>
+        <operation>notContain</operation>
+        <value>death</value>
+    </filters>
+    <label>HRS 4S Loans &amp; Distributions</label>
+    <queue>HRS4SLoansDistributions</queue>
+    <sharedTo>
+        <group>HRS4SLoansandDistributions</group>
+        <group>HRS_4S_Participant_Support</group>
+        <role>HRS_4S_Field_and_FA_Support_Manager</role>
+        <role>HRS_4S_LDPS_Representative_I</role>
+        <role>HRS_4S_LDPS_Supervisor_I</role>
+        <role>HRS_4S_LDPS_Supervisor_II</role>
+    </sharedTo>
+</ListView>

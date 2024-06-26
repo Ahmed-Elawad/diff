@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRG_Auto_Asssign_200_Plus_emps</fullName>
+    <active>false</active>
+    <description>ensures that every opportunity that gets moved to sold that has 200+ employees has an HR generalist</description>
+    <errorConditionFormula>AND(Account.HR_Generalist__c = null, ISPICKVAL(StageName , &apos;Sold&apos;), Employees_Paid_Per_Payroll__c &gt;= 200)</errorConditionFormula>
+    <errorMessage>Can not move this opportunity to sold until a HR Generalist has been added to the prospect-client page</errorMessage>
+</ValidationRule>

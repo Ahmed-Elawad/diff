@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Remove_Date_Closed</fullName>
+        <field>Date_Closed__c</field>
+        <name>Remove Date Closed</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Closed_date</fullName>
+        <description>When the status = solved populated that closed date</description>
+        <field>Date_Closed__c</field>
+        <formula>TODAY()</formula>
+        <name>Update Closed date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Remove Closed Date</fullName>
+        <actions>
+            <name>Remove_Date_Closed</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_FROI__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Risk Assessment</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_FROI__c.Status__c</field>
+            <operation>notEqual</operation>
+            <value>Solved</value>
+        </criteriaItems>
+        <description>When the status is not equal to solved then remove the date closed</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update Closed Date</fullName>
+        <actions>
+            <name>Update_Closed_date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PEO_FROI__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Risk Assessment</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_PEO_FROI__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Solved</value>
+        </criteriaItems>
+        <description>When the status = solved populated that closed date
+Rule Criteria:</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

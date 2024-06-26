@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Welcome_Email_timeframe__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>If ( Not(IsNull (  First_Welcome_Email__c )) &amp;&amp; Not ( IsNull (  Employees_Loaded__c )), 
+( First_Welcome_Email__c - Employees_Loaded__c - 2*( floor((First_Welcome_Email__c - DATE(1985, 6, 24))/7) - floor((Employees_Loaded__c- DATE(1985, 6, 24))/7))),Null)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Welcome Email timeframe</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

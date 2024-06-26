@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PEOPayroll_Regular_Payroll_Processed</fullName>
+    <active>true</active>
+    <description>If Payroll is selected in Product and Regular Payroll Processed is selected in Disc Type, do not require Subject and Desc.</description>
+    <errorConditionFormula>AND( 
+NOT(ISPICKVAL(Product__c, &quot;Payroll&quot;)), 
+NOT(ISPICKVAL(Discrepancy_Type__c, &quot;Regular Payroll Processed&quot;)), 
+OR(Subject = &quot;&quot;, 
+Description = &quot;&quot;), 
+RecordType.Name = &quot;Service Support PEO&quot;, 
+$Profile.Name &lt;&gt; &quot;System Administrator&quot;)</errorConditionFormula>
+    <errorMessage>Please fill in the Description and Subject fields to proceed.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>IF_IW_not_wearing_PPE_then_details_need</fullName>
+    <active>true</active>
+    <description>If proper PPE = No, then you need details on PPE</description>
+    <errorConditionFormula>AND 
+( 
+ISPICKVAL ( Was_proper_PPE_used__c , &quot;No&quot;), 
+ISBLANK ( Details_on_PPE__c) 
+)</errorConditionFormula>
+    <errorDisplayField>Details_on_PPE__c</errorDisplayField>
+    <errorMessage>If proper PPE = No, then you need details on PPE</errorMessage>
+</ValidationRule>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ESR_action_requires_Processing_type</fullName>
+    <active>true</active>
+    <description>case #23189431 for ESR Service Support rcd type, if Action is 1 of 3 values you must also put in Processing Type. Merged with validation rule ESR_Conversion_Processing_Type.</description>
+    <errorConditionFormula>AND(NOT(BEGINS( $Profile.Name ,&apos;System Admin&apos;)), 
+RecordType.Name = &apos;Service Support ESR Case&apos;, 
+OR(ISPICKVAL(Action__c ,&apos;Transferred to Conversions&apos;),
+ISPICKVAL(Action__c,&apos;DSR Updated Yes Report&apos;), 
+ISPICKVAL(Action__c,&apos;Transferred to Processing&apos;), 
+ISPICKVAL(Action__c,&apos;Update/Changes YE&apos;)), 
+ISBLANK(TEXT(Processing_Type__c)))</errorConditionFormula>
+    <errorDisplayField>Processing_Type__c</errorDisplayField>
+    <errorMessage>Processing Type is required based on your Action field value.</errorMessage>
+</ValidationRule>

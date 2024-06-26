@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>S2S_Close_Error</fullName>
+    <active>true</active>
+    <description>Origin of Root Cause and Root Cause 2nd Level required to close case</description>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&apos;System Administrator&apos;)) 
+,RecordType.Name =&apos;Sales2Service Case&apos; 
+, OR(ISPICKVAL(Origin_of_Root_Cause__c, &apos;&apos;)
+, ISPICKVAL(Root_Cause_2nd_Level__c, &apos;&apos;))
+, ISCHANGED( Status ) 
+, OR( ISPICKVAL(Status , &apos;Closed - Client Issue Completed&apos;) 
+, ISPICKVAL(Status , &apos;Closed - Client Unresponsive&apos;) 
+, ISPICKVAL(Status , &apos;Closed - Sent to PAC&apos;)))</errorConditionFormula>
+    <errorMessage>Origin of Root Cause and Root Cause 2nd Level required to close case.</errorMessage>
+</ValidationRule>

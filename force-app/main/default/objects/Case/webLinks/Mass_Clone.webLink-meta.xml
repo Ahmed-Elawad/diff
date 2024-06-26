@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Mass_Clone</fullName>
+    <availability>online</availability>
+    <description>To Create Mass Incident cases
+CMF-4/5/18-fixed parameter name to avoid javascript error</description>
+    <displayType>button</displayType>
+    <linkType>javascript</linkType>
+    <masterLabel>Mass Clone</masterLabel>
+    <openType>onClickJavaScript</openType>
+    <protected>false</protected>
+    <url>{!REQUIRESCRIPT(&quot;/soap/ajax/14.0/connection.js&quot;)}
+{!REQUIRESCRIPT(&quot;/soap/ajax/14.0/apex.js&quot;)}
+sforce.connection.sessionId = &apos;{!$Api.Session_ID}&apos;;
+
+alert(&apos;Cloning cases&apos;);
+
+var caseId = &apos;{!Case.Id}&apos;;
+
+
+var sRet = sforce.apex.execute(&quot;IncidentCaseUtilities&quot;,&quot;massCreateIncidentCases&quot;, {caseId:caseId});
+
+window.location.reload();</url>
+</WebLink>

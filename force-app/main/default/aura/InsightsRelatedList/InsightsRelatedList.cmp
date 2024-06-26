@@ -1,0 +1,14 @@
+<aura:component controller="InsightsDA" access="global">
+    <aura:attribute name="recordId" type="Id" />    
+    <aura:attribute name="insights" type="Object[]"/>
+    <aura:attribute name="columns" type="List"/> 
+    <aura:attribute name="insightsTitle" type="String"/>
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <lightning:card title="{!v.insightsTitle}" iconName="custom:custom27">
+        <aura:if isTrue = "{!v.insights.length > 0}" >
+            <lightning:dataTable keyField="id" data="{!v.insights}" columns="{!v.columns}" hideCheckboxColumn="true" resizecolumndisabled="true"/>   	
+        </aura:if>
+    </lightning:card>
+        
+</aura:component>

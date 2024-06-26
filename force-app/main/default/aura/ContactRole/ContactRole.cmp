@@ -1,0 +1,28 @@
+<aura:component description="ContactRole">
+    <aura:attribute name="contact" type="Object" />
+
+
+                <aura:if isTrue="{!v.contact.Decision_Maker__c || v.contact.Influencer__c || v.contact.PayrollContact__c || v.contact.Business_Owner__c}">
+    <div class="box" title="Contact Role">
+        <div class="banner-header slds-align_absolute-center">
+            <h4 class="slds-item_label slds-text-color_weak slds-truncate slds-text-align_center">Contact Role</h4>
+        </div>
+        <div class="banner-body column">
+              <img src="{!$Resource.BannerIcons + '/LightningIcons/person.png'}" />
+                <aura:if isTrue="{!v.contact.Decision_Maker__c}">
+                    <div class="text-color_blue"> Decision Maker</div>   
+                </aura:if>
+                <aura:if isTrue="{!v.contact.Influencer__c}">
+                     <div class="text-color_blue">Influencer</div>
+                </aura:if>
+                <aura:if isTrue="{!v.contact.PayrollContact__c}">
+                     <div class="text-color_blue"> Payroll Contact</div>
+                </aura:if>
+                <aura:if isTrue="{!v.contact.Business_Owner__c}">
+                      <div class="text-color_blue">Business Owner</div>
+                </aura:if>
+        </div>
+    </div>
+   </aura:if>
+
+</aura:component>

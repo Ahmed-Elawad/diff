@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Assigning_P_C_number_to_integratd_record</fullName>
+    <active>true</active>
+    <description>Prevent assigning P-C number to integrated records, record with Bis Id&apos;s</description>
+    <errorConditionFormula>NOT(ISNULL(Case_Number__r.Account.Bis_ID__c))  &amp;&amp; 
+ISCHANGED(Assigned_Prospect_Client_Number__c)  &amp;&amp; 
+NOT(ISNULL(Assigned_Prospect_Client_Number__c))</errorConditionFormula>
+    <errorDisplayField>Assigned_Prospect_Client_Number__c</errorDisplayField>
+    <errorMessage>**** Prospect-Client record has a BIS ID, Assigned Prospect-Client Number cannot be updated *****</errorMessage>
+</ValidationRule>

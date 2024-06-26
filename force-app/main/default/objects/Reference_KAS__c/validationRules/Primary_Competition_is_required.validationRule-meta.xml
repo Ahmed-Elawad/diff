@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Primary_Competition_is_required</fullName>
+    <active>true</active>
+    <description>Primary competition should be required when Resolution Type is &apos;Lost due to Competitor&apos;</description>
+    <errorConditionFormula>TEXT(Case_Lookup__r.Origin ) = &apos;Reactive&apos; &amp;&amp; 
+ISPICKVAL(Resolution_type__c, &apos;Lost&apos;) &amp;&amp; 
+ISPICKVAL(Resolution_Type_Details__c, &apos;Competitor&apos;) &amp;&amp; 
+ISPICKVAL(Primary_Competition__c, &apos;&apos;)</errorConditionFormula>
+    <errorMessage>Primary Competition is required when Resolution Type is &apos;Lost&apos; and details is &apos;Competitor&apos;.</errorMessage>
+</ValidationRule>

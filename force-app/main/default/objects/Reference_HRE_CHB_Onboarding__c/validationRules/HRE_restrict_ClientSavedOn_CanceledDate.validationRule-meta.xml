@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRE_restrict_ClientSavedOn_CanceledDate</fullName>
+    <active>true</active>
+    <description>Prevent the Client Saved On and Canceled Date fields from being simultaneously populated.</description>
+    <errorConditionFormula>AND( 
+( NOT(ISNULL(Client_Saved_On__c)) ), 
+( NOT(ISNULL(Canceled_Date__c)) ), 
+($UserRole.Name &lt;&gt; &quot;HRE Handbook Supervisor team 1&quot;), 
+($UserRole.Name &lt;&gt; &quot;HRE Handbook Supervisor team 2&quot;), 
+($UserRole.Name &lt;&gt; &quot;HRE Handbook Supervisor team 3&quot;), 
+($UserRole.Name &lt;&gt; &quot;System Administrator&quot;) 
+)</errorConditionFormula>
+    <errorDisplayField>Client_Saved_On__c</errorDisplayField>
+    <errorMessage>You cannot have &apos;Client Saved On&apos; and &apos;Canceled Date&apos; populated at the same time.</errorMessage>
+</ValidationRule>

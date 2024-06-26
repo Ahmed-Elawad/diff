@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PEO_Require_Email</fullName>
+    <active>true</active>
+    <description>This will make the email required when the follow-up method is email</description>
+    <errorConditionFormula>RecordTypeId = &quot;01270000000UIeT&quot; &amp;&amp;   
+ISPICKVAL(Follow_Up_Activity__c, &quot;E-Mail&quot;) &amp;&amp; 
+Isblank(Originator_Email_Address__c)</errorConditionFormula>
+    <errorDisplayField>Originator_Email_Address__c</errorDisplayField>
+    <errorMessage>You need to enter an email address for follow-up.</errorMessage>
+</ValidationRule>

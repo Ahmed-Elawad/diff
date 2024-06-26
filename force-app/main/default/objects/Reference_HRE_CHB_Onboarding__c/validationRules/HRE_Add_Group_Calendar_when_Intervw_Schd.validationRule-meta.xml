@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRE_Add_Group_Calendar_when_Intervw_Schd</fullName>
+    <active>false</active>
+    <description>Force update of the Added to Group Calendar field when the Interview scheduled field has been checked.</description>
+    <errorConditionFormula>AND(
+( Interview_Scheduled__c = TRUE ),
+( Added_to_Group_Calendar__c = FALSE ),
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)))
+)</errorConditionFormula>
+    <errorDisplayField>Added_to_Group_Calendar__c</errorDisplayField>
+    <errorMessage>Appointment must be added to the group calandar</errorMessage>
+</ValidationRule>

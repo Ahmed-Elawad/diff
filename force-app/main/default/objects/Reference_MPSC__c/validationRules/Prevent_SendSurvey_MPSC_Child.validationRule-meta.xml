@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_SendSurvey_MPSC_Child</fullName>
+    <active>true</active>
+    <description>If isChild is checked or Reference_MPSC_Parent is populated, then prevent user from populating Send Survey</description>
+    <errorConditionFormula>AND(
+ ( (isChild__c = true) || NOT(ISBLANK(Reference_MPSC_Parent__c)) ),
+ ISCHANGED(Send_Survey__c),
+(Send_Survey__c),
+$Profile.Name &lt;&gt;&quot;System Administrator&quot;
+)</errorConditionFormula>
+    <errorDisplayField>Send_Survey__c</errorDisplayField>
+    <errorMessage>You cannot send a Survey when the Reference MPSC Parent is populated</errorMessage>
+</ValidationRule>

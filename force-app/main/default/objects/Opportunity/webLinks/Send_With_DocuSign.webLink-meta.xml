@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Send_With_DocuSign</fullName>
+    <availability>online</availability>
+    <displayType>button</displayType>
+    <linkType>javascript</linkType>
+    <masterLabel>Send With DocuSign</masterLabel>
+    <openType>onClickJavaScript</openType>
+    <protected>false</protected>
+    <url>{!REQUIRESCRIPT(&quot;/soap/ajax/30.0/connection.js&quot;)} 
+{!REQUIRESCRIPT(&quot;/soap/ajax/30.0/apex.js&quot;)}
+var query = &quot;select Id, In_Person_Signature__c from Opportunity  where Id = &apos;{!Opportunity.Id}&apos; limit 1&quot;; 
+        
+var result = sforce.connection.query(query); 
+var records = result.getArray(&quot;records&quot;); 
+        
+var myObj = records[0];
+
+myObj.In_Person_Signature__c  = false;
+        
+var results = sforce.connection.update([myObj]);
+//********* Option Declarations (Do not modify )*********//
+var RC = &apos;&apos;;var RSL=&apos;&apos;;var RSRO=&apos;&apos;;var RROS=&apos;&apos;;var CCRM=&apos;&apos;;var CCTM=&apos;&apos;;var CCNM=&apos;&apos;;var CRCL=&apos;&apos;;var CRL=&apos;&apos;;var OCO=&apos;&apos;;var DST=&apos;&apos;;var LA=&apos;&apos;;var CEM=&apos;&apos;;var CES=&apos;&apos;;var STB=&apos;&apos;;var SSB=&apos;&apos;;var SES=&apos;&apos;;var SEM=&apos;&apos;;var SRS=&apos;&apos;;var SCS =&apos;&apos;;var RES=&apos;&apos;;
+//*************************************************//
+
+// Modify individual options here:
+
+// Related Content (default no related content)
+RC = &apos;&apos;; //Ex: GetRelContentIDs(&quot;{!Opportunity.Id}&quot;);
+
+// Recipient Signer Limit (default no limit)
+RSL = &apos;&apos;; //Ex: &apos;3&apos;
+
+// Recipient Starting Routing Order (default 1)
+RSRO = &apos;&apos;; // Ex: &apos;1&apos;
+
+// Recipient Routing Order Sequential (default not sequential)
+RROS= &apos;&apos;; //Ex: &apos;1&apos;
+
+// Custom Contact Role Map (default config role)
+CCRM = &apos;&apos;; //Ex: &apos;Decision Maker~Signer1;Economic Buyer~CarbonCopy&apos;
+
+// Custom Contact Type Map (default Signer)
+CCTM = &apos;&apos;; //Ex: &apos;Decision Maker~Signer;Economic Buyer~CC&apos;
+
+// Custom Contact Note Map (default no note)
+CCNM = &apos;&apos;; //Ex: &apos;Decision Maker~Note for DM;Economic Buyer~Note For EB;DEFAULT_NOTE~Default Note&apos;
+
+// Custom Related Contact List (default object contact)
+CRCL = &apos;&apos;;
+//Ex:&apos;LoadDefaultContacts~1,MyContacts__r,Email~Email__c;FirstName~First_Name__c;LastName~Last_Name__c;Role~Role__c&apos;
+
+// Custom Recipient List
+CRL = &apos;&apos;;
+
+//Ex:&apos;Email~;FirstName~;LastName~;Role~SignInPersonName~;RoutingOrder~;AccessCode~;RecipientNote~;SignNow~, LoadDefaultContacts~1;Role~Signer 1;RoutingOrder~3&apos;
+
+// One Click Option (default edit envelope screen)
+OCO = &apos;&apos;; //Ex: Tag
+
+// DocuSign Template ID (default no template)
+DST = &apos;&apos;; //Ex: &apos;67870A79-A0B5-4596-8AC1-CC7CC1EA01EB&apos;
+
+// Load Attachments (default on)
+LA = &apos;0&apos;; //Ex: &apos;0&apos;
+
+// Custom Email Message (default in config)
+var sOwner = &quot;{!JSENCODE(Opportunity.OwnerFullName)}&quot;;
+var sOppName = &quot;{!JSENCODE(Opportunity.Name)}&quot;;
+//var sSigner =  &quot;{!JSENCODE(dsfs__DocuSign_Envelope_Recipient__c.dsfs__DocuSign_Signature_Name__c)}&quot;;
+//CEM=&apos;&apos;;
+CEM = &apos;As discussed, please review and execute the documentation by clicking on the link above.\\n\\nShould you have any questions, do not hesitate to reach out.\\n\\nThank you and have a great day!\\n\\nSincerely,\\n&apos;+sOwner; 
+
+// Custom Email Subject (default in config)
+var sAcc = &quot;{!JSENCODE(Account.Name)}&quot;;
+CES = &apos;Paychex Documents - &apos;+sAcc;
+//Ex: &apos;Re: Opportunity Name: {!Opportunity.Name}&apos;
+
+// Show Tag Button (default in config)
+STB = &apos;&apos;; //Ex: &apos;1&apos;
+
+// Show Send Button (default in config)
+SSB = &apos;&apos;; //Ex: &apos;1&apos;
+
+// Show Email Subject (default in config)
+SES = &apos;&apos;; //Ex: &apos;1&apos;
+
+// Show Email Message (default in config)
+SEM = &apos;&apos;; //Ex: &apos;1&apos;
+
+// Show Reminder/Expire (default in config)
+SRS = &apos;&apos;; //Ex: &apos;1&apos;
+
+// Show Chatter (default in config)
+SCS = &apos;&apos;; //Ex: &apos;1&apos;
+
+// Reminder and Expiration Settings
+RES = &apos;&apos;; //Ex: &apos;0,1,2,0,120,3&apos;
+
+//********* Page Callout (Do not modify) *********//
+window.location.href = &quot;/apex/dsfs__DocuSign_CreateEnvelope?DSEID=0&amp;SourceID={!Opportunity.Id}&amp;RC=&quot;+RC+&quot;&amp;RSL=&quot;+RSL+&quot;&amp;RSRO=&quot;+RSRO+&quot;&amp;RROS=&quot;+RROS+&quot;&amp;CCRM=&quot;+CCRM+&quot;&amp;CCTM=&quot;+CCTM+&quot;&amp;CRCL=&quot;+CRCL+&quot;&amp;CRL=&quot;+CRL+&quot;&amp;OCO=&quot;+OCO+&quot;&amp;DST=&quot;+DST+&quot;&amp;CCNM=&quot;+CCNM+&quot;&amp;LA=&quot;+LA+&quot;&amp;CEM=&quot;+CEM+&quot;&amp;CES=&quot;+CES+&quot;&amp;SRS=&quot;+SRS+&quot;&amp;STB=&quot;+STB+&quot;&amp;SSB=&quot;+SSB+&quot;&amp;SES=&quot;+SES+&quot;&amp;SEM=&quot;+SEM+&quot;&amp;SRS=&quot;+SRS+&quot;&amp;SCS=&quot;+SCS+&quot;&amp;RES=&quot;+RES;
+//*******************************************//</url>
+</WebLink>

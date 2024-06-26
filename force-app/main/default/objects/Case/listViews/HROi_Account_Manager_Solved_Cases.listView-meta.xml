@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HROi_Account_Manager_Solved_Cases</fullName>
+    <columns>CREATEDBY_USER.ALIAS</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <columns>OWNER_NAME</columns>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>PARENT.CASE_NUMBER</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>Client_Number__c</columns>
+    <columns>NAME</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>CASES.PRIORITY</columns>
+    <columns>Case_Created_Date1__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.HROi_Account_Manager_Case</value>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>equals</operation>
+        <value>Solved,Closed - Duplicate</value>
+    </filters>
+    <filters>
+        <field>CORE.USERS.LAST_NAME</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Case_Created_By_Role__c</field>
+        <operation>contains</operation>
+        <value>HROi</value>
+    </filters>
+    <label>HROi Account Manager Solved Cases</label>
+    <sharedTo>
+        <roleAndSubordinates>PHRSDirector</roleAndSubordinates>
+    </sharedTo>
+</ListView>

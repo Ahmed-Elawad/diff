@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Opportunity_Type_Should_Not_Be_New_Plan</fullName>
+    <active>true</active>
+    <description>Opportunity Type Should Not Be New Plan  if conversation details is not null</description>
+    <errorConditionFormula>AND(OR(CONTAINS($User.Job_Name__c, &apos;Sales Rep&apos;), $User.ProfileName__c == &apos;HRS Sales Administration - SB&apos;,
+	$User.ProfileName__c == &apos;HRS Sales Manager - SB&apos;),RecordType.DeveloperName ==&apos;HRS401kOpportunityRecordType&apos;,NOT(ISNULL(Conversion_Assets__c)), ISPICKVAL( OpportunityType__c , &apos;New Plan&apos;) ,AND(NOT(ISPICKVAL( StageName ,&quot;Gained Access&quot;)),NOT(ISPICKVAL( StageName ,&quot;Qualified&quot;)))
+	)</errorConditionFormula>
+    <errorMessage>“This account has existing asset dollars, please choose &apos;Conversion&apos;. If the assets should be removed from this account, please submit a Sales Help Case with documentation confirming the company does not have a retirement plan with assets.”</errorMessage>
+</ValidationRule>

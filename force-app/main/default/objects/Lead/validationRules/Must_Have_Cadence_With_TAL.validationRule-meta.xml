@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Must_Have_Cadence_With_TAL</fullName>
+    <active>false</active>
+    <description>If a record is in TAL with an Inbound Rep, must have the Cadence steps populated</description>
+    <errorConditionFormula>AND(BEGINS($Profile.Name, &quot;NSS Inbound&quot;) 
+,ISCHANGED(Lead_Stage__c)
+,ISPICKVAL(Lead_Stage__c, &quot;TAL&quot;) 
+,OR (ISBLANK( Next_Cadence_Follow_up_Date__c) 
+,ISPICKVAL(Last_Cadence_Step_Completed__c,&quot;&quot; )))</errorConditionFormula>
+    <errorMessage>This record is currently being worked in TAL. You must enter a cadence step/date or move it to Reject/Recycle to save it.</errorMessage>
+</ValidationRule>

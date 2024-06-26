@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Referral_Source_Potential__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>IF(TEXT(Referral_Source_Business_Type__c)=&apos;Accounting Firm&apos; || TEXT(Referral_Source_Business_Type__c)=&apos;Strategic Accountant Firm&apos;,IF(Today() - Profiled_Date__c &lt;= 365,IF(TEXT(Number_of_Business_Clients_with_EEs__c)=&apos;101+&apos; ||TEXT(Number_of_Business_Clients_with_EEs__c)=&apos;51 to 100&apos; ,&apos;High&apos; ,IF(TEXT(Number_of_Business_Clients_with_EEs__c)=&apos;26 to 50&apos; ,&apos;Medium&apos; ,IF(TEXT(Number_of_Business_Clients_with_EEs__c)=&apos;1 to 25&apos; ,&apos;Low&apos; ,IF(ISBLANK(TEXT(Number_of_Business_Clients_with_EEs__c))||TEXT(Number_of_Business_Clients_with_EEs__c)=&apos;None&apos; , IF(TEXT(Ref_s_to_Payroll_HCM_in_last_12_mos__c)=&apos;100+&apos;||TEXT(Ref_s_to_Payroll_HCM_in_last_12_mos__c)=&apos;51 to 99&apos;||TEXT(Ref_s_to_Payroll_HCM_in_last_12_mos__c)=&apos;21 to 50&apos;,&apos;High&apos;,IF(TEXT(Ref_s_to_Payroll_HCM_in_last_12_mos__c)=&apos;11 to 20&apos; ||TEXT(Ref_s_to_Payroll_HCM_in_last_12_mos__c)=&apos;6 to 10&apos;,&apos;Medium&apos;, IF(TEXT(Ref_s_to_Payroll_HCM_in_last_12_mos__c)=&apos;1 to 5&apos; ,&apos;Low&apos;,IF(TEXT(Ref_s_to_Payroll_HCM_in_last_12_mos__c)=&apos;0&apos;,&apos;None&apos;,IF(ISBLANK(TEXT(Ref_s_to_Payroll_HCM_in_last_12_mos__c)),&apos;Unknown&apos;,&apos;&apos;))))),&apos;&apos;)))),&apos;Unverified&apos;),
+IF(TEXT(Referral_Source_Business_Type__c)=&apos;Bank&apos;, IF(Today() - Bank_Profiled_Date__c &lt;= 365, IF(TEXT(Total_of_business_accounts_households__c)=&apos;1001+&apos;,&apos;High&apos;, IF(TEXT(Total_of_business_accounts_households__c)=&apos;501-1000&apos; || TEXT(Total_of_business_accounts_households__c)=&apos;250-500&apos;,&apos;Medium&apos;,IF(TEXT(Total_of_business_accounts_households__c)=&apos;1-249&apos;,&apos;Low&apos;, &apos;Unknown&apos;))), &apos;Unverified&apos;), &apos;&apos;))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Referral Source Potential</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

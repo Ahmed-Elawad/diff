@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ESR_New_Case_All_Open</fullName>
+    <columns>OWNER.ALIAS</columns>
+    <columns>NAME</columns>
+    <columns>Case_Number__c</columns>
+    <columns>BIS_ID__c</columns>
+    <columns>Branch_Client_Number__c</columns>
+    <columns>Prospect_Client_Name__c</columns>
+    <columns>Days_in_Current_Step__c</columns>
+    <columns>Current_Step__c</columns>
+    <columns>ESR_Status__c</columns>
+    <columns>CREATED_DATE</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_HNBF__c.Reference_ESR_Record_Type</value>
+    </filters>
+    <filters>
+        <field>ESR_Status__c</field>
+        <operation>notEqual</operation>
+        <value>Completed,Cancelled,Refused,Client Unresponsive,Closed - Rejected</value>
+    </filters>
+    <filters>
+        <field>Days_in_Current_Step__c</field>
+        <operation>notEqual</operation>
+        <value>Onboarding Complete</value>
+    </filters>
+    <label>ESR: New Case All Open</label>
+    <sharedTo>
+        <role>DirectorHBOperations</role>
+        <roleAndSubordinates>ESR_Operations_Manager</roleAndSubordinates>
+        <roleAndSubordinates>ESR_Service_Center_Manager</roleAndSubordinates>
+    </sharedTo>
+</ListView>

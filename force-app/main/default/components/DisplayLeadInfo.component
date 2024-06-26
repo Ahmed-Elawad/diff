@@ -1,0 +1,32 @@
+<!-- Component to display the lead information for a lightning component.
+
+   History
+   -------
+   11/10/2017 Dan Carmen        Created to display the lead information for a lightning component
+
+ -->
+<apex:component >
+
+   <apex:attribute name="leadId"
+      type="Id"
+      required="true"
+      description="The Id of the Lead." />
+
+
+  <div id="renderLightingComponent"/>
+  <apex:includeLightning />
+  
+  <script>
+            $Lightning.use("c:ReferralPageLeadDisplayApp", function() {
+                $Lightning.createComponent(
+                    "c:ReferralPageLeadDisplay",
+                    {leadId:'{!leadId}'},
+                    "renderLightingComponent",
+                    function(cmp) {
+                        console.log("Component is created!");
+                        console.log(cmp);
+                    });
+                });
+  </script>
+  
+</apex:component>

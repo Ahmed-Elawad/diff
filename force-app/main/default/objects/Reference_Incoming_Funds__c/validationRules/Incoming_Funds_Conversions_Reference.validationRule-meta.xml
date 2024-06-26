@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Incoming_Funds_Conversions_Reference</fullName>
+    <active>true</active>
+    <description>The Conversions Reference field is required when the Contribution Type = Conversion.</description>
+    <errorConditionFormula>AND(
+ ISPICKVAL(Contribution_Type__c,&apos;Conversion&apos;),
+ ISBLANK(Conversions_Reference__c)
+)</errorConditionFormula>
+    <errorDisplayField>Conversions_Reference__c</errorDisplayField>
+    <errorMessage>If Contribution Type = Conversion, then Conversions Reference is required.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,161 @@
+<!-- VF Page display result of Opportunity Split Controller
+  History
+  -------
+   12/04/2016  Jermaine Stukes   Created
+   11/21/2017  Jermaine Stukes   Added Handbook Contact Error Message 
+   10/02/2019  Brandon Vidro     Added Submitted Revenue Clone Button
+   11/20/2020  Jake Hinds        Updating list of reasons per APR0112422
+   12/14/2021  Dan Carmen        Removed/commented out Steelbrick (Salesforce CPQ) code. Add ability to split out product groups.
+   05/23/2023  Dan Carmen        For multi-ids, ability to split processing into queueable jobs.
+
+
+-->
+<apex:page controller="OpptySplitController" showHeader="true" action="{!initialize}" sidebar="true" docType="html-5.0" lightningStylesheets="true">
+
+   <apex:form id="oppSplitForm">
+	<apex:includeScript value="{!$Resource.buttonsEnabledJs}" />
+    <script type="text/javascript">
+        function clickSplitOpp(objSubmitBtn1)
+        {
+            objSubmitBtn1.disabled = true;
+            objSubmitBtn1.value = 'Processing…';
+            doSplitOpp();
+        }
+       
+    </script> 
+      <apex:pageBlock id="mainBlock" title="Split/Clone {!blockTitle}" rendered="{!opptyOkay}">
+
+         <apex:actionFunction name="doSplitOpp" action="{!splitOpportunity}"/>
+
+         <apex:pageBlockSection rendered="{!startOkay}" columns="1">
+            <apex:inputCheckbox rendered="{!splitOkay}" label="Clone Handbook Contact?" value="{!cloneHandbookContact}"/>
+         </apex:pageBlockSection>
+          
+         <apex:pageBlockSection rendered="{!startOkay}" columns="1">
+             <apex:outputText escape="false"><font size="2px"><b>Opportunity Status</b></font></apex:outputText>
+             <apex:outputText escape="false" value="1- Quote associated with Opportunity? {!quoteFoundText}"/>
+             <apex:outputText escape="false" value="2- Is this a Multi-Id Quote? {!multiIdText}"/>
+             <apex:outputText escape="false" value="3- Are there Multiple Quote Groups? {!multipleQuoteText}"/>
+             <apex:outputText escape="false" value="4- Is the Quote approved (status={!quoteStatus})? {!quoteApprovedText}"/>
+             <apex:outputText escape="false" value="5- Are there multiple product groups on this Opportunity? {!prodGroupText}"/>
+             <apex:outputText escape="false" value="{!statusMsg}" />
+         </apex:pageBlockSection>
+
+
+          
+         <apex:pageBlockSection rendered="{!and(not(opptySplittable),handbookError)}" columns="1">
+             <apex:outputText ><font color="red" size="3px"><b>Please Note: This opportunity cannot be split - Handbook Contact Configuration Issue: </b></font>
+                       <br/><br/><b>One of the following products are in included in one or more associated Opportunity(ies). </b><br/><br/></apex:outputText>
+             <apex:dataList value="{!handbookProdNames}" var="Product">
+                   <apex:outputText value="{!Product}"/>
+             </apex:dataList>
+             <apex:outputText ><b>
+                 The Contact ID Identical to the Handbook Contact entered on the initial opportunity must be added 
+                 to any Account that has an Opportunity containing the Handbook product.</b>
+             </apex:outputText>
+         </apex:pageBlockSection>
+          
+         <apex:pageBlockSection rendered="{!AND(finishOkay,splitSuccess)}" columns="1">
+            <apex:outputText rendered="{!processingSplitAsync}">
+               <font color="blue" size="4px"><b>This opportunity is still processing. Final results will be posted to you.</b></font>
+               <br/><br/>Initial results of Opportunity Split Below:
+            </apex:outputText>
+            <apex:outputText rendered="{!NOT(processingSplitAsync)}">
+               <font color="red" size="3px"><b>This opportunity was successfully split</b></font>
+               <br/><br/>Summary of Opportunity Split Below:
+            </apex:outputText>
+            <apex:pageBlock >
+               <apex:pageblocktable value="{!ClonedOpptyList}" var="oppList">
+                  <apex:column headervalue="Opportunity Added">
+                     <apex:outputLink value="{!URLFOR($Action.Opportunity.View, oppList.Id)}">{!oppList.Name}</apex:outputLink>
+                  </apex:column>
+               </apex:pageblocktable>
+            </apex:pageBlock>
+         </apex:pageBlockSection>
+  
+   
+         <apex:pageBlockButtons location="bottom">
+           <!--
+           <apex:commandButton rendered="{!startOkay}" disabled="{!AND(NOT(splitOkay),NOT(splitByProdGroupOkay))}" action="{!splitOpportunity}" value="Split Opportunity"/>
+           -->
+           <apex:commandButton rendered="{!startOkay}" disabled="{!AND(NOT(splitOkay),NOT(splitByProdGroupOkay))}" onclick="clickSplitOpp(this);" value="Split Opportunity"/>
+           <apex:commandButton rendered="{!startOkay}" action="{!cloneOpportunity}" value="Clone Opportunity"/>
+           <apex:commandButton rendered="{!startOkay}" action="{!submittedRevenueClone}" value="Submitted Revenue Clone"/>
+           <apex:commandButton rendered="{!startOkay}" action="{!returnToOpportunity}" value="Cancel"/>
+           <apex:commandButton rendered="{!finishOkay}" action="{!returnToOpportunity}" value="Done - Original Opportunity"/>
+         </apex:pageBlockButtons> 
+          
+          
+      </apex:pageBlock>
+
+      <apex:pageBlock id="errorBlock" title="Split/Clone Opportunity" rendered="{!Not(opptyOkay)}">
+         <apex:pageBlockSection columns="1">
+             <apex:outputText ><font color="red" size="3px"><b>A valid Opportunity was not found </b></font>
+             </apex:outputText>
+          </apex:pageBlockSection>
+          <apex:commandButton action="{!returnToOpportunity}" value="Done - Return to Original Opportunity"/>
+      </apex:pageBlock>
+
+<!--
+            <apex:pageBlock title="Split Opportunity" rendered="{!AND(opptyOkay, selectedSplit)}">
+                <apex:pageBlockSection columns="2">                            
+                    <apex:inputCheckbox label="Clone Handbook Contact?" value="{!cloneHandbookContact}"/>
+                </apex:pageBlockSection>
+
+                <apex:pageBlockButtons location="bottom">
+                    <apex:commandButton id="split-button" action="{!splitOpportunity}" value="Split Opportunity" rerender="oppSplitForm" oncomplete="return false;"/>
+                    <apex:commandButton id="return-to-opp-button" action="{!returnToOpportunity}" value="Cancel"/>
+                </apex:pageBlockButtons> 
+            </apex:pageBlock>
+
+            <apex:pageBlock rendered="{!AND(opptyOkay, not(selectedSplit))}">
+
+                <apex:pageBlockButtons >
+                    <apex:commandButton action="{!returnToOpportunity}" value="Done - Return to Original Opportunity"/>
+                </apex:pageBlockButtons>        
+                
+                <apex:outputPanel id="displayOutput">
+                    <apex:actionRegion rendered="{!opptySplittable}">
+                        <apex:outputText >
+                            <font color="red" size="3px">
+                                <b>This opportunity was successfully split</b>
+                            </font>
+                            <br/><br/>Summary of Opportunity Split Below:
+                        </apex:outputText>
+                        <apex:pageBlock >
+                            <apex:pageblocktable value="{!ClonedOpptyList}" var="oppList">
+                                <apex:column headervalue="Opportunity Added">
+                                    <apex:outputLink value="{!URLFOR($Action.Opportunity.View, oppList.Id)}">{!oppList.Name}</apex:outputLink>
+                                </apex:column>
+                            </apex:pageblocktable>
+                        </apex:pageBlock>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!and(Not(opptySplittable),Not(handbookError))}">
+                        <apex:outputText ><font color="red" size="3px"><b>Please Note: This opportunity cannot be split - Below is a list of possible reasons why this opportunity couldn't be split </b></font>
+                        '<br/><br/>
+                        1- There is no quote associated with this opportunity<br/>
+                     2- The quote is not a multi-id quote<br/>
+                     3- There are not multiple quote groups within the quote<br/>
+                     4- Quote has not been fully approved<br/>
+                     5- Quote cannot be in Draft Status<br/>
+                     </apex:outputText>
+                    </apex:actionRegion>
+                    <apex:actionRegion rendered="{!and(not(opptySplittable),handbookError)}">
+                        <apex:outputText ><font color="red" size="3px"><b>Please Note: This opportunity cannot be split - Handbook Contact Configuration Issue: </b></font>
+                            <br/><br/><b>One of the following products are in included in one or more associated Opportunity(ies). </b><br/><br/></apex:outputText>
+                        <apex:dataList value="{!handbookProdNames}" var="Product">
+                            <apex:outputText value="{!Product}"/>
+                        </apex:dataList> <br/>   
+                        <apex:outputText ><b>
+                            The Contact ID Identical to the Handbook Contact entered on the initial opportunity must be added 
+                            to any Account that has an Opportunity containing the Handbook product.</b> <br/><br/>
+                        </apex:outputText>
+                    </apex:actionRegion>
+                </apex:outputPanel>
+
+
+
+            </apex:pageBlock>
+  -->
+        </apex:form>
+</apex:page>

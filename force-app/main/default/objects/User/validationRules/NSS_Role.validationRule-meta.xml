@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NSS_Role</fullName>
+    <active>true</active>
+    <description>If the User has an NSS Role only an admin can assign a new role</description>
+    <errorConditionFormula>ISCHANGED(UserRoleId) &amp;&amp;
+PRIORVALUE(HasNSSRole__c)=True &amp;&amp;
+NOT($User.ProfileId = &apos;00e30000000mTjP&apos;) &amp;&amp; 
+NOT($User.ProfileId = &apos;00e50000000rUMg&apos;) &amp;&amp;
+NOT($User.ProfileId = &apos;00e70000001JszN&apos;)</errorConditionFormula>
+    <errorMessage>If the User has an NSS Role only an admin can assign a new role</errorMessage>
+</ValidationRule>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRG_NoVoidValues_when_VRDiscrepUnresolvd</fullName>
+    <active>true</active>
+    <description>C33 - if Void Reason = &apos;Discrepancy Unresolved&apos;, then the Void Reason and Void Date  fields can NOT be populated by HRGs.</description>
+    <errorConditionFormula>AND( 
+(ISPICKVAL(PRIORVALUE(Void_Reason__c),&apos;Discrepancy Unresolved&apos;)),
+((ISCHANGED(Void_Date__c)) || 
+ (ISCHANGED(Void_Reason__c))), 
+(NOT(BEGINS($Profile.Name,&quot;HR Essentials&quot;))), 
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)))
+)</errorConditionFormula>
+    <errorDisplayField>Void_Reason__c</errorDisplayField>
+    <errorMessage>You can NOT update the Void Reason and Void Date fields when the Void Reason field = &apos;Discrepancy Unresolved&apos;.</errorMessage>
+</ValidationRule>

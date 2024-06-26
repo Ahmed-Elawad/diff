@@ -1,0 +1,80 @@
+<apex:component controller="Quota_TreeViewController">
+    <apex:attribute name="roleOrUserId" required="true" type="String" assignTo="{!roleOrUserId}" description="Enter Role or User Id to build the hierarchy. Pass null if you are passing JSON data as a parameter" />
+    <apex:attribute name="selectable" type="Boolean" assignTo="{!selectable}" description="Do you want nodes to be selectable?" />
+    <apex:attribute name="value" type="String" description="IDs of selected Nodes in CSV format" />
+    <apex:attribute name="JsonData" type="String" assignTo="{!JsonData}" description="JSON input for the tree component" />
+    <apex:inputHidden id="selectedKeys" value="{!value}" />
+    <apex:includeScript value="{!URLFOR($Resource.Quota_DynaTree, 'jquery/jquery.js' )}" />
+    <apex:includeScript value="{!URLFOR($Resource.Quota_DynaTree, 'jquery/jquery-ui.custom.js' )}" />
+    <apex:includeScript value="{!URLFOR($Resource.Quota_DynaTree, 'jquery/jquery.cookie.js' )}" />
+    <apex:includeScript value="{!URLFOR($Resource.Quota_DynaTree, 'src/jquery.dynatree.js' )}" />
+    
+    <apex:stylesheet value="{!URLFOR($Resource.Quota_DynaTree, 'src/skin/ui.dynatree.css')}" />
+
+    <!-- Add code to initialize the tree when the document is loaded: -->
+    <script type="text/javascript">
+    //alert("You entered JQuery Logic 1st ");
+    $(function(){
+        // Attach the Quota_DynaTree widget to an existing <div id="tree"> element
+        // and pass the tree options as an argument to the dynatree() function:
+        //alert("You entered JQuery Logic ");
+        $("#tree").dynatree({
+            onActivate: function(node) {
+                // A DynaTreeNode object is passed to the activation handler
+                // Note: we also get this event, if persistence is on, and the page is reloaded.
+                //alert("You activated " + node.data.key);
+            },
+            
+            persist: false,
+            checkbox: {!selectable},
+            generateIds: false,
+            classNames: {
+                checkbox: "dynatree-checkbox",
+                expanded: "dynatree-expanded"
+            },
+            selectMode: 2,
+            children: {!JsonString},
+            onSelect: function(select, node) {
+                // Get a list of all selected nodes, and convert to a key array:
+                //alert("You activated " + node.data.key);
+                var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+                    return node.data.key;
+                });
+                jQuery(document.getElementById("{!$Component.selectedKeys}")).val(selKeys.join(", "));
+                //jQuery(document.getElementById("j_id0:optionsForm:roleTree:j_id29:selectedKeys")).val(selKeys.join(","));
+                // Get a list of all selected TOP nodes
+                var selRootNodes = node.tree.getSelectedNodes(true);
+                // ... and convert to a key array:
+                //alert("You activated part 2 " + node.data.key);
+                var selRootKeys = $.map(selRootNodes, function(node){
+                    return node.data.key;
+                });
+            },
+            onLazyRead: function(node){
+                Visualforce.remoting.Manager.invokeAction(
+                    'Quota_TreeViewController.getChildNodesJSON', 
+                    node.data.key, 
+                    function(result, event){
+                        if (event.status) {
+                            var jsonObj = JSON.parse(result);
+                            node.addChild(jsonObj);
+                            node.setLazyNodeStatus(DTNodeStatus_Ok);
+                        } else if (event.type === 'exception') {
+                            document.getElementById("responseErrors").innerHTML = 
+                                event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                        } else {
+                            document.getElementById("responseErrors").innerHTML = event.message;
+                        }
+                    },
+                    {escape: false}
+                );
+                
+            }
+        });
+    });
+    </script>
+    
+    <!-- Add a <div> element where the tree should appear: -->
+    <div id="tree" style="width:400px; overflow:auto; line-height:1;"> </div>
+
+</apex:component>

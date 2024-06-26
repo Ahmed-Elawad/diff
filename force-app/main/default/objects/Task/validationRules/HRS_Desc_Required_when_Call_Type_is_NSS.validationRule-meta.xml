@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRS_Desc_Required_when_Call_Type_is_NSS</fullName>
+    <active>true</active>
+    <description>For HRS ONLY records</description>
+    <errorConditionFormula>AND( 
+   ($RecordType.Name = &quot;HRS Task Record Type&quot;),
+   (ISPICKVAL( Lead_Source_WAR_Call_Type__c , &quot;National Sales Support&quot; )), 
+Description = &quot;&quot;
+)</errorConditionFormula>
+    <errorDisplayField>Description</errorDisplayField>
+    <errorMessage>This field is required when the call type is ‘National Sales Support’. Upon saving, the comments will be emailed to the NSR. Please provide as much detail as possible in your comments to prevent further NSS follow up emails.</errorMessage>
+</ValidationRule>

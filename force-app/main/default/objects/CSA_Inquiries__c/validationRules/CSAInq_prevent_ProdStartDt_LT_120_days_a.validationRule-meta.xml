@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CSAInq_prevent_ProdStartDt_LT_120_days_a</fullName>
+    <active>true</active>
+    <description>Prevent users from entering a Product Start Date value more than 60 days previous to the current date</description>
+    <errorConditionFormula>AND( 
+ ISPICKVAL(Request_Type__c, &apos;INTERNAL REFERRALS&apos;), 
+ Product_Start_Date__c &lt; TODAY() - 120, 
+ $Profile.Name &lt;&gt;&quot;System Administratorrrrrrr&quot; 
+)</errorConditionFormula>
+    <errorMessage>You cannot enter a Product Start Date value older than 120 days ago.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,77 @@
+<!-- VS page used to add paper employees to Reference PEO
+ * History
+ * -------
+ * 01/17/2017 Jermaine Stukes Created
+ * 
+-->
+<apex:page id="peo" controller="RefPeoPaperEmpController" showHeader="true" standardStylesheets="true" sidebar="true" docType="html-5.0">
+    <apex:form id="formPage">
+        <apex:pageBlock id="block">
+            <apex:outputPanel id="Display">
+                <apex:actionRegion rendered="true">
+                    <div align="center">
+                        <apex:commandButton action="{!quickSave}" disabled="{!disableButtons}"  value="Save - Enter More Paper Employee(s)"/>
+                        <apex:commandButton action="{!submitUpdates}" disabled="{!disableButtons}"  value="Save - Return to Reference PEO"/>
+                        <apex:commandButton action="{!cancel}" html-formnovalidate="formnovalidate" value="Exit"/>
+                        <p>
+                            <font color="red">Note: Required fields "First Name", "Last Name", and "Last 4 digits of SSN" must be completed to save new paper employee.</font>
+                        </p>
+                    </div>
+                </apex:actionRegion>
+            </apex:outputPanel>  
+            <apex:pageBlockSection id="section" >
+                <apex:outputText ><b>Add Paper Employee Below: </b></apex:outputText><div/>
+                <apex:inputField label="First Name" id="fName" value="{!OnboardingCandidate.Employee_First_Name__c}">
+                    <apex:actionSupport event="onkeyup" action="{!Validate}" reRender="Display"/>
+                </apex:inputField>
+                <br/><apex:inputField label="Last Name" value="{!OnboardingCandidate.Employee_Last_Name__c}">
+                <apex:actionSupport event="onkeyup" action="{!Validate}" reRender="Display"/>
+                </apex:inputField>
+                <br/><apex:inputField label="Last 4 digits of Social Security Number" value="{!OnboardingCandidate.Last4SSN__c}">
+                <apex:actionSupport event="onkeyup"  action="{!Validate}" reRender="Display"/>
+                </apex:inputField>
+                <apex:inputField label="" value="{!OnboardingCandidate.Complete__c}">
+                    <apex:outputLabel value="Complete?"></apex:outputLabel>
+                </apex:inputField><br/><br/>               
+            </apex:pageBlockSection>
+        </apex:pageBlock><br/>
+        <apex:pageBlock >
+            <apex:outputPanel id="DisplayOnboardingEmployees">
+                <apex:actionRegion rendered="{!IF(candidatesEntered, 'true', 'false')}">
+                    <hr/>
+                    <apex:outputText ><b>List of Paper Employees added to Reference PEO:</b></apex:outputText>
+                    <apex:pageblocktable title="List of Onboarding Candidates added to Reference PEO" var="peoCandidate" value="{!PaperEmpList}">
+                        <apex:variable value="{!0}" var="count"/>
+                        <apex:column headerValue="Paper Employee's Name">
+                            <apex:outputLink value="{!URLFOR($Action.Reference_PEO_Onboarding_Candidates__c.View, peoCandidate.Id)}">{!peoCandidate.Full_Name__c} </apex:outputLink>
+                        </apex:column>
+                        <apex:column headerValue="Last 4 digits of SSN">
+                            <apex:inputField id="SSN" value="{!peoCandidate.Last4SSN__c}">
+                                <apex:actionSupport event="onchange" action="{!Updated}" reRender="DisplayButton"/>
+                            </apex:inputField>
+                        </apex:column>
+                        <apex:column headerValue="Completed?">
+                            <apex:inputField id="complete" value="{!peoCandidate.Complete__c}">
+                                <apex:actionSupport event="onchange" action="{!Updated}" reRender="DisplayButton"/>
+                            </apex:inputField>
+                        </apex:column>
+                        <apex:column headervalue="Action">
+                            <apex:commandlink value="Remove" action="{!removeEmp}" immediate="true">
+                                <!-- Pass the row number to the controller so that we know which row to remove -->
+                                <apex:param name="index" value="{!count}"/>
+                            </apex:commandlink> 
+                            <apex:variable var="count" value="{!count+1}"/>              
+                        </apex:column>  
+                    </apex:pageblocktable>
+                </apex:actionRegion>
+                <apex:outputPanel id="DisplayButton">
+                    <apex:actionRegion rendered="{!candidateUpdated}">
+                        <apex:commandButton action="{!updateSave}" value="Save Updates"/>
+                        <br/><font color="red">Note: This button only saves changes made to existing Paper Employees.</font>
+                    </apex:actionRegion>
+                </apex:outputPanel>
+            </apex:outputPanel>
+        </apex:pageBlock>
+    </apex:form>
+    <apex:relatedList list="peoList.Reference_PEO_Onboarding_Candidates__r"/>
+</apex:page>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>STM_Opportunity_Rejected</fullName>
+    <active>true</active>
+    <description>If status is rejected, Reason Not to Convert is required</description>
+    <errorConditionFormula>AND($RecordType.Name = &apos;STM Opportunity Record Type&apos;, ISPICKVAL(StageName,&apos;Rejected&apos;),ISBLANK(TEXT( Reason_Not_to_Convert__c )),NOT(BEGINS($Profile.Name,&apos;System Administrator&apos;)))</errorConditionFormula>
+    <errorMessage>If the status is &apos;Rejected&apos;, Reason Not to Convert is required</errorMessage>
+</ValidationRule>

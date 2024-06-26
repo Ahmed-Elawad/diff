@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Required_Client_Referral_Field</fullName>
+    <active>true</active>
+    <description>Client Referral field is required when Lead Source field value equals Referral - Client,Current Client-Additional ID</description>
+    <errorConditionFormula>And((NOT(BEGINS($Profile.Name, &apos;System Administrator&apos;))),(NOT(CONTAINS($User.Job_Name__c, &apos;Assistant&apos;))),
+OR(ISPICKVAL(LeadSource, &quot;Referral - Client&quot;), ISPICKVAL(LeadSource, &quot;Current Client-Additional ID&quot;),
+ISPICKVAL(LeadSource, &quot;Referral-Paychex Referral Network&quot;)),ISBLANK( Client_Referral__c ),OppSource__c &lt;&gt; &apos;ReferralMethods&apos;)</errorConditionFormula>
+    <errorMessage>Complete Client Referral Field</errorMessage>
+</ValidationRule>

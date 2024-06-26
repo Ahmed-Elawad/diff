@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Territory_Coverage_Verified</fullName>
+    <active>true</active>
+    <description>Cannot check this box without all the Territory Coverage fields</description>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&quot;System Admin&quot;)),
+ISCHANGED(Information_Verified__c),
+Information_Verified__c=true,
+OR(ISBLANK(X401k_TPA__c),
+ISBLANK(Banker_Name_Ref__c),
+ISBLANK(TEXT(H_B_Renewal_Date__c)),
+ISBLANK(Broker_Name_Ref__c),
+ISBLANK(CPA_Name_Ref__c),
+ISBLANK(Employees__c),
+ISBLANK(TEXT(Industry)),
+ISBLANK(Insurance_Broker_Name_Ref__c),
+ISBLANK(TEXT(Current_Prior_Method__c))))</errorConditionFormula>
+    <errorMessage>All of the Territory Coverage fields must be completed to check the Territory Coverage Information Verified Field</errorMessage>
+</ValidationRule>

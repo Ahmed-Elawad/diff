@@ -1,0 +1,54 @@
+<!-- Logic to maintain the referral score setups for the users
+
+   History
+   -------
+   05/16/2016 Dan Carmen   Created
+
+ -->
+<apex:page controller="ReferralScoreController"
+           tabStyle="ReferralScoreSetup__tab"
+           showHeader="true">
+  <apex:form >
+    <apex:pageBlock id="ReferralScoreBlock">
+       <apex:pageMessages />
+       <apex:pageBlockSection rendered="{!hasSetups}" columns="1">
+          <apex:pageBlockTable id="referralTypeTable" value="{!setups}" var="rec" cellPadding="2" border="1">
+             <apex:column >
+                <apex:commandLink rendered="{!rec.Id != null}" action="{!deleteSetup}" value="Delete" immediate="false" rerender="ReferralScoreBlock">
+                   <apex:param name="setupId" value="{!rec.Id}"/>
+                </apex:commandLink>
+             </apex:column>
+             <apex:column headerValue="{!$ObjectType.ReferralScoreSetup__c.Fields.ReferralSource__c.Label}">
+                <apex:selectList rendered="{!rec.Id = null}" value="{!rec.ReferralSource__c}" title="Source" size="1">
+                   <apex:selectOptions value="{!refSourceOptions}"/>
+                </apex:selectList>
+                <apex:outputField rendered="{!rec.Id != null}" value="{!rec.ReferralSource__c}"/>
+             </apex:column>
+             <apex:column headerValue="For Sold Referrals?">
+                <apex:inputField rendered="{!rec.Id = null}" value="{!rec.SoldReferrals__c}"/>
+                <apex:outputField rendered="{!rec.Id != null}" value="{!rec.SoldReferrals__c}"/>
+             </apex:column>
+             <apex:column headerValue="{!$ObjectType.ReferralScoreSetup__c.Fields.RangeMin__c.Label}">
+                <apex:inputField required="true" value="{!rec.RangeMin__c}"/>
+             </apex:column>
+             <apex:column headerValue="{!$ObjectType.ReferralScoreSetup__c.Fields.RangeMax__c.Label}">
+                <apex:inputField required="true" value="{!rec.RangeMax__c}"/>
+             </apex:column>
+             <apex:column headerValue="{!$ObjectType.ReferralScoreSetup__c.Fields.ReferralType__c.Label}">
+                <apex:inputField required="true" value="{!rec.ReferralType__c}"/>
+             </apex:column>
+          </apex:pageBlockTable>
+          
+       </apex:pageBlockSection>
+       
+          <apex:outputPanel id="buttonPanel">
+              <apex:commandButton value="Add New Record" action="{!addNewRecord}" rerender="ReferralScoreBlock" title="Add New Record"/>  
+              <apex:commandButton rendered="{!hasSetups}" value="Save" action="{!saveRecords}" rerender="ReferralScoreBlock" title="Save Records"/>  
+              <apex:commandButton rendered="{!hasSetups}" value="Cancel" immediate="true" action="{!cancelAdd}" rerender="ReferralScoreBlock" title="Cancel Add"/>  
+
+          </apex:outputPanel>
+       
+    </apex:pageBlock>
+  </apex:form>
+
+</apex:page>

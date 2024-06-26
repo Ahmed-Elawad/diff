@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Days_to_Client_Load_Received__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>If(ISNULL(DATEVALUE(CreatedDate)), 
+
+(Date_Client_Load_Received__c - today() - 2*( floor((Date_Client_Load_Received__c - DATE(1985, 6, 24))/7)-floor((datevalue(CreatedDate) - DATE(1985, 6, 24))/7))), 
+
+(Date_Client_Load_Received__c - datevalue(CreatedDate)) - 2*(floor((Date_Client_Load_Received__c - DATE(1985, 6, 24))/7)-floor((datevalue(CreatedDate) - DATE(1985, 6, 24))/7)))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Days to Client Load Received</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

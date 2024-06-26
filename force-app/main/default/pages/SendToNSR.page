@@ -1,0 +1,50 @@
+<!-- A page to send a Lead, Account or Contact to an NSR to call
+
+   History
+   -------
+   07/06/2016 Cindy Freeman   Created   
+ -->
+
+<apex:page controller="SendToNSRController">
+  <script>  
+  	 function closeWin() {
+         window.close();
+     }
+  </script>
+  <apex:form >
+	<apex:sectionHeader title="Send to an NSS Rep" />
+   	    
+	 <apex:pageBlock >
+        <apex:pageMessages />
+         <apex:pageBlockSection >
+             <apex:pageBlockSectionItem >
+                 <apex:outputLabel value="{!objLabel}"/> 
+                 <apex:outputText value="{!objToSendName}"/>
+             </apex:pageBlockSectionItem>
+         </apex:pageBlockSection>
+         <apex:pageBlockSection rendered="{!NOT(hasError)}" columns="1">
+             <apex:pageBlockSectionItem rendered="{!NOT(beingWorked)}">
+                 <apex:outputLabel value="Comment" />
+                 <apex:inputText value="{!addComment}" maxLength="{!maxLength}" size="80"/>
+             </apex:pageBlockSectionItem>             
+         </apex:pageBlockSection>
+         <apex:pageBlockSection rendered="{!NOT(hasError)}">
+             <apex:pageBlockSectionItem rendered="{!NOT(beingWorked)}">
+                 <apex:outputLabel value="Select an NSS Rep Name"/>
+                 <apex:outputPanel >
+                     <apex:selectList value="{!selectedNSRId}" size="10">
+                         <apex:selectOptions value="{!nsrOptions}"/>                     
+                     </apex:selectList>
+                 </apex:outputPanel>
+             </apex:pageBlockSectionItem>
+         </apex:pageBlockSection>
+        <apex:pageBlockButtons location="bottom">
+              <apex:commandButton rendered="{!showCancel}" value="Cancel" action="{!cancel}" />
+              <apex:commandButton rendered="{!showReassign}" value="Reassign to NSS Rep" action="{!reassignToNsr}" />
+              <apex:commandButton rendered="{!showReturn}" value="Return to {!objToSendName}" action="{!cancel}"/>
+         </apex:pageBlockButtons>                        
+     </apex:pageBlock>
+     
+  </apex:form>
+    
+</apex:page>

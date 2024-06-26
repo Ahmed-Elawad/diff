@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TAA_ISG_Open_Case</fullName>
+    <columns>OWNER_NAME</columns>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.PRIORITY</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>Enterprise_Support_Ticket_Number__c</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>Manager_Escalation_Needed__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Closed - APR Created,Closed - Implemented,Do Not Support,Solved</value>
+    </filters>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.Service_Support_TAA_Case,Case.Service_Support_Nettime_Case,Case.Service_Support_STM_Case</value>
+    </filters>
+    <filters>
+        <field>CORE.USERS.ALIAS</field>
+        <operation>equals</operation>
+        <value>ltayl,apasc,LCara1,thowa,jpark,sames,msper,bterv,rwand,rande</value>
+    </filters>
+    <label>TAA ISG Open Case</label>
+    <sharedTo>
+        <role>TimeAttendanceLevel2SupportRep</role>
+        <role>TimeAttendanceManager</role>
+    </sharedTo>
+</ListView>

@@ -1,0 +1,50 @@
+<aura:component >
+    
+    <aura:attribute name="field" type="Object" />
+    <aura:attribute name="userInfo" type="Object" />
+    
+	<aura:if isTrue="{!v.field.Type__c == 'Phone'}">
+
+                    <dl>
+                        <dt><p class="slds-text-heading_label slds-truncate">{!v.field.Label}</p></dt>
+                        <dd>
+                          
+                          <ui:outputPhone aura:id="oPhone" value="{!v.field.value}" />
+                            
+                            <!-- if we want click to call enabled NSS
+                            <aura:if isTrue="{!empty(v.userInfo.CallCenterId)}">
+                                
+                                <ui:outputPhone aura:id="oPhone" value="{!v.field.value}" />
+
+                                <aura:set attribute="else">
+                                    <lightning:clickToDial value="{!v.field.value}"/>
+                                </aura:set>
+                                
+                            </aura:if> --> 
+                        </dd>
+                    </dl>
+
+                    <aura:set attribute="else">
+                        <aura:if isTrue="{!v.field.Type__c == 'Lookup'}">
+                            <dl>
+                                <dt>
+                                    <p class="slds-text-heading_label slds-truncate">{!v.field.Label}</p>
+                                </dt>
+                                <dd><a href="" ><p class="slds-truncate" onclick="{!c.navigateToRecord}">{!v.field.value}</p></a></dd>
+                            </dl>
+
+
+                        <aura:set attribute="else">
+                            <dl>
+                                <dt>
+                                    <p class="slds-text-heading_label slds-truncate">{!v.field.Label}</p>
+                                </dt>
+                                <dd><p class="slds-truncate">{!v.field.value}</p></dd>
+                            </dl>
+                        </aura:set>
+
+                    </aura:if>
+                    </aura:set>
+
+                </aura:if>
+</aura:component>

@@ -1,0 +1,32 @@
+<!-- Component to display the lead information for a lightning component.
+
+   History
+   -------
+   01/29/2019 Dan Carmen        Created to display messages to the users for a pilot
+
+ -->
+<apex:component >
+
+   <apex:attribute name="sourceRecId"
+      type="Id"
+      required="true"
+      description="The Id of the Record." />
+
+
+  <div id="renderLightingComponentPageBanner"/>
+  <apex:includeLightning />
+  
+  <script>
+            $Lightning.use("c:NSSMsgHelperApp", function() {
+                $Lightning.createComponent(
+                    "c:NSSMsgHelper",
+                    {recordId:'{!sourceRecId}'},
+                    "renderLightingComponentPageBanner",
+                    function(cmp) {
+                        console.log("Component is created!");
+                        console.log(cmp);
+                    });
+                });
+  </script>
+  
+</apex:component>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>VerifyNeeded__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <formula>AND(NOT(ISNULL(EndDate__c)),  ISPICKVAL( Ownership_Status__c , &apos;Expired&apos;) 
+   , OR( ISNULL(VerifyCount__c), VerifyCount__c &lt; 2, NOT(EndDateVerified__c)))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>Does this record need more verifying?</inlineHelpText>
+    <label>Verify Needed</label>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

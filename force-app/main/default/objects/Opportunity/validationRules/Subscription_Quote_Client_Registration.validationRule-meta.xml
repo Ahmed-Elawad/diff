@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Subscription_Quote_Client_Registration</fullName>
+    <active>true</active>
+    <description>Before an Opportunity with a Subscription Quote can be moved beyond 75%, the account needs to be registered as a client</description>
+    <errorConditionFormula>AND( NOT(BEGINS($Profile.Name,&apos;System Admin&apos;))
+, Primary_Oracle_Quote__r.IsSubscriptionQuote__c
+, NOT(ISBLANK(ClientTracking__r.Id))
+, Probability &gt;= 0.75
+, PRIORVALUE(Probability) &lt; 0.75
+, OR(ISBLANK( Account.Paychex_CAID__c )
+    ,ISBLANK(ClientTracking__r.RegistrationStatusCode__c )
+    ,ISBLANK(ClientTracking__r.RegistrationEnd__c ))
+)</errorConditionFormula>
+    <errorMessage>Your primary quote contains one or more products that will be billed in the the new billing system. Next Step: Before moving to Sold, complete the &apos;Setup New Client&apos; process using the button on the Client Setup and Onboarding panel on your opportunity.</errorMessage>
+</ValidationRule>

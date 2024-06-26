@@ -1,0 +1,184 @@
+<!-- 
+    Created By: Mendel Guillaume - BlackTab Group
+    Date Created: 2015-05-11
+    Description: Displays list of appointments grouped by Date or Time (Today)
+ -->
+<apex:page docType="html-5.0" standardStylesheets="false" controller="MyAppointmentsListController">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<!--    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"/>
+ -->    
+ <apex:includeScript value="{!$Resource.jQuery2_0_3}" />  
+
+    <apex:stylesheet value="{!URLFOR($Resource.Salesforce1Bootstrap, 'bootstrap-sf1-010-beta15/dist/css/bootstrap-namespaced.css')}"/>
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        .bootstrap-sf1 { margin-left: auto; margin-right: auto;}
+        .content { width: 98%; margin-left: auto; margin-right: auto;}
+        .bootstrap-sf1 h3 {margin-top: 10px; margin-bottom: 5px;}
+        .bootstrap-sf1 .card-past {background-color: #dedede;}
+    </style>
+        <div id="divContainer" class="bootstrap-sf1" >
+            <div class="page-header page-header-compact context-c-alarmclock">
+                <h1>My Appointments <span class="pull-right s1utility s1utility-reply" onclick="returnHome();"></span>
+                <span class="page-header-label">{!appointmentLabel} ({!AppointmentCount})</span></h1>
+            </div>
+            <div class="content">
+                <h3 style="margin-bottom: 0px;">{!todayFormatted}</h3>
+                <apex:repeat value="{!AppointmentGroups}" var="ag">
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-6">
+                        <h3>{!ag.displayName}</h3>
+                        <apex:repeat value="{!ag.Events}" var="e">
+                            <div class="card {!IF(e.EndDateTime < NOW(), 'card-past', '')}">
+                                <div class="card-heading" >
+                                    <div class="pull-left" style="width: 80%">
+                                        <a href="#" onclick="redirectToObject('{!e.Id}'); return false;">{!e.Subject}</a>
+                                    </div>
+                                    <div class="pull-right" onclick="redirect('{!e.Id}'); return false;" >
+                                        <span class="{!IF(e.EndDateTime < NOW() && ISBLANK(e.Outcome__c), 's1utility s1utility-warning text-warning', '')}"></span>
+                                        <span class="{!IF(NOT(ISBLANK(e.Outcome__c)), 's1utility s1utility-check text-success', '')}"></span>
+                                    </div>
+                                </div>
+                                <ul class="card-detail card-detail-labels">
+                                    
+                                   <li class="list-group-item">
+                                        <label class="card-detail-label" onclick="redirect('{!e.Id}'); return false;">Contact</label>
+                                        <span class="card-detail-value">
+                                            <apex:outputField label="" value="{!e.WhoId}"/>
+                                            <span class="value" style="display: none;">{!e.WhoId}</span>
+                                        </span>
+                                    </li>
+                                    <li class="list-group-item" onclick="redirect('{!e.Id}'); return false;" >
+                                        <label class="card-detail-label">Start</label>
+                                        <span class="card-detail-value">
+                                            <apex:outputField label="" value="{!e.StartDateTime}"/>
+                                        </span>
+                                    </li>
+                                    <li class="list-group-item" onclick="redirect('{!e.Id}'); return false;">
+                                        <label class="card-detail-label">End</label>
+                                        <span class="card-detail-value">
+                                            <apex:outputField label="" value="{!e.EndDateTime}"/>
+                                        </span>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <label class="card-detail-label" onclick="redirect('{!e.Id}'); return false;">Opportunity</label>
+                                        <span class="card-detail-value" style="{!IF(AND(e.WhatId != null, BEGINS(e.WhatId, '006')) , '', 'display: none')}">
+                                            <apex:outputField label="" value="{!e.WhatId}"/>
+                                            <span class="value" style="display: none;">{!e.WhatId}</span>
+                                        </span>
+                                    </li>
+                                    <li class="list-group-item"  onclick="redirect('{!e.Id}'); return false;">
+                                        <label class="card-detail-label">Type</label>
+                                        <span class="card-detail-value">
+                                            <apex:outputField label="" value="{!e.Type}"/>
+                                        </span>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <label class="card-detail-label" onclick="redirect('{!e.Id}'); return false;">Address</label>
+                                        <span class="card-detail-value">
+                                            <a href="geo:0,0?q={!e.Location}">{!e.Location}</a>
+                                        </span>
+                                    </li>
+                                 </ul>
+                             </div>
+                        </apex:repeat>
+                    </div>
+                </div>
+                </apex:repeat>
+            </div>
+        </div>
+        
+        <script> 
+            (function(){try{var a=navigator.userAgent; 
+                if((a.indexOf('Salesforce')!=-1)&&(a.indexOf('iPhone')!=-1||a.indexOf('iPad')!=-1)&&(a.indexOf('OS/8')!=-1||a.indexOf('OS 8')!=-1)&&(a.indexOf('Safari')==-1)){ 
+                var s=document.createElement('style'); 
+                s.innerHTML="html,html body{overflow: auto;-webkit-overflow-scrolling:touch;}body{position:absolute;left:0;right:0;top:0;bottom:0;}"; 
+                document.getElementsByTagName('head')[0].appendChild(s);}}catch(e){}})(); 
+        </script>
+        
+        <script type="text/javascript">
+            var validationError = '';
+            var sf1 = false;
+            
+            //Determines if using mobile app or desktop
+            if(typeof sforce !== 'undefined' && sforce != null && sforce.one != null) 
+            {
+                sf1 = true;
+                
+            }
+            
+            
+            function redirect(meetingId)
+            {
+                //Salesforce1 redirect
+               if(sf1) 
+               {
+                    sforce.one.navigateToURL('/apex/MyAppointmentsUpdate?id=' + meetingId + '&type={!appointmentType}', false);
+               }
+               else //Desktop redirect
+               {
+                    window.location = '/apex/MyAppointmentsUpdate?id=' + meetingId + '&type={!appointmentType}';
+               }
+            }
+            
+            function redirectToObject(objectId)
+            {
+                //Salesforce1 redirect
+               if(sf1) 
+               {
+                    sforce.one.navigateToSObject(objectId);
+               }
+               else //Desktop redirect
+               {
+                    window.location = '/' + objectId;
+               }
+            }
+            
+            function returnHome()
+            {
+                ({!$User.UIThemeDisplayed == 'Theme3'}) ? window.parent.location.href='/home/home.jsp' : sforce.one.navigateToURL('#/home');
+            }
+            
+            //Changes link for lookup fields to click event and removes other Salesforce generated events
+            //Updates geo location link for iOS devices
+            if(sf1)
+            {
+                $(document).ready(function() {
+                    
+                    $('.card-detail-value a').each(function()
+                    { 
+                        
+                        if($(this).attr('href').indexOf('geo:') != 0)
+                        {
+                            $(this).click(function()
+                            {
+                                redirectToObject($(this).parent().parent().find('.value').text());
+                                return false;
+                            });
+                            
+                            $(this).attr('href', '#');                 
+                         
+                            $(this).removeAttr('onblur');
+                            $(this).removeAttr('onmouseout');
+                            $(this).removeAttr('onfocus');
+                            $(this).removeAttr('onmouseover');
+                        }
+                        else if((navigator.platform.indexOf("iPhone") != -1) 
+                                    || (navigator.platform.indexOf("iPod") != -1)
+                                    || (navigator.platform.indexOf("iPad") != -1))
+                        {
+                            $(this).attr('href',$(this).attr('href').replace('geo:0,0?q=', 'maps://maps.google.com/maps?saddr=Current%20Location&daddr='));
+                        }
+                        
+                    });
+                });
+            }
+            
+            
+        </script>
+</apex:page>

@@ -1,0 +1,23 @@
+<aura:component >
+	<aura:attribute name="content" type="Aura.Component[]"/>
+	<aura:attribute name="isVisible" type="Boolean"/>
+	<aura:attribute name="popupClass" type="String" default="generic-popup"/>
+
+ 	<aura:handler name="change" value="{!v.isVisible}" action="{!c.onIsVisibleChange}"/>
+		
+		
+	<div role="dialog" tabindex="-1" aria-labelledby="header43" id="{!v.popupClass + '-Modalbox'}" aura:id="generic-popup-Modalbox" class="slds-modal">
+        <div class="slds-modal__container" id="{!v.popupClass + '-container'}">
+
+            <div class="slds-modal__content slds-p-around--medium" id="{!v.popupClass + '-content'}">
+                <div class="content">
+                	{!v.content}
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slds-backdrop backdrop generic-popup-Modalbackdrop" id="generic-popup-Modalbackdrop" aura:id="generic-popup-Modalbackdrop"></div>
+
+</aura:component>

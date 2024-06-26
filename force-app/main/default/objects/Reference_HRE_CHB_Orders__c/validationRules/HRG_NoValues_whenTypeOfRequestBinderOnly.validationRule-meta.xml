@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRG_NoValues_whenTypeOfRequestBinderOnly</fullName>
+    <active>true</active>
+    <description>C23 - if Type of Request = &apos;Binders Only&apos;, then the 20 different fields can NOT be populated by the HRGs.</description>
+    <errorConditionFormula>AND( 
+(ISPICKVAL(Type_of_Request__c, &apos;Binders Only&apos;)), 
+( (NOT(ISBLANK(Copy_Handbook_From_Different_Client__c))) || 
+(NOT(ISBLANK(Copy_Handbook_Version_of_this_Client__c))) || 
+(NOT(ISBLANK(Different_Client_Handbook_Version_Title__c))) || 
+(NOT(ISPICKVAL(Handbook_Successfully_Exported__c, &apos;&apos;))) || 
+(NOT(ISBLANK(Name_Of_Exported_Handbook__c))) || 
+(NOT(ISBLANK(Username_The_File_Was_Exported_Under__c))) || 
+(X8_x_11__c) || 
+(Consecutive_Page_Numbers__c) || 
+(NOT(ISPICKVAL(Handbooks_Process_Needed__c, &apos;&apos;))) || 
+(NOT(ISPICKVAL(Logo_For_The_Title_Page__c, &apos;&apos;))) || 
+(NOT(ISPICKVAL(Tab_Color__c, &apos;&apos;))) || 
+(NOT(ISPICKVAL(X8_x_11_Options__c, &apos;&apos;))) || 
+(HTML_Needed__c) || 
+(Electronic_Only__c) || 
+(NOT(ISNULL(Inserts_Quantity__c))) || 
+(NOT(ISNULL(Spanish_Inserts_Quantity__c))) ), 
+(NOT(BEGINS($Profile.Name,&quot;HR Essentials&quot;))), 
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))) 
+)</errorConditionFormula>
+    <errorDisplayField>Type_of_Request__c</errorDisplayField>
+    <errorMessage>When selecting ‘Binders Only’ for the Type of Request field, you can only choose options related to binders in the Print/Binder Section (or Spanish).</errorMessage>
+</ValidationRule>

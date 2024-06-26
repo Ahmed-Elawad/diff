@@ -1,0 +1,250 @@
+<aura:component controller="CreateActivityController">
+
+    <aura:attribute name="descriptionAddOn" type="String"/>
+	<aura:attribute name="sobjecttype" type="String"/>
+	<aura:attribute name="activityType" type="String" required="true"/>
+	<aura:attribute name="sourceRecordId" type="Id" />
+    <aura:attribute name="attendeesAddOn" type="String" default=""/>
+    <aura:attribute name="carId" type="Id" default="" />
+
+    <aura:attribute name="evntStatus" type="String" />
+	<aura:attribute name="recordLoaded" type="Boolean" default="false" />
+    <aura:attribute name="profileName" type="String" />
+    <aura:attribute name="isThisPEOSalesUser" type="Boolean"/>
+    <aura:attribute name="hasInitialPresentation" type="Boolean"/>
+    <aura:attribute name="multipleInitialPresentation" type="Boolean"  default="false" />
+	<aura:attribute name="lookupContactId" type="String" />
+    <aura:attribute name="record" type="Object"
+                    description="The record object to be reloaded based on the new value of lookupId"/>
+    <aura:attribute name="recordFields" type="Object"
+                    description="Fields to be loaded"/>
+    <aura:attribute name="recordError" type="String"
+                    description="An error message bound to force:recordData"/>    
+    
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+	<aura:attribute name="newEvent" type="Event" default="{'sobjectType':'Event'
+					   ,'Status':'Not Started'
+					   ,'Lead_Source_WAR_Call_Type__c':'Call'
+					   ,'Type':'Type'
+					   ,'Subject':'Subject'
+					   ,'Description':''
+					   ,'ActivityDate':''
+                       ,'CPE_Topic__c': '' 
+                       , 'TAP_Topic__c': ''
+					   , 'Onsite_or_Virtual__c': ''
+                       , 'Meeting_Attendees__c': ''
+                       }"/>
+
+	<aura:attribute name="typeOptions" type="List" default="[]"/>
+	<aura:attribute name="callTypeOptions" type="List" default="[]"/>
+	<aura:attribute name="outcomeOptions" type="List" default="[]"/>
+	<aura:attribute name="appointmentTypeOptions" type="List" default="[]"/>
+	<aura:attribute name="onsiteOrVirtualOptions" type="List" default="[]"/>
+  	<aura:attribute name="CPETypeOptions" type="List" default="[]"/>
+	<aura:attribute name="tapTopicOptions" type="List" default="[]"/>
+	<aura:attribute type="DateTime" name="activityDateTime" />
+	<aura:attribute name="popupVisible" type="Boolean" default="false"/>
+	<aura:attribute name="isFollowUpActivity" type="Boolean" default="false"/>
+	<aura:attribute name="shouldCloseModal" type="Boolean" default="false"/>
+	<aura:attribute name="attendees" type="List" default="[]"/>
+
+    <aura:handler name="change" value="{!v.newEvent.IsReminderSet}" action="{!c.handleDateValueChange}"/>
+	<aura:handler name="change" value="{!v.activityDateTime}" action="{!c.handleDateValueChange}"/>
+	<aura:handler event="c:activityTypeChangedEvent" action="{!c.handleActivityTypeChange}"/>
+
+	 <h1 class="error-text">{!v.evntStatus}</h1> 
+
+	<ui:spinner aura:id="spinner" />
+	<c:PopupModal isVisible="{!v.popupVisible}" popupClass="followUpTaskPopup">
+		<aura:set attribute="content">
+			<c:createActivitySuccessPopup activityType="{!v.activityType}" isVisible="{!v.popupVisible}" isFollowUpActivity="{!v.isFollowUpActivity}" shouldCloseModal="{!v.shouldCloseModal}"/>
+		</aura:set>
+	</c:PopupModal>
+
+	<aura:if isTrue="{!v.recordLoaded}">
+		<form class="slds-form--stacked">
+
+			<aura:if isTrue="{!not(equals(v.profileName, 'Sales Engineer'))}">
+				
+				<lightning:combobox aura:id="taskform" name="callType" label="Call Type"
+						  placeholder="Choose Call Type"
+						  value="{!v.newEvent.Lead_Source_WAR_Call_Type__c}"
+						  options="{!v.callTypeOptions}"
+						  required="false"/>
+                <aura:if isTrue="{!v.multipleInitialPresentation}">
+                    <h1 class="error-text">Please Note: An initial presentation has already been scheduled/completed.  Please choose another type to continue.</h1> 
+                </aura:if>
+                <lightning:combobox aura:id="taskform" name="type" label="Type"
+                                    placeholder="Choose Type"
+                                    value="{!v.newEvent.Type}"
+                                    onchange="{!c.handleOptionSelected}"
+                                    options="{!v.typeOptions}"
+                                    required="true"/>
+                <lightning:combobox aura:id="taskform" name="TAPTopic" label="Prescriptive Topic"
+                                    class="form-component" 
+                                    placeholder="Choose Prescriptive Topic"
+                                    value="{!v.newEvent.TAP_Topic__c}"
+                                    options="{!v.tapTopicOptions}"
+                                    required="false"/>
+				<lightning:combobox aura:id="taskform" name="CPETopic" label="CPE Topic"
+						  placeholder="Choose CPE Topic"
+						  value="{!v.newEvent.CPE_Topic__c}"
+						  options="{!v.CPETypeOptions}"
+						  required="false"/>                
+
+				<lightning:input aura:id="taskform" label="Subject"
+							 class="form-component"
+							 name="subject"
+							 value="{!v.newEvent.Subject}"
+							 required="false"/>
+							 
+				<lightning:input aura:id="taskform" label="Location"
+							 class="form-component"
+							 name="location"
+							 value="{!v.newEvent.Location}"
+							 required="false"/>
+				
+                <lightning:combobox aura:id="taskform" name="onsiteVirtual" label="Onsite or Virtual"
+                                    class="form-component" 
+                                    placeholder="Choose Onsite or Virtual"
+                                    value="{!v.newEvent.Onsite_or_Virtual__c}"
+                                    options="{!v.onsiteOrVirtualOptions}"
+                                    required="true"/>
+
+				<div class="slds-form-element form-component">
+					<ui:inputDateTime aura:id="taskform" label="Meeting Date and Time" class="form-control slds-form-element"
+						   value="{!v.activityDateTime}" displayDatePicker="true" required="true"/>
+				</div>
+
+				<lightning:input aura:id="taskform" label="Meeting Duration in Minutes"
+							 class="form-component"
+							 name="durationInMinutes"
+							 value="{!v.newEvent.DurationInMinutes}"
+							 required="false"/>
+
+				<lightning:combobox aura:id="taskform" name="outcome" label="Outcome"
+						  class="form-component"
+						  placeholder="Choose Outcome"
+						  value="{!v.newEvent.Outcome__c}"
+						  options="{!v.outcomeOptions}"/>
+                
+                <lightning:input aura:id="taskform" name="meetingAttendees" label="Meeting Attendees"
+                          class="form-component"
+                          value="{!v.newEvent.Meeting_Attendees__c}"
+                          required="false"/>
+			
+                <lightning:textarea aura:id="taskform" class="description-text-area form-component" name="myTextArea" value="{!v.newEvent.Description}" 
+                                    label="Description" maxlength="32000" />
+                <aura:if isTrue="{!(v.activityDateTime != Null)}">
+                    <ui:inputCheckbox aura:id="taskform" name="reminderSet" label="Add a reminder?"
+                                      value="{!v.newEvent.IsReminderSet}"
+                                      required="false"/>
+                    
+                    <aura:if isTrue="{!v.newEvent.IsReminderSet}">
+                        <ui:inputDateTime aura:id="taskform"  class="form-component"  label="Reminder Date" value="{!v.newEvent.ReminderDateTime}" displayDatePicker="true"/>
+                    </aura:if>
+                </aura:if>
+
+				<aura:set attribute="else">
+
+					<lightning:combobox aura:id="taskform" name="callType" label="Appointment Type"
+						  class="form-component"
+						  placeholder="Choose Appointment Type"
+						  value="{!v.newEvent.Appointment_Type__c}"
+						  options="{!v.appointmentTypeOptions}"
+						  required="false"/>
+						 
+					<div class="form-component">
+						<ui:inputCheckbox aura:id="taskform" label="Pre-Plan"
+							name="prePlan"
+							value="{!v.newEvent.Pre_Plan__c}"/>
+					</div>
+
+					<div class="form-component">
+						<ui:inputCheckbox aura:id="taskform" label="Notes Received"
+							name="notesReceived"
+							value="{!v.newEvent.Notes_Received__c}"/>
+					</div>
+
+					<lightning:input aura:id="taskform" label="Subject"
+						 class="form-component"
+						 name="subject"
+						 value="{!v.newEvent.Subject}"
+						 required="false"/>
+							 
+				<lightning:input aura:id="taskform" label="Location"
+							 class="form-component"
+							 name="location"
+							 value="{!v.newEvent.Location}"
+							 required="false"/>
+		
+
+					<div class="slds-form-element form-component">
+						<ui:inputDateTime aura:id="taskform" label="Meeting Date and Time" class="form-control slds-form-element"
+							   value="{!v.activityDateTime}" displayDatePicker="true" required="true"/>
+					</div>
+
+					<lightning:input aura:id="taskform" label="Meeting Duration in Minutes"
+								 class="form-component"
+								 name="durationInMinutes"
+								 value="{!v.newEvent.DurationInMinutes}"
+								 required="false"/>
+				
+                    <lightning:textarea aura:id="taskform" class="description-text-area form-component" name="myTextArea" value="{!v.newEvent.Description}" 
+                                        label="Description" maxlength="32000" />
+                    <aura:if isTrue="{!(v.activityDateTime != Null)}">
+                        <ui:inputCheckbox aura:id="taskform" name="reminderSet" label="Add a reminder?"
+                                          value="{!v.newEvent.IsReminderSet}"
+                                          required="false"
+                                          />
+                        
+                        <aura:if isTrue="{!v.newEvent.IsReminderSet}">
+                            <ui:inputDateTime aura:id="taskform"  class="form-component"  label="Reminder Date" value="{!v.newEvent.ReminderDateTime}" displayDatePicker="true"/>
+                        </aura:if>
+                    </aura:if>
+                </aura:set>
+			</aura:if>
+			
+            <!-- Removed per a request during testing for APR0111608 - Capture Meeting Data; Requiring Attendees for Sales
+            <lightning:recordEditForm objectApiName="Contact">
+                <label for="contactFieldId">Prospect-Client Attendees</label>
+                <lightning:inputField aura:id="contactField" fieldName="ReportsToId" onchange="{!c.getContact}" variant="label-hidden" id="contactFieldId"/>
+                
+                <force:recordData aura:id="recordLoader"
+                                  layoutType="FULL"
+                                  recordId="{!v.lookupContactId}"
+                                  targetError="{!v.recordError}"
+                                  targetRecord="{!v.record}"
+                                  targetFields="{!v.recordFields }"
+                                  recordUpdated="{!c.handleRecordUpdated}"
+                                  mode="VIEW"/>                
+                                
+                <lightning:button type="submit" name="Submit" label="Add Attendee" onclick="{!c.onAddAttendees}"/>                
+                <div class="slds-combobox_container slds-scrollable" style="height:5rem;width:30rem">
+                            <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                <aura:iteration items="{!v.attendees}" var="item">
+                                    <li role="presentation" class="slds-listbox__item">
+                                        <div id="option6" class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option">
+                                            <span class="slds-media__body">
+                                                <span class="slds-truncate" title="{!item}">{!item.label}</span>
+                                            </span>
+                                        </div>
+                                    </li>
+                                </aura:iteration>
+                            </ul>
+                        </div>
+            </lightning:recordEditForm>
+			-->
+            
+            <div class="modal-footer">
+                <lightning:button label="Save"
+                                  class="slds-m-top--medium"
+                                  variant="brand"
+                                  disabled="{!v.multipleInitialPresentation}"
+                                  onclick="{!c.clickSaveEvent}"/>
+            </div>
+            
+		</form>
+	</aura:if>
+</aura:component>

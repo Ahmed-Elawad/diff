@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cant_use_PRN_Lead_Source_if_no_AMP_Ref</fullName>
+    <active>true</active>
+    <description>Only opportunities linked to Paychex Referral Network can have the lead source of Referral-Paychex Referral Network. If this was a Paychex Referral network lead please follow the verbal referral process to allow for payment.</description>
+    <errorConditionFormula>AND(
+ISPICKVAL(LeadSource, &apos;Referral-Paychex Referral Network&apos;),
+
+OR($User.Job_Name__c=&apos;Sales Representative&apos;,
+$Profile.Name = &apos;MMS SDR&apos;,
+$User.Job_Name__c=&apos;District Sales Manager&apos;,
+CONTAINS($User.Job_Name__c, &apos;Sales Assistant&apos;) ),
+
+AND(ISBLANK(ReferralLookup__r.Amplifinity_Referral__c), ISBLANK(amp_dev__Referral__c)  ),
+
+NOT(CONTAINS($RecordType.Name, &apos;Referral&apos;))
+)</errorConditionFormula>
+    <errorMessage>Only opportunities linked to Paychex Referral Network can have the lead source of Referral-Paychex Referral Network. If this was a Paychex Referral network lead please follow the verbal referral process to allow for payment.</errorMessage>
+</ValidationRule>

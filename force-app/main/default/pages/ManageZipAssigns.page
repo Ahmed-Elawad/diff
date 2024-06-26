@@ -1,0 +1,499 @@
+<!-- A wizard to submit zip code changes
+
+   History
+   -------
+   01/22/2013 Dan Carmen   Created
+   06/10/2013 Dan Carmen   Added if district or zone user to the form.
+   05/02/2016 Cindy Freeman Modified for new Core segments so can Clone segment or delete Segment with zip assignments
+   09/28/2016 Dan Carmen   Added some cleanup to the code - getting rid of unneeded fields
+   03/29/2017 Cindy Freeman     added option to select which segment you are cloning To
+   05/11/2017 Jacob Hinds   Adding MMS-ASO Partner
+   05/18/2021 Jermaine Stukes	Adding HRS Partner
+   07/15/2023 Pratik Das       APR0151864: SMB Channel Evolution BAU--Queue_Name__c added to the visualforce page
+   11/30/2023 Dan Carmen       Remove unused fields
+
+ -->
+<apex:page controller="ManageZipAssignController"
+           tabStyle="ManageZipAssignments__tab"
+           showHeader="true">
+    
+    <apex:form >
+        
+        <apex:includeScript value="{!$Resource.selectCheckboxesJs}" />
+        <apex:includeScript value="{!$Resource.jQueryJs}" />
+        <apex:includeScript value="{!$Resource.buttonsEnabledJs}" />
+        
+        <apex:actionFunction action="{!deleteTerritory}" name="jsDeleteTerritory" />
+        
+        <script type="text/javascript">
+        function confirmTerritoryDelete() {
+            if (confirm("This will Permanently delete this territory. Do you want to continue?")) {
+                return jsDeleteTerritory();
+            }
+            return false;
+        }
+        
+        
+        
+        </script>
+        
+        
+        <apex:sectionHeader title="Manage Zip Assignments" 
+                            subtitle="{!IF(isDistrictUser,'District',IF(isZoneUser,'Zone',''))}" />
+        
+        <!-- *****************    NOT a valid user ********************* -->    
+        <apex:pageBlock rendered="{!NOT(isValidUser)}" id="NotValidBlock">
+            <apex:pageMessages />
+            <h1>You do not have access to this form! {!noAccessReason}</h1>
+        </apex:pageBlock>
+        
+        
+        <!-- *****************    Valid user ********************* -->    
+        <apex:pageBlock rendered="{!AND(isValidUser,NOT(managingDistrict))}" id="ManageZipBlock">
+            <apex:pageMessages />
+            
+            <!--  *******************  Displaying Zip Codes ******************* -->
+            <apex:pageBlockSection rendered="{!AND(NOT(askForNewUser),NOT(addingZipCode),NOT(editTerritoryFrom))}" >
+                
+                <apex:pageBlockSectionItem rendered="{!hasZoneOptions}" >
+                    <apex:outputLabel value="Zone"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!selectedZoneId}" title="Available Zones" size="1">
+                            <apex:selectOptions value="{!zoneOptions}"/>
+                            <apex:actionSupport event="onchange" action="{!setZone}" rerender="ManageZipBlock" status="updatingStructureStatus" />  
+                        </apex:selectList>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!hasZoneOptions}" />
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="District" />
+                    <apex:outputPanel >
+                        <apex:selectList rendered="{!hasDistrictOptions}" value="{!selectedDistrictId}" title="Available Districts" size="1">
+                            <apex:selectOptions value="{!districtOptions}"/>
+                            <apex:actionSupport event="onchange" action="{!setDistrict}" rerender="ManageZipBlock" status="updatingStructureStatus" />  
+                        </apex:selectList>
+                        <apex:outputText rendered="{!NOT(hasDistrictOptions)}" value="{!districtName}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Sales Org"/>
+                    <apex:outputPanel >
+                        <apex:selectList rendered="{!hasMultipleSalesOrgs}" value="{!searchZa.Sales_Org__c}" title="Available Sales Orgs" size="1">
+                            <apex:selectOptions value="{!salesOrgPicklist}"/>
+                            <apex:actionSupport event="onchange" action="{!changeOrgStructure}" rerender="ManageZipBlock" status="updatingStructureStatus" />  
+                        </apex:selectList>
+                        <apex:outputField rendered="{!NOT(hasMultipleSalesOrgs)}" value="{!searchZa.Sales_Org__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Zip Segment"/>
+                    <apex:outputPanel >
+                        <apex:selectList rendered="{!hasMultipleSegmentOptions}" value="{!selectedSegmentId}" title="Available Zip Segments" size="1">
+                            <apex:selectOptions value="{!segmentOptions}"/>
+                            <apex:actionSupport event="onchange" action="{!setSegment}" rerender="ManageZipBlock" status="updatingStructureStatus" />  
+                        </apex:selectList>
+                        <apex:outputText rendered="{!NOT(hasMultipleSegmentOptions)}" value="{!selectedSegmentName}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem />
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Select A Territory" />
+                    <apex:outputPanel > 
+                        <apex:selectList rendered="{!hasTerritoryFroms}" value="{!selectedTerritoryFromId}" title="Available Territories" size="1">
+                            <apex:selectOptions value="{!territoryFromPicklist}"/>
+                            <apex:actionSupport event="onchange" action="{!selectTerritoryFrom}" rerender="ManageZipBlock" status="searchZipAsgnStatus" />
+                        </apex:selectList>
+                        <apex:outputText rendered="{!NOT(hasTerritoryFroms)}" style="color:BLUE; font-weight: bold;" value="No Territories Were Found!" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <br/>
+                <apex:outputField rendered="{!AND(hasTerritoryFromObject,NOT(editTerritoryFrom))}" value="{!selectedTerritoryFromObject.Name}" />
+                <apex:outputField rendered="{!AND(hasTerritoryFromObject,NOT(editTerritoryFrom))}" value="{!selectedTerritoryFromObject.TerritoryRep__c}" />
+                <apex:pageBlockSectionItem rendered="{!AND(hasTerritoryFromObject,hasTerritoryContact,NOT(editTerritoryFrom))}"  />
+                <apex:outputField rendered="{!AND(hasTerritoryFromObject,hasTerritoryContact,NOT(editTerritoryFrom))}" value="{!selectedTerritoryFromObject.TerritoryContact__c}" />
+                
+                <apex:pageBlockSectionItem rendered="{!AND(hasTerritoryFromObject,NOT(editTerritoryFrom))}">
+                    <apex:outputLabel value="Number of Zip Codes" />
+                    <apex:outputText value="{!zipAssignmentSet.resultSize}" />
+                </apex:pageBlockSectionItem>
+                <apex:outputField rendered="{!AND(hasTerritoryFromObject,NOT(editTerritoryFrom))}" value="{!selectedTerritoryFromObject.Rep_Name__c}" />
+                <apex:outputField rendered="{!AND(hasTerritoryFromObject,NOT(editTerritoryFrom))}" value="{!selectedTerritoryFromObject.OverrideAssistant__c}" />           
+                <apex:outputField rendered="{!AND(hasTerritoryFromObject,NOT(editTerritoryFrom))}" value="{!selectedTerritoryFromObject.OverrideManager__c}" />
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection id="buttonSection" rendered="{!AND(NOT(askForNewUser),NOT(addingZipCode),NOT(editTerritoryFrom))}" columns="1">
+                <apex:outputPanel >
+                    <apex:commandButton rendered="{!hasTerritoryFromObject}" value="{!IF(showZipAssignments,'Hide','Show')} Zip Codes" action="{!toggleShowAssignments}" rerender="ManageZipBlock" status="processingStatus"/>
+                    &nbsp;
+                    <apex:commandButton rendered="{!AND(hasTerritoryFromObject,(zipAssignmentSet.resultSize>0))}" value="{!IF(useFilter,'Remove','Use')} Filter" action="{!toggleUseFilter}" rerender="ManageZipBlock" status="changingFilterStatus"/>
+                    &nbsp;
+                    <apex:commandButton rendered="{!AND(hasTerritoryFromObject,canUserManageTerritory,hasEditAccess)}" value="Edit Territory" action="{!editTerritory}" rerender="ManageZipBlock" status="processingStatus"/>
+                    &nbsp;
+                    <apex:commandButton rendered="{!AND(canUserManageTerritory,hasTerritoryFromObject,hasEditAccess,OR((zipAssignmentSet.resultSize==0),selectedSegmentDeleteZips))}" value="Delete Territory" onclick="return confirmTerritoryDelete();" />
+                    <apex:commandButton rendered="{!AND(canUserManageTerritory,hasTerritoryFromObject,hasEditAccess,(zipAssignmentSet.resultSize>0),NOT(selectedSegmentDeleteZips))}" value="Delete Territory" onclick="alert('All Zip Codes must be moved to another territory before this can be deleted!');return false;" />
+                    &nbsp;
+                    <apex:commandButton rendered="{!AND(hasSelectedDistrictOrgUnit,hasEditAccess)}" value="Create New Territory" action="{!createNewTerritory}" rerender="ManageZipBlock" status="processingStatus"/>
+                    &nbsp;
+                    <apex:commandButton rendered="{!hasSelectedDistrictOrgUnit}" value="Manage District" action="{!manageDistrict}" status="processingStatus"/>
+                    &nbsp;              
+                    <apex:commandButton rendered="{!AND(hasTerritoryFromObject,hasEditAccess)}" value="Clone Territory" action="{!toggleUseClone}" status="processingStatus"/>
+                    &nbsp;              
+                    <apex:commandButton rendered="{!AND(isCorporateUser,hasEditAccess)}" value="Upload Spreadsheet" action="{!goToUploadForm}" />
+                    &nbsp;
+                    
+                    <apex:actionStatus startText="Searching for Zip Assignments..." id="searchZipAsgnStatus"/>
+                    <apex:actionStatus startText="Updating Organization Structure..." id="updatingStructureStatus"/>
+                    <apex:actionStatus startText="Processing..." id="processingStatus"/>
+                    <apex:actionStatus startText="Changing Filter" id="changingFilterStatus"/>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+            
+            <!--   ****************  Filter for Zip Codes  ****************** -->
+            <apex:pageBlockSection id="zipCodeFilterSection" rendered="{!AND(useFilter,NOT(addingZipCode),NOT(editTerritoryFrom))}" columns="1">
+                <apex:outputPanel >
+                    <apex:outputLabel value="Starting Zip"/>
+                    &nbsp;
+                    <apex:inputText value="{!zipLow}" maxlength="5" size="5"/>
+                    &nbsp;
+                    <apex:outputLabel value="Ending Zip"/>
+                    &nbsp;
+                    <apex:inputText value="{!zipHigh}" maxlength="5" size="5"/>
+                    &nbsp;
+                    <apex:outputLabel value="State"/>
+                    &nbsp;
+                    <apex:selectList value="{!selectedStateFilter}" label="State" multiselect="false" size="1">
+                        <apex:selectOptions value="{!stateFilterList}"/>
+                    </apex:selectList>
+                    &nbsp;
+                    <apex:commandButton value="Apply Filter" action="{!applyFilter}" status="applyingFilterStatus" rerender="ManageZipBlock"/>
+                    <apex:actionStatus startText="Applying Filter..." id="applyingFilterStatus"/>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+            
+            
+            <!--   ****************  Filter for Territory Clone  ****************** -->
+            <apex:pageBlockSection id="CloneTerritorySection" rendered="{!useClone}" columns="2">
+                <apex:outputPanel >
+                    
+                    <apex:selectList value="{!selectedCloneSegmentId}" title="Available Clone Segments" size="1">
+                        <apex:selectOptions value="{!cloneSegmentOptions}"/>
+                        <!--<apex:actionSupport event="onchange" action="{!changeCloneSegment}" rerender="ManageZipBlock" status="updatingCloneSegments" />-->  
+                    </apex:selectList>
+                    &nbsp;
+                    <apex:commandButton value="Save Cloned Territory" action="{!cloneTerritory}" status="applyingCloneStatus" rerender="ManageZipBlock"/>
+                    <apex:actionStatus startText="Cloning Territory..." id="applyingCloneStatus"/>
+                    &nbsp;               
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+            
+            <!-- --*********************     Edit/Create the territory     **************************** -->
+            <apex:pageBlockSection id="editTerritorySection" rendered="{!editTerritoryFrom}" columns="1">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="District" />
+                    <apex:outputText value="{!districtName}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Zip Segment" />
+                    <apex:outputText value="{!selectedSegmentName}" />
+                </apex:pageBlockSectionItem>
+                <apex:inputField value="{!editTerritoryRecord.Name}" />
+                
+                <apex:inputField value="{!editTerritoryRecord.TerritoryRep__c}" />
+                <apex:inputField value="{!editTerritoryRecord.Rep_Name__c}" />
+                
+                <apex:inputField value="{!editTerritoryRecord.Territory_Nbr__c}" />
+                <apex:inputField value="{!editTerritoryRecord.TerritoryContact__c}" />
+                <apex:inputField rendered="{!isCorporateUser}" value="{!editTerritoryRecord.District_Lockout__c}" />
+                
+                <apex:inputField value="{!editTerritoryRecord.OverrideAssistant__c}" />
+                <apex:inputField value="{!editTerritoryRecord.OverrideManager__c}" />
+                
+                <apex:inputField rendered="{!(editTerritoryRecord.District__r.Sales_Org__c == 'MMS')}" value="{!editTerritoryRecord.TerritoryRep__r.ASO_Partner__c}"/>
+                <apex:inputField rendered="{!(editTerritoryRecord.District__r.Sales_Org__c == 'PAY' || editTerritoryRecord.District__r.Sales_Org__c == 'MMS')}" value="{!editTerritoryRecord.TerritoryRep__r.HR_Services_Partner__c}">
+                    <apex:actionSupport event="onchange" reRender="displayButton"/>
+                </apex:inputField>
+                <apex:outputPanel >
+                    <apex:commandButton value="Save" action="{!saveTerritory}" rerender="ManageZipBlock" status="processingStatus2"/>
+                    <apex:commandButton value="Save RSR Partner" rendered="{!(editTerritoryRecord.District__r.Sales_Org__c == 'MMS')}" action="{!saveASOPartner}" status="processingStatus2"/>
+                    <apex:outputPanel id="displayButton"><apex:commandButton value="Save HRS Partner"  rendered="{!(editTerritoryRecord.District__r.Sales_Org__c == 'PAY' || editTerritoryRecord.District__r.Sales_Org__c == 'MMS')}" action="{!saveHRServicePartner}" status="processingStatus2"/></apex:outputPanel>
+                    <apex:commandButton value="Cancel" action="{!cancelEditTerritory}" rerender="ManageZipBlock" status="processingStatus2"/>
+                    <apex:actionStatus startText="Processing..." id="processingStatus2"/>
+                </apex:outputPanel>
+                
+            </apex:pageBlockSection>
+            
+            <apex:actionFunction action="{!startReassigningZips}" name="jsReassignZips" />
+            <apex:actionFunction action="{!performAssignToSelection}" name="jsPerformAssignTo" />
+            
+            
+            <apex:pageBlockSection id="zipAsgnListSection" rendered="{!AND(showZipAssignments,searchPerformed,NOT(addingZipCode))}" columns="1">
+                <hr width="100%"/>
+                
+                <apex:outputPanel rendered="{!NOT(isReassigning)}">
+                    <!-- 
+<apex:commandButton rendered="{!zipAsgnsFound}" value="Reassign Selected Zip Codes" action="{!startReassigningZips}" rerender="ManageZipBlock"/>
+-->
+                    <apex:commandButton rendered="{!AND(hasEditAccess,canUserManageTerritory,zipAsgnsFound)}" value="Reassign Selected Zip Codes" onclick="buttonsEnabled(false);return jsReassignZips();" rerender="ManageZipBlock"/>
+                    &nbsp;
+                    <apex:commandButton value="Add Zip Codes" rendered="{!AND(hasEditAccess,canUserManageTerritory,hasTerritoryFromObject,NOT(addingZipCode))}" action="{!addNewZipCodes}" rerender="ManageZipBlock"/>
+                    <apex:outputText rendered="{!NOT(canUserManageTerritory)}" style="color:RED; font-weight: bold;" value="This is a protected territory and must be maintained at the Zone level or higher." />
+                </apex:outputPanel>
+                
+                <apex:outputText rendered="{!isReassigning}" style="color:BLUE; font-weight: bold;" value="Number of Zip Assignments selected from District {!selectedDistrictOrgUnit.Name} Territory {!selectedTerritoryFromObject.Name}: {!nbrRecordsSelected}" />
+                
+                <apex:pageBlockSectionItem rendered="{!AND(isReassigning,hasZoneOptions)}" >
+                    <apex:outputLabel value="Zone"/>
+                    <apex:outputPanel >
+                        <apex:selectList value="{!selectedReassignZoneId}" title="Available Zones" size="1">
+                            <apex:selectOptions value="{!zoneOptions}"/>
+                            <apex:actionSupport event="onchange" action="{!setReassignZone}" rerender="ManageZipBlock" status="updatingReassignStructureStatus" />  
+                        </apex:selectList>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!isReassigning}">
+                    <apex:outputLabel value="District" />
+                    <apex:outputPanel >
+                        <apex:selectList rendered="{!hasDistrictReassignOptions}" value="{!selectedReassignDistrictId}" title="Available Districts" size="1">
+                            <apex:selectOptions value="{!districtReassignOptions}"/>
+                            <apex:actionSupport event="onchange" action="{!setReassignDistrict}" rerender="ManageZipBlock" status="updatingReassignStructureStatus" />  
+                        </apex:selectList>
+                        <apex:outputText rendered="{!NOT(hasDistrictReassignOptions)}" value="{!districtName}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!isReassigning}" >
+                    <apex:outputLabel value="Zip Segment" />
+                    <apex:outputText value="{!selectedSegmentName}" />
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!isReassigning}">
+                    <apex:outputLabel value="Assign To " />
+                    <apex:outputPanel >
+                        <apex:selectList rendered="{!hasTerritoryTos}" value="{!selectedTerritoryToId}" title="Assign To" size="1">
+                            <apex:selectOptions value="{!territoryToPicklist}"/>
+                            <apex:actionSupport event="onchange" action="{!selectTerritoryTo}" rerender="ManageZipBlock" status="updatingReassignStructureStatus" />
+                        </apex:selectList>
+                        
+                        <apex:outputText rendered="{!NOT(hasTerritoryTos)}" style="color:BLUE; font-weight: bold;" value="No Territories Were Found!" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                
+                <apex:outputPanel rendered="{!isReassigning}">
+                    <!-- 
+<apex:commandButton rendered="{!reassignCriteriaEntered}" value="Save Changes" action="{!performAssignToSelection}" rerender="ManageZipBlock"/>
+-->
+                    <apex:commandButton rendered="{!reassignCriteriaEntered}" value="Save Changes" onclick="buttonsEnabled(false);return jsPerformAssignTo();" rerender="ManageZipBlock"/>
+                    <apex:commandButton value="Cancel" action="{!cancelReassign}" rerender="ManageZipBlock"/>
+                    <apex:actionStatus startText="Updating Organization Structure..." id="updatingReassignStructureStatus"/>
+                </apex:outputPanel>
+                
+                
+                <apex:outputPanel rendered="{!showNoneSelected}" >
+                    <apex:outputText style="color:RED; font-weight: bold;" value="No Zip Assignments are selected!" />
+                </apex:outputPanel>
+                
+                <!-- 
+<apex:outputPanel rendered="{!NOT(askForNewUser)}">
+Number of Zip Assignments found: <b><font color="blue">{!nbrZipAsgnsFound}</font></b>.
+</apex:outputPanel>
+-->
+                <apex:pageBlockTable rendered="{!zipAsgnsFound}" id="zipAsgnTable" value="{!IF(askForNewUser,selectedZipWraps,displayZipWraps)}" var="rec" cellPadding="2" border="1">
+                    <apex:facet name="header">
+                        <apex:panelGrid rendered="{!NOT(askForNewUser)}" columns="3" width="100%" border="0" cellPadding="0" cellSpacing="0" rules="none">
+                            <apex:outputText >
+                                {!(zipAssignmentSet.pageNumber * zipAssignmentSet.pageSize)+1-zipAssignmentSet.pageSize}-{!IF((zipAssignmentSet.pageNumber * zipAssignmentSet.pageSize)>zipAssignmentSet.resultSize, zipAssignmentSet.resultSize,(zipAssignmentSet.pageNumber * zipAssignmentSet.pageSize))} of {!zipAssignmentSet.resultSize}
+                            </apex:outputText>
+                            <apex:outputPanel >
+                                <CENTER>
+                                    <apex:commandButton disabled="{!NOT(zipAssignmentSet.hasPrevious)}" value="|<" action="{!firstPage}" rerender="zipAsgnTable" title="First Page"/>  
+                                    <apex:commandButton disabled="{!NOT(zipAssignmentSet.hasPrevious)}" value="<" action="{!previous}" rerender="zipAsgnTable" title="Previous Page"/>
+                                    &nbsp;
+                                    <apex:commandButton disabled="{!NOT(zipAssignmentSet.hasNext)}" value=">" action="{!next}" rerender="zipAsgnTable" title="Next Page"/>      
+                                    <apex:commandButton disabled="{!NOT(zipAssignmentSet.hasNext)}" value=">|" action="{!lastPage}" rerender="zipAsgnTable" title="Last Page"/>
+                                </CENTER>
+                            </apex:outputPanel>
+                            <apex:outputText style="text-align:right;">
+                                <CENTER>
+                                    Page {!zipAssignmentSet.pageNumber} of {!numOfPages}
+                                </CENTER>
+                            </apex:outputText>      
+                        </apex:panelGrid>   
+                    </apex:facet>
+                    <apex:facet name="footer">
+                        <apex:panelGrid rendered="{!NOT(askForNewUser)}" columns="3" width="100%" border="0" cellPadding="0" cellSpacing="0" rules="none">
+                            <apex:outputText >
+                                {!(zipAssignmentSet.pageNumber * zipAssignmentSet.pageSize)+1-zipAssignmentSet.pageSize}-{!IF((zipAssignmentSet.pageNumber * zipAssignmentSet.pageSize)>zipAssignmentSet.resultSize, zipAssignmentSet.resultSize,(zipAssignmentSet.pageNumber * zipAssignmentSet.pageSize))} of {!zipAssignmentSet.resultSize}
+                            </apex:outputText>
+                            <apex:outputPanel >
+                                <CENTER>
+                                    <apex:commandButton disabled="{!NOT(zipAssignmentSet.hasPrevious)}" value="|<" action="{!firstPage}" rerender="zipAsgnTable" title="First Page"/>  
+                                    <apex:commandButton disabled="{!NOT(zipAssignmentSet.hasPrevious)}" value="<" action="{!previous}" rerender="zipAsgnTable" title="Previous Page"/>
+                                    &nbsp;
+                                    <apex:commandButton disabled="{!NOT(zipAssignmentSet.hasNext)}" value=">" action="{!next}" rerender="zipAsgnTable" title="Next Page"/>      
+                                    <apex:commandButton disabled="{!NOT(zipAssignmentSet.hasNext)}" value=">|" action="{!lastPage}" rerender="zipAsgnTable" title="Last Page"/>
+                                </CENTER>
+                            </apex:outputPanel>
+                            <apex:outputText style="text-align:right;">
+                                <CENTER>
+                                    Page {!zipAssignmentSet.pageNumber} of {!numOfPages}
+                                </CENTER>
+                            </apex:outputText>      
+                        </apex:panelGrid>   
+                    </apex:facet>
+                    
+                    
+                    <apex:column rendered="{!NOT(askForNewUser)}">
+                        <apex:facet name="header">
+                            <apex:outputPanel >
+                                <apex:inputCheckbox value="{!selectAll}" id="zipSelectAll" title="Select All" onclick="selectAll('zipSelectCheckbox',this)" >
+                                    <!-- 
+<apex:actionSupport event="onclick" action="{!selectAllZips}" rerender="zipAsgnListSection" />
+-->
+                                </apex:inputCheckbox>
+                                Selected
+                            </apex:outputPanel>
+                        </apex:facet>
+                        <apex:inputCheckbox value="{!rec.selected}" id="zipSelectCheckbox" >
+                            <!--  <apex:actionSupport event="onclick" action="{!markSelected}" rerender="ReferralTable" status="changeSelectionStatus" />  -->
+                        </apex:inputCheckbox>
+                    </apex:column>
+                    
+                    <apex:column value="{!rec.za.Name}" />
+                    
+                    <apex:column headerValue="City,State">
+                        <apex:outputText value="{!rec.cityState}"/>
+                    </apex:column>
+                    
+                    <apex:column value="{!rec.za.User__c}" />
+                    
+                    <apex:column value="{!rec.za.Rep_Name__c}" />
+                                        
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+            
+            <!--     ***************   Adding new zip codes     ******************* -->
+            <apex:pageBlockSection columns="1" rendered="{!AND(searchPerformed,addingZipCode)}" id="AddNewZipSection" collapsible="false" title="Adding Zip Codes for District {!selectedDistrictOrgUnit.Name} Territory {!selectedTerritoryFromObject.Name}">
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel style="white-space:nowrap;" value="How Many Zip Codes Are You Adding?" />
+                    <apex:outputPanel >
+                        <apex:inputText value="{!nbrToAdd}" size="4">
+                            <apex:actionSupport event="onchange" action="{!changeAddZipQuantity}" rerender="AddNewZipSection" status="changeNbrToAddStatus"/>
+                        </apex:inputText>
+                        <apex:actionStatus startText="Changing Number of Zip Codes..." id="changeNbrToAddStatus"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockTable id="newZipTable" value="{!zipsToAdd}" var="rec" cellPadding="2" border="1">
+                    <apex:column headerValue="{!IF(nbrToAdd==1,'Zip Code','Zip Code List')}">
+                        <apex:inputField value="{!rec.Name}"/>
+                    </apex:column>
+                </apex:pageBlockTable>
+                
+                <apex:outputPanel rendered="{!addingZipCode}">
+                    <apex:commandButton value="Save Zip Code(s)" action="{!saveNewZipRequest}" rerender="ManageZipBlock"/>
+                    &nbsp;
+                    <apex:commandButton value="Cancel Zip Code(s)" action="{!cancelNewZipRequest}" immediate="true" rerender="ManageZipBlock"/>
+                </apex:outputPanel>
+                
+            </apex:pageBlockSection>
+        </apex:pageBlock>     
+        
+        <apex:pageBlock rendered="{!AND(isValidUser,managingDistrict)}" id="ManageDistrictBlock">
+            <apex:pageMessages />
+            <apex:pageBlockSection columns="2">
+                <apex:outputField value="{!selectedDistrictOrgUnit.Name}" />
+                <apex:outputField value="{!selectedDistrictOrgUnit.Org_Type__c}" />
+                <!--APR0151864: SMB Channel Evolution BAU Start-->
+                <apex:outputField value="{!selectedDistrictOrgUnit.Queue_Name__c}" />
+                <!--APR0151864: SMB Channel Evolution BAU End-->
+                <apex:outputField value="{!selectedDistrictOrgUnit.Org_Unit_Name__c}" />
+                <apex:outputField value="{!selectedDistrictOrgUnit.Sales_Org__c}" />
+                
+                <apex:inputField value="{!selectedDistrictOrgUnit.Manager__c}" />
+                <apex:inputField value="{!selectedDistrictOrgUnit.Assistant__c}" />
+                
+                <apex:inputField value="{!selectedDistrictOrgUnit.MgrName__c}" />
+                <apex:inputField value="{!selectedDistrictOrgUnit.AssistantName__c}" />
+                
+                <apex:inputField value="{!selectedDistrictOrgUnit.MgrEmail__c}" />
+                <apex:inputField value="{!selectedDistrictOrgUnit.AssistantEmail__c}" />
+                
+                <apex:inputField value="{!selectedDistrictOrgUnit.OverrideMgr__c}" />
+                <apex:inputField value="{!selectedDistrictOrgUnit.OverrideAssistant__c}" />
+                
+                <apex:inputField value="{!selectedDistrictOrgUnit.UserRoleName__c}" />
+                <apex:pageBlockSectionItem />
+                
+                <apex:inputField value="{!selectedDistrictOrgUnit.OverrideUserRoleName__c}" />
+                <apex:pageBlockSectionItem />
+                
+                <apex:outputText rendered="{!NOT(hasDistrictUserLinks)}" value="No users found by User Role" />
+                <apex:pageBlockTable rendered="{!hasDistrictUserLinks}" id="userLinkTable" value="{!selectedDistrictOrgUnit.Org_Unit_User_Links__r}" var="rec" cellPadding="2" border="1">
+                    <apex:column value="{!rec.User__r.Name}" />
+                    <apex:column value="{!rec.User__r.Job_Name__c}" />
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+            <apex:actionFunction action="{!saveManageDistrictChanges}" name="jsSaveManageDistrictChanges" />
+            <apex:actionFunction action="{!cancelManageDistrict}" name="jsCancelManageDistrict" />
+            
+            <apex:outputPanel >
+                <apex:commandButton value="Save" onclick="buttonsEnabled(false);return jsSaveManageDistrictChanges();" immediate="false" />
+                <apex:commandButton value="Cancel" onclick="buttonsEnabled(false);return jsCancelManageDistrict();" immediate="true" />
+            </apex:outputPanel>
+        </apex:pageBlock>
+        <!-- 
+<apex:pageBlock rendered="{!AND(isValidUser,deletingRequests)}" id="CancelRequestBlock">
+
+<apex:pageMessages />
+
+<apex:outputPanel >
+<apex:commandButton value="Delete Selected Requests" action="{!deleteSelectedRequests}" />
+<apex:commandButton value="Do Not Delete Requests - Return to Manage Zip Assignments" action="{!cancelDeleteSelectedRequests}" />
+</apex:outputPanel>
+-->
+        <!--  ****************  Pending Requests to send to NSS  ********************* -->
+        <!-- 
+<apex:pageBlockSection columns="1" >
+<apex:pageBlockTable id="cancelRequestTable" value="{!openRequests}" var="rec" cellPadding="2" border="1">
+
+<apex:column >
+<apex:facet name="header">
+<apex:outputPanel >
+<apex:inputCheckbox value="{!selectAllCancel}" >
+<apex:actionSupport event="onclick" action="{!toggleSelectAllCancel}" rerender="cancelRequestTable" />
+</apex:inputCheckbox>
+Selected
+</apex:outputPanel>
+</apex:facet>
+<apex:inputCheckbox value="{!rec.selected}" />
+</apex:column>
+
+<apex:column value="{!rec.req.Zip_Assignment__r.Name}" />
+
+<apex:column headerValue="Request Name" >
+<apex:outputText value="{!rec.requestName}" />
+</apex:column>
+
+
+<apex:column value="{!rec.req.Zip_Assignment__r.Segment_Name__c}" />
+
+</apex:pageBlockTable>
+
+<apex:outputText rendered="{!maxRequestsReturned}" style="color:BLUE; font-weight: bold;" value="More Requests Exist. Only the latest 200 were returned." />
+
+</apex:pageBlockSection>
+
+</apex:pageBlock>
+-->
+    </apex:form>
+    
+</apex:page>

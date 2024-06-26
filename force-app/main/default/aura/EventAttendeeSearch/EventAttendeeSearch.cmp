@@ -1,0 +1,39 @@
+<aura:component description="EventAttendeeSearch" controller="EventAttendeeSearchAuraService"
+                implements="force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId,lightning:isUrlAddressable">
+    <aura:attribute name="eventId" type="String"/>
+
+    <aura:attribute name="activeUsers" type="Contact[]" default="[]"/>
+    <aura:attribute name="selectedUsers" type="Contact[]" default="[]"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="searchParams" type="String"/>
+    <aura:attribute name="isSearching" type="Boolean"/>
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="attendeeSelected" event="c:EventAttendeeAddEvent" action="{!c.selectUser}"/>
+
+    <!-- Added Attendees -->
+    <lightning:button variant="brand" class="add-user-button" label="Add Invitees" onclick="{!c.attachUsersToEvent}"
+                      disabled="{!v.selectedUsers.length == 0}"/>
+    <div class="scroll-container">
+        <c:EventAttendeeList selectedUsers="{!v.selectedUsers}"/>
+    </div>
+
+    <!-- Search Box -->
+    <div class="slds-form-element container">
+        <div class="search-container">
+            <lightning:input type="search" class="search-box" placeholder="Search for Attendees"
+                             value="{!v.searchParams}"/>
+            <lightning:button variant="neutral" class="search-button" label="Search" onclick="{!c.searchForUser}"/>
+        </div>
+    </div>
+
+    <!-- Search List -->
+    <aura:if isTrue="{!!v.isSearching}">
+        <div class="scroll-container">
+            <c:EventAttendeeSearchResults activeUsers="{!v.activeUsers}"/>
+        </div>
+        <aura:set attribute="else">
+            <lightning:spinner variant="brand" size="large"/>
+        </aura:set>
+    </aura:if>
+</aura:component>

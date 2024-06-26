@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TAA_Workable__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>AND(Do_Not_Call__c = false
+, Email_Opt_Out__c = false
+, NOT(ISPICKVAL(Type,&apos;HROi Client&apos;))
+, Out_of_Business__c = false
+, OR(RecordType.Name =&quot;Core Account Record Type&quot;,RecordType.Name = &quot;MMS Account Record Type&quot;)
+, NOT(BEGINS(AccountNumber,&apos;741&apos;))
+, NOT(AdvancedPartnerClients__c)
+, NumberOfEmployees &lt;50
+, Employees__c &lt; 50
+, OR(ISBLANK(OpportunityTypes__c),NOT(CONTAINS(OpportunityTypes__c, &quot;TAA&quot;)))
+, OR(ISBLANK(SalesParent__c),SalesParent__r.NumberOfEmployees &lt; 50)
+, NOT(CONTAINS(SensitivityList__c, &quot;TAA&quot;))
+)</description>
+    <formula>IF(ISPICKVAL(Restricted_Industry__c,&apos;CRB&apos;),false,
+AND(Do_Not_Call__c = false
+	, Email_Opt_Out__c = false
+	, NOT(ISPICKVAL(Type,&apos;HROi Client&apos;))
+	, NOT(ISPICKVAL(Permanent_Hold_Out_Description__c,&apos;Ecommerce&apos;))
+	, Out_of_Business__c = false
+        , Benetrac_Indicator__c = false
+	, OR(RecordType.Name =&quot;Core Account Record Type&quot;,RecordType.Name = &quot;MMS Account Record Type&quot;)
+	, OR(NOT(ISBLANK(AccountNumber)),NOT(BEGINS(AccountNumber,&apos;741&apos;)))
+	, AdvancedPartnerClients__c = false
+	, NumberOfEmployees &lt;50
+	, Employees__c &lt; 50
+	, OR(ISBLANK(OpportunityTypes__c),NOT(CONTAINS(OpportunityTypes__c, &quot;TAA&quot;)))
+	, OR(ISBLANK(SalesParent__c),SalesParent__r.NumberOfEmployees &lt; 50)
+	, OR(ISBLANK(SensitivityList__c),NOT(CONTAINS(SensitivityList__c, &quot;TAA&quot;)))
+	, OR(ISBLANK(CadenceType__c ),NOT(CONTAINS( CadenceType__c ,&quot;TAA&quot;)))
+	, ISPICKVAL(Time_and_Attendance__c,&quot;&quot;) 
+	, First_Run_Date__c  &lt;=  ADDMONTHS( TODAY() ,-2)
+	,(ISBLANK( Insurance_Broker_Name_Ref__c) || Insurance_Broker_Name_Ref__r.Sensitivity_BenAdmin__c = false)
+        ,NOT(CONTAINS(Owner.Job_Name__c , &quot;District Sales Manager&quot;))
+        ,NOT(Owner.Sales_Division__c = &quot;Strategic Accounts&quot;)
+	)
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>TAA Workable</label>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

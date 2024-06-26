@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Required_when_Lost_due_to</fullName>
+    <active>true</active>
+    <description>When Resolution Type is &quot;Lost&quot;, Additional Information is required</description>
+    <errorConditionFormula>ISPICKVAL( Case_Lookup__r.Origin , &apos;Reactive&apos;) &amp;&amp; 
+ISPICKVAL( Resolution_type__c, &apos;Lost&apos;) &amp;&amp; 
+ISPICKVAL(Additional_Information__c, &apos;&apos; )</errorConditionFormula>
+    <errorDisplayField>Additional_Information__c</errorDisplayField>
+    <errorMessage>Additional Information is required when Resolution Type is Lost.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sales_Rep_Cannot_Change_DSA_Rec_Type</fullName>
+    <active>true</active>
+    <description>Sales Reps (based on Job Name) are prevented from updating the Oppty record type from a DSA related Record type to a non DSA related Record type</description>
+    <errorConditionFormula>AND(
+ISCHANGED(RecordTypeId),
+OR($User.Job_Name__c = &quot;Sales Representative&quot;,
+$Profile.Name = &apos;MMS SDR&apos;),
+OR(PRIORVALUE(RecordTypeId) = &quot;012500000000ntY&quot;,
+PRIORVALUE(RecordTypeId) =&quot;012300000000hQf&quot;,
+PRIORVALUE(RecordTypeId) =&quot;012500000000ltD&quot;,
+PRIORVALUE(RecordTypeId) =&quot;0120g000000EAgt&quot;
+))</errorConditionFormula>
+    <errorMessage>Sales Representatives cannot change DSA related Record type to a non DSA related Record type</errorMessage>
+</ValidationRule>

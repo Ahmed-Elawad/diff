@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRE_TaskType_when_ACchangeReceived</fullName>
+    <active>true</active>
+    <description>The Task Type field must be populated in order to check the AC Change Received field for Handbook support records.</description>
+    <errorConditionFormula>AND( 
+(AC_Change_Received__c), 
+( ISPICKVAL(Task_Type__c, &apos;&apos;) ),
+( RecordType.Name = &quot;Handbook Support HRE/CHB Ref Object&quot; ), 
+($UserRole.Name &lt;&gt; &quot;HRE Handbook Supervisor team 1&quot;), 
+($UserRole.Name &lt;&gt; &quot;HRE Handbook Supervisor team 2&quot;), 
+($UserRole.Name &lt;&gt; &quot;HRE Handbook Supervisor team 3&quot;), 
+($UserRole.Name &lt;&gt; &quot;HRE HR Services Supervisor team 1&quot;), 
+($UserRole.Name &lt;&gt; &quot;HRE HR Services Supervisor team 2&quot;), 
+($UserRole.Name &lt;&gt; &quot;System Administrator&quot;) 
+)</errorConditionFormula>
+    <errorDisplayField>Task_Type__c</errorDisplayField>
+    <errorMessage>Before AC Change Received can be checked, you need to enter a value for Task Type.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All_Un_Related_Events</fullName>
+    <columns>TASK.SUBJECT</columns>
+    <columns>TASK.WHO_NAME</columns>
+    <columns>TASK.WHAT_NAME</columns>
+    <columns>TASK.DUE_DATE</columns>
+    <columns>TASK.TYPE</columns>
+    <columns>Lead_Source_WAR_Call_Type__c</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <columns>TASK.LAST_UPDATE</columns>
+    <columns>EVENT.LOCATION</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>ACTIVITY.TASK</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>TASK.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Completed</value>
+    </filters>
+    <filters>
+        <field>TASK.WHAT_NAME</field>
+        <operation>lessThan</operation>
+    </filters>
+    <label>All Un-Related Events</label>
+    <sharedTo>
+        <group>CORE</group>
+        <group>HRSSales</group>
+        <group>MMS</group>
+    </sharedTo>
+</ListView>

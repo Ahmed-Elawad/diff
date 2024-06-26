@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_LocalNameOther_populated</fullName>
+    <active>true</active>
+    <description>Prevent users from populating the Local Name (if other/tax collector) field, depending on specific Tax Agency, Tax Type, and Local Name values.</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;Reference PAC Record Type&quot; ), 
+( (LEN(Local_Name_if_other_tax_collector__c) &gt; 0) ), 
+( (NOT(ISPICKVAL(Local_Name__c, &apos;Other&apos;)))  || (NOT(ISPICKVAL(Tax_Type__c, &apos;Local/Other&apos;))) ), 
+( (NOT(ISPICKVAL(Local_Name__c, &apos;RITA&apos;))) &amp;&amp; (NOT(ISPICKVAL(Local_Name__c, &apos;CCA - Central Collection Agency&apos;))) &amp;&amp; (NOT(ISPICKVAL(Local_Name__c, &apos;EIT - Berkheimer&apos;))) ),
+( (NOT(ISPICKVAL(Tax_Agency__c, &apos;IRS - INTERNAL REVENUE SERVICE&apos;))) ),
+($Profile.Name &lt;&gt;&quot;System Administrator&quot;) 
+)</errorConditionFormula>
+    <errorDisplayField>Local_Name_if_other_tax_collector__c</errorDisplayField>
+    <errorMessage>Do not enter a value in the Local Name (if other/tax collector) field, when selecting a Local Name value besides &quot;Other&quot;.</errorMessage>
+</ValidationRule>

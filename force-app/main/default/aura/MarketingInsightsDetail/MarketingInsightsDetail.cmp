@@ -1,0 +1,41 @@
+<aura:component implements="lightning:isUrlAddressable,force:appHostable,flexipage:availableForAllPageTypes" access="global">
+    
+    <aura:attribute type="String" name="recordId" />   
+    <aura:attribute type="String" name="objectType" />
+    <aura:attribute name="openInsights" type="Object[]" />
+    <lightning:workspaceAPI aura:id="workspace" />   
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/> 
+  
+        <lightning:layout class="slds-page-header slds-page-header--object-home">
+		
+        <lightning:layoutItem >
+            	<img src="{!$Resource.BannerIcons + '/LightningIcons/Insights.png'}"/>
+        </lightning:layoutItem>
+
+        <lightning:layoutItem padding="horizontal-small">
+            <div class="page-section page-header">
+                <h1 class="slds-text-heading--label">90-DAY LOOKBACK</h1>
+                <h2 class="slds-text-heading--medium">Customer Intent Signals</h2>
+            </div>
+        </lightning:layoutItem>
+
+    	</lightning:layout>
+        <div class="slds-p-vertical--medium">
+            <div class="grid-wrapper">   
+                <c:BannerMarketingInsights recordId="{!v.recordId}" objectType="{!v.objectType}"  openInsights="{!v.openInsights}"/>
+            </div>  
+        </div> 
+        
+        <div class="slds-grid slds-gutters">
+            <div class="grid-wrapper">
+                <div class="slds-col slds-size_3-of-4">  
+                    <c:InsightsRelatedList recordId="{!v.recordId}"/>
+                </div>  
+                <div class="slds-col slds-size_1-of-4">
+                    <c:CampaignRelatedList recordId="{!v.recordId}"/>
+                </div>
+            </div>
+        </div>
+ 
+</aura:component>

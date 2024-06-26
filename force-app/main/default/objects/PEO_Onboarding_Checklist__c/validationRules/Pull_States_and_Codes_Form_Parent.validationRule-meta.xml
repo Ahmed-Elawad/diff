@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pull_States_and_Codes_Form_Parent</fullName>
+    <active>true</active>
+    <description>Ensures that the Pull Clientspace States and Codes field can only be checked from a parent PEO Underwriting Checklist.</description>
+    <errorConditionFormula>AND(Pull_Clientspace_States_and_Codes__c , 
+    NOT(ISBLANK( Parent_PEO_Checklist__c ) ) )</errorConditionFormula>
+    <errorMessage>To pull States and Codes, please check this field on the Parent PEO Underwriting checklist.</errorMessage>
+</ValidationRule>

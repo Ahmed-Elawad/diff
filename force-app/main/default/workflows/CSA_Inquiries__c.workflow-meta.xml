@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Email_CSA_Case_Requestor_1</fullName>
+        <description>Email CSA Case Requestor 1</description>
+        <protected>false</protected>
+        <recipients>
+            <type>creator</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>CSA_Templates/CSA_Requestor_Response_1</template>
+    </alerts>
+    <alerts>
+        <fullName>Email_CSA_Case_Requestor_2</fullName>
+        <description>Email CSA Case Requestor 2</description>
+        <protected>false</protected>
+        <recipients>
+            <type>creator</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>CSA_Templates/CSA_Requestor_Response_2</template>
+    </alerts>
+    <alerts>
+        <fullName>Email_CSA_Case_Requestor_3</fullName>
+        <description>Email CSA Case Requestor 3</description>
+        <protected>false</protected>
+        <recipients>
+            <type>creator</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>CSA_Templates/CSA_Requestor_Response_3</template>
+    </alerts>
+    <alerts>
+        <fullName>Email_CSA_Case_Requestor_4</fullName>
+        <description>Email CSA Case Requestor 4</description>
+        <protected>false</protected>
+        <recipients>
+            <type>creator</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>CSA_Templates/CSA_Requestor_Response_4</template>
+    </alerts>
+    <alerts>
+        <fullName>Email_CSA_Case_Requestor_5</fullName>
+        <description>Email CSA Case Requestor 5</description>
+        <protected>false</protected>
+        <recipients>
+            <type>creator</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>CSA_Templates/CSA_Requestor_Response_5</template>
+    </alerts>
+    <alerts>
+        <fullName>Email_CSA_Case_Requestor_6</fullName>
+        <description>Email CSA Case Requestor 6</description>
+        <protected>false</protected>
+        <recipients>
+            <type>creator</type>
+        </recipients>
+        <recipients>
+            <field>Referring_Rep_DSA_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>Referring_Rep_DSM_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>Sales_Rep_DSA_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>Sales_Rep_DSM_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>Referring_Rep__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <recipients>
+            <field>Sales_Rep__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>CSA_Templates/CSA_Requestor_Response_6</template>
+    </alerts>
+    <alerts>
+        <fullName>Email_CSA_Case_Requestor_6_with_missing_Email_fields</fullName>
+        <description>Email CSA Case Requestor 6 with missing Email fields</description>
+        <protected>false</protected>
+        <recipients>
+            <type>creator</type>
+        </recipients>
+        <recipients>
+            <field>Referring_Rep_DSA_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>Referring_Rep_DSM_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>Sales_Rep_DSA_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>Sales_Rep_DSM_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>Referring_Rep__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <recipients>
+            <field>Sales_Rep__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>HRS_4S_E_mail_Templates/CSA_Requestor_Response_6_missing_Rep_info</template>
+    </alerts>
+    <alerts>
+        <fullName>Email_CSA_Case_Requestor_7</fullName>
+        <description>Email CSA Case Requestor 7</description>
+        <protected>false</protected>
+        <recipients>
+            <type>creator</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>CSA_Templates/CSA_Requestor_Response_7</template>
+    </alerts>
+    <rules>
+        <fullName>CSA Auto Notify Requestor 1</fullName>
+        <actions>
+            <name>Email_CSA_Case_Requestor_1</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>CSA_Inquiries__c.Request_Type__c</field>
+            <operation>equals</operation>
+            <value>REFERRAL DISCREPANCY,STAT DISCREPANCY,BONUS DISCREPANCY,SOAR,PAYROLL UNIT DISCREPANCY</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>CSA_Inquiries__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Sales CSA Request Record Type</value>
+        </criteriaItems>
+        <description>When Request Type = PAYROLL UNIT, REFERRAL, BONUS, STAT DISCREPANCIES, SOAR</description>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>CSA Auto Notify Requestor 2</fullName>
+        <actions>
+            <name>Email_CSA_Case_Requestor_2</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>CSA_Inquiries__c.Request_Type__c</field>
+            <operation>equals</operation>
+            <value>ADV/SMBZ DISCREPANCY</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>CSA_Inquiries__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Sales CSA Request Record Type</value>
+        </criteriaItems>
+        <description>When Request Type = ADV/SMBZ DISCREPANCY</description>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>CSA Auto Notify Requestor 3</fullName>
+        <actions>
+            <name>Email_CSA_Case_Requestor_3</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>CSA_Inquiries__c.Request_Type__c</field>
+            <operation>equals</operation>
+            <value>REPORT,TIER 1 PREVIOUS MONTH SALE,RIGHT FAX,AICPA,EXP ALLOWANCE,WEB,TREO/IPHONE/WIRELESS CARD,GERMANY,SALARY,BANKS,COMMISSION SYSTEM ACCESS,RECOGNITION,COMP PLANS,DISABILITY,GENERAL QUESTION,NATIONAL ACCOUNTS</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>CSA_Inquiries__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Sales CSA Request Record Type</value>
+        </criteriaItems>
+        <description>When Request Type = AICPA,BANKS,GENERAL QUESTION,COMMISSION SYSTEM ACCESS,COMP PLANS,DISABILITY,EXP ALLOWANCE,GERMANY,NATIONAL ACCOUNTS,RECOGNITION, REPORT,RIGHT FAX,SALARY,TREO/IPHONE/WIRELESS CARD,WEB,TIER 1 PREVIOUS MONTH SALE</description>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>CSA Auto Notify Requestor 4</fullName>
+        <actions>
+            <name>Email_CSA_Case_Requestor_4</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>CSA_Inquiries__c.Request_Type__c</field>
+            <operation>equals</operation>
+            <value>COMM/AUDIT - ** For Monthly Audit Use Only **</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>CSA_Inquiries__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Sales CSA Request Record Type</value>
+        </criteriaItems>
+        <description>When Request Type = COMM/AUDIT - ** For Monthly Audit Use Only **</description>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>CSA Auto Notify Requestor 5</fullName>
+        <actions>
+            <name>Email_CSA_Case_Requestor_5</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>CSA_Inquiries__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Sales CSA Request Record Type</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>CSA_Inquiries__c.Request_Type__c</field>
+            <operation>equals</operation>
+            <value>SPLIT OPPORTUNITY</value>
+        </criteriaItems>
+        <description>When Request Type = SPLIT OPPORTUNITY</description>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>CSA Auto Notify Requestor 7</fullName>
+        <actions>
+            <name>Email_CSA_Case_Requestor_7</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>CSA_Inquiries__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Sales CSA Request Record Type</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>CSA_Inquiries__c.Request_Type__c</field>
+            <operation>equals</operation>
+            <value>DISTRICT CREDIT REASSIGNMENT</value>
+        </criteriaItems>
+        <description>When Request Type = District Credit Reassignment</description>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>CSA Bonus Effected Notification</fullName>
+        <active>true</active>
+        <criteriaItems>
+            <field>CSA_Inquiries__c.Bonus_Effected__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>CSA_Inquiries__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Sales CSA Request Record Type</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>CSA_Inquiries__c.Request_Type__c</field>
+            <operation>equals</operation>
+            <value>REFERRAL DISCREPANCY</value>
+        </criteriaItems>
+        <description>Emails SLongchamps when a Referral Discrepancy is submitted with Bonus Effected checked</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

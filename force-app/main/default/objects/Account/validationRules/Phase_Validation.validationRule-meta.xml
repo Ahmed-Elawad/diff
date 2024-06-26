@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Phase_Validation</fullName>
+    <active>false</active>
+    <description>Phase should be updated if profiled is true</description>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),Profiled__c = True, $RecordType.Name=&apos;MMS Account Record Type&apos;,OR(ISPICKVAL(Phase__c,&apos;0&apos;),ISBLANK(Text(Phase__c))))</errorConditionFormula>
+    <errorMessage>‘You must have a value in the Phase field before you can Qualify this Prospect-Client’</errorMessage>
+</ValidationRule>

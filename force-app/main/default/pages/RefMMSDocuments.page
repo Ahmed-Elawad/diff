@@ -1,0 +1,115 @@
+<!-- A vf page to display MMS Payroll onboarding documents in a tabbed format
+//   2 TABS     Required & Received Documents / Available Documents 
+
+   History
+   -------
+   05/15/2013 Cindy Freeman   Created 
+
+ -->  
+ 
+<apex:page standardController="Reference_MMS_Payroll__c" extensions="RefMMSPayrollDocController" tabStyle="Reference_MMS_Payroll__c">
+
+<apex:form >
+<!-- Define Tab panel .css styles -->
+    <style>
+        .activeTab {background-color: lightblue; color:white; background-image:none; font-size:12px}
+        .inactiveTab { background-color: lightgrey; color:black; background-image:none; font-size:10px}
+    </style>
+  
+   <apex:outputPanel id="jspanel" >
+    <script language="JavaScript1.2" src="/js/functions.js"></script>
+    <script>
+        function onControllerReturn() {
+            var x='{!congaOK}';
+            if (x=='Y')     
+                window.open("{!congaEmail}");
+        }
+        function delayIt() {
+            var t = setTimeout(onControllerReturn(),1000);
+        }
+        function testing() {
+            var x='{!congaOK}';
+            if (x=='Y')
+                alert('here at testing, congaOK says Y'); 
+            else
+                alert('else here at testing, congaOK says N');          
+        }
+    </script>
+  </apex:outputPanel>
+
+  <apex:actionFunction name="doSaveDocs" action="{!saveDocs}" rerender="mmsDocBlock,jspanel"/>
+  
+  <apex:pageBlock id="mmsDocBlock"> 
+    <apex:pageBlockButtons location="both">
+        <apex:outputText id="pgMsg" value="{!pgMsg}" rendered="{!showMsg}"/> 
+        <apex:commandButton value="Resolve All" immediate="true" action="{!resolveAll}" rerender="mmsDocBlock"/>  
+        <apex:commandButton value="Save" immediate="true" action="{!saveDocs}" rerender="mmsDocBlock"/>
+        <apex:commandButton value="Cancel" immediate="true" action="{!cancelDocs}" rerender="mmsDocBlock"/>
+<!--  <apex:commandButton value="Doc Discrepancy Email" immediate="true" action="{!sendEmail}" oncomplete="delayIt()" rerender="mmsDocBlock,jspanel"/> -->
+    </apex:pageBlockButtons>
+  
+   <apex:tabPanel switchType="documents" selectedTab="allDocs" 
+                  id="AllDocsPanel" tabClass="activeTab" 
+                  inactiveTabClass="inactiveTab">   
+      
+      <apex:tab label="Recvd/Reqd Documents" name="RecvReqd Documents" id="refDocs"> 
+         <apex:pageBlockSection columns="1" >
+            <apex:pageBlockTable id="refDocTable" value="{!refDocList}" var="refWrap"> 
+                <apex:column headerValue="Action" >
+                    <apex:commandLink rendered="{!Not(refWrap.doc.Mandatory__c)}" value="Delete" action="{!markSelected}" rerender="mmsDocBlock">
+                        <apex:param name="selectedId" value="{!refWrap.docId}" assignTo="{!selectedId}"/>
+                    </apex:commandLink>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Document</apex:facet>
+                    <apex:outputField value="{!refWrap.doc.Document__c}"/>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Check In Date</apex:facet>
+                    <apex:inputField value="{!refWrap.doc.Check_In_Date__c}">
+                        <apex:actionSupport event="onchange" action="{!saveDate}" rerender="mmsDocBlock" />
+                    </apex:inputField>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Received State</apex:facet>
+                    <apex:inputField value="{!refWrap.doc.Received_State__c}">
+                        <apex:actionSupport event="onchange" action="{!saveState}" rerender="mmsDocBlock" />
+                    </apex:inputField>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Discrepancy Comments</apex:facet>
+                    <apex:inputField value="{!refWrap.doc.Comments__c}">
+                        <apex:actionSupport event="onchange" action="{!saveComment}" rerender="mmsDocBlock" />
+                    </apex:inputField>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Discrepancy Resolution Date</apex:facet>
+                    <apex:inputField value="{!refWrap.doc.Discrepancy_Resolution_Date__c}">
+                        <apex:actionSupport event="onchange" action="{!saveResolutionDate}" rerender="mmsDocBlock" />
+                    </apex:inputField>
+                </apex:column>              
+            </apex:pageBlockTable>                       
+          </apex:pageBlockSection>        
+      </apex:tab> 
+
+      <apex:tab label="Available Documents" name="Document Names" id="docNames">
+         <apex:pageBlockSection columns="1" >
+            <apex:pageBlockTable id="newDocTable" value="{!newDocList}" var="docWrap">
+                <apex:column headerValue="Action" >
+                    <apex:commandLink value="Add" action="{!markSelected}" rerender="mmsDocBlock">
+                        <apex:param name="selectedId" value="{!docWrap.docId}" assignTo="{!selectedId}"/>
+                    </apex:commandLink>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Document</apex:facet>
+                    <apex:outputField value="{!docWrap.doc.Document__c}"/>
+                </apex:column>
+            </apex:pageBlockTable>             
+          </apex:pageBlockSection>        
+      </apex:tab> 
+    </apex:tabPanel>
+    
+  </apex:pageBlock>
+
+</apex:form>
+</apex:page>

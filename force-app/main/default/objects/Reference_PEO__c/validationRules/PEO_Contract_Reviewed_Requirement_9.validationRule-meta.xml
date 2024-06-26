@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PEO_Contract_Reviewed_Requirement_9</fullName>
+    <active>true</active>
+    <description>Contract Received must have a value before Contract Reviewed is checked.</description>
+    <errorConditionFormula>AND
+(  
+Contract_Reviewed__c = TRUE,
+ISBLANK(Contract_Received__c)
+)</errorConditionFormula>
+    <errorDisplayField>Contract_Received__c</errorDisplayField>
+    <errorMessage>Contract Received must have a value before Contract Reviewed is checked.</errorMessage>
+</ValidationRule>

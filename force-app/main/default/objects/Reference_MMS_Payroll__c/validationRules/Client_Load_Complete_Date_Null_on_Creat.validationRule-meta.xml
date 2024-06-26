@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Client_Load_Complete_Date_Null_on_Creat</fullName>
+    <active>true</active>
+    <description>Prevent the Client Load Completion Date field from being populated when the Case is created.</description>
+    <errorConditionFormula>ISNEW() &amp;&amp;  NOT( ISNULL( Client_Load_Completion_Date__c ) )</errorConditionFormula>
+    <errorDisplayField>Client_Load_Completion_Date__c</errorDisplayField>
+    <errorMessage>The Client Load Completion Date field can not be populated when a Case is being created. This field should only be updated after the Client Load has been completed.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,271 @@
+<!-- 
+
+  History
+  -------
+  12/08/2022 Dan Carmen       Modified to use SF Duplicate Management
+
+ -->
+<apex:page docType="html-5.0" controller="FlexOnlineAccountRequestController" lightningStyleSheets="true" showHeader="false">
+    
+    <style type="text/css">
+        <!--CPA Dashboard CSS-->
+        .banner {
+        background-color: #0469b1;
+        height : 50px;
+        padding: 10px 0px 0px 15px;
+        }        
+        .buttonColor 
+        {
+        color:white !important;
+        background:#1b4585 !important;
+        -webkit-transition-duration: 0.4s; /* Safari */
+        transition-duration: 0.4s;
+        }
+        .buttonColor:hover
+        {
+        color:white !important;
+        background:#0369b1 !important;
+        
+        }
+        .bannerheader1 {font-size:22px;
+        text-align: left;
+        padding: 0px 0px 10px 24px;
+        color: #404040;
+        font-family: Helvetica, sans-serif;
+        margin: 12px 0 0px;
+        font-weight: normal;
+        font-style: normal;
+        border-bottom-style: solid; 
+        border-bottom-width: 1px;
+        border-bottom-color: #d8d8d8;
+        }
+        .header1 {font-size:22px;
+        text-align: left;
+        color: #404040;
+        font-family: Helvetica, sans-serif;
+        margin: 12px 0 6px;
+        font-weight: normal;
+        font-style: normal;
+        }
+        
+        .label3 {font-size:14px;
+        text-align: left;
+        color: #9b9b9b;
+        font-family: Helvetica, sans-serif;
+        }
+        
+        .header2 {font-size:16px;
+        text-align: left;
+        color: #404040;
+        font-family: Helvetica, sans-serif;
+        font-weight: bold;
+        font-style: normal;
+        }
+        
+        .label1 {
+        text-align: left;
+        color: #9b9b9b;
+        font-family: Helvetica, sans-serif;
+        font-size: 12px;
+        }
+        .required{
+        color: #ff0000;
+        font-size: 14px;
+        }
+        .text1 {
+        text-align: left;
+        color: #404040;
+        font-family: Helvetica, sans-serif;
+        font-weight: normal;
+        font-style: normal;
+        font-size: 16px;
+        }
+        @media (min-device-width: 641px)
+        {
+        .label2 {font-size:16px;
+        text-align: left;
+        color: #9b9b9b;
+        font-family: Helvetica, sans-serif;
+        font-style: normal
+        }
+        .header2 {font-size:22px;
+        text-align: left;
+        color: #404040;
+        font-family: Helvetica, sans-serif;
+        font-weight: bold;
+        font-style: normal;
+        }   
+        .formWidth{width : 50%;}
+        }
+        @media (max-device-width: 640px)
+        {
+        .label2 {font-size:12px;
+        text-align: left;
+        color: #9b9b9b;
+        font-family: Helvetica, sans-serif;
+        font-style: normal;
+        }  
+        .header2 {font-size:16px;
+        text-align: left;
+        color: #404040;
+        font-family: Helvetica, sans-serif;
+        font-weight: bold;
+        font-style: normal;
+        }
+        .formWidth{width : 100%;}
+        }
+        
+        <!--End CPA Dashboard CSS-->
+        
+        <!--NON CPA Dashboard-->
+        
+        <!--'Flex Online Account Request'-->
+        h1 {font-size:30px;
+        text-align: center;
+        color: #01396e;
+        font-family: FGMedCon, arial;
+        margin: 12px 0 6px;
+        font-weight: normal;
+        font-style: normal;
+        line-height: 34px;
+        }
+        
+        <!--'All fields with a red asterisk are required'-->
+        h2 {font-size:20px;
+        text-align: center;
+        color: #01396e;
+        font-family: FGMedCon, arial;
+        margin: 12px 0 6px;
+        font-weight: normal;
+        font-style: normal;
+        line-height: 24px;
+        white-space: nowrap;
+        }
+        .desc1 {font-family: Verdana, Helvetica, sans-serif;
+        color: red; <!--#555;-->
+        font-size: 14px;
+        line-height: 20px;
+        margin: 0 0 20px;
+        font-weight: normal;
+        }
+        
+        <!-- Next two styles are used to change required red bar to asterisk -->
+        
+        .bPageBlock .requiredInput .requiredBlock {
+        background-color: #F6FBF6;
+        }
+        
+		.requiredInput .requiredBlock::before { 
+        display: block;
+        content: "*";
+        font-size: 1.5em;
+		font-weight: bold;
+        color: #c00;
+        margin-left: -4px;
+        margin-top: -2px;
+        }
+        
+        <!--Loading Spinner-->
+        .spinnerBg{
+        border-style: solid;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: auto;
+        margin-bottom: auto;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        background-color: #000;
+        opacity: 0.2;
+        z-index: 999999;
+        }
+        .spinner{
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        background-image: url("/img/loading32.gif");
+        background-size: 16px;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-position: center;
+        z-index: 9999999;
+        opacity: 1;
+        }
+        <!--End of Non CPA Dashboard-->
+    </style>
+    
+    <script type="text/javascript">
+    function validateSubmit() {
+        validateAndCheckDupes();
+    }
+    
+    function confirmSubmitandCreateShell(readyToSubmit) {
+        console.log('readyToSubmit: '+readyToSubmit);
+        if(readyToSubmit=='true') {
+            createShellAccount();
+        }
+    }
+    </script>
+    
+    <apex:actionStatus id="spinnerStatus">
+        <apex:facet name="start">
+            <div class="spinnerBg" />
+            <div class="spinner" />
+        </apex:facet>
+    </apex:actionStatus>    
+    
+    <!--Header-->
+    <div class="banner slds-grid slds-grid_vertical-align-center" style="{!IF(NOT(internal = true), 'display:block', 'display:none')}">        
+        <apex:image url="{!$Resource.paychex_logo}"  alt="Paychex Inc"/>
+    </div>
+    <center><h1>Flex Online Account Request</h1></center>
+    <apex:outputText styleClass="desc1" value="All fields are required." />
+    
+    <!-- ********** Apex Page Start ********** -->
+    <apex:outputPanel id="theOutputPanel">
+        <apex:pageMessages id="userMessages"/>
+        <apex:form id="theForm" >
+            <center>
+                <apex:pageBlock > <!-- rendered="{!NOT(isUsernameUnique) && NOT(uniqueCheckError)}" -->
+            	    <a href="https://myapps.paychex.com/landing_remote/login.do?TYPE=33554433&REALMOID=06-fd3ba6b8-7a2f-1013-ba03-83af2ce30cb3&GUID=&SMAUTHREASON=0&METHOD=GET&SMAGENTNAME=-SM-DcRXd3RBkM%2bIAuUkJhio4qMQPGHXSlwC5NHvGd60RCkP6guTqWS4qLnJtYdJd9Ge&TARGET=-SM-https%3a%2f%2fmyapps%2epaychex%2ecom%2f">Already have an account? Log in here.</a>
+                </apex:pageBlock>
+            </center>
+            <apex:pageBlock id="pageBlockFoundRecord" rendered="{!foundRAccount}">
+            	<apex:pageBlockSection id="dupeRAccountDetails" columns="1" showHeader="true" rendered="{!foundRAccount}">
+                    <apex:outputField value="{!dupRAccount.Name}" label="Accounting Firm Name: "/>
+					<apex:outputField value="{!dupRAccount.Zip_Postal_Code__c}" label="Accounting Firm Zip Code: "/>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection id="dupeRContactDetails" columns="1" showHeader="true" rendered="{!foundRContact}">
+					<apex:outputField value="{!dupRContact.First_Name__c}" label="Accountant First Name: "/>
+					<apex:outputField value="{!dupRContact.Last_Name__c}" label="Accountant Last Name: "/>
+					<apex:outputField value="{!dupRContact.Email__c}" label="Accountant Email: "/>
+            	</apex:pageBlockSection>
+                <apex:pageBlockButtons id="foundRecordButtons" location="bottom">
+                    <apex:commandButton value="Assign to Existing Accounting Firm" action="{!useRAccount}" oncomplete="createShellAccount()" status="spinnerStatus" reRender="theOutputPanel"/>
+                    <apex:commandButton value="Assign to Existing Accounting Firm and Accountant" action="{!useRAcctRCon}" oncomplete="createShellAccount()" status="spinnerStatus" reRender="theOutputPanel" rendered="{!foundRContact}"/>
+                    <apex:commandButton value="Create a new Accounting Firm and Accountant Record" action="{!submit}" status="spinnerStatus" reRender="theOutputPanel" oncomplete="createShellAccount()"/>
+                </apex:pageBlockButtons>
+            </apex:pageBlock>
+            <apex:pageBlock id="pageBlockMain" rendered="{!showForm}">
+                <apex:pageBlockSection id="formPB" columns="1" showHeader="true">
+                    <apex:input type="text" id="firmNameInput" value="{!firmName}" label="Accounting Firm Name" required="true"/>
+                    <apex:input type="text" id="zipCodeInput" value="{!zipCode}" label="Accounting Firm Zip Code" required="true"/>
+                    <!--<apex:input type="text" id="contactNameInput" value="{!contactName}" label="Client Name" required="true"/>-->
+                    <apex:input type="text" id="contactFirstNameInput" value="{!contactFirstName}" label="New Flex User First Name" required="true"/>
+                    <apex:input type="text" id="contactLastNameInput" value="{!contactLastName}" label="New Flex User Last Name" required="true"/>
+                    <apex:input type="date" id="dobInput" value="{!dob}" label="Date of Birth" title="Date of Birth is required to provide a means to securely reset your Account if needed. The Date of Birth field must be entered as MM/DD/YYYY." required="true"/>
+                    <apex:input type="text" id="phoneInput" value="{!phone}" label="Phone" required="true"/>
+                    <apex:input type="text" id="emailInput" value="{!email}" label="Email" title="{!$ObjectType.Flex_Online_Account_Request__c.Fields.Email__c.inlineHelpText}" required="true"/>
+                    <apex:input type="text" id="newUsernameInput" value="{!newUsername}" label="New Flex Username" title="{!$ObjectType.Flex_Online_Account_Request__c.Fields.Flex_Username__c.inlineHelpText}" required="true"/>
+                </apex:pageBlockSection>
+                <apex:pageBlockButtons id="buttonsOnForm" location="bottom">
+                    <apex:commandButton value="Submit" onclick="validateSubmit();" status="spinnerStatus" reRender="theOutputPanel" />
+                    <apex:commandButton value="Create a Case" action="{!createACase}" status="spinnerStatus" reRender="theOutputPanel" rendered="{!IF(NOT(uniqueCheckError) && NOT(isUsernameUnique), 'true', 'false')}"/>
+                    <!--<apex:commandButton value="Cancel" action="{!cancel}"/>-->
+                </apex:pageBlockButtons>
+                <apex:actionFunction name="validateAndCheckDupes" action="{!validateAndCheckDupes}" status="spinnerStatus" reRender="theOutputPanel" oncomplete="confirmSubmitandCreateShell('{!readyToSubmit}');"/>
+                <apex:actionFunction name="createShellAccount" action="{!createShellAccount}" status="spinnerStatus" reRender="theOutputPanel"/>
+            </apex:pageBlock>
+        </apex:form>
+    </apex:outputPanel>
+</apex:page>

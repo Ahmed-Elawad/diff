@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Bank_Centric_Rep_change_only_for_Citizen</fullName>
+    <active>true</active>
+    <description>DSA and ZA can only edit the Bank Centric Rep field for Citizens or Charter One branches</description>
+    <errorConditionFormula>AND(NOT(CONTAINS(Name, &apos;Citizen&apos;)),NOT(CONTAINS(Name, &apos;Charter&apos;)),  
+ISCHANGED( Bank_Centric_Rep__c ), 
+OR($User.ProfileId =&apos;00e50000000qsy4&apos;,$User.ProfileId =&apos;00e70000000ragc&apos;))</errorConditionFormula>
+    <errorMessage>You can only edit the Bank Centric Rep field for Citizens or Charter One bank.  Please contact a Bank Channel Manager to update this record.</errorMessage>
+</ValidationRule>

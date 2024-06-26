@@ -1,0 +1,77 @@
+<aura:component controller="PEOUW_AddDocsController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	<aura:attribute name='runUser' type='User' />
+    <aura:attribute name="isReadOnly" type="Boolean" default="true" />
+    <aura:attribute name="isReadOnlyString" type="String" default="" />
+    <aura:attribute name="medReadOnly" type="Boolean" default="false" />
+    <aura:attribute name="wcReadOnly" type="Boolean" default="false" />
+    <aura:attribute name="parentRecordId" type="Id"/>
+    <aura:attribute name="OnbPEOChecklist" type="Object"/>
+    <aura:attribute name='parentAcc' type='Account' />
+    <aura:attribute name='isCommUser' type='boolean' />
+    <aura:attribute name="polPeriodChanged" type="Boolean" default="false"/>
+    <aura:attribute name="allAccountsList" type="Account[]" />
+    <aura:attribute name="tabKind" type="String"/>
+    <aura:attribute name='selectedTabId' type='String' default="401kQuestionnaire"/> 
+    <aura:attribute name='possibleTabs' type='String[]' 
+                    default="['Census', 'Medical Invoice','Benefit Summary','Health Insurance Renewal','Claims Report','Payroll Report','Misc Files - Medical','Additional Misc Documents','Workers Comp Classes and Wages document']"/>
+    <aura:attribute name="communityUser" type="User"/>
+    <aura:attribute name="currTabId" type="String"/>
+    <aura:attribute name='makeReadOnly' type='Boolean' />
+    <aura:attribute name='makeAddtnlReadOnly' type='Boolean' default="true" />
+    
+    <aura:attribute name='activeLabel' type='String' />
+    <!-- auto save function-->
+    <aura:attribute name='saveAction' type='Object' />
+    
+    <!--for numbering-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name='init' type='Boolean' default="false" />
+    <aura:attribute name='CensusLabel' type='String' default="Census" />
+    <aura:attribute name='MedicalInvoiceLabel' type='String' default="Medical Invoice" />
+    <aura:attribute name='BenefitSummariesLabel' type='String' default="Benefit Summary" />
+    <aura:attribute name='HealthInsuranceRenewalLabel' type='String' default="Health Insurance Renewal" />
+    <aura:attribute name='ClaimsReportLabel' type='String' default="Claims Report" />
+    <aura:attribute name='PayrollReportLabel' type='String' default="Payroll Report" />
+    <aura:attribute name='MiscFilesMedicalLabel' type='String' default="Misc Files - Medical" />
+    <aura:attribute name='AdditionalMiscDocumentsLabel' type='String' default="Additional Misc Documents" />
+    <aura:attribute name='WorkersCompClassesWagesLabel' type='String' default="Workers Comp Classes and Wages document" />
+    <!-- JDA reference to save functionality --> <!--SFDC-14128-JD-->
+    <aura:attribute name='saveFunc' type='Object' />
+    
+    
+    <div>
+        <div>
+            <h1 class="tabHeader_title" >Add Documents</h1>
+            <h3 class='tabHeader_supportText'>Upload required files (*) and other information to help us provide an accurate quote.</h3>
+        </div>
+    </div>
+    <!-- SPA US2 Traditional submission choice -->
+    <aura:if isTrue="{!!v.init}">
+        <lightning:spinner alternativeText="Loading" size="medium" />
+        <aura:set attribute="else">
+            <c:UploadFiles tabOption="vertical" 
+                           checklist="{!v.OnbPEOChecklist}"  
+                           currentAccount="{!v.parentAcc}"  
+                           parentAccountToCurrentAccount='{!v.parentAcc.Id}'
+                           disableFilesUpload="{!v.isReadOnly}" readOnlyString='{!v.isReadOnlyString}'
+                           disableMedicalUpload ="{!v.medReadOnly}"  disableWCUpload ="{!v.wcReadOnly}"
+                           isCommunityUser="{!v.user.Profile.Name == 'Customer Community Login User Clone'}"
+                           misMedReqd = "{!v.OnbPEOChecklist.Miscellaneous_Docs_Required__c}" misWCReqd = "{!v.OnbPEOChecklist.Miscellaneous_Docs_Required_WC__c}"
+                           censusRequired = "{!v.OnbPEOChecklist.CensusRequired__c}" 
+                           claimsReportRequired = "{!v.OnbPEOChecklist.Claims_Report_required__c}"  
+                           wcRtNPrcReqd = "{!v.OnbPEOChecklist.WC_RatesAndPricing_Required__c}" 
+                           hlthInsRenwReqd = "{!v.OnbPEOChecklist.Health_Insurance_Renewal_required__c}" hlthInsSummReqd = "{!v.OnbPEOChecklist.Health_Insurance_Summary_required__c}" 
+                           hlthInvReqd = "{!v.OnbPEOChecklist.Health_Invoice_required__c}" lossRunsReqd = "{!v.OnbPEOChecklist.Loss_Runs_required__c}" 
+                           wcDecReqd="false" wcReqd = "{!v.OnbPEOChecklist.WCClassesWages_Required__c}" 
+                           payrollRegReqd = "{!v.OnbPEOChecklist.Payroll_Register_Required__c}"
+                           medInvReq = "{!v.OnbPEOChecklist.Medical_Invoice_Required__c}"
+                           benefitSummReq = "{!v.OnbPEOChecklist.Benefit_Summaries_Required__c}"
+                           payrollReportReq = "{!v.OnbPEOChecklist.Payroll_Report_Required__c}"
+                           AddntlDocsRqd="{!v.OnbPEOChecklist.Additional_Misc_Documents_Required__c}" 
+                           ActiveParentTab='{!v.selectedTabId}'
+                           parentTabs="{!v.possibleTabs}"
+                           saveFunc='{!v.saveFunc}'
+                           isCommUser="{!v.isCommUser}"/> 
+        </aura:set>
+    </aura:if>
+</aura:component>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRIS_Integrated_Rec_cant_change_Acct_Num</fullName>
+    <active>true</active>
+    <description>Prevent any profile beside System Admin from change the Prospect-Client Number of a Current Client Integration Rule</description>
+    <errorConditionFormula>AND(
+NOT(BEGINS($Profile.Name,&apos;System Administrator&apos;)),
+RecordType.Id &lt;&gt; &apos;012500000000rIR&apos;,
+ISCHANGED(AccountNumber),
+NOT(ISNULL(PRIORVALUE(Bis_ID__c)))  
+)</errorConditionFormula>
+    <errorDisplayField>AccountNumber</errorDisplayField>
+    <errorMessage>**** This is an HRIS Integrated Record , the Prospect-Client Number can not be Modified</errorMessage>
+</ValidationRule>

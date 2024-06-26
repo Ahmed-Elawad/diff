@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>V_Excess_Wage_Scrub_SF_Only</fullName>
+    <booleanFilter>(1 AND 2 AND 3 AND 4 AND 5 and 6 and 7 and 8) or (1 and 4 and 5 and 6 and 7 and 8 and 9 and 10)</booleanFilter>
+    <columns>NAME</columns>
+    <columns>Tax_Agency__c</columns>
+    <columns>Tax_Type__c</columns>
+    <columns>Date_1st_Notice_Received_in_PAC__c</columns>
+    <columns>OWNER.ALIAS</columns>
+    <columns>Ticket_Type__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Status__c</field>
+        <operation>equals</operation>
+        <value>Pending PAC Review - New Notice Received</value>
+    </filters>
+    <filters>
+        <field>Tax_Agency__c</field>
+        <operation>contains</operation>
+        <value>NV -,WA -,ID -,KY -,MI -,NY -,OK -,WY -</value>
+    </filters>
+    <filters>
+        <field>Tax_Type__c</field>
+        <operation>equals</operation>
+        <value>SUI-Unemployment</value>
+    </filters>
+    <filters>
+        <field>OWNER.ALIAS</field>
+        <operation>notEqual</operation>
+        <value>PAC MPSC D/E News,PAC Group E</value>
+    </filters>
+    <filters>
+        <field>OWNER.ALIAS</field>
+        <operation>contains</operation>
+        <value>pac group,pac mpsc</value>
+    </filters>
+    <filters>
+        <field>OWNER.ALIAS</field>
+        <operation>notContain</operation>
+        <value>additional,missing,no match</value>
+    </filters>
+    <filters>
+        <field>PAC_Use_Only_Data_Scrub_Notes__c</field>
+        <operation>notContain</operation>
+        <value>notEW</value>
+    </filters>
+    <filters>
+        <field>Paychex_PEO_Issue__c</field>
+        <operation>notEqual</operation>
+        <value>Yes</value>
+    </filters>
+    <filters>
+        <field>Tax_Agency__c</field>
+        <operation>contains</operation>
+        <value>WA -</value>
+    </filters>
+    <filters>
+        <field>Tax_Type__c</field>
+        <operation>equals</operation>
+        <value>State-Withholding</value>
+    </filters>
+    <label>V-Excess Wage Scrub (SF Only)</label>
+    <sharedTo>
+        <roleAndSubordinatesInternal>Operating_Risk_Manager</roleAndSubordinatesInternal>
+    </sharedTo>
+</ListView>

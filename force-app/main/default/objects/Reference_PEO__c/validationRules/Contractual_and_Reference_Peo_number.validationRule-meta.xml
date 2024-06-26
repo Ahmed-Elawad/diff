@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Contractual_and_Reference_Peo_number</fullName>
+    <active>true</active>
+    <errorConditionFormula>(isnull(PEO_Tracking_DB_ID__c)  || 
+isblank(Contractual_Specialist__c))  &amp;&amp;
+Contract_Reviewed__c &amp;&amp;
+NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))</errorConditionFormula>
+    <errorMessage>Please fill in the &apos;PEO Tracking DB ID&apos; &amp; &apos;Contractual Specialist&apos; before moving forward.</errorMessage>
+</ValidationRule>

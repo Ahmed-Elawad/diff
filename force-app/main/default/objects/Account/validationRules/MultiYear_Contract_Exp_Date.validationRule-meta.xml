@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MultiYear_Contract_Exp_Date</fullName>
+    <active>true</active>
+    <description>When the client is indicated as having a multi-year service agreement, the user must select an expiration date.</description>
+    <errorConditionFormula>AND(  
+Multi_Year_Contract__c  = true,
+ISNULL(  Multi_Year_Contract_Expiration_Date__c ))</errorConditionFormula>
+    <errorMessage>***The Multi-Year Contract Expiration Date is required when indicating that the client has a Multi-Year Contract.</errorMessage>
+</ValidationRule>

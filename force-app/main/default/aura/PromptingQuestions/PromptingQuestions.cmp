@@ -1,0 +1,170 @@
+<aura:component controller="CommunitiesAccountUpdateController" implements="force:appHostable" access="global">
+    
+    <!--<aura:attribute name="readOnlyPermission" type="Boolean" default="true" />-->
+    
+    <aura:attribute name="parentRecId" type="Id"/>
+    <aura:attribute name="PEOChecklist" type="Object"/>
+    <aura:attribute name="answersChanged" type="Boolean" default="false"/>
+    <aura:attribute name='radioGroupOptions' type='List' default="[{'label': 'Yes', 'value':'Yes'},{'label':'No','value':'No'}]" />
+    <aura:attribute name='medQuestionnaire' type='Map' />
+    <aura:attribute name='readOnly' type='boolean' />
+    
+    <aura:html tag="style">
+        .cuf-content {
+        padding: 0 0rem !important;
+        }
+        .slds-p-around--medium {
+        padding: 0rem !important;
+        }       
+        .slds-modal__content{
+        overflow-y:hidden !important;
+        height:unset !important;
+        max-height:unset !important;
+        }
+    </aura:html>
+    <div class="modal-header slds-modal__header slds-size_1-of-1">
+        <h4 class="title slds-text-heading--medium">Prompting Questions</h4>
+    </div>
+    
+    <div style="height: 10px"></div>
+    
+    <div class="slds-grid slds-gutters slds-wrap">
+        <div class="slds-col slds-size_3-of-3" style="padding-bottom:25px">
+            <span>
+                <lightning:radioGroup name='Current_Medical_Coverage_Provided__c'
+                                      label="Does your company currently have health insurance in place?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange="{!c.clearFields}" 
+                                      value="{!v.PEOChecklist.Current_Medical_Coverage_Provided__c}"
+                                      disabled='{!v.readOnly}' />   
+            </span>
+        </div>
+        <aura:if isTrue="{!v.PEOChecklist.Current_Medical_Coverage_Provided__c == 'Yes'}">
+            <div class="slds-col slds-size_3-of-3" style="padding-bottom:25px">
+                <span>
+                    <lightning:input disabled='{!v.readOnly}' label="Carrier" value="{!v.PEOChecklist.medical_coverage_carrier__c}" onchange="{!c.handleChange}" required="true" placeholder="Click or tap here to enter text."></lightning:input>
+                </span>
+            </div>
+            <div class="slds-col slds-size_3-of-6" style="padding-bottom:25px">
+                <span>
+                    <lightning:input disabled='{!v.readOnly}' aura:id="renDate" label="Renewal Date" value="{!v.PEOChecklist.medical_coverage_renewal_date__c}" onchange="{!c.handleRenDateChanged}" required="true" type="date" format="MM/dd/yyyy"></lightning:input>
+                </span>
+            </div>
+            <div class="slds-col slds-size_3-of-6" style="padding-bottom:25px">
+                <span>
+                    <lightning:radioGroup name='Cobra_Participants__c'
+                                          label="Cobra Participants"
+                                          options="{!v.radioGroupOptions}"
+                                          onchange="{!c.handleChange}" 
+                                          value="{!v.PEOChecklist.Cobra_Participants__c}"
+                                          required="true"
+                                          disabled='{!v.readOnly}' />
+                </span>
+            </div>
+            
+            <div class="slds-col slds-size_3-of-6" style="padding-bottom:25px">
+                <span>
+                    <lightning:input disabled='{!v.readOnly}'  label="Number of Enrolled Employees" value="{!v.PEOChecklist.Number_of_Enrolled_Employees__c}" onchange="{!c.handleChange}" required="true" type="number" placeholder="Click or tap here to enter text."></lightning:input>
+                </span>
+            </div>
+            <div class="slds-col slds-size_3-of-6" style="padding-bottom:25px">
+                <span>
+                    <lightning:radioGroup name='Has_Self_or_Level_Funded_Plan__c'
+                                          label="Do you have self funded or level funded plan?"
+                                          options="{!v.radioGroupOptions}"
+                                          onchange="{!c.handleChange}" 
+                                          value="{!v.PEOChecklist.Has_Self_or_Level_Funded_Plan__c}"
+                                          required="true"
+                                          disabled='{!v.readOnly}' />
+                </span>
+            </div>
+        </aura:if>
+    </div>
+    
+    <div class="modal-footer slds-modal__footer slds-size_1-of-1">
+        <lightning:button disabled='{!v.readOnly}'  class="slds-m-top_small" variant="brand" type="button" name="saveProgress" label="Save Progress" onclick="{!c.saveProgress}" ></lightning:button>
+    </div>
+</aura:component>
+
+<!--
+<aura:component controller="CommunitiesAccountUpdateController" implements="force:appHostable" access="global">
+    
+    <aura:method name="saveRecordEditForm" action="{!c.saveForm}" access="PUBLIC" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/> 
+    <aura:attribute name="childStep" type="Integer"/>
+    <aura:attribute name="parentRecId" type="Id"/>
+    <aura:attribute name="PEOChecklist" type="Object"/>
+    <aura:attribute name="answersChanged" type="Boolean" default="false"/>
+    <aura:attribute name="readOnlyPermission" type="Boolean" default="true" />
+    
+    <aura:html tag="style">
+        .cuf-content {
+        padding: 0 0rem !important;
+        }
+        .slds-p-around-medium {
+        padding: 0rem !important;
+        }       
+        .slds-modal__content{
+        overflow-y:hidden !important;
+        height:unset !important;
+        max-height:unset !important;
+        }
+    </aura:html>
+    <div class="modal-header slds-modal__header slds-size_1-of-1">
+        <h4 class="title slds-text-heading-medium">Prompting Questions</h4>
+    </div>
+    
+    <lightning:recordEditForm aura:id="promptingQuestionsForm" recordId="{!v.PEOChecklist.Id}" objectApiName="PEO_Onboarding_Checklist__c" onsuccess="{!c.submitSuccessful}">
+        
+        <div style="height: 10px"></div>
+        
+        <div class="slds-grid slds-gutters slds-wrap">
+            <div class="slds-col slds-size_3-of-3" style="padding-bottom:25px">
+                <span>
+                    <label for="Q1">Current Medical Coverage Provided</label>
+                    <lightning:inputField fieldName="Current_Medical_Coverage_Provided__c" id="Q1" variant="label-hidden" value="{!v.PEOChecklist.Current_Medical_Coverage_Provided__c}" onchange="{!c.clearFields}"></lightning:inputField>
+                </span>
+            </div>
+            <aura:if isTrue="{!v.PEOChecklist.Current_Medical_Coverage_Provided__c == 'Yes'}">
+                <div class="slds-col slds-size_3-of-3" style="padding-bottom:25px">
+                    <span>
+                        <label for="Q2">Carrier</label>
+                        <lightning:inputField fieldName="medical_coverage_carrier__c" id="Q2" variant="label-hidden" value="{!v.PEOChecklist.medical_coverage_carrier__c}" onclick="{!c.handleChange}"></lightning:inputField>
+                    </span>
+                </div>
+                <div class="slds-col slds-size_3-of-6" style="padding-bottom:25px">
+                    <span>
+                        <label for="Q3">Renewal Date</label>
+                        <lightning:inputField fieldName="medical_coverage_renewal_date__c" id="Q3" variant="label-hidden" value="{!v.PEOChecklist.medical_coverage_renewal_date__c}" onclick="{!c.handleChange}"></lightning:inputField>
+                    </span>
+                </div>
+                <div class="slds-col slds-size_3-of-6" style="padding-bottom:25px">
+                    <span>
+                        <label for="Q4">Cobra Participants</label>
+                        <lightning:inputField fieldName="Cobra_Participants__c" Id="Q4" variant="label-hidden" value="{!v.PEOChecklist.Cobra_Participants__c}" onchange="{!c.handleChange}"></lightning:inputField>
+                    </span>
+                </div>
+            </aura:if>
+            <div class="slds-col slds-size_3-of-6" style="padding-bottom:25px">
+                <span>
+                    <label for="Q5">Number of Enrolled Employees</label>
+                    <lightning:inputField fieldName="Number_of_Enrolled_Employees__c" Id="Q5" variant="label-hidden" value="{!v.PEOChecklist.Number_of_Enrolled_Employees__c}" onclick="{!c.handleChange}"></lightning:inputField>
+                </span>
+            </div>
+            <div class="slds-col slds-size_3-of-6" style="padding-bottom:25px">
+                <span>
+                    <label for="Q6">Do you have self funded or level funded plan?</label>
+                    <lightning:inputField fieldName="Has_Self_or_Level_Funded_Plan__c" Id="Q6" variant="label-hidden" value="{!v.PEOChecklist.Has_Self_or_Level_Funded_Plan__c}" onchange="{!c.handleChange}"></lightning:inputField>
+                </span>
+            </div>
+        </div>
+    </lightning:recordEditForm>
+    
+    <div class="modal-footer slds-modal__footer slds-size_1-of-1">
+        <lightning:button class="slds-m-top_small" variant="brand" type="button" name="Previous" label="Previous" onclick="{!c.stepBackward}" />
+        <lightning:button class="slds-m-top_small" variant="brand" type="button" name="saveAndNext" label="Next" onclick="{!c.saveAndNext}" ></lightning:button>
+        <lightning:button class="slds-m-top_small" variant="brand" type="button" name="saveProgress" label="Save Progress" onclick="{!c.saveProgress}" ></lightning:button>
+    </div>
+</aura:component>
+-->

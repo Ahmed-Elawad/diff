@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_Additional_Duplicate_To</fullName>
+    <active>true</active>
+    <description>Case #30556311 - If Main Issue is Additional Notice or Duplicate Notice, must fill in Additional/Duplicate To field</description>
+    <errorConditionFormula>AND( 
+$RecordType.Name = &quot;Reference PAC Record Type&quot; , 
+OR (ISPICKVAL(Main_Issue__c , &quot;Additional Notice&quot;), 
+ISPICKVAL(Main_Issue__c , &quot;Duplicate Notice&quot;)), 
+ISBLANK(Additional_Duplicate_To__c), 
+NOT(CONTAINS($Profile.Name,&quot;System Admin&quot;)) 
+)</errorConditionFormula>
+    <errorDisplayField>Additional_Duplicate_To__c</errorDisplayField>
+    <errorMessage>The “Additional/Duplicate To” field cannot be blank if “Main Issue” equals ‘Additional Notice’ or ‘ Duplicate Notice’</errorMessage>
+</ValidationRule>

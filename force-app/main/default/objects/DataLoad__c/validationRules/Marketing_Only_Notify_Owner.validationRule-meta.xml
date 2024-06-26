@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Marketing_Only_Notify_Owner</fullName>
+    <active>true</active>
+    <description>Only allow marketing and sys admins to use the notify owner checkbox</description>
+    <errorConditionFormula>AND(NotifyOwner__c == true
+    ,AND(NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)))
+    ,AND(NOT(BEGINS($Profile.Name,&apos;Paychex Marketing&apos;)))
+   )</errorConditionFormula>
+    <errorDisplayField>NotifyOwner__c</errorDisplayField>
+    <errorMessage>Only Marketing and System Admins can use the Notify Owner field.</errorMessage>
+</ValidationRule>

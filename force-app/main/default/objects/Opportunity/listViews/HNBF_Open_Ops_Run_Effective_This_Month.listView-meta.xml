@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HNBF_Open_Ops_Run_Effective_This_Month</fullName>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>OPPORTUNITY.CLOSE_DATE</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>OPPORTUNITY.PROBABILITY</columns>
+    <columns>Revenue__c</columns>
+    <columns>OPPORTUNITY.NEXT_STEP</columns>
+    <columns>OpportunityType__c</columns>
+    <columns>Referring_Employee__c</columns>
+    <columns>OPPORTUNITY.CREATED_DATE</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>OPPORTUNITY.PROBABILITY</field>
+        <operation>greaterThan</operation>
+        <value>5</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.PROBABILITY</field>
+        <operation>lessOrEqual</operation>
+        <value>80</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.CLOSE_DATE</field>
+        <operation>equals</operation>
+        <value>THIS_MONTH,NEXT_MONTH</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Opportunity.HNBF_Opportunity_Record_Type</value>
+    </filters>
+    <label>HNBF - Open Ops Run Effective This Month</label>
+    <sharedTo>
+        <roleAndSubordinates>HNBFDIRECTOR</roleAndSubordinates>
+    </sharedTo>
+</ListView>

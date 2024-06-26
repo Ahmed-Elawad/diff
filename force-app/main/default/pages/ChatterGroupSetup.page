@@ -1,0 +1,57 @@
+<!-- Used to modify the Chatter_Group_Setup__c object.
+
+   History
+   -------
+   04/10/2012 Dan Carmen   Created 
+   06/11/2012 Dan Carmen   Modified for owner fix.
+ -->
+<apex:page standardController="Chatter_Group_Setup__c" extensions="ChatterGroupSetupController" >
+   <apex:form >
+      <apex:pageMessages />
+      <apex:pageBlock >
+         <apex:pageBlockButtons >
+            <apex:commandButton action="{!save}" value="Save" />
+            <apex:commandButton action="{!cancel}" value="Cancel" />
+         </apex:pageBlockButtons>
+         <apex:pageBlockSection columns="2">
+            <apex:inputField value="{!cgs.Name}"/>
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!cgs.Type__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!cgs.IsActive__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!cgs.Org_Units__c}" />
+            <apex:inputField value="{!cgs.Child_Groups__c}" />
+            <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Selected Profiles" />
+               <apex:selectList value="{!selectedProfiles}" multiselect="true" title="Selected Profiles" size="8">
+                  <apex:selectOptions value="{!profileOptions}"/>
+                  <!-- <apex:actionSupport event="onchange" action="{!changeLicenseType}" />  -->
+               </apex:selectList>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Manager Profiles" />
+               <apex:selectList value="{!managerProfiles}" multiselect="true" title="Manager Profiles" size="8">
+                  <apex:selectOptions value="{!profileOptions}"/>
+               </apex:selectList>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Owner Profile" />
+               <apex:selectList value="{!cgs.Owner_Profile__c}" title="Owner Profile" size="1">
+                  <apex:selectOptions value="{!ownerProfileOptions}"/>
+               </apex:selectList>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!cgs.Owner_Role__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!cgs.Owner__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!cgs.Use_Owner__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!cgs.Do_Not_Include_Child_Profiles__c}" />
+            <apex:pageBlockSectionItem />
+            <apex:inputField value="{!cgs.ExecuteSetup__c}" />
+         </apex:pageBlockSection>
+      </apex:pageBlock>
+   </apex:form>
+</apex:page>

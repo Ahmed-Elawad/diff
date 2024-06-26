@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Check_New_User_Profile</fullName>
+    <active>false</active>
+    <description>Check if the record has the New User Profile. If so, do not let it be saved.</description>
+    <errorConditionFormula>((ISNEW() =FALSE) &amp;&amp; (Profile.Name = &apos;New User Profile&apos;))</errorConditionFormula>
+    <errorDisplayField>ProfileId</errorDisplayField>
+    <errorMessage>You must change the Profile from New User Profile before saving this record.</errorMessage>
+</ValidationRule>

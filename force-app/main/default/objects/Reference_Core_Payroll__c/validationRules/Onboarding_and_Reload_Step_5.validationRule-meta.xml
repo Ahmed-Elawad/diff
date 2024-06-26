@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Onboarding_and_Reload_Step_5</fullName>
+    <active>false</active>
+    <description>Fields are required for step 5</description>
+    <errorConditionFormula>AND(OR($RecordType.Name = &apos;MPSC Reload&apos;,$RecordType.Name = &apos;Reference MPSC Onboarding Core Payroll&apos;),NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+ISPICKVAL( Current_Step__c,&apos;(5 of 6) 1st run complete – Finalizing implementation&apos;),
+OR(
+ISBLANK( Date_IS_Assigned__c ),
+Client_Load_Received__c=false, 
+ISBLANK(Initial_Client_Contact_Date__c), 
+ISBLANK(Date_Client_Load_Complete__c), 
+ISBLANK(New_Load_Audit_Date__c),
+AND(
+NOT(ISPICKVAL(IS_Completed_open_Client_Audit_Items__c,&apos;NA&apos;)),
+NOT(ISPICKVAL(IS_Completed_open_Client_Audit_Items__c,&apos;Yes&apos;))),
+ISBLANK(Payroll_Run_Date__c)
+))</errorConditionFormula>
+    <errorMessage>For Current Step 5 of 6, all required fields for Steps 1-4 must be populated plus Payroll Run Date is required</errorMessage>
+</ValidationRule>

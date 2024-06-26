@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Current_Step_4_of_12_Number_of_Locations</fullName>
+    <active>true</active>
+    <errorConditionFormula>(ISPICKVAL( Current_Step__c ,&quot;(4 of 12) Due Diligence/Process Shadow&quot;)|| 
+(ISPICKVAL( Current_Step__c ,&quot;(5 of 12) Internal Brief of Findings/Concerns&quot;)|| 
+(ISPICKVAL( Current_Step__c ,&quot;(6 of 12) Proposals Presented to Prospect&quot;)|| 
+(ISPICKVAL( Current_Step__c ,&quot;(7 of 12) Building Conversion Timeline&quot;) || 
+(ISPICKVAL( Current_Step__c ,&quot;(8 of 12) Kick Off Meeting&quot;) || 
+(ISPICKVAL( Current_Step__c ,&quot;(9 of 12) Client Training&quot;) || 
+(ISPICKVAL( Current_Step__c ,&quot;(10 of 12) First Payroll Run&quot;) || 
+(ISPICKVAL( Current_Step__c ,&quot;(12 of 12) Transfer to Ongoing Support&quot;) || 
+(ISPICKVAL( Current_Step__c ,&quot;(11 of 12) Post Run Debrief&quot;) 
+
+))))))))) 
+
+&amp;&amp; 
+OR ( 
+
+
+
+ISBLANK( Number_of_Locations__c ))</errorConditionFormula>
+    <errorDisplayField>Number_of_Locations__c</errorDisplayField>
+    <errorMessage>Number of Locations is Required Field</errorMessage>
+</ValidationRule>

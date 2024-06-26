@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Time_Attendance_RMA_OS</fullName>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>Reassign_Category_1__c</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>CASES.LAST_UPDATE</columns>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>Branch_Client_ID__c</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>Follow_Up_Date__c</columns>
+    <columns>OWNER_NAME</columns>
+    <columns>Product__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Case_Age__c</field>
+        <operation>notEqual</operation>
+        <value>Case Closed</value>
+    </filters>
+    <filters>
+        <field>OWNER_NAME</field>
+        <operation>equals</operation>
+        <value>Time Attendance RMA</value>
+    </filters>
+    <filters>
+        <field>CASES.ORIGIN</field>
+        <operation>notEqual</operation>
+        <value>Collections</value>
+    </filters>
+    <filters>
+        <field>Branch_Client_ID__c</field>
+        <operation>notContain</operation>
+        <value>944-,940-,942-,943-</value>
+    </filters>
+    <label>Time Attendance RMA - OS</label>
+    <sharedTo>
+        <role>MPSC_NBCER_Supervisor</role>
+        <role>TimeAttendanceAccountSpecialist</role>
+        <role>TimeAttendanceBilling</role>
+        <role>TimeAttendanceCoordinator</role>
+        <role>TimeAttendanceInboundRep</role>
+        <role>TimeAttendanceLevel2SupportRep</role>
+        <role>TimeAttendanceManager</role>
+        <role>TimeAttendanceNCSRep</role>
+        <role>TimeAttendancePreSales</role>
+        <role>TimeAttendanceSupervisorAS</role>
+        <role>TimeAttendanceSupervisorInbound</role>
+        <role>TimeAttendanceSupervisorLevel2</role>
+        <role>TimeAttendanceSupervisorOperations</role>
+        <role>TimeAttendanceSupervisorOutbound</role>
+        <role>TimeAttendanceTraining</role>
+    </sharedTo>
+</ListView>

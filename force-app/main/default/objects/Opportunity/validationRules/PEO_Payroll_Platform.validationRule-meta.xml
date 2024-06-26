@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PEO_Payroll_Platform</fullName>
+    <active>true</active>
+    <description>Payroll Platform must be populated to move to Discovery 40% and beyond.</description>
+    <errorConditionFormula>AND( 
+ISPICKVAL(Payroll_Platform__c, &quot;&quot;),
+OR(
+(RecordType.Name = &apos;PEO Opportunity FSS Record Type&apos;),
+(RecordType.Name = &apos;PEO Opportunity Record Type&apos;),
+(RecordType.Name = &apos;Prism PEO Opportunity FSS Record Type&apos;),
+(RecordType.Name = &apos;Prism PEO Opportunity Record Type&apos;)
+  ),
+ NOT($Profile.Name = &apos;Sales Enablement&apos;),
+ NOT($Profile.Name = &apos;System Administrator&apos;),
+ NOT($Profile.Name = &apos;System Administrator API&apos;),
+ NOT($Profile.Name = &apos;System Administrator API-Alteryx&apos;),
+ NOT($Profile.Name = &apos;System Administrator API-ClientSpace&apos;),
+ NOT($Profile.Name = &apos;System Administrator API-PEO&apos;),
+ NOT($Profile.Name = &apos;Paychex Marketing Admin&apos;),
+ OR(Probability &gt;= 0.40,
+ Probability &gt;= 0.50,
+ Probability &gt;= 0.70))</errorConditionFormula>
+    <errorMessage>Payroll Platform must be populated to move to Discovery 40% and beyond.</errorMessage>
+</ValidationRule>

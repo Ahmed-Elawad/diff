@@ -1,0 +1,20 @@
+<aura:component >
+    <aura:attribute name="recordId" type="Id"/>
+    <aura:attribute name="AppConfig" type="Object"/>
+    <aura:attribute name="recordError" type="String"/>
+    
+	<aura:attribute name="opportunity" type="Opportunity"/>
+
+    <force:recordData aura:id="oppLoader"
+    				  recordId="{!v.recordId}"
+    				  fields="Id,Name,Account.Name,Pricebook2Id,Owner.Name" 
+                      targetFields="{!v.opportunity}"
+                      targetError="{!v.recordError}"
+      				  recordUpdated="{!c.Init}"
+                      mode="VIEW" />
+    
+    
+    <ui:button label="Send with DocuSign" press="{!c.SendWithDocuSign}"/>
+
+	
+</aura:component>

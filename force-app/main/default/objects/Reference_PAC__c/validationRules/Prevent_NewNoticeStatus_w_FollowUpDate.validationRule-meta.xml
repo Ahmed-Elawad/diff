@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_NewNoticeStatus_w_FollowUpDate</fullName>
+    <active>true</active>
+    <description>Prevent users from populating the Follow Up Date when setting the Status to ‘Pending PAC Review - New Notice Received’.</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;Reference PAC Record Type&quot; ), 
+( NOT(ISNULL(Follow_Up_Date__c)) ), 
+OR 
+( 
+ISPICKVAL(Status__c, &quot;Pending PAC Review - New Notice Received&quot;), 
+ISPICKVAL(Status__c, &quot;Pending PAC Review - Transferring New to D/E&quot;) , 
+ISPICKVAL(Status__c, &quot;Pending PAC Review - Reassign to New ORR&quot;) 
+), 
+$Profile.Name &lt;&gt;&quot;System Administrator&quot; 
+)</errorConditionFormula>
+    <errorDisplayField>Follow_Up_Date__c</errorDisplayField>
+    <errorMessage>You cannot populate the Follow Up Date when the Status = ‘Pending PAC Review - New Notice Received’, &apos;Pending PAC Review – Transferring New to D/E&apos;, or &apos;Pending PAC Review – Reassign to New ORR&apos;.</errorMessage>
+</ValidationRule>

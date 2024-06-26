@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>COE_Delivery_Date_Requirement</fullName>
+    <active>true</active>
+    <description>If the status of the case is changed to Test Complete - Pending Release, there must be a date in the delivery date field</description>
+    <errorConditionFormula>$RecordType.Name = &quot;COE Submission Case Record Type&quot; &amp;&amp;
+ISPICKVAL(  Status, &quot;Test Complete - Pending Release&quot;) &amp;&amp; 
+ISBLANK( Delivery_Date__c )</errorConditionFormula>
+    <errorMessage>If testing is complete you must enter a delivery date field</errorMessage>
+</ValidationRule>

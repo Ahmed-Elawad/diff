@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRE_Lockdown_Send_Welcome_Call_Automated</fullName>
+    <active>true</active>
+    <description>Prevent the Send Welcome Call Automated Emails field from being updated multiple times.</description>
+    <errorConditionFormula>AND(
+ (ISCHANGED(Send_Welcome_Call_Automated_Emails__c)), 
+ (Send_Welcome_Call_Automated_Emails__c = FALSE), 
+ ($UserRole.Name &lt;&gt; &quot;HRE Handbook Supervisor team 1&quot;), 
+ ($UserRole.Name &lt;&gt; &quot;HRE Handbook Supervisor team 2&quot;), 
+ ($UserRole.Name &lt;&gt; &quot;HRE Handbook Supervisor team 3&quot;), 
+ ($UserRole.Name &lt;&gt; &quot;HRE HR Services Supervisor team 1&quot;), 
+ ($UserRole.Name &lt;&gt; &quot;HRE HR Services Supervisor team 2&quot;), 
+ ($UserRole.Name &lt;&gt; &quot;HRE Advisor Team 1&quot;), 
+ ($UserRole.Name &lt;&gt; &quot;HRE Advisor Team 2&quot;), 
+ ($UserRole.Name &lt;&gt; &quot;HRE Handbook Rep team 1&quot;),
+ ($UserRole.Name &lt;&gt; &quot;HRE Handbook Rep team 2&quot;),
+ ($UserRole.Name &lt;&gt; &quot;System Administrator&quot;) 
+)</errorConditionFormula>
+    <errorDisplayField>Send_Welcome_Call_Automated_Emails__c</errorDisplayField>
+    <errorMessage>You can not uncheck &apos;Send Welcome Call Automated Emails&apos;. To stop sending automatic emails, please check the &apos;Stop Welcome Call Automated Emails&apos; field.</errorMessage>
+</ValidationRule>

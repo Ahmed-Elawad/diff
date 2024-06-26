@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_populated_FBAE_readyToTransferDate</fullName>
+    <active>true</active>
+    <description>In order for the FBAE ready to Transfer Date field to be populated the following fields are required - H&amp;B Client, Benefit Renewal Month and Training Completed/Certification Receive. Or both the Lost Product (FBAE) and  FBAE IC fields must be populated.</description>
+    <errorConditionFormula>AND( 
+( NOT(ISBLANK(FBAE_ready_to_Transfer_Date__c))), 
+( ( ISPICKVAL(H_B_Client__c, &apos;&apos;) ) ||
+  ( ISBLANK(Benefit_Renewal_Month__c) ) ||
+  ( ISPICKVAL(Training_Completed_Certification_Receive__c, &apos;&apos;) ) ),
+( ( Lost_Product_FBAE__c = FALSE ) || ( ISBLANK(FBAE_IC__c ) ) ),
+$Profile.Name &lt;&gt;&quot;System Administrator&quot; 
+)</errorConditionFormula>
+    <errorDisplayField>FBAE_ready_to_Transfer_Date__c</errorDisplayField>
+    <errorMessage>In order for the FBAE ready to Transfer Date field to be populated the following fields are required - H&amp;B Client, Benefit Renewal Month and Training Completed/Certification Receive. Or both the Lost Product (FBAE) and  FBAE IC fields must be populated.</errorMessage>
+</ValidationRule>

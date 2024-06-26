@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status_is_not_Pending_PAC_Review</fullName>
+    <active>true</active>
+    <description>Field value cannot be NULL if Status is not Pending PAC Review - Transferring New to D/E</description>
+    <errorConditionFormula>OR( ISBLANK( First_Period_Listed__c ) ,
+ISBLANK( Taxpay_Start_Date__c ) ,
+ISBLANK( Date_Notice_Issued__c ) )&amp;&amp;
+NOT(ISPICKVAL(Status__c , &apos;Pending PAC Review - New Notice Received&apos;)) &amp;&amp;
+NOT(ISPICKVAL(Status__c , &apos;Pending PAC Review - Transferring New to D/E&apos;)) &amp;&amp;
+RecordTypeId =&apos;012700000001kI1&apos; &amp;&amp;
+NOT(BEGINS($Profile.Name,&quot;System Admin&quot;))</errorConditionFormula>
+    <errorMessage>Taxpay Start Date,1st Period Listed Date Or Date Notice Issued cannot be NULL if Status is not Pending PAC Review - Transferring New to D/E.</errorMessage>
+</ValidationRule>

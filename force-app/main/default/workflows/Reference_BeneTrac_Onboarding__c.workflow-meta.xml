@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Calculate_Days_in_Imp</fullName>
+        <description>Calculate how many days this onboarding record was in Implementation.</description>
+        <field>Total_Days_in_Implementation__c</field>
+        <formula>TEXT(Fully_Connected_Date__c - Data_Needed_By_Date__c)</formula>
+        <name>Calculate Days in Imp</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Calculate_Days_in_Site_Construction</fullName>
+        <description>APR0141893: RBO Field Functionality Update #3: Days in Site Construction</description>
+        <field>Days_in_Site_Construction__c</field>
+        <formula>TEXT(Build_Complete_Date__c - Data_Needed_By_Date__c)</formula>
+        <name>Calculate Days in Site Construction</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Calculate Days in Imp</fullName>
+        <actions>
+            <name>Calculate_Days_in_Imp</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_BeneTrac_Onboarding__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Ref BeneTrac Implementation Onboarding</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_BeneTrac_Onboarding__c.Data_Needed_By_Date__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_BeneTrac_Onboarding__c.Fully_Connected_Date__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>Calculate how many days this record was in implementation</description>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Calculate Days in Site Construction</fullName>
+        <actions>
+            <name>Calculate_Days_in_Site_Construction</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_BeneTrac_Onboarding__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Ref BeneTrac Implementation Onboarding</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_BeneTrac_Onboarding__c.Data_Needed_By_Date__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_BeneTrac_Onboarding__c.Site_Delivery_Date__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>Calculate how many days this record was in site construction.</description>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

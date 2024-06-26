@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>populate_Activation_Complete_first</fullName>
+    <active>true</active>
+    <description>Activation Complete must be populated to enter a date in for Verified EE Detail to WEX.</description>
+    <errorConditionFormula>ISBLANK(PRIORVALUE( Verified_EE_Detail_to_WEX__c ) ) &amp;&amp;
+NOT(ISBLANK(Verified_EE_Detail_to_WEX__c )) &amp;&amp;
+ISBLANK(Activation_Complete__c )</errorConditionFormula>
+    <errorMessage>You must enter a date in Activation Complete first.</errorMessage>
+</ValidationRule>

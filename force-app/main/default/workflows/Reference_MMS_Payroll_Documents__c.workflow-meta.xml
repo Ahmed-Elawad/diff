@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>HRO_Summary_Check_in_Date</fullName>
+        <field>HRO_Summary_Check_in_Date__c</field>
+        <formula>Check_In_Date__c</formula>
+        <name>HRO Summary Check-in Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+        <targetObject>Reference_MMS_Payroll__c</targetObject>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>POP_Summary_Checked_In_Field_Update</fullName>
+        <field>POP_Summary_Checked_In__c</field>
+        <literalValue>1</literalValue>
+        <name>POP Summary Checked In Field Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+        <targetObject>Reference_MMS_Payroll__c</targetObject>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>SUI_Summary_Checked_In_Field_Update</fullName>
+        <field>SUI_Summary_Checked_In__c</field>
+        <literalValue>1</literalValue>
+        <name>SUI Summary Checked In Field Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+        <targetObject>Reference_MMS_Payroll__c</targetObject>
+    </fieldUpdates>
+    <rules>
+        <fullName>HRO Summary Check-in WF</fullName>
+        <actions>
+            <name>HRO_Summary_Check_in_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll_Documents__c.Check_In_Date__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll_Documents__c.Document__c</field>
+            <operation>equals</operation>
+            <value>HRO Summary</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll_Documents__c.Received_State__c</field>
+            <operation>equals</operation>
+            <value>Complete,Resolved</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>POP Summary WF Rule</fullName>
+        <actions>
+            <name>POP_Summary_Checked_In_Field_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>(1 AND 2 AND 3)OR (1 AND 2 AND 4)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll_Documents__c.Check_In_Date__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll_Documents__c.Document__c</field>
+            <operation>equals</operation>
+            <value>POP Summary</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll_Documents__c.Received_State__c</field>
+            <operation>equals</operation>
+            <value>Complete</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll_Documents__c.Received_State__c</field>
+            <operation>equals</operation>
+            <value>Resolved</value>
+        </criteriaItems>
+        <description>Update indicator on Reference Preview when POP Summary document is checked in</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>SUI Summary WF Rule</fullName>
+        <actions>
+            <name>SUI_Summary_Checked_In_Field_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>(1 AND 2 AND 3)OR (1 AND 2 AND 4)</booleanFilter>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll_Documents__c.Check_In_Date__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll_Documents__c.Document__c</field>
+            <operation>equals</operation>
+            <value>SUI Summary</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll_Documents__c.Received_State__c</field>
+            <operation>equals</operation>
+            <value>Complete</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_MMS_Payroll_Documents__c.Received_State__c</field>
+            <operation>equals</operation>
+            <value>Resolved</value>
+        </criteriaItems>
+        <description>Update indicator on Reference Preview when SUI Summary document is checked in</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

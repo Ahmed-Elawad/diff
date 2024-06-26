@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>A401K_Require_Contact_or_Referral_Contac</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+ISBLANK(ContactId), 
+ISBLANK(Referral_Contact__c),
+RecordTypeId = &quot;012700000001U2z&quot;,
+NOT(BEGINS($Profile.Name,&quot;System Admin&quot;)),
+$Profile.Name != &apos;Sales Enablement&apos;,
+$Profile.Name != &apos;2008-09 HRS 4S Operations B&apos;,
+$User.Job_Name__c != &apos;Sales Representative&apos;,
+$User.Job_Name__c != &apos;District Sales Manager&apos;,
+$User.Job_Name__c != &apos;District Sales Assistant&apos;
+)</errorConditionFormula>
+    <errorMessage>Please associate a Contact or a Referral Contact to this Case!</errorMessage>
+</ValidationRule>

@@ -1,0 +1,59 @@
+<aura:component controller="PEOGettingStartedHelpController" implements="forceCommunity:availableForAllPageTypes,force:appHostable,flexipage:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,lightning:isUrlAddressable,lightning:utilityItem,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="public">
+	<aura:handler name="init" value="{!this}" action="{!c.init}" />
+	<aura:attribute name='salesRep' type='User' />
+	<aura:attribute name='openCases' type='Case[]' />
+    <aura:attribute name="caseColumns" type="List"/>
+    <div class="body">
+        <br/>
+    	<h1 style="font-size: 24px;font-family:'Graphik-Regular-Web';" class="slds-align_absolute-center">Help Center</h1>
+    	<br/><br/>
+        <div class="slds-box slds-grid slds-gutters whiteSection" id="knowledge">
+            <div class="slds-size_5-of-12">
+                <h1 class="sectionTitle">Document Templates and Examples</h1><br/>
+                <p>Here are some examples of some of the required documents.  If you require further assistance, please contact our support team by following the steps in the 'Have Us Call You' section below.  Questions submitted after hours will be answered Monday through Friday, 8:00 a.m. to 5:00 p.m. ET.</p>
+                <br/>
+            </div>
+            <div class="slds-size_1-of-12">
+            </div>
+            <div class="whiteSection slds-size_6-of-12 knowledgeContainer">
+                <c:PEOGettingStartedKnowledge showPageTitle="false"/>
+            </div>
+        </div>
+        <br/><br/>
+        <aura:if isTrue='{!v.openCases.length > 0}'>
+        	<div class="slds-grid slds-gutters" id="cases">
+                <div class="whiteSection slds-box slds-size_12-of-12">
+                    <h1 class="sectionTitle">Open Cases</h1><br/>
+                    <div class="caseTable">
+                    	<lightning:datatable
+                                         keyField="id"
+                                         data="{! v.openCases }"
+                                         columns="{! v.caseColumns }"
+                                         hideCheckboxColumn="true"/> 
+                    </div>
+                    
+                </div>
+        	</div>
+        </aura:if>
+        <br/><br/>
+        <div class="slds-grid slds-gutters" id="contact">
+            <div class="whiteSection slds-box slds-size_3-of-12">
+                <h1 class="sectionTitle">Contact Us</h1><br/>
+                <p>Please Contact your representative</p><br/>
+                <p><b>{!v.salesRep.Name}: </b><span class="phoneNumber">{!v.salesRep.Phone}</span></p>
+                <br/>
+                
+            </div>
+            <div class="slds-size_1-of-12">
+            </div>
+            <div class="slds-box slds-size_8-of-12 knowledgeContainer whiteSection">
+                <h1 class="sectionTitle">Have Us Call You</h1>
+                <lightning:flow aura:id="supportFlow" />
+            </div>
+        </div>
+        <br/><br/>
+        
+        
+    </div>
+    
+</aura:component>

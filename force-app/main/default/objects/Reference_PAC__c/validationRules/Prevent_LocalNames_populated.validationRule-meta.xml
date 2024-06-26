@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_LocalNames_populated</fullName>
+    <active>true</active>
+    <description>Prevent users from populating the Local Name and Local Name (if other/tax collector) fields, depending on specific Tax Agency and Tax Type values</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;Reference PAC Record Type&quot; ), 
+ (NOT(ISPICKVAL(Local_Name__c, &apos;&apos;))  ||  (LEN(Local_Name_if_other_tax_collector__c) &gt; 0) ),
+ (NOT(ISPICKVAL(Tax_Agency__c, &apos;IRS - INTERNAL REVENUE SERVICE&apos;)) ),
+ ( (ISPICKVAL(Tax_Type__c, &apos;State-Withholding&apos;))  ||  (ISPICKVAL(Tax_Type__c, &apos;SUI-Unemployment&apos;)) ),
+ ($Profile.Name &lt;&gt;&quot;System Administrator&quot;)
+)</errorConditionFormula>
+    <errorDisplayField>Tax_Type__c</errorDisplayField>
+    <errorMessage>Do not enter a value in the Local Name or Local Name (if other/tax collector) fields, when selecting a Tax Type value of either State-Withholding  or  SUI-Unemployment.</errorMessage>
+</ValidationRule>

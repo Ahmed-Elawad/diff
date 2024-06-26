@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TEMP_Completed_EFT_EDI_Warranties1</fullName>
+    <columns>NAME</columns>
+    <columns>Reference_PAC__c</columns>
+    <columns>Payment_Type__c</columns>
+    <columns>Payment_Requested_By__c</columns>
+    <columns>Payment_Method__c</columns>
+    <columns>Date_Completed__c</columns>
+    <columns>Check_Date__c</columns>
+    <columns>Payment_Amount__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_PAC_Warranty_Late_Payment__c.PAC_Warranty_Record_Type</value>
+    </filters>
+    <filters>
+        <field>Warranty_Approved__c</field>
+        <operation>equals</operation>
+        <value>Approved</value>
+    </filters>
+    <filters>
+        <field>Date_Completed__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Payment_Method__c</field>
+        <operation>equals</operation>
+        <value>EDI,EFT,&quot;Other (Void, Daily Balance, etc)&quot;</value>
+    </filters>
+    <label>TEMP Completed EFT/EDI Warranties</label>
+    <sharedTo>
+        <role>Operating_Risk_Manager</role>
+    </sharedTo>
+</ListView>

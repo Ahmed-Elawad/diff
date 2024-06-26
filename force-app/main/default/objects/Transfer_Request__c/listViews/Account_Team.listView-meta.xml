@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Account_Team</fullName>
+    <columns>NAME</columns>
+    <columns>Account__c</columns>
+    <columns>Account_Owner__c</columns>
+    <columns>Status__c</columns>
+    <columns>CREATEDBY_USER</columns>
+    <columns>CREATED_DATE</columns>
+    <columns>UPDATEDBY_USER</columns>
+    <columns>Comments__c</columns>
+    <columns>Owner_Field__c</columns>
+    <columns>Owner_Type__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CREATED_DATE</field>
+        <operation>equals</operation>
+        <value>LAST_N_DAYS:30</value>
+    </filters>
+    <filters>
+        <field>Owner_Field__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Owner_Type__c</field>
+        <operation>equals</operation>
+        <value>TAA</value>
+    </filters>
+    <label>Account Team</label>
+</ListView>

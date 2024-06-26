@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Promotion_is_required</fullName>
+    <active>true</active>
+    <description>36545119 - Promotion is required when Opportunity is marked sold.</description>
+    <errorConditionFormula>AND(
+AND(ISBLANK(TEXT(Promotion__c)),NOT(OR(Approved_Quotes_Exception__c , NOT(ISBLANK(Primary_Oracle_Quote__c) )))),
+ISCHANGED(StageName),
+OR(Probability &gt;= 0.80, ISPICKVAL(StageName, &apos;Sold - Submitted to CTT&apos;)),
+OR(
+$RecordType.Name = &apos;MMS Opportunity (DSA) Record Type&apos;,
+$RecordType.Name = &apos;MMS Opportunity Record Type&apos;,
+$RecordType.Name = &apos;Core Opportunity DSA Record Type&apos;,
+$RecordType.Name = &apos;Core Opportunity Record Type&apos;,
+$RecordType.Name = &apos;Core Virtual Sales&apos;,
+$RecordType.Name = &apos;ASO Opportunity FSS Record Type&apos;,
+$RecordType.Name = &apos;ASO Opportunity Record Type&apos;,
+$RecordType.Name = &apos;PEO Opportunity FSS Record Type&apos;,
+$RecordType.Name = &apos;PEO Opportunity Record Type&apos;,
+$RecordType.Name = &apos;Prism PEO Opportunity FSS Record Type&apos;,
+$RecordType.Name = &apos;Prism PEO Opportunity Record Type&apos;,
+$RecordType.Name = &apos;HRS 401(k) Opportunity FSS Record Type&apos;,
+$RecordType.Name = &apos;HRS 401(k) Opportunity Record Type&apos;),
+OR
+($User.Job_Name__c = &apos;Sales Representative&apos;,
+$User.Job_Name__c = &apos;District Sales Manager&apos;,
+$User.Job_Name__c = &apos;District Sales Assistant&apos;),
+AND(
+NOT(ISPICKVAL(OpportunityType__c, &apos;Ancillary&apos;)),
+NOT(ISPICKVAL(OpportunityType__c, &apos;Referral&apos;)),
+NOT(ISPICKVAL(OpportunityType__c, &apos;Adjustment&apos;)),
+NOT(ISPICKVAL(OpportunityType__c, &apos;Balance&apos;)),
+NOT(ISPICKVAL(OpportunityType__c, &apos;True-Up&apos;)),
+NOT(ISPICKVAL(OpportunityType__c, &apos;Chargeback&apos;))
+),
+CloseDate &gt;= DATE(2020,04,03),
+NOT(BEGINS($Profile.Name, &apos;System Administrator&apos;)),
+NOT($User.Sales_Division__c = &apos;CSSR&apos;),
+OR(Approved_Quotes_Exception__c ,
+NOT(ISBLANK(Primary_Oracle_Quote__c) ))
+)</errorConditionFormula>
+    <errorMessage>You must populate the Promotion field before marking your Opportunity as Sold. If no Promotion was given to the client, then select ‘None’.</errorMessage>
+</ValidationRule>

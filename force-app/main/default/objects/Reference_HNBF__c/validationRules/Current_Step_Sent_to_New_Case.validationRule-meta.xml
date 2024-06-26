@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Current_Step_Sent_to_New_Case</fullName>
+    <active>true</active>
+    <description>Before the Current Step can be changed to Sent to New Case the following fields need to be completed:
+
+AOR effective Date
+SOX Status
+Date Received</description>
+    <errorConditionFormula>ISPICKVAL(Current_Step__c, &quot;Sent to New Case&quot;)&amp;&amp; 
+If((ISPICKVAL(Submission_Type__c, &quot;AOR&quot;) ||ISPICKVAL(Submission_Type__c, &quot;AOR and New Case&quot;)), 
+( 
+(Ready_to_Send_to_New_Case__c &gt; 0) || 
+ISNULL(Date_Received__c) 
+), ISNULL(Date_Received__c) 
+)</errorConditionFormula>
+    <errorMessage>Before the Current Step can be Sent to New case, you must have a value in the following fields: 
+AOR effective Date
+SOX Status
+Date Received</errorMessage>
+</ValidationRule>

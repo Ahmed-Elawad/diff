@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HR_Services_My_Open_ASO_Opportunities</fullName>
+    <columns>OpportunityType__c</columns>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>OPPORTUNITY.CLOSE_DATE</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>OPPORTUNITY.AMOUNT</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>OpportunityType__c</field>
+        <operation>equals</operation>
+        <value>ASO,HRE,PEO</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.PROBABILITY</field>
+        <operation>greaterOrEqual</operation>
+        <value>5</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.PROBABILITY</field>
+        <operation>lessOrEqual</operation>
+        <value>80</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Opportunity.PEOASOOpportunityRecordType</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.STAGE_NAME</field>
+        <operation>notEqual</operation>
+        <value>Sold - Submitted,Sold - Revenue Recognition,Sold - Started,Sold - Run,Sold - Commissioned,Not Sold,Lost,No Decision,Disqualified</value>
+    </filters>
+    <label>HR Services - My Open ASO Opportunities</label>
+    <sharedTo>
+        <roleAndSubordinates>HRSERVICESSRDIR</roleAndSubordinates>
+        <roleAndSubordinatesInternal>HRSZONE3</roleAndSubordinatesInternal>
+    </sharedTo>
+</ListView>

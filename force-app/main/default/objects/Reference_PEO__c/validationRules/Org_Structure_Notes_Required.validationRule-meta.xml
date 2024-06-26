@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Org_Structure_Notes_Required</fullName>
+    <active>true</active>
+    <description>If Org Structure=Other (need notes to specify), Org Structure Notes must be populated.</description>
+    <errorConditionFormula>And( ISPICKVAL( Org_Structure__c , &quot;Other (need notes to specify)&quot;) , IsBlank(Org_Structure_Notes__c)) &amp;&amp; NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))</errorConditionFormula>
+    <errorDisplayField>Org_Structure_Notes__c</errorDisplayField>
+    <errorMessage>Org Structure Notes are required if you have selected Other (need notes to specify) in the Org Structure.</errorMessage>
+</ValidationRule>

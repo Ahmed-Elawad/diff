@@ -1,0 +1,98 @@
+<aura:component >
+    <aura:attribute name="portalusers" type="Object" />
+    <aura:attribute name="inviteNotSent" type="Boolean" />
+    <div class="box cBannerContactRoles" title="PEOPortalUser" style="width: 15%;">
+        <div class="banner-header slds-align_absolute-center">
+            <h4 class="slds-item_label slds-text-color_weak slds-truncate slds-text-align_center"> PEO Portal User(s) </h4>
+        </div>
+        <div class="banner-body">
+            <div class="{!'slds-item_detail slds-truncate slds-align_absolute-center column ' + (not(empty(v.recordId)) ? ' clickable-banner-item' : '') }" title="PEOPortalUser">
+                
+                <lightning:icon iconName="standard:user" alternativeText="User" title="User" />
+                
+                
+                <span>
+                    <aura:if isTrue="{!v.portalusers.Id!=null}">
+                        <table class="slds-table slds-table_bordered slds-table_cell-buffer opty_table">
+                            <thead>
+                                <tr class="slds-text-title_caps">
+                                    <aura:if isTrue="{!not(empty(v.portalusers.Contact.Name))}">
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="Community User Name">Community User Name</div>
+                                        </th>
+                                    </aura:if>
+                                    <aura:if isTrue="{!not(empty(v.portalusers.LastLoginDate))}">
+                                        <th scope="col">
+                                            <div class="slds-truncate" title=" Last Login Date">Last Login Date</div>
+                                        </th>
+                                    </aura:if>
+                                    <aura:if isTrue="{!and(not(empty(v.portalusers.Requested_Invite_Date__c)),empty(v.portalusers.LastLoginDate))}">
+                                        <th scope="col">
+                                            <aura:if isTrue="{!v.inviteNotSent}">
+                                                <div class="slds-truncate" title="Invite Sent Date">Requested Invite Date</div>
+                                                <aura:set attribute='else'>
+                                                    <div class="slds-truncate" title="Invite Sent Date">Invite Sent Date</div>
+                                                </aura:set>
+                                            </aura:if>
+                                        </th>
+                                    </aura:if>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                <tr>
+                                    <aura:if isTrue="{!not(empty(v.portalusers.Contact.Name))}">
+                                        <td data-label="Community User Name">
+                                            <div class="slds-truncate" title="">{!v.portalusers.Contact.Name}</div>
+                                        </td>
+                                    </aura:if>
+                                    <aura:if isTrue="{!v.portalusers.IsActive}">
+                                        <aura:if isTrue="{!not(empty(v.portalusers.LastLoginDate))}">
+                                            <td data-label="Industry">
+                                                <lightning:formattedDateTime aura:id="dt"
+                                                                             value="{!v.portalusers.LastLoginDate}"
+                                                                             month="numeric"
+                                                                             day="numeric"
+                                                                             year="numeric"
+                                                                             hour="2-digit"
+                                                                             minute="2-digit"
+                                                                             second="2-digit"
+                                                                             hour12="true"
+                                                                             timeZone="{!$Locale.timezone}"/>                                        
+                                            </td>
+                                        </aura:if>
+                                    </aura:if>  
+                                    <aura:if isTrue="{!!v.portalusers.IsActive}">
+                                        
+                                        <td data-label="Industry">
+                                            <div class="slds-truncate" title="">Inactive</div>
+                                        </td>
+                                    </aura:if>     
+                                    <aura:if isTrue="{!and(not(empty(v.portalusers.Requested_Invite_Date__c)),empty(v.portalusers.LastLoginDate))}">
+                                        <td data-label="invite sent date">
+                                            <!--<div class="slds-truncate" title="">{!v.portalusers.CreatedDate}</div>-->
+                                            <lightning:formattedDateTime aura:id="dt"
+                                                                         value="{!v.portalusers.Requested_Invite_Date__c}"
+                                                                         month="numeric"
+                                                                         day="numeric"
+                                                                         year="numeric"
+                                                                         hour="2-digit"
+                                                                         minute="2-digit"
+                                                                         second="2-digit"
+                                                                         hour12="true"
+                                                                         timeZone="{!$Locale.timezone}"/> 
+                                        </td>
+                                    </aura:if>
+                                </tr>
+                                
+                            </tbody>
+                        </table>                        
+                        <aura:set attribute="else">
+                            No Portal User
+                        </aura:set>
+                    </aura:if>
+                </span>
+            </div>
+        </div>
+    </div>
+</aura:component>

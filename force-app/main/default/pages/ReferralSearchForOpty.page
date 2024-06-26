@@ -1,0 +1,110 @@
+<!-- Page to handle Referrals search of opportunity
+
+   History
+   -------    
+   10/6/2015 Cindy Freeman     Created 
+ -->
+  
+<apex:page controller="ReferralSearchForOptyController">
+<apex:form >
+    
+    <apex:sectionHeader title="Paychex Referrals" subtitle="{!sectionHeaderSubTitle}" />
+     
+    <apex:pageBlock >        
+        <apex:pageBlockSection columns="1">
+            The correct Opportunity must be linked to the referral record to ensure proper commission credit.  
+            In the event that a duplicate Opportunity was created for the selling rep to track this referral, 
+            this page will allow you to identify the correct Selling Opportunity and link it to this referral. 
+            The search results below are Opportunities created in the last 90 days related to this same Prospect-Client record.
+            Choose the correct Selling Opportunity from this list. 
+        <br/><br/>
+            Once the relinking is complete, the duplicate Opportunity will be updated with a Status of ‘Referral Duplicate’.
+            Be sure to go back and mark the duplicate Opportunity for deletion.
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+        
+    <apex:pageBlock >
+        <apex:pageBlockSection columns="2">        
+            <apex:pageBlockSectionItem >
+                <apex:outputText value="Referral Name: "/>
+                <apex:outputField value="{!ref.Name}" />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputText value="Selling Opportunity: "/>
+                <apex:outputField value="{!ref.Selling_Opportunity__c}" />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputText value="Referring User: "/>
+                <apex:outputField value="{!ref.Referring_User__c}" />
+            </apex:pageBlockSectionItem>    
+            <apex:pageBlockSectionItem >
+                <apex:outputText value="Selling User: "/>
+                <apex:outputField value="{!ref.User__c}" />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputText value="Prospect-Client: "/>
+                <apex:outputField value="{!ref.Account__c}" />
+            </apex:pageBlockSectionItem>    
+            <apex:pageBlockSectionItem >
+                <apex:outputText value="Opportunity Status: "/>
+                <apex:outputField value="{!ref.Selling_Opportunity__r.StageName}" />
+            </apex:pageBlockSectionItem>    
+            <apex:pageBlockSectionItem >
+                <apex:outputText value="Source Contact: "/>
+                <apex:outputField value="{!ref.SourceContact__c}" />
+            </apex:pageBlockSectionItem>    
+            <apex:pageBlockSectionItem >
+                <apex:outputText value="Commission Products: "/>
+                <apex:outputField value="{!ref.Commission_Products__c}" />
+            </apex:pageBlockSectionItem>    
+            <apex:pageBlockSectionItem >
+                <apex:outputText value="Referral Status: "/>
+                <apex:outputField value="{!ref.Status__c}" />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputText value="Opportunity Run Date: "/>
+                <apex:outputField value="{!ref.Selling_Opportunity__r.CloseDate}" />
+            </apex:pageBlockSectionItem>                    
+    
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    
+    <apex:pageBlock >
+        <apex:pageMessages /> 
+        <apex:pageBlockButtons >
+            <apex:commandButton value="Update Referral" action="{!submit}"/>
+            <apex:commandButton value="Cancel" action="{!cancel}" rendered="{!Not(allDone)}"/>
+            <apex:commandButton value="Return to Referral" action="{!cancel}" rendered="{!allDone}"/>
+        </apex:pageBlockButtons>
+        <apex:pageBlockTable value="{!oppWrapList}" var="wrap">
+            <apex:column >
+                   <apex:facet name="header"> 
+                      <apex:outputPanel >           
+                      Selected
+                      </apex:outputPanel>
+                   </apex:facet>
+                   <apex:inputCheckbox value="{!wrap.selected}" id="oppSelectCheckbox" >
+                   </apex:inputCheckbox>
+            </apex:column>  
+            <apex:column >
+                <apex:facet name="header"> 
+                      <apex:outputPanel >Opportunity Name</apex:outputPanel>
+                </apex:facet>
+                <apex:outputLink onclick="window.open('/' + '{!wrap.opp}')"> 
+                    <apex:outputText value="{!wrap.opp.Name}"/>
+                </apex:outputLink>
+            </apex:column>
+            <apex:column value="{!wrap.opp.Owner.Name}">            
+                <apex:facet name="header"> 
+                      <apex:outputPanel >Opportunity Owner</apex:outputPanel>
+                </apex:facet>
+            </apex:column>
+            <apex:column value="{!wrap.opp.StageName}"/>
+            <apex:column value="{!wrap.opp.CloseDate}"/>
+            <apex:column value="{!wrap.opp.CreatedDate}"/>
+            <apex:column value="{!wrap.opp.LeadSource}"/>
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+
+</apex:form>
+</apex:page>

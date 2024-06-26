@@ -1,0 +1,148 @@
+<apex:page controller="TaxNoticeController" tabStyle="Client_Field_Submission__c"
+           showHeader="false">
+<style>
+        .vfHelpText a            {position:relative;}
+        .vfHelpText a span       {display: none;}
+        .vfHelpText a:hover span {display: block;
+                                  position:absolute;
+                                  top:1.25em;
+                                  padding:2px 5px;
+                                  left:-15em; width:15em;
+                                  z-index:100;
+                                  border:1px solid orange;
+   background-color:#FEFDB9;
+                                  color:black;
+                                 }
+    </style>
+
+    <apex:form id="subform" >
+        <apex:pageMessages />  
+        
+    <apex:pageBlock rendered="{!display}" id="pb">        
+        <apex:pageBlockSection columns="1">
+            <div style="text-align: center;border-style: double;">
+            <br/>
+            Please complete the following form to submit a copy of the tax notice you received.
+            <br/><br/>
+            Once you click ‘Next’ you will have an opportunity to attach a copy of the tax notice you received.  If no physical tax notice is available to attach, please be sure to provide detailed notes in the ‘Additional Notes’ section of the submission form to explain what is being requested.
+            <br/><br/>
+            **If you received an Unemployment/Reemployment Rate or Filing Frequency notification (that does not show a balance due), please do not submit it via this form.  Instead, please provide the notice to your local field office as soon as possible to ensure your account is properly updated.**
+            <br/><br/>
+            **Paychex does not prepare or file Corporate, Business, Franchise, or Sales Tax liabilities; please do not submit notices of this type as we will be unable to assist in researching them**
+            <br/><br/>
+            </div>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+        
+        
+        <apex:pageBlock rendered="{!display}">
+      
+            <apex:pageBlockSection title="" columns="1">
+                <apex:inputField required="true" value="{!cFS.Business_Name__c}" /> 
+                <apex:inputField required="true" value="{!cFS.Federal_ID_Number_Submitted__c}" label="Federal ID Number"/>
+                <apex:inputField required="false" value="{!cFS.Agency_ID_if_differentthanFederalID__c}" />
+                <apex:inputField value="{!cFS.Paychex_Client_ID__c}" label="Paychex Client ID (optional)" />
+                <apex:pageBlockSectionItem >
+                <apex:outputpanel >
+				<apex:outputLabel value="Current/Past PEO Client?" />
+				<span class="vfHelpText">
+        <apex:outputLink value="javascript:return false;">
+            <img src="/s.gif" alt="" class="helpOrb" />
+            <span>{!$ObjectType.Client_Field_Submission__c.fields.Current_Past_Paychex_PEO_Client__c.inlineHelpText}</span>
+        </apex:outputLink>
+    </span>
+				</apex:outputpanel>
+                <apex:inputField value="{!cFS.Current_Past_Paychex_PEO_Client__c}" />
+				</apex:pageBlockSectionItem>
+              <apex:pageBlockSectionItem helpText="{!$ObjectType.Client_Field_Submission__c.Fields.Date_Company_Started_with_Paychex__c.InlineHelpText}">
+              <apex:outputPanel >
+                  <apex:outputLabel value="{!$ObjectType.Client_Field_Submission__c.Fields.Date_Company_Started_with_Paychex__c.Label}" />
+                <span class="vfHelpText">
+        <apex:outputLink value="javascript:return false;">
+            <img src="/s.gif" alt="" class="helpOrb" />
+            <span>{!$ObjectType.Client_Field_Submission__c.fields.Date_Company_Started_with_Paychex__c.inlineHelpText}</span>
+        </apex:outputLink>
+    </span>
+      </apex:outputPanel>            
+
+                  <apex:inputField value="{!cFS.Date_Company_Started_with_Paychex__c}" />
+				</apex:pageBlockSectionItem>
+                <apex:inputField required="true" value="{!cFS.Government_Tax_Agency__c}" label="Government Agency Tax Notice is from" />
+                <apex:inputField required="true" value="{!cFS.Tax_Form__c}" label="Tax Form"  onchange="displayAlert();">
+                </apex:inputField>
+              <apex:pageBlockSectionItem helpText="{!$ObjectType.Client_Field_Submission__c.Fields.Date_Notice_was_Issued__c.InlineHelpText}">
+              <apex:outputPanel >
+                  <apex:outputLabel value="{!$ObjectType.Client_Field_Submission__c.Fields.Date_Notice_was_Issued__c.Label}" />
+                <span class="vfHelpText">
+        <apex:outputLink value="javascript:return false;">
+            <img src="/s.gif" alt="" class="helpOrb" />
+            <span>{!$ObjectType.Client_Field_Submission__c.fields.Date_Notice_was_Issued__c.inlineHelpText}</span>
+        </apex:outputLink>
+    </span>
+      </apex:outputPanel>            
+
+                  <apex:inputField required="true" value="{!cFS.Date_Notice_was_Issued__c}" />
+				</apex:pageBlockSectionItem>
+                <apex:inputField required="true" value="{!cFS.Notice_Type__c}" label="Notice Type">
+				</apex:inputField>				
+                <apex:inputField required="false" value="{!cFS.Total_Amount_Due_per_Notice__c}" id="Dueamount" />
+<apex:pageBlockSectionItem >
+                <apex:outputpanel >
+				<apex:outputLabel value="Do we have approval to collect and pay" />
+				<span class="vfHelpText">
+        <apex:outputLink value="javascript:return false;">
+            <img src="/s.gif" alt="" class="helpOrb" />
+            <span>{!$ObjectType.Client_Field_Submission__c.fields.Do_we_have_approval_to_collect_and_pay__c.inlineHelpText}</span>
+        </apex:outputLink>
+    </span>
+				</apex:outputpanel>
+                <apex:inputField required="true" value="{!cFS.Do_we_have_approval_to_collect_and_pay__c}" />
+				</apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                <apex:outputpanel >
+				<apex:outputLabel value="Was there a prior submission?" />
+				<span class="vfHelpText">
+        <apex:outputLink value="javascript:return false;">
+            <img src="/s.gif" alt="" class="helpOrb" />
+            <span>{!$ObjectType.Client_Field_Submission__c.fields.Was_a_submission_for_this_agency_issue__c.inlineHelpText}</span>
+        </apex:outputLink>
+    </span>
+				</apex:outputpanel>
+                <apex:inputField required="true" value="{!cFS.Was_a_submission_for_this_agency_issue__c}" />
+				</apex:pageBlockSectionItem>               
+                <apex:outputText value="" />
+                <apex:outputText value="" />
+                <apex:inputField required="true" value="{!cFS.Submitters_Name__c}" label="Submitter's Name" />
+                <apex:inputField required="true" value="{!cFS.Email__c}" /> 
+                <apex:inputField required="true" value="{!cFS.Phone_Number__c}" /> 
+                <apex:inputField value="{!cFS.Fax_Number__c}" label="Fax Number (optional)" />
+                <apex:outputText value="" />
+                <apex:inputField required="true" value="{!cFS.Submitter_is_Main_Contact__c}" label="Will you be the main point of contact?" />
+                <apex:outputText value="If you answered no, who is the main point of contact?" />
+                <apex:inputField required="false" value="{!cFS.Main_Contact_Name__c}" /> 
+                <apex:inputField required="false" value="{!cFS.Main_Contact_Email__c}" /> 
+                <apex:inputField required="false" value="{!cFS.Main_Contact_Phone_Number__c}" /> 
+                <apex:inputField required="false" value="{!cFS.Main_Contact_Fax_Number__c}" /> 
+                <apex:outputText value="" />
+                <apex:outputText value="" />
+                <apex:inputField required="false" value="{!cFS.Additional_Notes__c}" label="Additional Notes (optional)" />
+           </apex:pageBlockSection>
+                  
+               
+                    <apex:pageBlockButtons location="bottom">
+                <apex:commandButton action="{!quicksave}" value="Next" onclick="displayAlert();"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        
+    </apex:form>
+    <c:MultiAttachment rendered="{!NOT(display)}" objId="{!cFS.id}"/> 
+    <script type="text/javascript">
+    
+       function displayAlert(){
+           var stringvalue='{!cFS.Tax_Form__c}';
+    if(stringvalue=='Corporate/Franchise/Sales & Use Tax')
+        alert('Please work directly with the agency as this is not a Tax Type supported by Paychex');
+    }
+        </script>
+
+</apex:page>

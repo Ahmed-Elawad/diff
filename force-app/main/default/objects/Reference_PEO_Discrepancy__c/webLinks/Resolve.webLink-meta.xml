@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Resolve</fullName>
+    <availability>online</availability>
+    <description>Quick Resolve for PEO Discrepancies</description>
+    <displayType>button</displayType>
+    <linkType>javascript</linkType>
+    <masterLabel>Resolve</masterLabel>
+    <openType>onClickJavaScript</openType>
+    <protected>false</protected>
+    <url>{!requireScript(&quot;/soap/ajax/26.0/connection.js&quot;)}  //soap connection call 
+ 
+var r = confirm(&quot;Are you sure you want to Quick Resolve this discrepancy?&quot;);
+if (r == true) {
+ var dis = new sforce.SObject(&quot;Reference_PEO_Discrepancy__c&quot;);  //get the opp your on
+dis.Id = &quot;{!Reference_PEO_Discrepancy__c.Id}&quot;;
+// Create a date object with the current time
+  var now = new Date();
+
+// Create an array with the current month, day and time
+  var date = [ now.getMonth() + 1, now.getDate(), now.getFullYear() ];
+
+// Create an array with the current hour, minute
+  var time = [ now.getHours(), now.getMinutes()];
+
+// Determine AM or PM suffix based on the hour
+  var suffix = ( time[0] &lt; 12 ) ? &quot;AM&quot; : &quot;PM&quot;;
+
+// Convert hour from military time
+  time[0] = ( time[0] &lt; 12 ) ? time[0] : time[0] - 12;
+
+// If hour is 0, set it to 12
+  time[0] = time[0] || 12;
+
+// If seconds and minutes are less than 10, add a zero
+    if ( time[1] &lt; 10 ) {
+      time[1] = &quot;0&quot; + time[1];
+  }
+
+// Return the formatted string
+  dis.displayDate__c = date.join(&quot;/&quot;) + &quot; &quot; + time.join(&quot;:&quot;) + &quot; &quot; + suffix;
+
+ dis.Quick_Resolve_option__c = &quot;true&quot;; 
+ sforce.connection.update([dis]);
+
+//alert(&quot;This discrepancy has been resolved&quot;);
+window.location.reload(); // reload the page 
+
+   
+}</url>
+</WebLink>

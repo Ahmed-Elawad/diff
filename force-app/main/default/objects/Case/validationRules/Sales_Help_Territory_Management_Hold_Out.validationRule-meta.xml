@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sales_Help_Territory_Management_Hold_Out</fullName>
+    <active>true</active>
+    <description>Territory Management requests must be submitted by a Sales Assistant.  Please work with your DSA/FSS, or Zone Assistant to request these changes.</description>
+    <errorConditionFormula>AND(
+NOT( $Permission.TM_Sales_Help_Request ),
+$RecordType.Name = &apos;Sales Help Request Case&apos;,
+ISPICKVAL(Type,&apos;Territory Management&apos;)
+)</errorConditionFormula>
+    <errorMessage>Territory Management requests must be submitted by a Sales Assistant or Manager. Please work with your DSM, Sales Assistant, or Zone Assistant to request these changes.</errorMessage>
+</ValidationRule>

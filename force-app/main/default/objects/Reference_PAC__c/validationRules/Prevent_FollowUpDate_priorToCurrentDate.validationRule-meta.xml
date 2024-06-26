@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_FollowUpDate_priorToCurrentDate</fullName>
+    <active>true</active>
+    <description>Prevent users from entering a Follow Up Date value prior than the current date</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;Reference PAC Record Type&quot; ), 
+(ISCHANGED(Follow_Up_Date__c)), 
+( Follow_Up_Date__c  &lt;  TODAY() ), 
+($Profile.Name &lt;&gt;&quot;System Administrator&quot;) 
+)</errorConditionFormula>
+    <errorDisplayField>Follow_Up_Date__c</errorDisplayField>
+    <errorMessage>You cannot set the Follow Up Date to a date prior than today</errorMessage>
+</ValidationRule>

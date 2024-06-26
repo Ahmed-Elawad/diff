@@ -1,0 +1,60 @@
+<!--
+History
+02/22/2021 Dan Carmen      Added Do Not Prospect banner
+12/14/2023 Shilpa G		   APR0155814: Added Intent Banner to replace Insights Banner
+
+-->
+<aura:component description="LeadBanner" controller="ObjectBannerAuraService">
+    <aura:attribute name="leadId" type="Id" required="true" />
+    <aura:attribute name="bannerSettings" type="Object" required="true" />
+    <aura:attribute name="isPilot" type="Boolean"/>
+    
+    <aura:attribute name="lead" type="Object" />
+    
+    <aura:attribute name="leadWrapper" type="Object" />
+    
+    <aura:attribute name="sensitivityList" type="String"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <force:recordData aura:id="leadLoader"
+                      fields="Id,Name,LastActivityDate,Referral_National_Account__c,Referral_National_Account__r.Name,Product_Sensitivity_Checkbox__c,DoNotCall,HasOptedOutOfEmail,In_Cadence__c,LastCadenceClosedReason__c,LastCadenceClosedType__c,LastCadenceName__c,DoNotProspectReason__c"
+                      recordId="{!v.leadId}"
+                      targetFields="{!v.lead}"
+                      mode="VIEW" />
+    <div class="slds-tile__detail">
+        <div class="grid-wrapper">
+            <!-- Do Not Prospect -->
+            <c:BannerDoNotProspect noProspectReason="{!v.lead.DoNotProspectReason__c}" />
+
+            <!-- Do Not Contact & Email Opt-Out -->
+            <aura:if isTrue="{!or(v.lead.DoNotCall, v.lead.HasOptedOutOfEmail)}">
+                <c:BannerDNC contact="{!v.lead}" />
+            </aura:if>
+            <!-- Product Sensitivity -->
+            <aura:if isTrue="{!v.sensitivityList.length > 0}">
+                <c:BannerProductSensitivity sensitivityList="{!v.sensitivityList}" />
+            </aura:if> 
+            <!-- In Cadence -->
+            <aura:if isTrue="{!v.lead.In_Cadence__c}">
+                <c:BannerInCadence record="{!v.lead}" recordId="{!v.leadId}" cadenceType="{!v.lead.CadenceType__c}" cadenceName="{!v.lead.LastCadenceName__c}"/>
+            </aura:if>
+            <!-- Strategic Account -->
+            <aura:if isTrue="{!v.lead.Referral_National_Account__c != NULL}">
+                <c:BannerStrategicAccount accountName="{!v.lead.Referral_National_Account__r.Name}" />
+            </aura:if>
+            <!-- Open Activities -->
+            <aura:if isTrue="{!or(and(!v.bannerSettings.Lead_Show_Activities_If_None__c, or(v.lead.LastActivityDate, v.leadWrapper.OpenActivities.length > 0)), v.bannerSettings.Lead_Show_Activities_If_None__c)}">
+                <c:BannerOpenActivities recordId="{!v.leadId}" openActivities="{!v.leadWrapper.OpenActivities}" lastActivityDate="{!v.lead.LastActivityDate}" />
+            </aura:if>
+            <!--Marketing Insights-->
+            <!--<aura:if isTrue="{!and(v.isPilot, v.leadWrapper.marketingInsights.length > 0)}">
+                <c:BannerInsights recordId="{!v.leadId}" objectType="Lead" openInsights="{!v.leadWrapper.marketingInsights}"/>
+            </aura:if>-->
+            <!--Customer Intent Signals-->
+            <aura:if isTrue="{!and(v.isPilot, v.leadWrapper.customerIntentSignals.length > 0)}">
+                <c:BannerInsights recordId="{!v.leadId}" objectType="Lead" openInsights="{!v.leadWrapper.customerIntentSignals}"/>
+            </aura:if>
+        </div>
+    </div>
+</aura:component>

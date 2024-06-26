@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Getting_Started_Exception_Reason_Notes</fullName>
+    <active>true</active>
+    <description>You must enter notes when choosing &apos;Other&apos; in the Getting Started Exception Reason. SFDC-9917</description>
+    <errorConditionFormula>AND(
+NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+ISPICKVAL( Getting_Started_Exception_Reason__c,&apos;Other&apos; ),ISBLANK(Getting_Started_Exception_Reason_Notes__c))</errorConditionFormula>
+    <errorDisplayField>Getting_Started_Exception_Reason_Notes__c</errorDisplayField>
+    <errorMessage>You must enter notes when choosing &apos;Other&apos; in the Getting Started Exception Reason.</errorMessage>
+</ValidationRule>

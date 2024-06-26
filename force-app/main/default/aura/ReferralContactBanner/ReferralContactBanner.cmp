@@ -1,0 +1,111 @@
+<aura:component description="ReferralContactBanner" controller="ObjectBannerAuraService">
+    <aura:attribute name="referralContactId" type="Id" required="true" />
+    <aura:attribute name="bannerSettings" type="Object" required="true" />
+
+    <aura:attribute name="referralContactWrapper" type="Object" />
+    <aura:attribute name="engagementTextDisplayList" type="Object" />
+    
+   	<aura:attribute name="referralContact" type="Object" />
+    <aura:attribute name="isCommunityUser" type="Boolean" />
+    <aura:attribute name="enrolledUser" type="Boolean" />
+    <aura:attribute name="loggedInUser" type="Boolean" />
+    <aura:attribute name="commUser" type="Object" />
+    <aura:attribute name="displayRefContChicklet" type="Boolean"/>
+
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <lightning:messageChannel type="cpa_Message_Channel__c" onMessage="{!c.doInit}"/>
+    <aura:dependency resource="markup://force:editRecord" type="EVENT" />
+    <aura:dependency resource="markup://force:createRecord" type="EVENT" />
+
+
+
+    <aura:attribute name="hasPermission" type="Boolean" default="false"/>
+
+    <aura:attribute name="CurrentUser" type="Object"/>
+    <force:recordData recordId="{!$SObjectType.CurrentUser.Id}"
+                    fields="Profile.Name"
+                    targetFields="{!v.CurrentUser}"/>
+
+
+
+    <aura:handler event="force:refreshView" action="{!c.doInit}" />
+    
+    <!--<force:recordData aura:id="referralContactLoader"
+                      fields="Id,Name,LastActivityDate, Sensitivity_List__c, Referral_Account__r.In_Cadence__c,Referral_Account__r.CadenceType__c,Referral_Account__r.LastCadenceName__c,Referral_Account__r.LastCadenceClosedType__c"
+                      recordId="{!v.referralContactId}"                      
+                      targetFields="{!v.referralContact}" recordUpdated="{!c.ini}"
+                      targetError="{!v.recordLoadError}"
+                      mode="VIEW" />  -->
+    <lightning:recordForm aura:id="referralContactLoader"
+                          recordId="{!v.referralContactId}"
+                          objectApiName="Referral_Contact__c" mode="View"
+                          onsuccess="{!c.ini}"
+                          fields="Id,Name,LastActivityDate, Referral_Type__c, Sensitivity_List__c, Referral_Account__r.In_Cadence__c,Referral_Account__r.CadenceType__c,Referral_Account__r.LastCadenceName__c,Referral_Account__r.LastCadenceClosedType__c,Referral_Account__r.Referral_Source_Business_Type__c" />
+
+    <div class="slds-tile__detail">
+        <div class="grid-wrapper">
+            <!-- Referral Type -->
+            <!--<aura:if isTrue="{!v.referralContactWrapper.ReferralContact.Referral_Type__c}">-->
+                <c:BannerReferralType referralType="{!v.referralContactWrapper.ReferralContact.Referral_Type__c}" businessType="{!v.referralContactWrapper.ReferralContact.Referral_Account__r.Referral_Source_Business_Type__c}" />
+            <!--</aura:if>-->
+
+            <!-- Product Sensitivity -->
+   <!--         <aura:if isTrue="{!v.referralContactWrapper.ReferralContact.Sensitivity_List__c}">
+                <c:BannerProductSensitivity />
+            </aura:if> --> 
+			
+            <!-- In Cadence -->
+            <aura:if isTrue="{!v.referralContact.Referral_Account__r.In_Cadence__c}">
+                <c:BannerInCadence record="{!v.referralContact}" recordId="{!v.referralContact.Id}" cadenceType="{!v.referralContact.Referral_Account__r.CadenceType__c}" cadenceName="{!v.referralContact.Referral_Account__r.LastCadenceName__c}"/>
+            </aura:if>
+            
+            <aura:if isTrue="{!v.referralContact.Sensitivity_List__c.length>0}">
+                <c:BannerProductSensitivity sensitivityList ="{!v.referralContact.Sensitivity_List__c}" />
+            </aura:if>
+           
+            <!-- Engaged -->
+            <aura:if isTrue="{!v.engagementTextDisplayList.length > 0}">
+                <c:BannerEngaged engagementTextDisplayList="{!v.engagementTextDisplayList}" />
+            </aura:if>
+
+            <!-- CPA Persona -->
+            <aura:if isTrue="{!v.referralContactWrapper.ReferralContact.Persona__c}">
+                <c:BannerCPAPersona persona="{!v.referralContactWrapper.ReferralContact.Persona__c}" />
+            </aura:if>
+
+            <!-- Activity 
+            <aura:if isTrue="{!or(and(!v.bannerSettings.Referral_Contact_Show_Activities_If_None__c, v.referralContactWrapper.ReferralContact.Contact__r.LastActivityDate), v.bannerSettings.Referral_Contact_Show_Activities_If_None__c)}">
+                <c:BannerOpenActivities recordId="{!v.referralContactWrapper.ReferralContact.Contact__c}" openActivities="{!v.referralContactWrapper.OpenActivities}" lastActivityDate="{!v.referralContactWrapper.ReferralContact.Contact__r.LastActivityDate}" />
+            </aura:if>--> 
+            
+            <!-- Activity -->
+           <aura:if isTrue="{!or(and(!v.bannerSettings.Referral_Contact_Show_Activities_If_None__c, or(v.referralContact.LastActivityDate, v.referralContactWrapper.OpenActivities.length>0)), v.bannerSettings.Referral_Contact_Show_Activities_If_None__c)}"> -->
+                <c:BannerOpenActivities recordId="{!v.referralContactId}" openActivities="{!v.referralContactWrapper.OpenActivities}" lastActivityDate="{!v.referralContact.LastActivityDate}" />
+            </aura:if>          
+
+            <!-- Open Cases -->
+            <aura:if isTrue="{!or(and(!v.bannerSettings.Referral_Contact_Show_Cases_If_Zero__c, v.referralContactWrapper.OpenCases.length > 0), v.bannerSettings.Referral_Contact_Show_Cases_If_Zero__c)}">
+                <c:BannerOpenCases recordId="{!v.referralContactId}" openCases="{!v.referralContactWrapper.OpenCases}" caseType="Referral Account" objectType="Referral_Contact__c" />
+            </aura:if>
+
+            <!-- Opportunities -->
+            <aura:if isTrue="{!or(and(!v.bannerSettings.Referral_Contact_Show_Opps_If_Zero__c, v.referralContactWrapper.OpenOpportunities.length > 0), v.bannerSettings.Referral_Contact_Show_Opps_If_Zero__c)}">
+                <c:BannerOpenOpportunities recordId="{!v.referralContactId}" openOpportunities="{!v.referralContactWrapper.OpenOpportunities}" opportunityType="Referral Account"  objectType="Referral_Contact__c" />
+            </aura:if>
+
+            <!-- Mutual Clients -->
+            <aura:if isTrue="{!or(and(!v.bannerSettings.Referral_Contact_Mutual_Clients_If_Zero__c, v.referralContactWrapper.MutualClientCount > 0), v.bannerSettings.Referral_Contact_Mutual_Clients_If_Zero__c)}">
+                <c:BannerMutualClients recordId="{!v.referralContactId}" mutualClientCount="{!v.referralContactWrapper.MutualClientCount}" objectType="Referral_Contact__c" businessType="{!v.referralContactWrapper.ReferralContact.Referral_Account__r.Referral_Source_Business_Type__c}"/>
+            </aura:if>
+
+            <!-- CPA Portal Users -->
+            <aura:if isTrue="{!and(or(v.CurrentUser.Profile.Name == 'System Administrator' || v.CurrentUser.Profile.Name == 'Sales Enablement' || $Label.c.Accountant_Program_Require_Permission == 'No' || $Label.c.Accountant_Program_Require_Permission == 'NO' || v.hasPermission == true))}">
+                    
+            <aura:if isTrue="{!and(v.isCommunityUser,v.displayRefContChicklet)}">
+                    <c:CPAPortalUsers recordId="{!v.referralContactId}" objectType="Referral_Contact__c" loggedInUser="{!v.loggedInUser}" enrolledUser="{!v.enrolledUser}"  commUser="{!v.commUser}" referralContactData="{!v.referralContactWrapper.ReferralContact}"/>
+                </aura:if>            
+            </aura:if>
+        </div>
+    </div>
+</aura:component>

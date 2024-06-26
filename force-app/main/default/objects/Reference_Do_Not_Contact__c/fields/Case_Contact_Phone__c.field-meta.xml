@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Case_Contact_Phone__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>Case 26171567</description>
+    <externalId>false</externalId>
+    <formula>IF(NOT(ISBLANK(CaseID__r.Lead__r.Phone)),CaseID__r.Lead__r.Phone,
+IF(NOT(ISBLANK(CaseID__r.Lead__r.MobilePhone)),CaseID__r.Lead__r.MobilePhone,
+IF(NOT(ISBLANK(CaseID__r.Contact.Phone)),CaseID__r.Contact.Phone,
+IF(NOT(ISBLANK(CaseID__r.Contact.MobilePhone)),CaseID__r.Contact.MobilePhone,
+IF(NOT(ISBLANK(CaseID__r.Contact.OtherPhone)),CaseID__r.Contact.OtherPhone,CaseID__r.Account.Phone)))))</formula>
+    <label>Case Contact Phone</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

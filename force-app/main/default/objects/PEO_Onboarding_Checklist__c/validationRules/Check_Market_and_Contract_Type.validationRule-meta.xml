@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Check_Market_and_Contract_Type</fullName>
+    <active>true</active>
+    <description>Checks if Market and Contract type can be modified or not. If CS CM status is Prospect it can be edited. And once the field has values, it cant be made null</description>
+    <errorConditionFormula>CASE(
+IF($Profile.Name &lt;&gt; &quot;System Administrator API-ClientSpace&quot;, &quot;1&quot;, &quot;0&quot;) +
+IF($Profile.Name &lt;&gt; &quot;System Administrator&quot;, &quot;1&quot;, &quot;0&quot;) +
+IF(CSCMContractStatus__c &lt;&gt; &quot;Prospect&quot;, &quot;1&quot;, &quot;0&quot;) +
+IF(CSCMContractStatus__c = &quot;Prospect&quot;, &quot;1&quot;, &quot;0&quot;) +
+IF(AND(ISCHANGED( Contract_Type__c ),NOT(ISBLANK(TEXT(Contract_Type__c)))), &quot;1&quot;, &quot;0&quot;) +
+IF(AND(ISCHANGED( Market__c ),NOT(ISBLANK(TEXT(Market__c)))), &quot;1&quot;, &quot;0&quot;) +
+IF(AND(ISCHANGED( Market__c ),ISBLANK(TEXT(Market__c))), &quot;1&quot;, &quot;0&quot;) +
+IF(AND(ISCHANGED( Contract_Type__c ),ISBLANK(TEXT(Contract_Type__c))), &quot;1&quot;, &quot;0&quot;) ,
+
+&quot;11101100&quot;, 1,
+&quot;11101000&quot;, 1,
+&quot;11100100&quot;, 1,
+&quot;11010011&quot;, 1,
+&quot;11010001&quot;, 1,
+&quot;11010010&quot;, 1,
+&quot;11100011&quot;, 1,
+&quot;11100010&quot;, 1,
+&quot;11100001&quot;, 1,
+
+0
+) = 1</errorConditionFormula>
+    <errorMessage>Market and Contract Type can be edited only when the CS CM Contract Status is equal to Prospect.
+Also once the value is set these fields cant be cleared.</errorMessage>
+</ValidationRule>

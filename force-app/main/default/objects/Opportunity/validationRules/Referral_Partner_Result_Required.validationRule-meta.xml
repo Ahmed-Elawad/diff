@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Referral_Partner_Result_Required</fullName>
+    <active>true</active>
+    <description>Force users to populate the Referral Partner Result field before completing the Opportunity</description>
+    <errorConditionFormula>AND( 
+$RecordType.Name = &quot;Referral Partner Opportunity Record Type&quot;, 
+ISPICKVAL(Referral_Partner_Result__c, &apos;&apos;),
+ISPICKVAL( StageName , &apos;Completed&apos;), 
+NOT(OR(BEGINS($Profile.Name,&quot;System Administrator&quot;),BEGINS($Profile.Name,&quot;MMS Sales ZSA&quot;),BEGINS($Profile.Name,&quot;Core Zone Administration&quot;),BEGINS($Profile.Name,&quot;Salesforce Support&quot;))) 
+)</errorConditionFormula>
+    <errorDisplayField>Referral_Partner_Result__c</errorDisplayField>
+    <errorMessage>You must select a value for the Referral Partner Result field before you can set the Opportunity Status = Completed</errorMessage>
+</ValidationRule>

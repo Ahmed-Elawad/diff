@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Reference_PAC_Rejected_Warranty_Payment_Approval_Request</fullName>
+        <description>Reference PAC - Rejected Warranty Payment Approval Request. Used by the Approve Reference PAC Warranty Payment approval process.</description>
+        <protected>false</protected>
+        <recipients>
+            <type>creator</type>
+        </recipients>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>AutoresponseEmailTemplate/PAC_Warranty_Payment_Rejected</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>Ref_PAC_WLP_Date_Approved_Denied_Update</fullName>
+        <description>Populate the Reference PAC Warranty/Late Payment.Date Approved/Denied field with the current date</description>
+        <field>Date_Approved_Denied__c</field>
+        <formula>TODAY()</formula>
+        <name>Ref PAC WLP Date Approved/Denied Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_WLP_Date_Warranty_Approved_Updat</fullName>
+        <description>Populate the Reference PAC Warranty/Late Payment.Warranty Approved? field with &quot;Approved&quot;. Used by the Approve Reference PAC Warranty Payment approval process.</description>
+        <field>Warranty_Approved__c</field>
+        <literalValue>Approved</literalValue>
+        <name>Ref PAC WLP Date Warranty Approved Updat</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_WLP_Date_entered_Approval_Proces</fullName>
+        <description>Populate the Reference PAC Warranty/Late Payment.Warranty record entered Approval Process field with the current date/time</description>
+        <field>Warranty_record_entered_Approval_Process__c</field>
+        <formula>NOW()</formula>
+        <name>Ref PAC WLP Date entered Approval Proces</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_WLP_Date_exited_Approval_Process</fullName>
+        <description>Populate the Reference PAC Warranty/Late Payment.Warranty record exited Approval Process field with the current date/time</description>
+        <field>Warranty_record_exited_Approval_Process__c</field>
+        <formula>NOW()</formula>
+        <name>Ref PAC WLP Date exited Approval Process</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_WLP_Payment_ApprvDenied_By_Upd</fullName>
+        <description>Populate the Reference PAC Warranty/Late Payment.Payment Approved/Denied by field with the current user</description>
+        <field>Payment_Approved_Denied_by__c</field>
+        <formula>$User.FirstName + &quot; &quot; +$User.LastName</formula>
+        <name>Ref PAC WLP Payment ApprvDenied By Upd</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_WLP_Payment_Completed_By_Update</fullName>
+        <description>Populate the Reference PAC Warranty/Late Payment.Payment Completed By field  via the User updating the Date Completed field</description>
+        <field>Payment_Completed_By__c</field>
+        <formula>$User.FirstName + &quot; &quot; +$User.LastName</formula>
+        <name>Ref PAC WLP Payment Completed By Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_WLP_Payment_Requested_By_Update</fullName>
+        <description>Populate the Reference PAC Warranty/Late Payment.Payment Requested By field  via the User creating the record</description>
+        <field>Payment_Requested_By__c</field>
+        <formula>$User.FirstName + &quot; &quot; +$User.LastName</formula>
+        <name>Ref PAC WLP Payment Requested By Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Ref_PAC_WLP_Warranty_Approved_rejected</fullName>
+        <description>Populate the Reference PAC Warranty/Late Payment.Warranty Approved? field with &quot;Denied&quot;. Used by the Approve Reference PAC Warranty Payment approval process</description>
+        <field>Warranty_Approved__c</field>
+        <literalValue>Denied</literalValue>
+        <name>Ref PAC WLP Warranty Approved rejected</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Period_Date_via_Reference_PAC</fullName>
+        <description>Populate the Period Date for Payment field via the value contained in the parent Reference PAC.1st Period Listed field.</description>
+        <field>Period_Date_for_Payment__c</field>
+        <formula>Reference_PAC__r.First_Period_Listed__c</formula>
+        <name>Update Period Date via Reference PAC</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Populate Ref PAC WLP Payment Completed By</fullName>
+        <actions>
+            <name>Ref_PAC_WLP_Payment_Completed_By_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Populate the Reference PAC Warranty/Late Payment.Payment Completed By field via the User updating the Date Completed field</description>
+        <formula>AND(   (ISCHANGED(Date_Completed__c)),  (NOT(ISNULL(Date_Completed__c))) )</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Populate Ref PAC WLP Payment Requested By</fullName>
+        <actions>
+            <name>Ref_PAC_WLP_Payment_Requested_By_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_PAC_Warranty_Late_Payment__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>PAC Warranty Record Type,PAC Late Payment Record Type</value>
+        </criteriaItems>
+        <description>Populate the Reference PAC Warranty/Late Payment.Payment Requested By field  via the User creating the record</description>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>Reference PAC WLP populate Period Date for Payment</fullName>
+        <actions>
+            <name>Update_Period_Date_via_Reference_PAC</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Populate the Reference PAC Warranty/Late Payment.Period Date for Payment field  via the  Reference PAC.1st Period Listed</description>
+        <formula>ISNULL(Period_Date_for_Payment__c)</formula>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+</Workflow>

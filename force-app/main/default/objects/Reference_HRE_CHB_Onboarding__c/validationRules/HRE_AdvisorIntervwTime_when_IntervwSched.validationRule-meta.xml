@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRE_AdvisorIntervwTime_when_IntervwSched</fullName>
+    <active>true</active>
+    <description>The Advisor Interview Time field must be populated in order to check the Interview Scheduled field.</description>
+    <errorConditionFormula>AND(
+(Interview_Scheduled__c),
+( ISPICKVAL(Advisor_Interview_Time__c, &apos;&apos;) ),
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)))
+)</errorConditionFormula>
+    <errorDisplayField>Advisor_Interview_Time__c</errorDisplayField>
+    <errorMessage>Before Interview Scheduled can be checked, you need to enter a value for Advisor Interview Time.</errorMessage>
+</ValidationRule>

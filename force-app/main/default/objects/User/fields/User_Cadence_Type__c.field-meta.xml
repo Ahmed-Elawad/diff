@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>User_Cadence_Type__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>IF(AND(ISPICKVAL(Sales_Org__c,&quot;NSS&quot;),CONTAINS(UserRole.Name,&quot;NSS Inbound Rep - PEO&quot;)),&quot;Inbound-Oasis&quot;,
+IF(CONTAINS( TEXT(NSS_Team__c),&quot;Oasis&quot;),TEXT(NSS_Team__c),
+IF(ISPICKVAL( NSS_Team__c,&quot;MMS SDR&quot;),&quot;MMS SDR&quot;,
+IF(ISPICKVAL( NSS_Team__c,&quot;Virtual SMB&quot;),&quot;Virtual SMB&quot;,
+IF(ISPICKVAL( NSS_Team__c,&quot;SMB New Business&quot;),&quot;SMB New Business&quot;,
+IF(CONTAINS( Profile.Name,&quot;HRS Virtual Sales&quot;),&quot;Virtual HRS&quot;,
+IF(AND(ISPICKVAL( NSS_Team__c,&quot;Inbound&quot;),CONTAINS(UserRole.Name,&quot;VIRTUAL SALES CORE&quot;)),&quot;SMB INB&quot;,
+IF(OR(CONTAINS(UserRole.Name,&quot;SMB SA&quot;),CONTAINS(UserRole.Name,&quot;SMB Sales Rep Strategic Accounts&quot;),CONTAINS(UserRole.Name,&quot;SMB District Strategic Accounts&quot;),CONTAINS(UserRole.Name,&quot;Strategic Accounts Manager&quot;)),&quot;SMB SA&quot;,
+IF(CONTAINS(UserRole.Name,&quot;BPO Rep&quot;),&quot;BPO&quot;,
+IF(AND(ISPICKVAL(Sales_Org__c,&quot;NSS&quot;),CONTAINS(UserRole.Name,&quot;Forms&quot;)),&quot;Inbound-Forms&quot;,
+IF(ISPICKVAL(Sales_Org__c,&quot;PAY&quot;),&quot;SMB&quot;,
+IF(ISPICKVAL(Sales_Org__c,&quot;PAS&quot;),&quot;ASO&quot;,
+IF(AND(ISPICKVAL(Sales_Org__c,&quot;MMS&quot;),CONTAINS(UserRole.Name, &quot;CSR&quot;),ISBLANK(Touchpoint_Custom_Tag__c)),&quot;CSSR&quot;,
+IF(OR(Profile.Name=&quot;NSS Inbound Rep&quot;,Profile.Name=&quot;NSS Outbound Rep&quot;),&quot;NSS&quot;,
+IF(AND(CONTAINS(Touchpoint_Custom_Tag__c,&quot;CSM&quot;),NOT(ISBLANK(Touchpoint_Custom_Tag__c))),&quot;CSM&quot;,
+IF(CONTAINS(Sales_Division__c,&quot;Virtual HNBF&quot;), Sales_Division__c, IF(CONTAINS(Title,&quot;Wholesale&quot;),&quot;HRS-WS&quot;,TEXT(Sales_Org__c)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)</formula>
+    <label>User Cadence Type</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

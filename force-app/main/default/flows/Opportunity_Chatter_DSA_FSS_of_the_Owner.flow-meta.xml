@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <processMetadataValues>
+            <name>textJson</name>
+            <value>
+                <stringValue>{&quot;mentions&quot;:[],&quot;message&quot;:&quot;@[{![Opportunity].Owner.DSA_FSS__c}]  Opportunity - {![Opportunity].Name}&apos;s Status changed from Sold-Submitted to Sold-Revenue Recognized.&quot;}</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>myRule_1_A1</name>
+        <label>Notify DSA/FSS of Owner of Status change</label>
+        <locationX>100</locationX>
+        <locationY>200</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <connector>
+            <targetReference>myDecision2</targetReference>
+        </connector>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <stringValue>@[{!myVariable_current.Owner.DSA_FSS__c}]  Opportunity - {!myVariable_current.Name}&apos;s Status changed from Sold-Submitted to Sold-Revenue Recognized.</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>type</name>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>myVariable_current.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <processMetadataValues>
+            <name>textJson</name>
+            <value>
+                <stringValue>{&quot;mentions&quot;:[],&quot;message&quot;:&quot;@[{![Opportunity].Owner.DSA_FSS__c}]  Opportunity - {![Opportunity].Name}&apos;s Run-Effective Date changed to {![Opportunity].CloseDate}.&quot;}</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>myRule_3_A1</name>
+        <label>Notify DSA/FSS of Owner of Run-Effective Date change</label>
+        <locationX>300</locationX>
+        <locationY>200</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <connector>
+            <targetReference>myDecision4</targetReference>
+        </connector>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <stringValue>@[{!myVariable_current.Owner.DSA_FSS__c}]  Opportunity - {!myVariable_current.Name}&apos;s Run-Effective Date changed to {!myVariable_current.CloseDate}.</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>type</name>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>myVariable_current.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <processMetadataValues>
+            <name>textJson</name>
+            <value>
+                <stringValue>{&quot;mentions&quot;:[],&quot;message&quot;:&quot;@[{![Opportunity].Owner.DSA_FSS__c}]  Opportunity - {![Opportunity].Name}&apos;s Net Revenue changed to {![Opportunity].Amount}.&quot;}</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>myRule_5_A1</name>
+        <label>Notify DSA/FSS of Owner of Net Revenue change</label>
+        <locationX>500</locationX>
+        <locationY>200</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <stringValue>@[{!myVariable_current.Owner.DSA_FSS__c}]  Opportunity - {!myVariable_current.Name}&apos;s Net Revenue changed to {!myVariable_current.Amount}.</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>type</name>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>myVariable_current.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>49.0</apiVersion>
+    <assignments>
+        <name>myVariable_waitStartTimeAssignment</name>
+        <label>myVariable_waitStartTimeAssignment</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>myVariable_waitStartTimeVariable</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.CurrentDateTime</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>myDecision</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <processMetadataValues>
+            <name>index</name>
+            <value>
+                <numberValue>0.0</numberValue>
+            </value>
+        </processMetadataValues>
+        <name>myDecision</name>
+        <label>myDecision</label>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>myDecision2</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>default</defaultConnectorLabel>
+        <rules>
+            <name>myRule_1</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>formula_myRule_1</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>myRule_1_A1</targetReference>
+            </connector>
+            <label>Check for Status change not made by DSA/FSS</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <processMetadataValues>
+            <name>index</name>
+            <value>
+                <numberValue>1.0</numberValue>
+            </value>
+        </processMetadataValues>
+        <name>myDecision2</name>
+        <label>myDecision2</label>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>myDecision4</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>default</defaultConnectorLabel>
+        <rules>
+            <name>myRule_3</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>formula_myRule_3</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>myRule_3_A1</targetReference>
+            </connector>
+            <label>Check for Run-Effective Date change not made by DSA/FSS</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <processMetadataValues>
+            <name>index</name>
+            <value>
+                <numberValue>2.0</numberValue>
+            </value>
+        </processMetadataValues>
+        <name>myDecision4</name>
+        <label>myDecision4</label>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>default</defaultConnectorLabel>
+        <rules>
+            <name>myRule_5</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>formula_myRule_5</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>myRule_5_A1</targetReference>
+            </connector>
+            <label>Check for Net Revenue change not made by DSA/FSS</label>
+        </rules>
+    </decisions>
+    <description>FL - notify DSA/FSS of the Opportunity Owner for specific changes - Case 30043963</description>
+    <formulas>
+        <processMetadataValues>
+            <name>originalFormula</name>
+            <value>
+                <stringValue>( ([Opportunity].RecordType.Name  = &quot;PEO Opportunity Record Type&quot;) || ([Opportunity].RecordType.Name  = &quot;PEO Opportunity FSS Record Type&quot;) ) &amp;&amp;
+ISCHANGED([Opportunity].StageName) &amp;&amp;
+(ISPICKVAL([Opportunity].StageName, &quot;Sold - Revenue Recognition&quot;)) &amp;&amp;
+(TEXT(PRIORVALUE([Opportunity].StageName)) = &quot;Sold - Submitted&quot;) &amp;&amp;
+([Opportunity].Owner.DSA_FSS__c) != null &amp;&amp;
+([Opportunity].Owner.DSA_FSS__c.Username) != $User.Username</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>formula_myRule_1</name>
+        <dataType>Boolean</dataType>
+        <expression>( ({!myVariable_current.RecordType.Name}  = &quot;PEO Opportunity Record Type&quot;) || ({!myVariable_current.RecordType.Name}  = &quot;PEO Opportunity FSS Record Type&quot;) ) &amp;&amp;
+ISCHANGED({!myVariable_current.StageName}) &amp;&amp;
+(ISPICKVAL({!myVariable_current.StageName}, &quot;Sold - Revenue Recognition&quot;)) &amp;&amp;
+(TEXT(PRIORVALUE({!myVariable_current.StageName})) = &quot;Sold - Submitted&quot;) &amp;&amp;
+({!myVariable_current.Owner.DSA_FSS__c}) != null &amp;&amp;
+({!myVariable_current.Owner.DSA_FSS__r.Username}) != {!$User.Username}</expression>
+    </formulas>
+    <formulas>
+        <processMetadataValues>
+            <name>originalFormula</name>
+            <value>
+                <stringValue>( ([Opportunity].RecordType.Name  = &quot;PEO Opportunity Record Type&quot;) || ([Opportunity].RecordType.Name  = &quot;PEO Opportunity FSS Record Type&quot;) ) &amp;&amp;
+ISCHANGED([Opportunity].CloseDate) &amp;&amp;
+NOT(ISNULL([Opportunity].CloseDate)) &amp;&amp;
+([Opportunity].Owner.DSA_FSS__c) != null &amp;&amp;
+([Opportunity].Owner.DSA_FSS__c.Username) != $User.Username &amp;&amp;
+( (ISPICKVAL([Opportunity].StageName, &quot;Sold - Submitted&quot;)) ||
+  (ISPICKVAL([Opportunity].StageName, &quot;Underwriting&quot;)) ||
+  (ISPICKVAL([Opportunity].StageName, &quot;Sold - Revenue Recognition&quot;)) ||
+  (ISPICKVAL([Opportunity].StageName, &quot;Orientation&quot;)) ||
+  (ISPICKVAL([Opportunity].StageName, &quot;Final Underwriting&quot;)) ||
+  (ISPICKVAL([Opportunity].StageName, &quot;Sold - Started&quot;)) ||
+  (ISPICKVAL([Opportunity].StageName, &quot;Sold - Commissioned&quot;)) )</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>formula_myRule_3</name>
+        <dataType>Boolean</dataType>
+        <expression>( ({!myVariable_current.RecordType.Name}  = &quot;PEO Opportunity Record Type&quot;) || ({!myVariable_current.RecordType.Name}  = &quot;PEO Opportunity FSS Record Type&quot;) ) &amp;&amp;
+ISCHANGED({!myVariable_current.CloseDate}) &amp;&amp;
+NOT(ISNULL({!myVariable_current.CloseDate})) &amp;&amp;
+({!myVariable_current.Owner.DSA_FSS__c}) != null &amp;&amp;
+({!myVariable_current.Owner.DSA_FSS__r.Username}) != {!$User.Username} &amp;&amp;
+( (ISPICKVAL({!myVariable_current.StageName}, &quot;Sold - Submitted&quot;)) ||
+  (ISPICKVAL({!myVariable_current.StageName}, &quot;Underwriting&quot;)) ||
+  (ISPICKVAL({!myVariable_current.StageName}, &quot;Sold - Revenue Recognition&quot;)) ||
+  (ISPICKVAL({!myVariable_current.StageName}, &quot;Orientation&quot;)) ||
+  (ISPICKVAL({!myVariable_current.StageName}, &quot;Final Underwriting&quot;)) ||
+  (ISPICKVAL({!myVariable_current.StageName}, &quot;Sold - Started&quot;)) ||
+  (ISPICKVAL({!myVariable_current.StageName}, &quot;Sold - Commissioned&quot;)) )</expression>
+    </formulas>
+    <formulas>
+        <processMetadataValues>
+            <name>originalFormula</name>
+            <value>
+                <stringValue>( ([Opportunity].RecordType.Name  = &quot;PEO Opportunity Record Type&quot;) || ([Opportunity].RecordType.Name  = &quot;PEO Opportunity FSS Record Type&quot;) ) &amp;&amp;
+ISCHANGED([Opportunity].Amount) &amp;&amp;
+NOT(ISNULL([Opportunity].Amount)) &amp;&amp;
+([Opportunity].Owner.DSA_FSS__c) != null &amp;&amp;
+([Opportunity].Owner.DSA_FSS__c.Username) != $User.Username &amp;&amp;
+( (ISPICKVAL([Opportunity].StageName, &quot;Sold - Submitted&quot;)) ||
+  (ISPICKVAL([Opportunity].StageName, &quot;Underwriting&quot;)) ||
+  (ISPICKVAL([Opportunity].StageName, &quot;Sold - Revenue Recognition&quot;)) ||
+  (ISPICKVAL([Opportunity].StageName, &quot;Orientation&quot;)) ||
+  (ISPICKVAL([Opportunity].StageName, &quot;Final Underwriting&quot;)) ||
+  (ISPICKVAL([Opportunity].StageName, &quot;Sold - Started&quot;)) ||
+  (ISPICKVAL([Opportunity].StageName, &quot;Sold - Commissioned&quot;)) )</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>formula_myRule_5</name>
+        <dataType>Boolean</dataType>
+        <expression>( ({!myVariable_current.RecordType.Name}  = &quot;PEO Opportunity Record Type&quot;) || ({!myVariable_current.RecordType.Name}  = &quot;PEO Opportunity FSS Record Type&quot;) ) &amp;&amp;
+ISCHANGED({!myVariable_current.Amount}) &amp;&amp;
+NOT(ISNULL({!myVariable_current.Amount})) &amp;&amp;
+({!myVariable_current.Owner.DSA_FSS__c}) != null &amp;&amp;
+({!myVariable_current.Owner.DSA_FSS__r.Username}) != {!$User.Username} &amp;&amp;
+( (ISPICKVAL({!myVariable_current.StageName}, &quot;Sold - Submitted&quot;)) ||
+  (ISPICKVAL({!myVariable_current.StageName}, &quot;Underwriting&quot;)) ||
+  (ISPICKVAL({!myVariable_current.StageName}, &quot;Sold - Revenue Recognition&quot;)) ||
+  (ISPICKVAL({!myVariable_current.StageName}, &quot;Orientation&quot;)) ||
+  (ISPICKVAL({!myVariable_current.StageName}, &quot;Final Underwriting&quot;)) ||
+  (ISPICKVAL({!myVariable_current.StageName}, &quot;Sold - Started&quot;)) ||
+  (ISPICKVAL({!myVariable_current.StageName}, &quot;Sold - Commissioned&quot;)) )</expression>
+    </formulas>
+    <interviewLabel>Opportunity_Chatter_DSA_FSS_of_the_Owner-2_InterviewLabel</interviewLabel>
+    <label>Opportunity Chatter DSA/FSS of the Owner</label>
+    <processMetadataValues>
+        <name>ObjectType</name>
+        <value>
+            <stringValue>Opportunity</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>ObjectVariable</name>
+        <value>
+            <elementReference>myVariable_current</elementReference>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OldObjectVariable</name>
+        <value>
+            <elementReference>myVariable_old</elementReference>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>TriggerType</name>
+        <value>
+            <stringValue>onAllChanges</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Workflow</processType>
+    <startElementReference>myVariable_waitStartTimeAssignment</startElementReference>
+    <status>Obsolete</status>
+    <variables>
+        <name>myVariable_current</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Opportunity</objectType>
+    </variables>
+    <variables>
+        <name>myVariable_old</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Opportunity</objectType>
+    </variables>
+    <variables>
+        <name>myVariable_waitStartTimeVariable</name>
+        <dataType>DateTime</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <elementReference>$Flow.CurrentDateTime</elementReference>
+        </value>
+    </variables>
+</Flow>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DD_Distribution_Submitted_VR</fullName>
+    <active>true</active>
+    <description>If Distribution Submitted to CAM is populated, Distribution Submitted by must also be populated</description>
+    <errorConditionFormula>RecordType.Name = &apos;Death Distribution&apos; &amp;&amp; NOT(ISNULL( Distribution_Submitted_to_CAM__c ))  &amp;&amp;  ISBLANK( Distribution_Submitted_by__c )</errorConditionFormula>
+    <errorDisplayField>Distribution_Submitted_by__c</errorDisplayField>
+    <errorMessage>* If Distribution Submitted to CAM is populated, Distribution Submitted by must also be populated *</errorMessage>
+</ValidationRule>

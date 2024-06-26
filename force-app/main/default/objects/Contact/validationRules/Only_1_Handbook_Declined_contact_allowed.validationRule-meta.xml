@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Only_1_Handbook_Declined_contact_allowed</fullName>
+    <active>true</active>
+    <description>under the Paychex Utility account there is a contact named Handbook Declined. We want to prevent user from creating their own Handbook Declined contact.
+case #26083597</description>
+    <errorConditionFormula>OR((FirstName = &apos;Handbook&apos; &amp;&amp; LastName = &apos;Declined&apos;), 
+(FirstName = &apos;Declined&apos; &amp;&amp; LastName = &apos;Handbook&apos;)) 
+&amp;&amp; 
+Account.Name != &apos;Paychex Utility&apos; 
+&amp;&amp; 
+NOT(BEGINS($Profile.Name, &quot;System Admin&quot;))</errorConditionFormula>
+    <errorMessage>There is already a contact named Handbook Declined under the Paychex Utility account. Please use that one.</errorMessage>
+</ValidationRule>

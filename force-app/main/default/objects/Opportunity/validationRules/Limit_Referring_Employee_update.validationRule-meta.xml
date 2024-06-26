@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Limit_Referring_Employee_update</fullName>
+    <active>true</active>
+    <description>If NSS Source = Inbound or Outbound, only NSS Mngr Admin or SA can update Referring Employee field</description>
+    <errorConditionFormula>AND ( 
+OR(ISPICKVAL( NSS_Source__c, &apos;Inbound&apos;), 
+   ISPICKVAL( NSS_Source__c, &apos;Outbound&apos;) ) , 
+ISCHANGED( Referring_Employee__c ), 
+NOT(BEGINS( $Profile.Name, &apos;System Admin&apos;)), 
+NOT($Profile.Name = &apos;NSS Manager Admin&apos;) 
+,(((NOW() - CreatedDate) * 1000) &gt; 4) 
+)</errorConditionFormula>
+    <errorDisplayField>Referring_Employee__c</errorDisplayField>
+    <errorMessage>You do not have permission to change the Referring Employee if the NSS Source is Inbound or Outbound.</errorMessage>
+</ValidationRule>

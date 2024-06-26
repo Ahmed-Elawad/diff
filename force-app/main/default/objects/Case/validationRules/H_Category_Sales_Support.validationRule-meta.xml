@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>H_Category_Sales_Support</fullName>
+    <active>true</active>
+    <description>If H_Category 1 is &apos;Ops - Sales Support&apos;, Minutes Worked field is required</description>
+    <errorConditionFormula>AND(NOT(BEGINS(&quot;$Profile.Name&quot;,&quot;System Admin&quot;)),ISPICKVAL( HRS4SCategory1__c ,&quot;Ops - Sales Support&quot;),ISBLANK( Minutes_Worked__c ))</errorConditionFormula>
+    <errorDisplayField>Minutes_Worked__c</errorDisplayField>
+    <errorMessage>If H_Category 1 is &apos;Ops - Sales Support&apos;, Minutes Worked field is required</errorMessage>
+</ValidationRule>

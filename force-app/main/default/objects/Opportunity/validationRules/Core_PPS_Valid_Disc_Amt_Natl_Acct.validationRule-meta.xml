@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Core_PPS_Valid_Disc_Amt_Natl_Acct</fullName>
+    <active>false</active>
+    <description>only allow up to 25% Naitonal Account Discount on PPS</description>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)) , Payroll_Processing_Services_Package__c || Payroll_Processing_Services_Plus_Package__c ,
+ ISPICKVAL( WIN_Check__c , &quot;National Account&quot;),
+ WIN__c &gt; 0.25 )
+||
+AND(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)) ,  Payroll_Processing_Services_Package__c ||  Payroll_Processing_Services_Plus_Package__c ,
+ISPICKVAL(  Discount2_Type__c , &quot;National Account&quot;),
+ Discount2_Percentage__c  &gt; 0.25)</errorConditionFormula>
+    <errorMessage>***National Account discount is only up to 25%* when discounting PPS package***</errorMessage>
+</ValidationRule>

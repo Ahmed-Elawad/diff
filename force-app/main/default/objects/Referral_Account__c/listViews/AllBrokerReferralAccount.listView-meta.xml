@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AllBrokerReferralAccount</fullName>
+    <columns>RECORDTYPE</columns>
+    <columns>NAME</columns>
+    <columns>OWNER.FIRST_NAME</columns>
+    <columns>OWNER.LAST_NAME</columns>
+    <columns>Referral_Source_Business_Type__c</columns>
+    <columns>PartnerId__c</columns>
+    <columns>ReferralPaymentStart__c</columns>
+    <columns>Referral_Payment_Program_Name__c</columns>
+    <columns>Referral_Payment_Partner_Status__c</columns>
+    <columns>VendorInternalURL__c</columns>
+    <columns>ReferralSourceSubType__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Referral_Source_Business_Type__c</field>
+        <operation>equals</operation>
+        <value>Broker,Broker Dealer,Broker Dealer Branch,Business Consultant,Financial Services,Full Service Agency,Health Insurance Broker,Health Ins Broker,Insurance Broker,PEO Broker,P&amp;C Broker,Property and Casualty Broker,Trusted Advisor</value>
+    </filters>
+    <filters>
+        <field>End_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>notEqual</operation>
+        <value>Referral_Account__c.CoreReferralSourceRecordType,Referral_Account__c.HRSReferralSourceRecordType</value>
+    </filters>
+    <filters>
+        <field>End_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <label>All Broker Referral Account</label>
+    <sharedTo>
+        <group>HRSSales</group>
+        <group>MMS</group>
+    </sharedTo>
+</ListView>

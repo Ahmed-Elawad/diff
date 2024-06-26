@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PSST_Supervisor_Agree_Disagree_123</fullName>
+    <active>true</active>
+    <errorConditionFormula>OR( 
+AND(ISPICKVAL(  PSST_Supervisor_reviewed_1__c ,&quot;Yes&quot;) || ISPICKVAL( PSST_Supervisor_reviewed_1__c ,&quot;No&quot;), ISPICKVAL(   PSST_Supervisor_Agree_Disagree_1__c,&quot;&quot; ) ), 
+
+AND(ISPICKVAL(  PSST_Supervisor_reviewed_2__c ,&quot;Yes&quot;) || ISPICKVAL( PSST_Supervisor_reviewed_2__c ,&quot;No&quot;),ISPICKVAL(   PSST_Supervisor_Agree_Disagree__c,&quot;&quot; ) ), 
+
+AND(ISPICKVAL(  PSST_Supervisor_reviewed_3__c ,&quot;Yes&quot;) || ISPICKVAL( PSST_Supervisor_reviewed_3__c ,&quot;No&quot;), ISPICKVAL(   PSST_Supervisor_Agree_Disagree_3__c,&quot;&quot; ) ) 
+
+
+)</errorConditionFormula>
+    <errorMessage>PSST Supervisor Agree Disagree  fields are required if PSST Supervisor reviewed =  ‘Yes’ or ‘No’</errorMessage>
+</ValidationRule>

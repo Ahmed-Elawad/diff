@@ -1,0 +1,28 @@
+<aura:component description="BannerMultiID">
+    <aura:attribute name="account" type="Object" />
+
+    <div class="box" title="Open Cases">
+        <div class="banner-header slds-align_absolute-center">
+            <h4 class="slds-item_label slds-text-color_weak slds-truncate slds-text-align_center">Multi ID?</h4>
+        </div>
+        <div class="banner-body">
+            <div class="slds-item_detail slds-truncate slds-align_absolute-center column clickable-banner-item" title="Multi Id" onclick="{!c.navigateToParentOrChildren}">
+
+                <img src="{!$Resource.BannerIcons + '/LightningIcons/parentchild.png'}" />
+
+                <span>
+                    <aura:if isTrue="{!v.account.isParent__c}">
+                        Parent
+                    </aura:if>
+                    <aura:if isTrue="{!v.account.isChild__c}">
+                        Child
+                    </aura:if>
+                    <aura:if isTrue="{!and(!v.account.isParent__c, !v.account.isChild__c)}">
+                        Single ID
+                    </aura:if>
+                </span>
+
+            </div>
+        </div>
+    </div>
+</aura:component>

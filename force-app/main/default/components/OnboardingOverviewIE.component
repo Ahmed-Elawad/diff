@@ -1,0 +1,56 @@
+<apex:component controller="OnboardingOverviewController"> 
+    <apex:form > 
+       <apex:pageBlock rendered="{!IF((singleRefCollection.size == 0 && singleRefGradCollection.size == 0),FALSE,TRUE)}" title="Onboarding Overview">
+           <apex:pageblockSection columns="1" >
+              <apex:dataTable width="100%" columns="6" columnsWidth="10%,25%,20%,15%,15%,15%"  rendered="{!IF((singleRefCollection.size == 0),FALSE,TRUE)}" 
+                              value="{!singleRefCollection}" var="refData" style="white-space:nowrap;color:#4a4a56;font-size:.95em;"  >
+               <apex:column headerValue="Product">
+                   <apex:outputLink target="_parent" value="/{!refData.Id}" >{!refData.product}</apex:outputLink> 
+               </apex:column>
+               <apex:column headerValue="Status:">
+                  <apex:outputText value="{!refData.status}" /> <!-- Status -->
+               </apex:column>
+                  <apex:column headerValue="Est. Run Date:">
+                      <apex:outputText value="{0,date,MM/dd/yyyy}">
+                          <apex:param value="{!refData.runDate}" />
+                      </apex:outputText><!-- OwnerName -->
+                  </apex:column>
+               <apex:column headerValue="Assigned To:">
+                  <apex:outputText value="{!refData.ownerName}" /> <!-- OwnerName -->
+               </apex:column>
+               <apex:column headerValue="Phone">
+                  <apex:outputText value="{!refData.ownerPhone}" /> <!-- OwnerPhone -->
+               </apex:column>
+                  <apex:column headerValue="Email">
+                      <apex:outputText value="{!refData.ownerEmail}" /> <!-- OwnerEmail -->
+                  </apex:column>
+            </apex:dataTable>
+       </apex:pageblockSection>
+            <apex:outputPanel id="Graduated" rendered="{!IF((singleRefGradCollection.size == 0),FALSE,TRUE)}" >
+                <apex:commandButton rendered="{!NOT(showGraduated)}" value="Completed Onboarding +" reRender="Graduated" immediate="true">
+                    <apex:param value="true" assignTo="{!showGraduated}"/>
+                </apex:commandButton>
+                <apex:commandButton rendered="{!showGraduated}" value="Completed Onboarding -" reRender="Graduated" immediate="true">
+                    <apex:param value="false" assignTo="{!showGraduated}"/>
+                </apex:commandButton>
+                <apex:pageblockSection columns="1" >
+                      <apex:DataTable width="100%" columns="6" columnsWidth="10%,25%,20%,15%,15%,15%" rendered="{!showGraduated}" 
+                                      value="{!singleRefGradCollection}" var="refData" style="white-space:nowrap;color:#4a4a56;font-size:.95em;" >
+                       <apex:column >
+                          <apex:outputText value="{!refData.product}" /> <!-- Product -->
+                       </apex:column>
+                       <apex:column >
+                          <apex:outputText value="{!refData.status}" /> <!-- Status -->
+                       </apex:column>
+                       <apex:column >
+                          <apex:outputLink target="_parent" value="/{!refData.Id}" >{!refData.refName}</apex:outputLink> <!-- ID and ReferenceNumber -->
+                       </apex:column>
+                       <apex:column />
+                       <apex:column />
+                       <apex:column />
+                    </apex:DataTable>
+                </apex:pageblockSection>
+              </apex:outputPanel> 
+       </apex:pageBlock>   
+   </apex:form>
+</apex:component>

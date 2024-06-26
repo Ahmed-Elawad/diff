@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_ClosedStatus_w_Late_Payments</fullName>
+    <active>true</active>
+    <description>Prevent users from setting the Status to a closed value when there are still Open Late_Payment records</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;Reference PAC Record Type&quot; ), 
+(  ( ISPICKVAL(Status__c, &apos;Closed in PAC - Communicated Findings to Client&apos;) )  ||  ( ISPICKVAL(Status__c, &apos;Closed in PAC - Field to Relay Findings to Client&apos;) )  ),
+( Number_of_Open_Late_Payment_records__c &gt; 0),
+($Profile.Name &lt;&gt;&quot;System Administrator&quot;)
+)</errorConditionFormula>
+    <errorDisplayField>Status__c</errorDisplayField>
+    <errorMessage>You cannot choose a Closed Status value if there are still Open Late Payment records.</errorMessage>
+</ValidationRule>

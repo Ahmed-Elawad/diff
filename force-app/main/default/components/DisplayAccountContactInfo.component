@@ -1,0 +1,30 @@
+<apex:component >
+
+   <apex:attribute name="accountId"
+      type="Id"
+      required="true"
+      description="The Id of the Account." />
+
+   <apex:attribute name="contactId"
+      type="Id"
+      required="true"
+      description="The Id of the Contact" />
+
+
+  <div id="renderLightingComponent"/>
+  <apex:includeLightning />
+  
+  <script>
+            $Lightning.use("c:ReferralPageDisplayApp", function() {
+                $Lightning.createComponent(
+                    "c:ReferralPageDisplay",
+                    {accountId:'{!accountId}', contactId:'{!contactId}'},
+                    "renderLightingComponent",
+                    function(cmp) {
+                        console.log("Component is created!");
+                        console.log(cmp);
+                    });
+                });
+  </script>
+  
+</apex:component>

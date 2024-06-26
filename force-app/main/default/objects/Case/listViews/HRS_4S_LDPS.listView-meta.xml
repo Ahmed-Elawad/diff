@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRS_4S_LDPS</fullName>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>NAME</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>CASES.PRIORITY</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <columns>CASES.RECORDTYPE</columns>
+    <filterScope>Queue</filterScope>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Solved,Solved - Call Disconnected,Solved - Call Transferred</value>
+    </filters>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>notEqual</operation>
+        <value>Case.Terminations_and_Transfers</value>
+    </filters>
+    <label>HRS 4S LDPS</label>
+    <queue>HRS4SLoansDistributions</queue>
+    <sharedTo>
+        <group>HRS_4S_LDPS_Reports</group>
+        <role>HRS_4S_LDPS_Representative_I</role>
+        <role>HRS_4S_LDPS_Representative_II</role>
+        <role>HRS_4S_LDPS_Supervisor_I</role>
+        <role>HRS_4S_LDPS_Supervisor_II</role>
+    </sharedTo>
+</ListView>

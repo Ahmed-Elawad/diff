@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>If_MVA_then_need_supervised_training</fullName>
+    <active>true</active>
+    <description>If MVA is yes then need info on supervised training</description>
+    <errorConditionFormula>AND 
+(  ISPICKVAL( Was_this_a_result_of_an_MVA__c , &quot;Yes&quot;) ,
+ISBLANK ( TEXT( Did_the_IW_undergo_supervised_training__c) ) 
+
+)</errorConditionFormula>
+    <errorDisplayField>Did_the_IW_undergo_supervised_training__c</errorDisplayField>
+    <errorMessage>If MVA = Yes then you need info on the supervised training</errorMessage>
+</ValidationRule>

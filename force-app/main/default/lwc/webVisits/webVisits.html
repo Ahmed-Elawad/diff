@@ -1,0 +1,46 @@
+<template>
+    <div class="banner-header slds-align_absolute-center">
+        <h4 class="slds-item_label slds-text-color_weak slds-truncate slds-text-align_center">Web Visits</h4>
+    </div>
+        <div class="banner-body">
+            <div class="slds-item_detail slds-truncate slds-align_absolute-center column">
+                <template if:true={webVisitLow}>
+                    <div class="slds-item_detail slds-truncate slds-align_absolute-center column" title="A LOW amount of visits to key site pages means the prospect likely found what they were looking for quickly.">
+                        <p style=" font-size:10px"><i>Frequency of visits to Paychex.com </i></p>    
+                        <br/>
+                        <template if:true={imageURL}>
+                            <img src={imageURL}/>
+                        </template>
+                        <p style= "color: rgb(0, 112, 210)" >{webVisitValue}</p> 
+                    </div> 
+                </template>
+                <template if:true={webVisitMedium}>
+                    <div class="slds-item_detail slds-truncate slds-align_absolute-center column" title="A MEDIUM amount of visits to key site pages means the prospect was likely browsing or a return site visitor.">
+                        <p style=" font-size:10px"><i>Frequency of visits to Paychex.com </i></p>    
+                        <br/>
+                        <template if:true={imageURL}>
+                            <img src={imageURL}/>
+                        </template>
+                        <p style= "color: rgb(0, 112, 210)" >{webVisitValue}</p> 
+                    </div> 
+                </template>
+                <template if:true={webVisitHigh}>
+                    <div class="slds-item_detail slds-truncate slds-align_absolute-center column" title="A HIGH amount of visits to key site pages over the past 90 days means the lead is likely consuming content or evaluating Paychex.">
+                        <p style=" font-size:10px"><i>Frequency of visits to Paychex.com </i></p>    
+                        <br/>
+                        <template if:true={imageURL}>
+                            <img src={imageURL}/>
+                        </template>
+                        <p style= "color: rgb(0, 112, 210)" >{webVisitValue}</p> 
+                    </div> 
+                </template>
+                <template if:true={webVisitNone}>
+                    <div class="slds-item_detail slds-truncate slds-align_absolute-center column">
+                        <p style=" font-size:10px"><i>Frequency of visits to Paychex.com </i></p>    
+                        <br/>
+                        <p style= "color: rgb(0, 112, 210)" >{webVisitNone}</p> 
+                    </div> 
+                </template>
+            </div>       
+        </div>
+</template>

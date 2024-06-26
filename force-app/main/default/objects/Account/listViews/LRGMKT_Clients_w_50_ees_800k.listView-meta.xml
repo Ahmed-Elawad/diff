@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>LRGMKT_Clients_w_50_ees_800k</fullName>
+    <booleanFilter>1 and  2 and 3 and  4 and 5 and 6</booleanFilter>
+    <columns>Federal_ID_Number__c</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>ACCOUNT.EMPLOYEES</columns>
+    <columns>ACCOUNT.ACCOUNT_NUMBER</columns>
+    <columns>Larkspur_401K_Assets__c</columns>
+    <columns>ACCOUNT.ADDRESS2_STREET</columns>
+    <columns>ACCOUNT.ADDRESS2_CITY</columns>
+    <columns>ACCOUNT.ADDRESS2_STATE</columns>
+    <columns>ACCOUNT.ADDRESS2_ZIP</columns>
+    <columns>ACCOUNT.PHONE1</columns>
+    <columns>First_Run_Date__c</columns>
+    <columns>X401k_Record_Keeper__c</columns>
+    <columns>ACCOUNT.ADDRESS1_ZIP</columns>
+    <filterScope>Team</filterScope>
+    <filters>
+        <field>Bis_ID__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>notContain</operation>
+        <value>Lost Client</value>
+    </filters>
+    <filters>
+        <field>X401_k__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.EMPLOYEES</field>
+        <operation>lessOrEqual</operation>
+        <value>49</value>
+    </filters>
+    <filters>
+        <field>Larkspur_401K_Assets__c</field>
+        <operation>greaterOrEqual</operation>
+        <value>500000</value>
+    </filters>
+    <filters>
+        <field>Out_of_Business__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <label>LRGMKT - Clients w/ &lt; 50+ ees &amp; 500k+</label>
+    <sharedTo>
+        <role>HRS_DISTRICT_90</role>
+        <role>HRS_SALES_REP_DISTRICT_61</role>
+        <role>HRS_SALES_REP_DISTRICT_62</role>
+        <role>HRS_SALES_REP_DISTRICT_63</role>
+        <role>HRS_SALES_REP_DISTRICT_67</role>
+        <role>HRS_SALES_REP_DISTRICT_84</role>
+        <role>HRS_SALES_REP_DISTRICT_90</role>
+        <role>HRS_SALES_REP_DISTRICT_95</role>
+    </sharedTo>
+</ListView>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CANCELS_Pending_Trade_Confirms</fullName>
+    <booleanFilter>1 and 4 and (2 or 3)</booleanFilter>
+    <columns>NAME</columns>
+    <columns>SunGard_Number__c</columns>
+    <columns>BIS_ID__c</columns>
+    <columns>Estimated_Week_of_Liquidation__c</columns>
+    <columns>Money_Manager__c</columns>
+    <columns>Send_to_CAM_to_Liquidate_Assets__c</columns>
+    <columns>Plan_Liquidation_Complete_Date__c</columns>
+    <columns>Send_to_Trade_Rec_to_Conf_Liquid_Ammoun__c</columns>
+    <columns>Trade_Confirm_Amt_Approval__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Send_to_CAM_to_Liquidate_Assets__c</field>
+        <operation>greaterThan</operation>
+        <value>12/1/2016</value>
+    </filters>
+    <filters>
+        <field>Send_to_Trade_Rec_to_Conf_Liquid_Ammoun__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Asset_Liquidation_Issue_Date__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Wire_Sent__c</field>
+        <operation>equals</operation>
+    </filters>
+    <label>CANCELS: Pending Trade Confirms</label>
+    <sharedTo>
+        <role>HRS4SClientRetentionRepresentative</role>
+        <role>HRS4SDirector</role>
+        <role>HRS_4S_Client_Retention_Supervisor</role>
+        <role>HRS_4S_Client_Support_Rep</role>
+        <role>HRS_4S_Client_Support_Supervisor</role>
+    </sharedTo>
+</ListView>

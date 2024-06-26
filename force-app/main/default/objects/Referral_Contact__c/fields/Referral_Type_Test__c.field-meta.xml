@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Referral_Type_Test__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>This field demonstrates the Referral Type as calculated directly from the data within Salesforce, unlike the main Referral Type field that is calculated from data in the WAR system.</description>
+    <externalId>false</externalId>
+    <formula>CASE( Referral_Account__r.Referral_Source_Business_Type__c,&apos;Accounting Firm&apos;,
+IF (NOT(ISBLANK(Referral_Count__c)), CASE (Referral_Count__c, 0, &quot;50 CPA Non-referring&quot;
+,1, &quot;30 CPA Referring &lt;3/Year&quot;
+,2, &quot;30 CPA Referring &lt;3/Year&quot;
+,3, &quot;10 CPA Referring 3-4/Year&quot;
+,4, &quot;10 CPA Referring 3-4/Year&quot;
+,&quot;5 CPA Referring &gt;4/Year&quot;),&quot;&quot;)
+,&quot;Financial Services&quot;,&quot;52 Bank Call&quot;
+,&quot;Broker&quot;, &quot;76 Money Manager&quot;
+,&quot;Insurance Carrier&quot;, &quot;70 IIA General&quot;
+, TEXT(Referral_Type__c) )</formula>
+    <inlineHelpText>This field demonstrates the Referral Type as calculated directly from the data within Salesforce, unlike the main Referral Type field that is calculated from data in the WAR system.</inlineHelpText>
+    <label>Referral Type Test</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ALL_SMB_SA_Expansion_Current_Clients</fullName>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>ACCOUNT.EMPLOYEES</columns>
+    <columns>SignificantContact__c</columns>
+    <columns>ACCOUNT.ADDRESS2_STATE</columns>
+    <columns>Referral_National_Account__c</columns>
+    <columns>OpportunityTypes__c</columns>
+    <columns>ACCOUNT.LAST_ACTIVITY</columns>
+    <columns>LastPayrollOppCreated__c</columns>
+    <columns>CORE.USERS.LAST_NAME</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Referral_National_Account__c</field>
+        <operation>startsWith</operation>
+        <value>Mindbody,Career Plug,Talent Reef</value>
+    </filters>
+    <filters>
+        <field>CadenceType__c</field>
+        <operation>notContain</operation>
+        <value>SMB</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.PHONE1</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Do_Not_Call__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>isChild__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.LAST_ACTIVITY</field>
+        <operation>lessThan</operation>
+        <value>LAST_N_DAYS:30</value>
+    </filters>
+    <filters>
+        <field>LastPayrollOppCreated__c</field>
+        <operation>lessThan</operation>
+        <value>LAST_90_DAYS</value>
+    </filters>
+    <filters>
+        <field>OpportunityTypes__c</field>
+        <operation>notContain</operation>
+        <value>Payroll,PEO,ASO</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>equals</operation>
+        <value>CORE Client,Current Client,FLEX Client,HR Solutions FLEX Client,MMS Client,PEO Client,Preview Client</value>
+    </filters>
+    <label>ALL - SMB SA Expansion Current Clients</label>
+    <sharedTo>
+        <roleAndSubordinatesInternal>SMBNewBusinessDistrict307</roleAndSubordinatesInternal>
+        <roleAndSubordinatesInternal>SMBNewBusinessDistrict310</roleAndSubordinatesInternal>
+        <roleAndSubordinatesInternal>SMBNewBusinessDistrict342</roleAndSubordinatesInternal>
+        <roleAndSubordinatesInternal>SMB_New_Business_Sales_Rep_251</roleAndSubordinatesInternal>
+        <roleAndSubordinatesInternal>Sales_Account_Manager_Overlay</roleAndSubordinatesInternal>
+    </sharedTo>
+</ListView>

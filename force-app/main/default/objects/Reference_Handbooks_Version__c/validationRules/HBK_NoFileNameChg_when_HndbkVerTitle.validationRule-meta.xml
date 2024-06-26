@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HBK_NoFileNameChg_when_HndbkVerTitle</fullName>
+    <active>true</active>
+    <description>If File Number is populated, then the Handbook Version Title field can NOT be updated by HRGs.</description>
+    <errorConditionFormula>AND( 
+(NOT(ISNULL(File_Number_Numeric__c))), 
+(ISCHANGED(Handbook_Version_Title__c)), 
+(NOT(BEGINS($Profile.Name,&quot;HR Essentials&quot;))), 
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))) 
+)</errorConditionFormula>
+    <errorDisplayField>Handbook_Version_Title__c</errorDisplayField>
+    <errorMessage>You can NOT update the Handbook Version Title field when the File Number field is populated.</errorMessage>
+</ValidationRule>

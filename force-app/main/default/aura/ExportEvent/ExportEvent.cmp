@@ -1,0 +1,17 @@
+<aura:component controller="ExportEventAuraService" implements="force:lightningQuickActionWithoutHeader,flexipage:availableForAllPageTypes,force:hasRecordId" >
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="evnt" type="Event" />
+    <aura:attribute name="downloadFile" type="Object" />
+    <aura:attribute name="recordError" type="Object" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.createEventFile}"/>
+    
+
+    <force:recordData aura:id="eventLoader"
+                  fields="Id,Subject,LastModifiedDate,CreatedDate,Description,Location,DurationInMinutes,StartDateTime"
+                  recordId="{!v.recordId}"
+                  targetFields="{!v.evnt}"
+                  targetError="{!v.recordError}"
+                  mode="VIEW" />
+	<a download="info.ics" id="downloadlink"></a>
+</aura:component>

@@ -1,0 +1,79 @@
+<!-- SF1 inline visualforce to display the Key Client Information on the Account page. 
+History
+-------
+03/31/2017 Justin Stouffer             Created  
+-->
+<apex:page standardController="Account" extensions="ClientOverviewController" tabStyle="Account" rendered="{!isSf1}" >
+    <apex:form > 
+        <apex:slds />
+        <div class="slds-scope slds-p-around--x-small">
+            <fieldset class="slds-form--compound">
+                <legend class="slds-form-element__label slds-text-title--caps ">Key Client Information</legend>
+                <div class="slds-form-element__group">
+                    <div class="slds-form-element__row">
+                        <div class="slds-form-element slds-size--1-of-2">
+                            <span class="slds-form-element__label">Flagship Client</span>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!account.Level_1__c}" />
+                            </div>
+                        </div>                        
+                        <div class="slds-form-element slds-size--2-of-2">
+                            <span class="slds-form-element__label">Client of Key Partner</span>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!account.KP_Client__c}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-form-element__row">
+                        <div class="slds-form-element slds-size--1-of-2">
+                            <span class="slds-form-element__label">BU Primary Client</span>
+                            <div class="slds-form-element__control">
+                                <apex:outputText style="white-space: pre;" value="{!BUPrimaryClient}" />
+                            </div>
+                        </div> 
+                        <div class="slds-form-element slds-size--2-of-2">
+                            <span class="slds-form-element__label">{!IF(DNCEIndicator == NULL,'','Do Not Call/Email Indicator')}</span>
+                            <div class="slds-form-element__control">
+                                <apex:outputText style="white-space:pre;Color:Red" value="{!DNCEIndicator}" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-form-element__row">
+                        <div class="slds-form-element slds-size--1-of-2">
+                            <span class="slds-form-element__label">At Risk</span>
+                            <div class="slds-form-element__control">
+                                <apex:outputText style="white-space: pre;Color:Red" value="{!atRisk}" />
+                            </div>
+                        </div>                        
+                        <div class="slds-form-element slds-size--2-of-2">
+                            <span class="slds-form-element__label">Potential Risk</span>
+                            <div class="slds-form-element__control">
+                                <apex:outputtext style="white-space: pre;Color:Orange" value="{!potentialRisk}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-form-element__row">
+                        <div class="slds-form-element slds-size--1-of-1">
+                            <span class="slds-form-element__label">Urgent Client Action Required</span>
+                            <div class="slds-form-element__control" >
+                                <apex:repeat value="{!clientActionNeeded}" var="items">
+                                    <a class=".slds-text-link" style="white-space: pre" href="{!URLFOR($Action.Case.View, items.id)}" >{!items.CaseNumber}</a><br/>
+                                </apex:repeat>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-form-element__row">
+                        <div class="slds-form-element slds-size--1-of-1">
+                            <span class="slds-form-element__label">Critical Client Notes</span>
+                            <div class="slds-form-element__control">
+                                <div Class="slds-form-element__static slds-text-longform">
+                                    <p>{!account.Critical_Client_Notes__c}</p>    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </apex:form>
+</apex:page>

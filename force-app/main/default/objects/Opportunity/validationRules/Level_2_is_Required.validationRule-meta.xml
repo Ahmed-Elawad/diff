@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Level_2_is_Required</fullName>
+    <active>true</active>
+    <errorConditionFormula>($User.Job_Name__c = &apos;Sales Representative&apos;
+|| $User.Job_Name__c = &apos;District Sales Manager&apos;
+|| $User.Job_Name__c = &apos;District Sales Assistant&apos;
+|| $User.Job_Name__c = &apos;Area Manager&apos;
+|| $User.Job_Name__c = &apos;Area Assistant&apos;
+|| $User.Job_Name__c = &apos;Zone Manager&apos;
+|| $User.Job_Name__c = &apos;Zone Assistant&apos;
+|| $Profile.Name = &apos;MMS SDR&apos;)
+&amp;&amp; ISCHANGED(StageName) &amp;&amp; Probability &gt;=0.70
+&amp;&amp; ISPICKVAL(LeadSource, &apos;Referral-Bank Referral&apos;)
+&amp;&amp; ISBLANK(TEXT(Level_2__c))</errorConditionFormula>
+    <errorMessage>The Level 2 field is required if the Lead Source equals Referral-Bank Referral</errorMessage>
+</ValidationRule>

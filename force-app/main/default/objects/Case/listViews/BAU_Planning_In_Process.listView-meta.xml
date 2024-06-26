@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BAU_Planning_In_Process</fullName>
+    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6 AND 7</booleanFilter>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>Disposition_3__c</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>Delivery_Date__c</columns>
+    <columns>Status_Description__c</columns>
+    <columns>Business_Unit_Ranking__c</columns>
+    <columns>Sales_Org__c</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>PARENT.CASE_NUMBER</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.COE_Submission_Case_Record_Type</value>
+    </filters>
+    <filters>
+        <field>CASES.CLOSED</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>CASES.TYPE</field>
+        <operation>notEqual</operation>
+        <value>Fast Track Request</value>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Cancelled,Closed</value>
+    </filters>
+    <filters>
+        <field>PARENT.CASE_NUMBER</field>
+        <operation>lessThan</operation>
+        <value>00000</value>
+    </filters>
+    <filters>
+        <field>Disposition_3__c</field>
+        <operation>equals</operation>
+        <value>In Process</value>
+    </filters>
+    <label>BAU Planning - In Process</label>
+    <sharedTo>
+        <group>CenterofExcellence</group>
+    </sharedTo>
+</ListView>

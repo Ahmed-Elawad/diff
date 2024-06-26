@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PHRS_ASO_NPR_Employee_Count_Change_Notes</fullName>
+    <active>true</active>
+    <errorConditionFormula>IF( ISPICKVAL(Product_Employee_Count_Change_Reason__c, &quot;Other&quot;) &amp;&amp;
+LEN( Employee_Count_Change_Reason_Notes__c ) &lt; 1 &amp;&amp;
+Product_Plan_Code__c  = &quot;1010&quot; &amp;&amp;
+NOT(BEGINS( $Profile.Name,&quot;System Administrator&quot;) ), TRUE, FALSE)</errorConditionFormula>
+    <errorDisplayField>Employee_Count_Change_Reason_Notes__c</errorDisplayField>
+    <errorMessage>Please use the Employee Count Change Reason Notes field to describe the other reason for the change in Employee Count.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Audit_Materials_Sent_Sent_To_and_CPA</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND
+(
+ISPICKVAL ( Schedule__c, &quot;H&quot;),
+ISPICKVAL ( Audit_Materials_Sent__c, &quot; &quot;) ||
+ISBLANK ( Sent_To__c )|| 
+ISBLANK ( CPA__c) 
+)</errorConditionFormula>
+    <errorMessage>Audit Materials Sent, Sent To, and CPA fields need to be entered if client has Schedule H</errorMessage>
+</ValidationRule>

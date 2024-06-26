@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRAM_Open_Cases_Billing_and_Enterprise</fullName>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>CORE.USERS.LAST_NAME</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>Flex_Category_Picklist__c</columns>
+    <columns>Status_Description__c</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>CREATEDBY_USER.ALIAS</columns>
+    <columns>CASES.PRIORITY</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.HRS_Act_Mgr_Service_case_record_type</value>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>equals</operation>
+        <value>In Progress,New,On Hold,Waiting on Assister,Waiting on Client,Waiting on HRG</value>
+    </filters>
+    <filters>
+        <field>Product__c</field>
+        <operation>notEqual</operation>
+        <value>HROi</value>
+    </filters>
+    <filters>
+        <field>Case_Created_By_Role__c</field>
+        <operation>notContain</operation>
+        <value>HROi</value>
+    </filters>
+    <filters>
+        <field>Sub_Product__c</field>
+        <operation>contains</operation>
+        <value>Billing,Enterprise</value>
+    </filters>
+    <label>HRAM Open Cases - Billing and Enterprise</label>
+    <sharedTo>
+        <group>HR_Account_Managers</group>
+    </sharedTo>
+</ListView>

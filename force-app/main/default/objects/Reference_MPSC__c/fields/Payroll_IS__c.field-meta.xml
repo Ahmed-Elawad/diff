@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Payroll_IS__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>This field is populated on creation from an object relationship and kept in sync with the by code in ReferenceMPSC.cls
+A Reference MPSC record is created 2 ways.
+1) A Case with record type &apos;Service Onboarding MPSC Core Payroll Case&apos; reaches step 6. That update triggers a Case with &apos;MPSC Transfer Case&apos; record type to be created and a Reference MPSC record. In this situation, the Payroll IC will be the Case Owner of the Case with the record type of &apos;Service Onboarding MPSC Core Payroll Case&apos;.
+2) A Case wtih &apos;MPSC Transfer Case&apos; record type can also be created manually which will create a Reference MPSC record. In this situation, the Payroll IC will not be populated and it should not be needed.</description>
+    <label>Payroll IC</label>
+    <referenceTo>User</referenceTo>
+    <relationshipName>Reference_MPSC1</relationshipName>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

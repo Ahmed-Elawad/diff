@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>My_Oasis_Prospecting_Outside_the_Base</fullName>
+    <columns>In_Cadence__c</columns>
+    <columns>OasisPEOAccountOwner__c</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ACCOUNT.PHONE1</columns>
+    <columns>ACCOUNT.ADDRESS1_CITY</columns>
+    <columns>ACCOUNT.ADDRESS1_STATE</columns>
+    <columns>ACCOUNT.ADDRESS1_ZIP</columns>
+    <columns>ACCOUNT.EMPLOYEES</columns>
+    <columns>NAICS_Code__c</columns>
+    <columns>SIC_Code__c</columns>
+    <columns>H_B_Renewal_Date__c</columns>
+    <columns>Work_Comp_Renewal_Date__c</columns>
+    <columns>Workers_Comp_Carrier__c</columns>
+    <columns>Multi_ID_Parent__c</columns>
+    <columns>ACCOUNT.LAST_ACTIVITY</columns>
+    <filterScope>Team</filterScope>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>equals</operation>
+        <value>Prospect,PEO Prospect,Oasis Prospect,HROi Prospect</value>
+    </filters>
+    <filters>
+        <field>CSCMContractStatus__c</field>
+        <operation>notEqual</operation>
+        <value>Submitted,Accepted,Underwriting,Approved,ContractPending,Implementation,PendingActivation,Client,PendingTermination,UnderContract</value>
+    </filters>
+    <filters>
+        <field>CORE.USERS.LAST_NAME</field>
+        <operation>notEqual</operation>
+        <value>Referral_Owner</value>
+    </filters>
+    <filters>
+        <field>Out_of_Business__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <label>My PEO Prospecting Outside the Base</label>
+    <sharedTo>
+        <roleAndSubordinates>PEO_Director</roleAndSubordinates>
+    </sharedTo>
+</ListView>

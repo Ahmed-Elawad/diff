@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HNBF_My_Opp_No_Decision</fullName>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>OPPORTUNITY.LEAD_SOURCE</columns>
+    <columns>OPPORTUNITY.CLOSE_DATE</columns>
+    <columns>OPPORTUNITY.PROBABILITY</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>OPPORTUNITY.AMOUNT</columns>
+    <columns>OPPORTUNITY.NEXT_STEP</columns>
+    <columns>Referring_Employee__c</columns>
+    <columns>Referral_From__c</columns>
+    <columns>OPPORTUNITY.LAST_ACTIVITY</columns>
+    <columns>OPPORTUNITY.CREATED_DATE</columns>
+    <columns>of_Employees__c</columns>
+    <columns>Comment_to_NSS__c</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>OPPORTUNITY.PROBABILITY</field>
+        <operation>lessThan</operation>
+        <value>20</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.SITE</field>
+        <operation>notEqual</operation>
+        <value>Referred Sold</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Opportunity.HNBF_Opportunity_Record_Type</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.STAGE_NAME</field>
+        <operation>equals</operation>
+        <value>No Decision</value>
+    </filters>
+    <label>HNBF My Opp No Decision</label>
+    <sharedTo>
+        <roleAndSubordinates>HNBFDIRECTOR</roleAndSubordinates>
+    </sharedTo>
+</ListView>

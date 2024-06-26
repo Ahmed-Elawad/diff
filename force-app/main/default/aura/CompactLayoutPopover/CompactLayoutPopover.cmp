@@ -1,0 +1,19 @@
+<aura:component >
+    <aura:attribute name="hoverElement" type="Object" />
+    <aura:attribute name="isHovered" type="Boolean" default="false"/>
+    <aura:attribute name="popoverHovered" type="Boolean" default="false"/>
+    <aura:attribute name="positioning" type="Object" />
+    
+    <aura:handler name="change" value="{!v.isHovered}" action="{!c.showHidePopover}"/>
+    <aura:handler name="change" value="{!v.hoverElement}" action="{!c.doInit}"/>
+
+    
+    <div aura:id="hover-modal" id="hover-modal" onmouseover="{!c.setPopoverHovered}" onmouseout="{!c.setPopoverUnhovered}" class="modal-size initial-placement">
+    	<div class="slds-popover slds-popover_panel slds-nubbin_right-top" role="dialog">
+            <div class="slds-popover__header">
+                {!v.body}
+            </div>
+        </div>
+    </div>
+	
+</aura:component>

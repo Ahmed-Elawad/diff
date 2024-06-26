@@ -1,0 +1,59 @@
+<aura:component description="OpportunityBanner" controller="ObjectBannerAuraService">
+    <aura:attribute name="opportunityId" type="Id" required="true" />
+    <aura:attribute name="AccountId" type="Id" />
+    
+    <aura:attribute name="bannerSettings" type="Object" required="true" />
+    
+    <aura:attribute name="opportunity" type="Object" />
+    
+    <aura:attribute name="opportunityWrapper" type="Object" />
+    
+    <aura:attribute name="inviteNotSent" type="Boolean" default="false"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    
+    <aura:dependency resource="markup://force:editRecord" type="EVENT" />
+    <aura:dependency resource="markup://force:createRecord" type="EVENT" />
+    <aura:handler event="force:refreshView" action="{!c.doInit}" />
+    
+    <force:recordData aura:id="opportunityLoader"
+                      fields="NSS_Source__c,Status_Update_Date__c,Amount,LastActivityDate"
+                      recordId="{!v.opportunityId}"
+                      targetFields="{!v.opportunity}"
+                      mode="VIEW" />
+    
+    <div class="slds-tile__detail">
+        <div class="grid-wrapper">
+            <aura:if isTrue="{!v.opportunity.NSS_Source__c}">
+                <c:BannerNSSInbound opportunity="{!v.opportunity}" />
+            </aura:if>
+            
+            <!-- if Referral_National_Account__c is populated on account -->
+            <aura:if isTrue="{!v.opportunityWrapper.StrategicAccount.Referral_National_Account__c}">
+                <c:BannerStrategicAccount accountName="{!v.opportunityWrapper.StrategicAccount.Referral_National_Account__r.Name}" />
+            </aura:if>
+            
+            <!-- Revenue - net revenue field -->
+            <aura:if isTrue="{!or(and(!v.bannerSettings.Opportunity_Show_Revenue_If_Zero__c, v.opportunity.Amount > 0), v.bannerSettings.Opportunity_Show_Revenue_If_Zero__c)}">
+                <c:BannerRevenue revenue="{!v.opportunity.Amount}" />
+            </aura:if>
+            
+            <!-- Initial Presentation Complete - related presentation-intitial event in the past -->
+            <aura:if isTrue="{!v.opportunityWrapper.RelatedEvents}">
+                <c:BannerInitialPresentationComplete recordId="{!v.opportunity.Id}" relatedPresentationEvents="{!v.opportunityWrapper.RelatedEvents}" />
+            </aura:if>
+            
+            <!-- Activity - either # open activities OR Date of last activity -->
+            <aura:if isTrue="{!or(and(!v.bannerSettings.Opportunity_Show_Activities_If_None__c, or(v.opportunity.LastActivityDate, v.opportunityWrapper.OpenActivities.length > 0)), v.bannerSettings.Opportunity_Show_Activities_If_None__c)}">
+                <c:BannerOpenActivities recordId="{!v.opportunity.Id}" openActivities="{!v.opportunityWrapper.OpenActivities}" lastActivityDate="{!v.opportunity.LastActivityDate}" />
+            </aura:if>
+            
+            <c:BannerContactRoles contactRoles="{!v.opportunityWrapper.ContactRoles}" userInfo="{!v.opportunityWrapper.UserInformation}" />
+            <aura:if isTrue="{!v.opportunityWrapper.opp.Has_Community_User__c}">
+                <c:BannerPEOPortalUser portalusers="{!v.opportunityWrapper.portalUsers}" inviteNotSent="{!v.inviteNotSent}" />
+            </aura:if>
+            
+        </div>
+    </div>
+</aura:component>

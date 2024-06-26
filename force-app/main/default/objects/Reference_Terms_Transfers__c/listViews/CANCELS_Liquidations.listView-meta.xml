@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CANCELS_Liquidations</fullName>
+    <columns>SunGard_Number__c</columns>
+    <columns>BIS_ID__c</columns>
+    <columns>Estimated_Week_of_Liquidation__c</columns>
+    <columns>Send_to_CAM_to_Liquidate_Assets__c</columns>
+    <columns>FED_Wire_Type__c</columns>
+    <columns>Wire_Line_Number__c</columns>
+    <columns>Money_Manager__c</columns>
+    <columns>Plan_Liquidation_Complete_Date__c</columns>
+    <columns>Date_Group_Notified__c</columns>
+    <columns>Date_Audit_Issue_Resolved__c</columns>
+    <columns>NAME</columns>
+    <columns>Pending_Transfer_Tasks__c</columns>
+    <columns>Asset_Liquidation_Issue__c</columns>
+    <columns>Liquidation_Amount_Notes__c</columns>
+    <columns>Current_Step__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_Terms_Transfers__c.X401k_Transfer</value>
+    </filters>
+    <filters>
+        <field>Plan_Liquidation_Complete_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Estimated_Week_of_Liquidation__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>equals</operation>
+        <value>In Process,Closed – Paperwork Discrepancy Never Resolved</value>
+    </filters>
+    <filters>
+        <field>Case_Lookup__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <label>CANCELS: Liquidations</label>
+    <sharedTo>
+        <role>HRS4SClientRetentionRepresentative</role>
+        <role>HRS4SDirector</role>
+        <role>HRS_4S_Client_Retention_Supervisor</role>
+        <role>HRS_4S_Client_Support_Supervisor</role>
+    </sharedTo>
+</ListView>

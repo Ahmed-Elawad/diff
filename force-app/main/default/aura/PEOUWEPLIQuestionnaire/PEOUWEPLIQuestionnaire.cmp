@@ -1,0 +1,689 @@
+<aura:component controller="CommunityEpliController" implements="force:appHostable" access="global">
+    <ltng:require styles="{!$Resource.multilineToastCSS}" />
+    
+    <!--<aura:attribute name="previousEPL" type="Object[]"/>-->
+    <!--<aura:attribute name="readOnlyPermission" type="Boolean" default="true" />-->
+    
+    <!-- auto save attributes --> 
+    <aura:registerEvent name='autoSave' type='c:CommunityFormsAutoSave' />
+    <aura:attribute name='autoSaveRecords' type='map' />
+    
+    <aura:attribute name='saveAction' type='Object' />
+    
+    <!-- reference to save functionality -->
+    <aura:attribute name='saveFunc' type='Object' />
+    
+    <aura:registerEvent name="discrepancyEvt" type="c:markPeoUwFormDiscrepancy"/>
+    <aura:handler name="init" value="{!this}" action="{!c.getPolicyPeriods}" />
+    <aura:attribute name='formName' type='String' default='EPLI Questionnaire' />
+    
+    <aura:attribute name="parentRecId" type="Id"/>
+    <aura:attribute name="PEOChecklist" type="Object"/>
+    <aura:attribute name="parentAccount" type="Account"/>
+    <aura:attribute name="PolicyPeriods" type="Policy_Period__c[]"/>
+    <aura:attribute name="answersChanged" type="Boolean" default="false"/>
+    <aura:attribute name="policyPeriodChanged" type="Boolean" default="false"/>
+    <aura:attribute name="readOnly" type="Boolean" default="true" />
+    <aura:attribute name="readOnlyString" type="String" default="" />
+    <aura:attribute name='radioGroupOptions' type='List' default="[{'label': 'Yes', 'value':'Yes'},{'label':'No','value':'No'}]" />
+    <aura:attribute name='user' type='User' />
+    <aura:attribute name='agreementSigned' type='boolean' default='false'/>
+    <aura:attribute name='aknSelected' type='Boolean' default='false'/>
+    <aura:attribute name="allAccounts" type="Account[]" />
+    <aura:attribute name='communityUser' type='boolean' />
+    <aura:attribute name='allowDiscLog' type='Boolean' />
+    <aura:attribute name='formSubmitted' type='boolean' default='false' />
+    <aura:attribute name='buttonLabel' type='String' />
+    <aura:attribute name='errMsg' type='String' />
+    <aura:attribute name='numOfMatters' type='Integer' default='3' />
+	<aura:attribute name='parentTabs' type='String[]' />
+    <aura:attribute name='ActiveParentTab' type='String'/>
+    <aura:attribute name='showRemainingAccounts' type='Boolean' default='false' />
+    <aura:attribute name='allAcctsVisible' type='Boolean' default='false' />
+    <aura:attribute name='invalidFedID' type='boolean' />
+    <!--JDA save-->
+    <aura:attribute name='relatedFieldList' type='String[]' />
+    
+    <aura:html tag="style">
+        .cuf-content {
+        padding: 0 0rem !important;
+        }
+        .slds-p-around--medium {
+        padding: 0rem !important;
+        }       
+        .slds-modal__content{
+        overflow-y:hidden !important;
+        height:unset !important;
+        max-height:unset !important;
+        }
+    </aura:html>
+    
+    <!-- <aura:if isTrue="{!greaterthan(v.readOnlyString.length, 1)}">
+        <div style="width:100%">
+            <ui:message title="Evaluation Status" severity="info" closable="false" >
+                {!v.readOnlyString}
+            </ui:message>
+        </div>
+    </aura:if> -->
+   
+     <!-- <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+        <thead>
+            <tr class="">
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="">Company Name</div>
+                </th>
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="">Federal ID Number</div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <aura:if isTrue="{! not(greaterthan(v.allAccounts.length, 10)) }">
+                <aura:iteration items="{!v.allAccounts}" var="acc">
+                    <tr class="slds-hint-parent">
+                        <td>
+                            <div class="slds-truncate" title="">{!acc.Name}</div>
+                        </td>
+                        <td data-label="Federal ID Number">
+                            <div class="slds-truncate" title="">{!acc.Federal_ID_Number__c}</div>
+                        </td>
+                    </tr>
+                </aura:iteration>
+                <aura:set attribute='else'>
+                    <aura:iteration items="{!v.allAccounts}" var="acc" end='9'>
+                        <tr class="slds-hint-parent">
+                            <td>
+                                <div class="slds-truncate" title="">{!acc.Name}</div>
+                            </td>
+                            <td data-label="Federal ID Number">
+                                <div class="slds-truncate" title="">{!acc.Federal_ID_Number__c}</div>
+                            </td>
+                        </tr>
+                    </aura:iteration>
+                    <aura:if isTrue='{!v.showRemainingAccounts}'>
+                        <aura:iteration items="{!v.allAccounts}" var="acc" start='9'>
+                            <tr class="slds-hint-parent">
+                                <td>
+                                    <div class="slds-truncate" title="">{!acc.Name}</div>
+                                </td>
+                                <td data-label="Federal ID Number">
+                                    <div class="slds-truncate" title="">{!acc.Federal_ID_Number__c}</div>
+                                </td>
+                            </tr>
+                        </aura:iteration>
+                    </aura:if>
+                    <lightning:button class="slds-m-top_small" 
+                                      variant="brand"  
+                                      name="Show All" 
+                                      label="{! (v.allAcctsVisible ? 'Hide' : 'Show All' )}"
+                                      onclick="{!c.showRemainingAccts}" />
+                </aura:set>
+            </aura:if>
+        </tbody>
+    </table> -->
+    
+    <!-- <div style="height: 20px"></div>
+    <div class="slds-grid slds-gutters slds-wrap"> -->
+        <!-- <div class="slds-col slds-size_3-of-3">
+            <span>
+                <b>Employment practices questionnaire</b>
+            </span>
+        </div>
+        <div class="slds-col slds-size_4-of-4" style="padding-bottom:15px">
+            <span>
+                <lightning:input label='Client ("you") full legal name:' value="{!v.parentAccount.Legal_Name__c}" onchange="{!c.handleChange}"   placeholder="If not populated, please enter Legal Name in the Company Information - Basic Information tab." disabled="true"></lightning:input>
+            </span>
+        </div>
+        <div class="slds-col slds-size_1-of-3">
+        </div>
+        <div class="slds-col slds-size_3-of-3">
+            <span>
+                If more than one legal entity will be signatory to the Service Agreement, include information for all signatory entities on a combined basis. 
+            </span>
+        </div> -->
+        <!--<div class="slds-col slds-size_1-of-12 slds-align_absolute-center">
+            <span>
+                1.
+            </span>
+        </div>-->
+        <!-- <div style="height: 15px"></div>
+        <div class="slds-col slds-size_11-of-12" style="padding:15px 0px 20px 0px"> -->
+            <!-- <span>
+                <legend class="slds-form-element__legend slds-form-element__label required">*</legend>
+                <div>Describe your principal product/business:</div><br/>
+                <lightning:input variant="label-hidden" aura:id="EPLIRequiredField" required="true" disabled='{!v.readOnly}' label="Describe your principal product/business:" name='PEO_Onboarding_Checklist__c.description_principle_product_business__c' value="{!v.PEOChecklist.description_principle_product_business__c}" onchange="{!c.handleChange}"   placeholder="Click or tap here to enter text."></lightning:input> 
+            </span>
+        </div> -->
+        
+       <!-- <div class="slds-col slds-size_1-of-12 slds-align_absolute-center">
+            <span>
+                2.
+            </span>
+        </div>-->
+        <!-- <div class="slds-col slds-size_11-of-12" style="padding-bottom:5px">
+            <span>
+                <div class='question'>Will there be 150 or more Covered Employees under the service agreement?</div><br/>
+                <lightning:radioGroup aura:id="EPLIRequiredField" required="true" name='PEO_Onboarding_Checklist__c.has_150_or_more_emp_for_svc_agreement__c'
+                                      variant="label-hidden"
+                                      label="Will there be 150 or more Covered Employees under the service agreement?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange="{!c.clearFields}" 
+                                      value="{!v.PEOChecklist.has_150_or_more_emp_for_svc_agreement__c}"
+                                      disabled='{!v.readOnly}'/>
+            </span>
+        </div> -->
+        
+        <!-- <div class="slds-col slds-size_11-of-12">
+        </div> -->
+        <!--<div class="slds-col slds-size_1-of-12 slds-align_absolute-center">
+            <span>
+                3.
+            </span>
+        </div>-->
+        <!-- <div style="height: 15px"></div>
+        <div class="slds-col slds-size_11-of-12" style="padding-bottom:5px">
+            <span>
+                <div class='question'>Have there been three(3) or more Employment Matters (defined below) in the last three(3) years?</div><br/>
+                <lightning:radioGroup aura:id="EPLIRequiredField" required="true" name='PEO_Onboarding_Checklist__c.has_three_or_more_employment_matters__c'
+                                      variant="label-hidden"
+                                      label="Have there been three(3) or more Employment Matters (defined below) in the last three(3) years?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange="{!c.clearFields}" 
+                                      value="{!v.PEOChecklist.has_three_or_more_employment_matters__c}"
+                                      disabled='{!v.readOnly}'/>
+            </span>
+        </div>
+        <div class="slds-col slds-size_11-of-12">
+        </div> -->
+        
+        <!-- <aura:if isTrue="{!v.PEOChecklist.has_three_or_more_employment_matters__c == 'Yes'}">
+            <div class="slds-col slds-size_1-of-12  slds-align_absolute-center"> </div>
+            <div class="slds-col slds-size_11-of-12" style="padding-bottom:5px">
+                <span>
+                    <div style="height: 15px"></div>
+                    <lightning:input aura:id="EPLIRequiredField" required="{!v.PEOChecklist.has_three_or_more_employment_matters__c == 'Yes'}" disabled='{!v.readOnly}'
+                                          name='PEO_Onboarding_Checklist__c.Under_which_FEIN_was_the_claim_filed__c'
+                                          label="Under which entity (FEIN) was the claim filed?"
+                                          onchange="{!c.clearFields}" 
+                                          value="{!v.PEOChecklist.Under_which_FEIN_was_the_claim_filed__c}"/>
+                </span>
+            </div>
+            <div class="slds-col slds-size_6-of-12"></div>
+        </aura:if> -->
+        
+        <!--<div class="slds-col slds-size_1-of-12 slds-align_absolute-center">
+            <span>
+                4.
+            </span>
+        </div>-->
+        <!-- <div style="height: 15px"></div>
+        <div class="slds-col slds-size_11-of-12" style="padding-bottom:5px">
+            <span>
+                <div class='question'>Has any Employment Matter (defined below) exceeded $75,000 (all inclusive) in the last three(3) years?</div><br/>
+                <lightning:radioGroup aura:id="EPLIRequiredField" required="true" name='PEO_Onboarding_Checklist__c.has_any_emp_matter_exceeded_75k_inclusve__c'
+                                      variant="label-hidden"
+                                      label="Has any Employment Matter (defined below) exceeded $75,000 (all inclusive) in the last three(3) years?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange="{!c.clearFields}" 
+                                      value="{!v.PEOChecklist.has_any_emp_matter_exceeded_75k_inclusve__c}"
+                                      disabled='{!v.readOnly}'/>
+            </span>
+        </div>
+        <div class="slds-col slds-size_11-of-12">
+        </div> -->
+        
+        
+        <!-- <aura:if isTrue="{!v.PEOChecklist.has_150_or_more_emp_for_svc_agreement__c == 'Yes' || v.PEOChecklist.has_three_or_more_employment_matters__c == 'Yes' || v.PEOChecklist.has_any_emp_matter_exceeded_75k_inclusve__c == 'Yes'}">
+            <div class="slds-col slds-size_1-of-12">
+            </div>
+            <div class="slds-col slds-size_11-of-12">
+                <span>
+                    <div style="height: 15px"></div>
+                    <lightning:input aura:id="EPLIRequiredField" 
+                                     name='PEO_Onboarding_Checklist__c.num_emp_matters_3_past_yrs_ignore_cost__c'
+                                     required="{!v.PEOChecklist.has_150_or_more_emp_for_svc_agreement__c == 'Yes' || v.PEOChecklist.has_three_or_more_employment_matters__c == 'Yes' || v.PEOChecklist.has_any_emp_matter_exceeded_75k_inclusve__c == 'Yes'}" 
+                                     disabled='{!v.readOnly}' 
+                                     label="If you answered yes to any of the above, how many Employment Matters (regardless of cost) have you had in the past three(3) years?" 
+                                     placeholder="Click or tap here to enter text." 
+                                     value="{!v.PEOChecklist.num_emp_matters_3_past_yrs_ignore_cost__c}" 
+                                     onchange="{!c.handleChange}" 
+                                     type='number' 
+                                     fieldLevelHelp="Please enter a number"
+                                     pattern="[0-9]*"
+                                     messageWhenBadInput="This response requires a number. Please enter a number"></lightning:input>
+                </span>
+            </div>
+        </aura:if> -->
+        <!-- <div style="height: 15px"></div>
+        <div class="slds-col slds-size_12-of-12" style="padding-top:15px">
+            <span>
+                Employment Matters are demands, lawsuits, charges, attorney demand letters, inquiries, governmental investigations, written allegations or complaints, grievances, proceedings before the Equal 
+                Employment Opportunity Commission or any other government agency with responsibility for employment practices, relating to an employee, former employee, or applicant for employment (including 
+                through any PEO, temp staffing, or other alternative staffing arrangement) involving you or a predecessor that relates to:
+            </span>
+        </div>
+        <div class="slds-col slds-size_6-of-12 slds-text-align_center" style="padding-top:10px">
+            <span>
+               Discrimination
+            </span>
+        </div>
+        <div class="slds-col slds-size_6-of-12 slds-text-align_center" style="padding-top:10px">
+            <span>
+                Harassment
+            </span>
+        </div>
+        <div class="slds-col slds-size_6-of-12 slds-text-align_center">
+            <span>
+                Hostile work environment
+            </span>
+        </div> -->
+        <!-- <div class="slds-col slds-size_6-of-12 slds-text-align_center">
+            <span>
+                Wrongful discharge (including constructive discharge)
+            </span>
+        </div>
+        <div class="slds-col slds-size_6-of-12 slds-text-align_center">
+            <span>
+                Wrongful demotion, discipline, or failure to hire or promote
+            </span>
+        </div>
+        <div class="slds-col slds-size_6-of-12 slds-text-align_center">
+            <span>
+                Failure to comply with leave laws (such as the FMLA)
+            </span>
+        </div>
+        <div class="slds-col slds-size_6-of-12 slds-text-align_center">
+            <span>
+                Failure to accommodate a religious practice or disability
+            </span>
+        </div>
+        <div class="slds-col slds-size_6-of-12 slds-text-align_center">
+            <span>
+                Violation of minimum wage or overtime law
+            </span>
+        </div>
+        <div class="slds-col slds-size_6-of-12 slds-text-align_center">
+            <span>
+                Retaliation or violation of whistleblower laws
+            </span>
+        </div>
+        <div class="slds-col slds-size_6-of-12 slds-text-align_center" style="padding-bottom:10px">
+            <span>
+                False imprisonment, intentional infliction of emotional distress, assault, battery, or invasion of privacy
+            </span>
+        </div>
+        <div style="height: 15px"></div>
+        <div class="slds-col slds-size_12-of-12" style="padding-bottom:5px">
+            <span>
+                For each matter, please describe what was alleged, how it was resolved (e.g., settlement, judgment, still open, etc.), the amount of attorney fees incurred in defense (including fees paid by insurance), and
+                the amount of any settlement or judgment (including amounts paid by insurance). If more than 5 matters outline matters in the additional matters textbox below
+            </span>
+        </div> -->
+        <!-- <div class="slds-col slds-size_12-of-12" style="padding-bottom:15px">
+            <table border="1" cellpadding="5">
+                <tr>
+                    <td class="slds-text-align_center">
+                        <span>Matter 1</span>
+                    </td>
+                    <td style="padding:5px">
+                        <lightning:input aura:id="EPLIRequiredField" 
+                                         name='PEO_Onboarding_Checklist__c.matter_1__c'
+                                         required="{!v.PEOChecklist.has_150_or_more_emp_for_svc_agreement__c == 'Yes' || v.PEOChecklist.has_three_or_more_employment_matters__c == 'Yes' || v.PEOChecklist.has_any_emp_matter_exceeded_75k_inclusve__c == 'Yes'}" 
+                                         disabled='{!v.readOnly}' 
+                                         label="" 
+                                         value="{!v.PEOChecklist.matter_1__c}" 
+                                         onchange="{!c.handleChange}" 
+                                         variant="label-hidden" 
+                                         placeholder="Click or tap here to enter text."></lightning:input>
+                    </td>
+                    <td class="slds-text-align_center" style="padding:1rem 1rem 1rem 1rem">
+                        <span>Federal ID</span>
+                    </td>
+                    <td style="padding:5px">
+                        <lightning:input aura:id="EPLIRequiredField" 
+                                         name='PEO_Onboarding_Checklist__c.Matter1_Fed_id__c'
+                                         required="{!and (v.PEOChecklist.matter_1__c != '',v.PEOChecklist.matter_1__c != null)}"
+                                         disabled='{!v.readOnly}' 
+                                         label="Matter 1 Federal ID" 
+                                         value="{!v.PEOChecklist.Matter1_Fed_id__c}" 
+                                         onchange="{!c.handleChange}"
+                                         variant="label-hidden"
+                                         maxlength='9' 
+                                         fieldLevelHelp="Enter the FEIN for the entity associated to the specific Employment Matter (numbers only)."
+                                         placeholder="Click here to enter Federal ID."></lightning:input>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="slds-text-align_center">
+                        <span>Matter 2</span>
+                    </td>
+                    <td style="padding:5px">
+                        <lightning:input disabled='{!v.readOnly}'  
+                                         name='PEO_Onboarding_Checklist__c.Matters_2__c' 
+                                         label="" 
+                                         value="{!v.PEOChecklist.Matters_2__c}" 
+                                         onchange="{!c.handleChange}" 
+                                         variant="label-hidden" 
+                                         placeholder="Click or tap here to enter text." />
+                    </td>
+                    <td class="slds-text-align_center" style="padding:1rem 1rem 1rem 1rem">
+                        <span>Federal ID</span>
+                    </td>
+                    <td style="padding:5px">
+                        <lightning:input aura:id="EPLIRequiredField" 
+                                         name='PEO_Onboarding_Checklist__c.Matter2_Fed_id__c'
+                                         required="{!and (v.PEOChecklist.Matters_2__c != '',v.PEOChecklist.Matters_2__c != null)}"
+                                         disabled='{!v.readOnly}' 
+                                         label="Matter 2 Federal ID" 
+                                         value="{!v.PEOChecklist.Matter2_Fed_id__c}" 
+                                         onchange="{!c.handleChange}" 
+                                         variant="label-hidden"
+                                         maxlength='9'
+                                         placeholder="Click here to enter Federal ID."></lightning:input>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="slds-text-align_center">
+                        <span>Matter 3</span>
+                    </td>
+                    <td style="padding:5px">
+                        <lightning:input disabled='{!v.readOnly}' 
+                                         name='PEO_Onboarding_Checklist__c.Matters_3__c' 
+                                         label="" 
+                                         value="{!v.PEOChecklist.Matters_3__c}" 
+                                         onchange="{!c.handleChange}" 
+                                         variant="label-hidden" 
+                                         placeholder="Click or tap here to enter text." />
+                    </td>
+                    <td class="slds-text-align_center" style="padding:1rem 1rem 1rem 1rem">
+                        <span>Federal ID</span>
+                    </td>
+                    <td style="padding:5px">
+                        <lightning:input aura:id="EPLIRequiredField" 
+                                         name='PEO_Onboarding_Checklist__c.Matter3_Fed_id__c'
+                                         required="{!and (v.PEOChecklist.Matters_3__c != '',v.PEOChecklist.Matters_3__c != null)}"
+                                         disabled='{!v.readOnly}' 
+                                         label="Matter 3 Federal ID" 
+                                         value="{!v.PEOChecklist.Matter3_Fed_id__c}" 
+                                         onchange="{!c.handleChange}" 
+                                         variant="label-hidden"
+                                         maxlength='9'
+                                         placeholder="Click here to enter Federal ID."></lightning:input>
+                    </td>
+                </tr>
+                <aura:if isTrue="{! greaterthanorequal(v.numOfMatters, 4) }">
+                    <tr>
+                        <td class="slds-text-align_center">
+                            <span>Matter 4</span>
+                        </td>
+                        <td style="padding:5px">
+                            <lightning:input disabled='{!v.readOnly}' 
+                                             label="" 
+                                             name='PEO_Onboarding_Checklist__c.Matters_4__c' 
+                                             value="{!v.PEOChecklist.Matters_4__c}" 
+                                             onchange="{!c.handleChange}" 
+                                             variant="label-hidden" 
+                                             placeholder="Click or tap here to enter text." />
+                        </td>
+                        <td class="slds-text-align_center" style="padding:1rem 1rem 1rem 1rem">
+                            <span>Federal ID</span>
+                        </td>
+                        <td style="padding:5px">
+                            <lightning:input aura:id="EPLIRequiredField" 
+                                             name='PEO_Onboarding_Checklist__c.Matter4_Fed_id__c'
+                                             required="{!and (v.PEOChecklist.Matters_4__c != '',v.PEOChecklist.Matters_4__c != null)}"
+                                             disabled='{!v.readOnly}' 
+                                             label="Matter 4 Federal ID" 
+                                             value="{!v.PEOChecklist.Matter4_Fed_id__c}" 
+                                             onchange="{!c.handleChange}" 
+                                             variant="label-hidden"
+                                             maxlength='9'
+                                             placeholder="Click here to enter Federal ID."></lightning:input>
+                        </td>
+                    </tr>
+                </aura:if>
+                <aura:if isTrue="{! greaterthanorequal(v.numOfMatters, 5) }">
+                    <tr>
+                        <td class="slds-text-align_center">
+                            <span>Matter 5</span>
+                        </td>
+                        <td style="padding:5px">
+                            <lightning:input disabled='{!v.readOnly}' 
+                                             label="" 
+                                             name='PEO_Onboarding_Checklist__c.Matters_5__c' 
+                                             value="{!v.PEOChecklist.Matters_5__c}" 
+                                             onchange="{!c.handleChange}" 
+                                             variant="label-hidden" 
+                                             placeholder="Click or tap here to enter text." />
+                        </td>
+                        <td class="slds-text-align_center" style="padding:1rem 1rem 1rem 1rem">
+                            <span>Federal ID</span>
+                        </td>
+                        <td style="padding:5px">
+                            <lightning:input aura:id="EPLIRequiredField" 
+                                             name='PEO_Onboarding_Checklist__c.Matter5_Fed_id__c'
+                                             required="{!and (v.PEOChecklist.Matters_5__c != '',v.PEOChecklist.Matters_5__c != null)}"
+                                             disabled='{!v.readOnly}' 
+                                             label="Matter 5 Federal ID" 
+                                             value="{!v.PEOChecklist.Matter5_Fed_id__c}" 
+                                             onchange="{!c.handleChange}" 
+                                             variant="label-hidden"
+                                             maxlength='9'
+                                             placeholder="Click here to enter Federal ID."></lightning:input>
+                        </td>
+                    </tr>
+                </aura:if>
+            </table>
+            <aura:if isTrue="{! greaterthanorequal(v.numOfMatters, 6) }">
+                <lightning:textArea aura:id="EPLIRequiredField" 
+                                    required="true" 
+                                    name='PEO_Onboarding_Checklist__c.Additional_Matters_Information__c' 
+                                    disabled='{!v.readOnly}' 
+                                    label="Additional Matters - Include Federal ID" 
+                                    value="{!v.PEOChecklist.Additional_Matters_Information__c}" 
+                                    onchange="{!c.handleChange}" />
+            </aura:if>
+            <lightning:button disabled='{! greaterthanorequal(v.numOfMatters, 6) }' 
+                              class="slds-m-top_small" 
+                              variant="brand"  
+                              name="AddMatter" 
+                              label="Add another matter"
+                              onclick="{!c.handleMatterUpdate}" />
+            <lightning:button disabled='{! lessthanorequal(v.numOfMatters, 3) }' 
+                              class="slds-m-top_small" 
+                              variant="brand"  
+                              name="removeMatter" 
+                              label="Remove matter"
+                              onclick="{!c.handleMatterUpdate}" />
+        </div> -->
+       <!-- <div class="slds-col slds-size_1-of-12 slds-align_absolute-center">
+            <span>
+                5.
+            </span>
+        </div>-->
+        
+        <!-- <div class="slds-col slds-size_11-of-12" style="padding-bottom:25px">
+            <span>
+                <lightning:input aura:id="EPLIRequiredField" name='PEO_Onboarding_Checklist__c.state_with_most_employees__c' required="true" disabled='{!v.readOnly}' label="In which states do you have the most employees?" value="{!v.PEOChecklist.state_with_most_employees__c}" onchange="{!c.handleChange}" placeholder="Click or tap here to enter text."></lightning:input>
+            </span>
+        </div> -->
+        <!--<div class="slds-col slds-size_1-of-12 slds-align_absolute-center">
+            <span>
+                6.
+            </span>
+        </div>-->
+        <!-- <div style="height: 15px"></div>
+        <div class="slds-col slds-size_11-of-12" style="padding-bottom:15px">
+            <span>
+                <div class='question'>Do you anticipate any Employment Matters in connection with any past or future RIFs?</div><br/>
+                <lightning:radioGroup aura:id="EPLIRequiredField" required="true" name='PEO_Onboarding_Checklist__c.emp_matter_anticipated_connected_to_rif__c'
+                                      variant="label-hidden"
+                                      label="Do you anticipate any Employment Matters in connection with any past or future RIFs?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange="{!c.clearFields}" 
+                                      value="{!v.PEOChecklist.emp_matter_anticipated_connected_to_rif__c}"
+                                      disabled='{!v.readOnly}'/>
+            </span>
+        </div> -->
+       <!-- <div class="slds-col slds-size_1-of-12 slds-align_absolute-center">
+            <span>
+                7.
+            </span>
+        </div>-->
+        <!-- <div class="slds-col slds-size_11-of-12" style="padding-bottom:15px">
+            <span>
+                <lightning:input aura:id="EPLIRequiredField" required="true" name='PEO_Onboarding_Checklist__c.prev_12_mnth_rif_exp_and_emp_count__c' disabled='{!v.readOnly}' label='If you have had any reductions in force (RIFs) in the past 12 months please state when, why, and how many employees were affected. If none, please enter "N/A."' value="{!v.PEOChecklist.prev_12_mnth_rif_exp_and_emp_count__c}" onchange="{!c.handleChange}" placeholder="Click or tap here to enter text."></lightning:input>
+            </span>
+        </div> -->
+       <!-- <div class="slds-col slds-size_1-of-12 slds-align_absolute-center">
+            <span>
+                8.
+            </span>
+        </div>-->
+        <!-- <div style="height: 15px"></div>
+        <div class="slds-col slds-size_11-of-12" style="padding-bottom:15px">
+            <span>
+                <lightning:input aura:id="EPLIRequiredField" name='PEO_Onboarding_Checklist__c.future_12_mnth_rif_exp_emp_count_nd_date__c' required="true" disabled='{!v.readOnly}' label='If you anticipate any RIFs in the next 12 months please state when, why, and how many employees will be affected. If none, please enter "N/A."' value="{!v.PEOChecklist.future_12_mnth_rif_exp_emp_count_nd_date__c}" onchange="{!c.handleChange}" placeholder="Click or tap here to enter text."></lightning:input>
+            </span>
+        </div> -->
+        <!--<div class="slds-col slds-size_1-of-12 slds-align_absolute-center">
+            <span>
+                8.
+            </span>
+        </div>
+        <div class="slds-col slds-size_11-of-12" style="padding-bottom:5px">
+            <span>
+                <lightning:radioGroup aura:id="EPLIRequiredField" required="true" name='PEO_Onboarding_Checklist__c.emp_matter_anticipated_connected_to_rif__c'
+                                      label="Do you anticipate any Employment Matters (defined above) in connection with any past or future RIFs?"
+                                      options="{!v.radioGroupOptions}"
+                                      onchange="{!c.clearFields}" 
+                                      value="{!v.PEOChecklist.emp_matter_anticipated_connected_to_rif__c}"
+                                      disabled='{!v.readOnly}'/>
+            </span>
+        </div> -->
+        
+       <!-- <div class="slds-col slds-size_6-of-12">
+        </div>-->
+        <!-- <aura:if isTrue="{!not(v.PEOChecklist.emp_matter_anticipated_connected_to_rif__c == 'No')}">
+            <div class="slds-col slds-size_1-of-12 slds-align_absolute-center">
+                <span>
+                    9.
+                </span>
+            </div>
+            <div style="height: 15px"></div>
+            <div class="slds-col slds-size_11-of-12" style="padding-bottom:15px">
+                <span>
+                    <lightning:input aura:id="EPLIRequiredField" name='PEO_Onboarding_Checklist__c.desc_circ_potential_lead_to_matter__c' required="true" disabled='{!v.readOnly}' label='If you know of any circumstances that may become Employment Matters, please describe. If none, please enter "N/A."' value="{!v.PEOChecklist.desc_circ_potential_lead_to_matter__c}" onchange="{!c.handleChange}"   placeholder="Click or tap here to enter text."></lightning:input>
+                </span>
+            </div>
+        </aura:if> -->
+        <!-- <div class="slds-col slds-size_12-of-12" style="padding-bottom:5px">
+            <span>
+                If you ever purchased coverage for employment practices liability (EPL), please provide the following:
+            </span>
+        </div>
+        <div class="slds-col slds-size_12-of-12" style="padding-bottom:5px">
+            <span>
+                If none, please enter N/A in the Policy Period field.
+            </span>
+        </div>
+        <div class="slds-col slds-size_12-of-12" style="padding-bottom:30px">
+            <div style="height: 15px"></div>
+            <table class="policyTable" border="0" cellpadding="5">
+                <thead border="1">
+                    <tr>
+                        <th class="policyCell"></th>
+                        <th class="policyCell">Policy Period</th>
+                        <th class="policyCell">Insurance Carrier</th>
+                        <th class="policyCell">Limits</th>
+                        <th class="policyCell">Deductible/Retention</th>
+                        <th class="policyCell">Premium</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.PolicyPeriods}" var="polPeriod" indexVar="index">  
+                        <tr> 
+                            <td class="policyCell">
+                                {!index + 1})
+                            </td>
+                            <td class="policyCell">
+                                <lightning:input class="policyInput" aura:id="policyPeriodField" name='Policy_Period__c.Policy_Period__c' required="true" disabled='{!v.readOnly}' label="Policy Period" value="{!polPeriod.Policy_Period__c}" variant="label-hidden" placeholder="Enter text..." onchange="{!c.handlePolicyPeriodChange}"/>
+                            </td>  
+                            <aura:if isTrue="{!not(polPeriod.Policy_Period__c == 'N/A' || polPeriod.Policy_Period__c == 'n/a' || polPeriod.Policy_Period__c == 'NA')}">
+                                <td class="policyCell">
+                                    <lightning:input class="policyInput" aura:id="policyPeriodField"  name='Policy_Period__c.Insurance_Carrier__c' required="true" disabled='{!v.readOnly}' label="Insurance Carrier" value="{!polPeriod.Insurance_Carrier__c}" variant="label-hidden" placeholder="Enter text..." onchange="{!c.handlePolicyPeriodChange}"/>
+                                </td>
+                                <td class="policyCell">
+                                    <lightning:input class="policyInput" aura:id="policyPeriodField" name='Policy_Period__c.Limit__c' required="true" disabled='{!v.readOnly}' label="Limits" value="{!polPeriod.Limit__c}" variant="label-hidden" placeholder="Enter text..." onchange="{!c.handlePolicyPeriodChange}"/>
+                                </td>
+                                <td class="policyCell">
+                                    <lightning:input class="policyInput" aura:id="policyPeriodField" name='Policy_Period__c.Deductible_Retention__c' required="true" disabled='{!v.readOnly}' label="Deductible/Retention" value="{!polPeriod.Deductible_Retention__c}" variant="label-hidden" placeholder="Enter text..." onchange="{!c.handlePolicyPeriodChange}"/>
+                                </td>
+                                <td class="policyCell">
+                                    <lightning:input class="policyInput" aura:id="policyPeriodField" name='Policy_Period__c.Premium__c' required="true" disabled='{!v.readOnly}' label="Premium" value="{!polPeriod.Premium__c}" variant="label-hidden" placeholder="Enter text..." onchange="{!c.handlePolicyPeriodChange}"/>
+                                </td>
+                            </aura:if>
+                            <td>
+                                <aura:if isTrue="{!greaterthan(v.PolicyPeriods.length, 1)}">
+                                    <a name="{!index}" onclick="{!c.removeRow}">
+                                        <lightning:icon disabled='{!v.readOnly}' iconName="utility:delete" alternativeText="delete" size="x-small"/>
+                                    </a>
+                                </aura:if>
+                            </td>
+                            
+                        </tr>  
+                    </aura:iteration>
+                </tbody>
+                
+            </table>
+            <aura:if isTrue="{!lessthan(v.PolicyPeriods.length, 5)}">
+                <lightning:button disabled='{!v.readOnly}' class="slds-m-top_small" variant="brand" type="button" name="Add Row" label="Add Row" onclick="{!c.addPolicyPeriod}" ></lightning:button>
+            </aura:if>
+            <lightning:button  disabled='{!v.readOnly}' class="slds-m-top_small" variant="brand" type="button" name="Save Policy Periods" label="Save Policy Periods" onclick="{!c.savePolicyPeriods}" ></lightning:button>
+        </div>
+        <div style="height: 10px"></div>
+        <h4><b>Acknowledgement</b></h4>
+        <div class=" slds-p-vertical_x-small" >
+                <p><i>
+        It is essential that the information you provide is true, accurate, complete, and not misleading.  Whomever you designate to provide 
+        it should have access to the information, make due inquiry within legal restrictions, and take into account all information you can 
+        legally disclose.  Information should be updated if there is any material change.  Not meeting eligibility requirements or not providing 
+        true, accurate, complete, and non-misleading information for any reason may result in, among other things, rate adjustments or unavailability 
+        of products and services.</i></p>
+            </div>
+
+        <div class='slds-form-element slds-p-vertical_x-small'>
+            <aura:if isTrue="{!v.user.Profile.Name != 'Customer Community Login User Clone'}">
+                <div>
+                    <p class='slds-text-color_error slds-text-body_small'>DISABLED: ONLY THE CLIENT CAN AGREE TO THE ACKNOWLEDGMENT</p>
+                </div>
+            </aura:if>
+            <abbr class="slds-required" title="required">*</abbr>
+            <div class='slds-show_inline-block' style="padding:0px 0px 0px 0px">
+                <lightning:input type="checkbox"
+                                 checked="{!v.agreementSigned}"
+                                 label='I have read and agree with the above statement'
+                                 disabled="{!or(v.user.Profile.Name != 'Customer Community Login User Clone',v.agreementSigned)}"
+                                 onchange="{!c.handleAkn}"/>
+            </div>
+        </div> -->
+        
+    <!-- </div>
+    
+    <div>  -->
+        <!--divclass="modal-footer slds-modal__footer slds-size_1-of-1">
+        <lightning:button class="slds-m-top_small" variant="brand" type="button" name="Previous" label="Previous" onclick="{!c.stepBackward}" />
+        <lightning:button class="slds-m-top_small" variant="brand" type="button" name="saveAndNext" label="Next" onclick="{!c.saveAndNext}" ></lightning:button>
+        <aura:if isTrue='{! and(!v.communityUser, v.allowDiscLog) }'>
+            <lightning:button class="slds-m-top_small" variant="brand" type="button" name="newDiscrepancy" label="Add New Discrepancy" onclick="{!c.openTab}" ></lightning:button>
+        </aura:if-->
+        <!-- <c:communityFormNavButtons allPossibleParents='{!v.parentTabs}'
+                                   activeParent='{!v.ActiveParentTab}'
+                                   parentTabsetUsesIteration='True'
+                                   hideBackButton='True' 
+                                   saveFunc='{!v.saveFunc}'
+                                   skipSaveEvt='false' /> -->
+        <!--lightning:button  disabled='{!v.readOnly}' class="slds-m-top_small" variant="brand" type="button" name="saveProgress" label="Save and Submit" onclick="{!c.saveProgress}" ></lightning:button>
+    	<lightning:button class="slds-m-top_small" variant="brand" type="button" name="saveLater" label="Save and Finish Later" onclick="{!c.saveProgress}" ></lightning:button-->
+    <!-- </div> -->
+</aura:component>

@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Inquiry_Date_Exited</fullName>
+        <field>Inquiry_Date_Exited__c</field>
+        <formula>Now()</formula>
+        <name>Inquiry Date Exited</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Inquiry_Exited_To</fullName>
+        <field>Inquiry_Exited_To__c</field>
+        <formula>Current_Funnel_Status__c</formula>
+        <name>Inquiry Exited To</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>MQL_Date_Exited</fullName>
+        <field>MQL_Date_Exited__c</field>
+        <formula>Now()</formula>
+        <name>MQL Date Exited</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>MQL_Exited_To</fullName>
+        <field>MQL_Exited_To__c</field>
+        <formula>Current_Funnel_Status__c</formula>
+        <name>MQL Exited To</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_Close_Date</fullName>
+        <field>DFR_Closed_Date__c</field>
+        <formula>TODAY()</formula>
+        <name>Populate Close Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_EOL_Entered_Date</fullName>
+        <field>EOL_Date_Entered__c</field>
+        <formula>Now()</formula>
+        <name>Populate EOL Entered Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_EOL_Entered_From</fullName>
+        <field>EOL_Entered_From__c</field>
+        <formula>PRIORVALUE( Current_Funnel_Status__c )</formula>
+        <name>Populate EOL Entered From</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_EOL_Reason</fullName>
+        <field>EOL_Reason__c</field>
+        <formula>IF (NOT(ISBLANK(Text(Opportunity__r.Reason_Not_Sold__c))),
+Text(Opportunity__r.Reason_Not_Sold__c ),IF (NOT(ISBLANK(Text(Lead__r.Recycle_Reason__c))),Text(Lead__r.Recycle_Reason__c),
+IF (NOT(ISBLANK(Text(Lead__r.Reject_Reason__c))),Text(Lead__r.Reject_Reason__c),null)))</formula>
+        <name>Populate EOL Reason</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_Inquiry_Entered_Date</fullName>
+        <field>Inquiry_Date_Entered__c</field>
+        <formula>Now()</formula>
+        <name>Populate Inquiry Entered Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_Inquiry_Entered_From</fullName>
+        <field>Inquiry_Entered_From__c</field>
+        <formula>PRIORVALUE(Current_Funnel_Status__c)</formula>
+        <name>Populate Inquiry Entered From</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_MQL_Entered_Date</fullName>
+        <field>MQL_Date_Entered__c</field>
+        <formula>Now()</formula>
+        <name>Populate MQL Entered Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_MQL_Entered_From</fullName>
+        <field>MQL_Entered_From__c</field>
+        <formula>PRIORVALUE(Current_Funnel_Status__c)</formula>
+        <name>Populate MQL Entered From</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_SAO_Entered_Date</fullName>
+        <field>SAO_Date_Entered__c</field>
+        <formula>Now()</formula>
+        <name>Populate SAO Entered Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_SAO_Entered_From</fullName>
+        <field>SAO_Entered_From__c</field>
+        <formula>PRIORVALUE( Current_Funnel_Status__c )</formula>
+        <name>Populate SAO Entered From</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_SQO_Entered_Date</fullName>
+        <field>SQO_Date_Entered__c</field>
+        <formula>Now()</formula>
+        <name>Populate SQO Entered Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_SQO_Entered_From</fullName>
+        <field>SQO_Entered_From__c</field>
+        <formula>PRIORVALUE( Current_Funnel_Status__c )</formula>
+        <name>Populate SQO Entered From</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_Suspect_Entered_Date</fullName>
+        <field>Suspect_Date_Entered__c</field>
+        <formula>Now()</formula>
+        <name>Populate Suspect Entered Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_Suspect_Entered_From</fullName>
+        <field>Suspect_Entered_From__c</field>
+        <formula>PRIORVALUE(Current_Funnel_Status__c)</formula>
+        <name>Populate Suspect Entered From</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_TAL_Entered_Date</fullName>
+        <field>TAL_Date_Entered__c</field>
+        <formula>Now()</formula>
+        <name>Populate TAL Entered Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_TAL_Entered_From</fullName>
+        <field>TAL_Entered_From__c</field>
+        <formula>PRIORVALUE( Current_Funnel_Status__c )</formula>
+        <name>Populate TAL Entered From</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_TQO_Entered_Date</fullName>
+        <field>TQO_Date_Entered__c</field>
+        <formula>Now()</formula>
+        <name>Populate TQO Entered Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_TQO_Entered_From</fullName>
+        <field>TQO_Entered_From__c</field>
+        <formula>PRIORVALUE( Current_Funnel_Status__c )</formula>
+        <name>Populate TQO Entered From</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>SAO_Date_Exited</fullName>
+        <field>SAO_Date_Exited__c</field>
+        <formula>Now()</formula>
+        <name>SAO Date Exited</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>SAO_Exited_To</fullName>
+        <field>SAO_Exited_To__c</field>
+        <formula>Current_Funnel_Status__c</formula>
+        <name>SAO Exited To</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>SQO_Date_Exited</fullName>
+        <field>SQO_Date_Exited__c</field>
+        <formula>Now()</formula>
+        <name>SQO Date Exited</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>SQO_Exited_To</fullName>
+        <field>SQO_Exited_To__c</field>
+        <formula>Current_Funnel_Status__c</formula>
+        <name>SQO Exited To</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Suspect1_Date_Exited</fullName>
+        <field>Suspect_Date_Exited__c</field>
+        <formula>Now()</formula>
+        <name>Suspect Date Exited</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Suspect_Date_Exited</fullName>
+        <field>Suspect_Exited_To__c</field>
+        <formula>Current_Funnel_Status__c</formula>
+        <name>Suspect - Date Exited</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Suspect_Exited_To</fullName>
+        <field>Suspect_Exited_To__c</field>
+        <formula>Current_Funnel_Status__c</formula>
+        <name>Suspect Exited To</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>TAL_Date_Exited</fullName>
+        <field>TAL_Date_Exited__c</field>
+        <formula>Now()</formula>
+        <name>TAL Date Exited</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>TAL_Exited_To</fullName>
+        <field>TAL_Exited_To__c</field>
+        <formula>Current_Funnel_Status__c</formula>
+        <name>TAL Exited To</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>TQO_Date_Exited</fullName>
+        <field>TQO_Date_Exited__c</field>
+        <formula>Now()</formula>
+        <name>TQO Date Exited</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>TQO_Exited_To</fullName>
+        <field>TQO_Exited_To__c</field>
+        <formula>Current_Funnel_Status__c</formula>
+        <name>TQO Exited To</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Move out of Inquiry</fullName>
+        <actions>
+            <name>Inquiry_Date_Exited</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Inquiry_Exited_To</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>PRIORVALUE( Current_Funnel_Status__c ) = &apos;Inquiry&apos; &amp;&amp;  Current_Funnel_Status__c !=&apos;Inquiry&apos;</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Move out of MQL</fullName>
+        <actions>
+            <name>MQL_Date_Exited</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>MQL_Exited_To</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>PRIORVALUE( Current_Funnel_Status__c ) = &apos;MQL&apos; &amp;&amp;  Current_Funnel_Status__c != &apos;MQL&apos;</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Move out of SAO</fullName>
+        <actions>
+            <name>SAO_Date_Exited</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>SAO_Exited_To</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>PRIORVALUE( Current_Funnel_Status__c ) = &apos;SAO&apos; &amp;&amp;  Current_Funnel_Status__c != &apos;SAO&apos;</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Move out of SQO</fullName>
+        <actions>
+            <name>SQO_Date_Exited</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>SQO_Exited_To</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>PRIORVALUE( Current_Funnel_Status__c ) = &apos;SQO&apos; &amp;&amp;  Current_Funnel_Status__c != &apos;SQO&apos;</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Move out of Suspect</fullName>
+        <actions>
+            <name>Suspect1_Date_Exited</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Suspect_Exited_To</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>PRIORVALUE(Current_Funnel_Status__c) = &apos;Suspect&apos; &amp;&amp;  Current_Funnel_Status__c !=&apos;Suspect&apos;</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Move out of TAL</fullName>
+        <actions>
+            <name>TAL_Date_Exited</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>TAL_Exited_To</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>PRIORVALUE( Current_Funnel_Status__c ) = &apos;TAL&apos; &amp;&amp;  Current_Funnel_Status__c != &apos;TAL&apos;</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Move out of TQO</fullName>
+        <actions>
+            <name>TQO_Date_Exited</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>TQO_Exited_To</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>PRIORVALUE( Current_Funnel_Status__c ) = &apos;TQO&apos; &amp;&amp;  Current_Funnel_Status__c != &apos;TQO&apos;</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Populate EOL Fields</fullName>
+        <actions>
+            <name>Populate_Close_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Populate_EOL_Entered_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Populate_EOL_Entered_From</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>AND(
+ISCHANGED( Current_Funnel_Status__c ),
+((PRIORVALUE( Current_Funnel_Status__c ) != &quot;Reject&quot; &amp;&amp; Current_Funnel_Status__c = &quot;Reject&quot; ) || (PRIORVALUE( Current_Funnel_Status__c ) != &quot;Recycle&quot; &amp;&amp; Current_Funnel_Status__c = &quot;Recycle&quot; ) )
+)
+|| ( NOT(ISBLANK(Opportunity__c)) &amp;&amp; Opportunity__r.IsClosed &amp;&amp; ISBLANK(DFR_Closed_Date__c))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Populate Inquiry Fields</fullName>
+        <actions>
+            <name>Populate_Inquiry_Entered_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Populate_Inquiry_Entered_From</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>Current_Funnel_Status__c = &apos;Inquiry&apos;</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Populate MQL Fields</fullName>
+        <actions>
+            <name>Populate_MQL_Entered_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Populate_MQL_Entered_From</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>Current_Funnel_Status__c = &apos;MQL&apos;</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Populate SAO Fields</fullName>
+        <actions>
+            <name>Populate_SAO_Entered_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Populate_SAO_Entered_From</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>Current_Funnel_Status__c = &apos;SAO&apos;</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Populate SQO Fields</fullName>
+        <actions>
+            <name>Populate_SQO_Entered_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Populate_SQO_Entered_From</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>Current_Funnel_Status__c = &apos;SQO&apos;</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Populate Suspect Fields</fullName>
+        <actions>
+            <name>Populate_Suspect_Entered_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Populate_Suspect_Entered_From</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>Current_Funnel_Status__c = &apos;Suspect&apos;</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Populate TAL Fields</fullName>
+        <actions>
+            <name>Populate_TAL_Entered_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Populate_TAL_Entered_From</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>Current_Funnel_Status__c = &apos;TAL&apos;</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Populate TQO Fields</fullName>
+        <actions>
+            <name>Populate_TQO_Entered_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Populate_TQO_Entered_From</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>Current_Funnel_Status__c = &apos;TQO&apos;</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

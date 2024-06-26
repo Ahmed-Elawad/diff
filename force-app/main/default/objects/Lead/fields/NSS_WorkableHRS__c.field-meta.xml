@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NSS_WorkableHRS__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <formula>AND(DoNotCall=false 
+,ISPICKVAL(Status,&quot;Disqualified&quot;)=false 
+,ISPICKVAL(Hold_Out_Reason__c,&apos;Bank Referral&apos;) = false 
+,ISPICKVAL(LeadSource,&apos;Referral-Bank Referral&apos;) = false
+,ISPICKVAL(Hold_Out_Reason__c,&apos;Ecommerce&apos;) = false 
+,Referral_Contact__r.Sensitivity_401_k__c = false 
+,DuplicatePhone_HRS__c = false 
+,Workable_Override__c = FALSE
+,(ISBLANK(amp_dev__Referral__c) &amp;&amp; NOT(ISPICKVAL( Hold_Out_Reason__c , &apos;Paychex Referral Network&apos;)))
+
+
+
+)</formula>
+    <inlineHelpText>Is this workable by the HRS group in NSS?</inlineHelpText>
+    <label>NSS Workable-HRS</label>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

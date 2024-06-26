@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Broker_Full_Name_Required</fullName>
+    <active>false</active>
+    <description>If the Lead source is not &quot;Referral-Financial Advisor&quot; and &apos;Will a Financial Advisor be attached to the Plan&apos; is YES</description>
+    <errorConditionFormula>AND( ISPICKVAL(Will_a_FA_be_attached_to_the_Plan__c,&apos;Yes&apos;) , NOT(ISPICKVAL(LeadSource, &apos;Referral-Financial Advisor&apos;)), Account.Broker_Name_Ref__c == &apos;&apos; )</errorConditionFormula>
+    <errorMessage>Complete the Broker Full Name / Financial Broker Full Name on the Prospect-Client record</errorMessage>
+</ValidationRule>

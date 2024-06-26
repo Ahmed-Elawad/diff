@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>POP_Cancel_Date_Entered</fullName>
+    <active>true</active>
+    <description>Cannot enter a HSA Cancel Date until pending Tasks are completed</description>
+    <errorConditionFormula>NOT(ISNULL( POP_Downgrade_Complete__c ))&amp;&amp;
+(
+CONTAINS( Pending_FSA_Tasks__c , &quot;Pending POP Setup&quot;)||
+CONTAINS( Pending_FSA_Tasks__c , &quot;Pending POP Termination&quot;)||
+CONTAINS( Pending_FSA_Tasks__c , &quot;Unresolved Paperwork Discrepancy&quot;)||
+CONTAINS( Pending_FSA_Tasks__c , &quot;CPR NPR Callout&quot;)
+)</errorConditionFormula>
+    <errorMessage>You cannot fill out &quot;POP Cancel Date Entered&quot; until the following Pending Tasks are Resolved: Pending POP Setup, Pending POP Termination,  CPR NPR Callout, and Unresolved Paperwork Discrepancy</errorMessage>
+</ValidationRule>

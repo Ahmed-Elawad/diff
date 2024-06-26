@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRE_SetUpComplt_before_WelcomeCallComplt</fullName>
+    <active>true</active>
+    <description>Prevent the Welcome Call Complete field from being populated BEFORE the Set Up Complete field has been populated.</description>
+    <errorConditionFormula>AND(
+ ISCHANGED(Welcome_Call_Complete__c),
+ ( Set_Up_Complete__c = FALSE ),
+ (NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)))
+ )</errorConditionFormula>
+    <errorDisplayField>Welcome_Call_Complete__c</errorDisplayField>
+    <errorMessage>You cannot change &apos;Welcome Call Complete&apos; before &apos;Set Up Complete&apos;.</errorMessage>
+</ValidationRule>

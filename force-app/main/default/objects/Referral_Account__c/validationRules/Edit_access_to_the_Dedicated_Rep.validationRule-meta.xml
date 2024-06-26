@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Edit_access_to_the_Dedicated_Rep</fullName>
+    <active>true</active>
+    <errorConditionFormula>ISCHANGED( DedicatedRep__c )  &amp;&amp;  ISPICKVAL(Referral_Source_Business_Type__c  , &apos;Strategic Account&apos;) &amp;&amp;  ($Profile.Name  &lt;&gt; &apos;MMS Sales ZSA - SB&apos; &amp;&amp; $Profile.Name  &lt;&gt; &apos;Salesforce Support&apos; &amp;&amp; $Profile.Name  &lt;&gt; &apos;Sales Data Steward&apos; &amp;&amp; $Profile.Name  &lt;&gt; &apos;Bank Channel Manager&apos; &amp;&amp; NOT(BEGINS($Profile.Name, &apos;System Admin&apos;)))</errorConditionFormula>
+    <errorMessage>You do not have access to edit Dedicated Rep field.</errorMessage>
+</ValidationRule>

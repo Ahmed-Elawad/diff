@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RelaunchBatch__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <formula>AND(IsActive__c = true
+, OR(ISPICKVAL(ProcessType__c,&apos;Purge Only&apos;),ISPICKVAL(ProcessType__c,&apos;Purge and Archive&apos;))
+,OR (ISBLANK(LatestRunDate__c)
+,LatestRunDate__c &lt; TODAY()
+,MoreRecords__c = true))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>Do we relaunch the batch process?</inlineHelpText>
+    <label>Relaunch Batch</label>
+    <securityClassification>Internal</securityClassification>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

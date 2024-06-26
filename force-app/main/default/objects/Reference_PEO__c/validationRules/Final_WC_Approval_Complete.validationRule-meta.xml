@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Final_WC_Approval_Complete</fullName>
+    <active>false</active>
+    <description>If Final WC Approval Complete is populated, the field Workers Compensation Type has to have a value in it and value can not equal &quot;SR NO WC COI&quot;.
+Used for PEO Paper Based Onboarding.</description>
+    <errorConditionFormula>($RecordType.DeveloperName = &apos;PEO_Paper_Based_Onboarding&apos; ||
+$RecordType.Id = &quot;0120g000000grzo&quot;)
+
+
+&amp;&amp;    NOT(ISBLANK(Reply_from_WC_Underwriting__c))&amp;&amp;
+OR( ISBLANK(TEXT(Workers_Compensation_Type__c )),  ISPICKVAL(Workers_Compensation_Type__c , &apos;SR NO WC COI&apos;) )</errorConditionFormula>
+    <errorMessage>When Final WC Approval Complete is populated, the Workers Compensation Type cannot be blank or have the value  &apos;SR NO WC COI&apos;.</errorMessage>
+</ValidationRule>

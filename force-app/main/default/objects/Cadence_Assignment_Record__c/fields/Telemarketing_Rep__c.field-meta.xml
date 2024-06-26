@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Telemarketing_Rep__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>This is only used for the UI to be able to apply the filters. The code is running off the Suggested User field.</description>
+    <inlineHelpText>If you have a preferred partner, enter the name here. Only eligible records will be sent to them. If this is left blank, all records will be sent to the appropriate queue to be worked.</inlineHelpText>
+    <label>Preferred Partner</label>
+    <lookupFilter>
+        <active>false</active>
+        <booleanFilter>1 AND 2</booleanFilter>
+        <errorMessage>User must have an NSS Team defined (NSR or SDR)</errorMessage>
+        <filterItems>
+            <field>User.IsActive</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </filterItems>
+        <filterItems>
+            <field>User.NSS_Team__c</field>
+            <operation>notEqual</operation>
+            <value></value>
+        </filterItems>
+        <infoMessage>User must have an NSS Team defined (NSR or SDR)</infoMessage>
+        <isOptional>false</isOptional>
+    </lookupFilter>
+    <referenceTo>User</referenceTo>
+    <relationshipName>TelemarketingCarReps</relationshipName>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

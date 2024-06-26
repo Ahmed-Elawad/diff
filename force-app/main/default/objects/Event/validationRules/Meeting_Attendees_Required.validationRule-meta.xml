@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Meeting_Attendees_Required</fullName>
+    <active>true</active>
+    <errorConditionFormula>(ISNEW() || ISCHANGED(Outcome__c)) &amp;&amp;
+NOT(ISBLANK(TEXT(Outcome__c))) &amp;&amp;
+ISPICKVAL(Onsite_or_Virtual__c, &apos;Onsite&apos;) &amp;&amp;
+(ISBLANK(Meeting_Attendees__c) || NOT(CONTAINS(Meeting_Attendees__c, &apos; &apos;)))</errorConditionFormula>
+    <errorDisplayField>Meeting_Attendees__c</errorDisplayField>
+    <errorMessage>Before saving your changes, you must enter the names of ALL meeting attendees in the Meeting Attendees field. This information will be audited. Make sure to include first and last names and to separate each attendee with a comma.</errorMessage>
+</ValidationRule>

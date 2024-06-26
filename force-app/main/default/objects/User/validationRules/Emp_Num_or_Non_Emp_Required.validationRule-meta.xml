@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Emp_Num_or_Non_Emp_Required</fullName>
+    <active>true</active>
+    <description>Employee number is required to all Paychex Employee users. Non-Paychex Employee users must be indicated</description>
+    <errorConditionFormula>(BEGINS(Profile.Name , &quot;2008-09&quot;)  &amp;&amp;  LEN(EmployeeNumber)=0 &amp;&amp; NOT( Non_Paychex_Employee__c ))  || (BEGINS( $Profile.Name  , &quot;2008-09&quot;)  &amp;&amp;  LEN(EmployeeNumber)=0 &amp;&amp; NOT( Non_Paychex_Employee__c ))</errorConditionFormula>
+    <errorDisplayField>EmployeeNumber</errorDisplayField>
+    <errorMessage>**** Employee number is required to all Paychex Employee users. Non-Paychex Employee users must be indicated ****</errorMessage>
+</ValidationRule>

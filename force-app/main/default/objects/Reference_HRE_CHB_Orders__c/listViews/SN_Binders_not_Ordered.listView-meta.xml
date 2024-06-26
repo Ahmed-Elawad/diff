@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SN_Binders_not_Ordered</fullName>
+    <booleanFilter>((1 or 10)AND 2 AND 3 and 4 and 5 and 8 and 9) or ((1 or 10)and 2 and 3 and 6 and 7 and 8 and 9)</booleanFilter>
+    <columns>NAME</columns>
+    <columns>Prospect_Client_Name__c</columns>
+    <columns>Prospect_Client_Number__c</columns>
+    <columns>BIS_ID__c</columns>
+    <columns>Type_of_Request__c</columns>
+    <columns>Task_Due_Date__c</columns>
+    <columns>Template__c</columns>
+    <columns>Outside_Color__c</columns>
+    <columns>Art__c</columns>
+    <columns>Binder_Quantity__c</columns>
+    <columns>RECORDTYPE</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>notEqual</operation>
+        <value>Reference_HRE_CHB_Orders__c.Handbook_HR_Solutions_Order_Record_Type,Reference_HRE_CHB_Orders__c.Handbook_PEO_Order_Record_Type</value>
+    </filters>
+    <filters>
+        <field>Order_Date__c</field>
+        <operation>notEqual</operation>
+        <value>LAST_N_DAYS:3</value>
+    </filters>
+    <filters>
+        <field>X8_x_11_Options__c</field>
+        <operation>notEqual</operation>
+        <value>1” Binder,3 holes,Plastic Spiral,Fold/Stitch</value>
+    </filters>
+    <filters>
+        <field>Date_Sent_to_Vendor__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Binder_Quantity__c</field>
+        <operation>greaterThan</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Spanish_Binder_Order_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Spanish_Binder_Quantity__c</field>
+        <operation>greaterThan</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Task_Type__c</field>
+        <operation>equals</operation>
+        <value>Ok to Print,Reorder,Spanish Translation</value>
+    </filters>
+    <filters>
+        <field>Order_Date__c</field>
+        <operation>equals</operation>
+        <value>LAST_N_DAYS:30</value>
+    </filters>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_HRE_CHB_Orders__c.Handbook_Support_Order_Record_Type</value>
+    </filters>
+    <label>SN - Binders not Ordered</label>
+    <sharedTo>
+        <role>HRE_Handbook_Rep_team_1</role>
+        <role>HRE_Handbook_Rep_team_2</role>
+        <role>HRE_Handbook_Rep_team_3</role>
+        <role>HRE_Handbook_Supervisor_team_1</role>
+        <role>HRE_Handbook_Supervisor_team_2</role>
+        <role>HRE_Handbook_Supervisor_team_3</role>
+    </sharedTo>
+</ListView>

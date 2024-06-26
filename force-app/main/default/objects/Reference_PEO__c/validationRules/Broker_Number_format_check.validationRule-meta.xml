@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Broker_Number_format_check</fullName>
+    <active>true</active>
+    <description>case #22553218 - only allow letters and numbers in Broker Number</description>
+    <errorConditionFormula>AND(OR(ISNEW(),ISCHANGED(Broker_Number__c)), 
+NOT(ISBLANK(Broker_Number__c)), 
+NOT(BEGINS($Profile.Name, &quot;System Admin&quot;)), 
+NOT(REGEX(Broker_Number__c, &quot;[A-Za-z0-9]+&quot;)) 
+)</errorConditionFormula>
+    <errorDisplayField>Broker_Number__c</errorDisplayField>
+    <errorMessage>Broker Number can only be letters and numbers</errorMessage>
+</ValidationRule>

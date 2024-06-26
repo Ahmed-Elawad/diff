@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Certified_PEO_PEO_Client_Required</fullName>
+    <active>true</active>
+    <description>Certified PEO (PEO+) Client needs to have a value when Contract Reviewed = true</description>
+    <errorConditionFormula>( 
+RecordTypeId = &apos;01270000000UJ01&apos; || 
+RecordTypeId = &apos;012700000001jeX&apos; ||
+RecordTypeId = &apos;012700000001kKx&apos; || 
+RecordTypeId=&quot;0120g000000grzo&quot;) 
+ &amp;&amp; 
+Contract_Reviewed__c = true &amp;&amp; 
+( 
+ISPICKVAL(Certified_PEO_PEO_Client__c, &quot;&quot;) || 
+ISPICKVAL(Certified_PEO_PEO_Client__c, &quot;None&quot;) 
+) &amp;&amp; 
+NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))</errorConditionFormula>
+    <errorDisplayField>Certified_PEO_PEO_Client__c</errorDisplayField>
+    <errorMessage>Certified PEO (PEO+) Client needs to have a value.</errorMessage>
+</ValidationRule>

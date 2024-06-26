@@ -1,0 +1,70 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes" access="global" >
+    
+    <!-- auto save -->
+    <aura:registerEvent name='autoSave' type='c:CommunityFormsAutoSave' />
+    <aura:attribute name='autoSaveRecords' type='map' />
+    
+    <aura:attribute name='notForProfitIndustryRec' type='Object' />
+    <aura:attribute name='radioGroupOptions' type='List' default="[{'label': 'Yes', 'value':'Yes'},{'label':'No','value':'No'}]" />
+    <aura:attribute name="disableEdit" type="Boolean" default="true" />
+    <aura:attribute name="parentAccount" type="Account"/>
+    <aura:attribute name="allAccounts" type="Account[]" />
+    
+    <aura:method name="validateFields" action="{!c.validate}" access="public"/>
+    
+  <!--
+    <lightning:radioGroup disabled='{!v.disableEdit}' 
+                          name='Are_volunteers_used__c'
+                          label="Are volunteers used?"
+                          options="{!v.radioGroupOptions}"
+                          value="{!v.notForProfitIndustryRec.Are_volunteers_used__c}"
+                          onchange='{!c.handleChange}'/>
+    <aura:if isTrue="{!v.notForProfitIndustryRec.Are_volunteers_used__c=='Yes'}">
+        <div class="slds-m-vertical_large">
+            <div class="slds-text-heading_small indent">
+                <p>Please submit page 1 of your most recent IRS Form 990 confirming the number of employees and the number of volunteers. 
+                    You may upload this to the “Misc Files - Workers’ Comp” section within the next tab</p>
+            </div>
+            <lightning:input disabled="{!v.disableEdit}" name="Num_of_volunteers_if_not_filed_irs_990__c" class="queIndent" onchange="{!c.handleChange}" type="number" 
+                             label="If you have not yet filed or are not required to complete IRS Form 990, 
+                                    please provide the number of volunteers used last year" 
+                             value="{!v.notForProfitIndustryRec.Num_of_volunteers_if_not_filed_irs_990__c}" />
+            <lightning:input disabled="{!v.disableEdit}" name="Num_of_volunteers_expected_next_year__c" class="queIndent" onchange="{!c.handleChange}" type="number" 
+                             label="If you have not yet filed or are not required to complete IRS Form 990, 
+                                    please provide the number of volunteers expected to be used this coming year" 
+                             value="{!v.notForProfitIndustryRec.Num_of_volunteers_expected_next_year__c}" />
+            <lightning:textarea disabled="{!v.disableEdit}" name="what_are_volunteer_responsibilities__c" onchange="{!c.handleChange}" label="What are their responsibilities?" 
+                                value="{!v.notForProfitIndustryRec.what_are_volunteer_responsibilities__c}" />
+        </div>
+    </aura:if>
+    -->
+    <lightning:radioGroup aura:id="isqQue" disabled="{!v.disableEdit}"
+                          name="Do_you_offer_any_type_of_medical_care__c"
+                          label="Do you offer any type of medical care?"
+                          options="{!v.radioGroupOptions}"
+                          value="{!v.notForProfitIndustryRec.Do_you_offer_any_type_of_medical_care__c}"
+                          onchange="{!c.handleChange}"/>
+    
+    <lightning:radioGroup aura:id="isqQue" disabled="{!v.disableEdit}"
+                          name="Offers_overnight_accomodations__c"
+                          label="Do you offer any type of overnight accommodations?"
+                          options="{!v.radioGroupOptions}"
+                          value="{!v.notForProfitIndustryRec.Offers_overnight_accomodations__c}"
+                          onchange="{!c.handleChange}"/>
+    
+    <lightning:radioGroup aura:id="isqQue" disabled="{!v.disableEdit}" 
+                          name="Are_metal_detectors_in_place__c"
+                          label="Are metal detectors used at your place of business?"
+                          options="{!v.radioGroupOptions}"
+                          value="{!v.notForProfitIndustryRec.Are_metal_detectors_in_place__c}"
+                          onchange="{!c.handleChange}"/>
+    
+    <lightning:radioGroup aura:id="isqQue" disabled="{!v.disableEdit}"
+                          name="Staff_trained_for_violent_confrontation__c"
+                          label="Have all staff members been trained to handle confrontations with potentially violent individuals?"
+                          options="{!v.radioGroupOptions}"
+                          value="{!v.notForProfitIndustryRec.Staff_trained_for_violent_confrontation__c}"
+                          onchange="{!c.handleChange}"/>
+        
+	
+</aura:component>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Oracle_Requests_Must_Go_to_SFDC</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(ISPICKVAL(Request_Status__c, &apos;Approved&apos;), Package_Name__c = &apos;Oracle_CPQ&apos;, NOT(CONTAINS($Profile.Name, &apos;System Admin&apos;)))</errorConditionFormula>
+    <errorMessage>Only SFDC COE can approve Oracle license requests</errorMessage>
+</ValidationRule>

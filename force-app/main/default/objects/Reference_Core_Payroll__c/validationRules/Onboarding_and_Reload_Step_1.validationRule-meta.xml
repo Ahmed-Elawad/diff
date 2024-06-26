@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Onboarding_and_Reload_Step_1</fullName>
+    <active>true</active>
+    <description>Fields are required for step 1</description>
+    <errorConditionFormula>AND(OR($RecordType.Name = &apos;MPSC Reload&apos;,$RecordType.Name = &apos;Reference MPSC Onboarding Core Payroll&apos;),NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),ISPICKVAL( Current_Step__c,&apos;(1 of 6) Load assigned to IS&apos;),ISBLANK( Date_IS_Assigned__c ))</errorConditionFormula>
+    <errorMessage>For Current Step 1 of 6, Date IS Assigned is required</errorMessage>
+</ValidationRule>

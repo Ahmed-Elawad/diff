@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Limit_Supervisor_Cloned_Rcd_Statuses</fullName>
+    <active>true</active>
+    <description>Limit which Statuses are used when a record is cloned</description>
+    <errorConditionFormula>ISNEW() &amp;&amp; $Profile.Name = &apos;NSS Manager&apos; &amp;&amp; 
+(ISPICKVAL( Status__c , &apos;Audit Approved&apos;) || 
+ISPICKVAL( Status__c , &apos;Audit Rejected&apos;) || 
+ISPICKVAL( Status__c , &apos;Audit Reject Final&apos;))</errorConditionFormula>
+    <errorDisplayField>Status__c</errorDisplayField>
+    <errorMessage>Please pick a different status for this record.</errorMessage>
+</ValidationRule>

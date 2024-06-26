@@ -1,0 +1,48 @@
+<aura:component controller="CreateActivityController" implements="force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:hasSObjectName">
+
+    <aura:attribute name="recordId" type="Id" default="0060300000620DrAAI" />
+    <aura:attribute name="record" type="Object"/>
+    <aura:attribute name="sobjecttype" type="String" default="{!v.sObjectName}"/>
+    <aura:attribute name="descriptionAddOn" type="String" default=""/>
+    <aura:attribute name="attendeesAddOn" type="String" default=""/>
+    <aura:attribute name="carId" type="Id" default="" />
+
+    <aura:attribute name="activityTypeOptions" type="List" default="[]"/>
+    <aura:attribute name="sourceObjectName" type="String" default="Task" />
+    <aura:attribute name="selectedActivityType" type="String"/>
+    <aura:attribute name="isFollowUpActivity" type="Boolean" default="false"/>
+    <aura:attribute name="profileName" type="String"/>
+    <aura:attribute name="multipleInitPresentations" type="Boolean"/>
+    <aura:attribute name="isThisPEOSalesUser" type="Boolean"/>
+    <aura:attribute name="picklistName" type="String"/>
+    <aura:attribute name="groupName" type="String"/>
+    <aura:attribute name="isReadyToLoadEntryForm" type="Boolean" default="false"/>
+
+    <aura:handler name="init" value="{! this }" action="{! c.doInit }"/>
+    <aura:handler name="change" value="{!v.multipleInitPresentations }" action="{! c.doInit }"/>
+    <aura:handler name="change" value="{!v.isFollowUpActivity }" action="{! c.loadOptions }"/>
+    <aura:registerEvent name="activityTypeChangedEvent" type="c:activityTypeChangedEvent"/>   
+
+    <lightning:layout >
+        <lightning:layoutItem padding="around-medium" size="12">
+            <lightning:combobox aura:id="selectActivityType" name="activityType" label="{!v.isFollowUpActivity ? 'Follow Up Activity Type' : 'Activity Type'}"
+                      placeholder="Choose Activity Type"
+                      value="{!v.selectedActivityType}"
+                      onchange="{!c.handleOptionSelected}"
+                      options="{!v.activityTypeOptions}"/>
+
+            <hr class="small-horizontal-rule"/>
+
+            <aura:if isTrue="{!(v.isReadyToLoadEntryForm != false) }">
+                <aura:if isTrue="{!and(v.sourceObjectName == 'Task', not(empty(v.selectedActivityType)))}">
+                    <c:taskEntryForm  activityType="{!v.selectedActivityType}" sourceRecordId="{!v.recordId}" isFollowUpActivity="{!v.isFollowUpActivity}" sobjecttype="{!v.sobjecttype}" profileName="{!v.profileName}" descriptionAddOn="{!v.descriptionAddOn}" carId="{!v.carId}" />
+                </aura:if>
+                
+                <aura:if isTrue="{!and(v.sourceObjectName == 'Event', not(empty(v.selectedActivityType)))}">
+                    <c:eventEntryForm  activityType="{!v.selectedActivityType}" sourceRecordId="{!v.recordId}" hasInitialPresentation="{!v.multipleInitPresentations}" isFollowUpActivity="{!v.isFollowUpActivity}" sobjecttype="{!v.sobjecttype}" profileName="{!v.profileName}" isThisPEOSalesUser="{!v.isThisPEOSalesUser}" descriptionAddOn="{!v.descriptionAddOn}" carId="{!v.carId}" />
+                </aura:if>
+            </aura:if>
+        </lightning:layoutItem>
+    </lightning:layout>
+
+</aura:component>

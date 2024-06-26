@@ -1,0 +1,39 @@
+<apex:page standardController="Contact" extensions="ContactOverviewController" tabStyle="Contact" >
+    <script>
+        function doRedirect(){
+        window.top.location='/{!Contact.id}';    
+        }
+    </script>
+    
+<apex:pageblock > 
+    <apex:pageBlockSection >
+    	<apex:pageBlockSectionItem >
+	    	<apex:outputLabel rendered="{!hasSensitivities}"  value="Product Sensitivities: " style="font-weight:bold" /> 
+    	 	<apex:outputText rendered="{!hasSensitivities}"  value="{!sensitivities}"  /> 
+        </apex:pageBlockSectionItem>
+    	 	
+    	<apex:pageBlockSectionItem >    
+    	 	 <apex:outputLabel rendered="{!isReferral}" value="Primary Referral Type: " style="font-weight:bold"/>
+    	 	 <apex:outputText rendered="{!isReferral}" value="{!contact.PrimaryReferralType__c}" />
+    	</apex:pageBlockSectionItem>    	 	 
+    	    	 	 
+		<apex:pageBlockSectionItem >    		    	    	 	 
+    		 <apex:outputLabel rendered="{!isSignificantCntct}" value="Significant Contact"	style="font-weight:bold" />
+    	 	 <apex:outputfield rendered="{!isSignificantCntct}"	value="{!contact.SignificantContact__c}" />
+    	</apex:pageBlockSectionItem>    
+    	
+    	<apex:pageBlockSectionItem > 
+    	 	<apex:OutputLabel value="NSS Ownership Data" style="font-weight:bold"/>
+    	 	<apex:OutputText value="{!pOData}"/>	 
+    	 </apex:pageBlockSectionItem>    
+    	 
+    	 <apex:pageBlockSectionItem HelpText="Opportunities in the Pending Stage"> 
+    	 	<apex:OutputLabel value="Open Opportunities" style="font-weight:bold"/>
+    	 	<apex:OutputText value="{!numOpty}"/>	 
+    	 </apex:pageBlockSectionItem>  
+    	 
+    	 
+    	 	
+	</apex:pageBlockSection>
+</apex:pageblock>
+</apex:page>

@@ -1,0 +1,756 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Email_DNC_Group_when_an_SFDC_user_flags_a_record_as_Do_Not_Call</fullName>
+        <ccEmails>DNCfromSalesforce@paychex.com</ccEmails>
+        <description>Email DNC Group when an SFDC user flags a record as Do Not Call</description>
+        <protected>false</protected>
+        <senderType>CurrentUser</senderType>
+        <template>AutoresponseEmailTemplate/Lead_Do_Not_Contact_Notification</template>
+    </alerts>
+    <alerts>
+        <fullName>Email_DNC_Group_when_an_SFDC_user_flags_a_record_as_Email_Opt_Out</fullName>
+        <ccEmails>DNCfromSalesforce@paychex.com</ccEmails>
+        <description>Email DNC Group when an SFDC user flags a record as Email Opt-Out</description>
+        <protected>false</protected>
+        <senderType>CurrentUser</senderType>
+        <template>AutoresponseEmailTemplate/Lead_Email_Opt_out_Notification</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>Assign_To_Marketing_User</fullName>
+        <field>OwnerId</field>
+        <lookupValue>marketo1@paychex.com</lookupValue>
+        <lookupValueType>User</lookupValueType>
+        <name>Assign To Marketing User</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Assign_To_NSS_Disqualified</fullName>
+        <field>OwnerId</field>
+        <lookupValue>NSS_Disqualified_Queue</lookupValue>
+        <lookupValueType>Queue</lookupValueType>
+        <name>Assign To NSS Disqualified</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Auto_MQL_Stage_Date</fullName>
+        <field>Auto_MQL_Stage_Date__c</field>
+        <formula>NOW()</formula>
+        <name>Auto MQL Stage Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Blank_Inquiry_Stage_Date</fullName>
+        <field>Inquiry_Stage_Date__c</field>
+        <name>Blank Inquiry Stage Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Blank_MQL_Stage_Date</fullName>
+        <field>MQL_Stage_Date__c</field>
+        <name>Blank MQL Stage Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Blank_Recycle_Stage_Date</fullName>
+        <field>Recycle_Stage_Date__c</field>
+        <name>Blank Recycle Stage Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Blank_Reject_Stage_Date</fullName>
+        <field>Reject_Stage_Date__c</field>
+        <name>Blank Reject Stage Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Blank_Suspect_Stage_Date</fullName>
+        <field>Suspect_Stage_Date__c</field>
+        <name>Blank Suspect Stage Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Blank_TAL_Stage_Date</fullName>
+        <field>TAL_Stage_Date__c</field>
+        <name>Blank TAL Stage Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Check_Call_Counter_Reset</fullName>
+        <field>Call_Counter_Reset_WF_Set__c</field>
+        <literalValue>1</literalValue>
+        <name>Check Call Counter Reset</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>true</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Clear_Duplicate_OK</fullName>
+        <description>clear field used in Dupe Blocker scenario filter</description>
+        <field>Duplicate_OK__c</field>
+        <literalValue>0</literalValue>
+        <name>Clear Duplicate OK</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Generate_Bank_Lead_ID_Lead</fullName>
+        <field>Bank_Lead_ID__c</field>
+        <formula>&quot;L&quot; &amp; UPPER(RIGHT(CASESAFEID(Id),9))</formula>
+        <name>Generate Bank Lead ID - Lead</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Increment_Call_Counter</fullName>
+        <field>Call_Counter__c</field>
+        <formula>IF(NOT(ISBLANK(Call_Counter__c)),Call_Counter__c + 1,1)</formula>
+        <name>Increment Call Counter</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Inquiry_Stage_Date</fullName>
+        <field>Inquiry_Stage_Date__c</field>
+        <formula>Now()</formula>
+        <name>Inquiry Stage Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Lead_Check_PEO_Leasing_Box</fullName>
+        <description>Checks PEO/Leasing box when PCPM is certain values.</description>
+        <field>PEOLeasing__c</field>
+        <literalValue>1</literalValue>
+        <name>Lead Check PEO/Leasing Box</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Lead_check_PEO_Leasing</fullName>
+        <description>check PEO Leasing box if the PEO current-prior method is populated,  case #18180245</description>
+        <field>PEOLeasing__c</field>
+        <literalValue>1</literalValue>
+        <name>Lead check PEO Leasing</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Lead_uncheck_PEO_Leasing</fullName>
+        <description>if Payroll current-prior method is changed to not be a PEO method, uncheck PEO Leasing box</description>
+        <field>PEOLeasing__c</field>
+        <literalValue>0</literalValue>
+        <name>Lead uncheck PEO Leasing</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>MALatitude_c_Purge</fullName>
+        <field>MALatitude__c</field>
+        <name>Lead.MALatitude_c_Purge</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>MALongitude_c_Purge</fullName>
+        <field>MALongitude__c</field>
+        <name>Lead.MALongitude_c_Purge</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>MQL_Stage_Date</fullName>
+        <field>MQL_Stage_Date__c</field>
+        <formula>Now()</formula>
+        <name>MQL Stage Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_DNC_Date</fullName>
+        <field>Do_Not_Call_Date__c</field>
+        <formula>TODAY()</formula>
+        <name>Populate DNC Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_DNC_Submitter</fullName>
+        <field>Email_Opt_Out_Submitter__c</field>
+        <formula>$User.FirstName &amp; &quot; &quot; &amp; $User.LastName</formula>
+        <name>Populate DNC Submitter</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_Email_Opt_Out_Date</fullName>
+        <field>Email_Opt_Out_Date__c</field>
+        <formula>TODAY()</formula>
+        <name>Populate Email Opt-Out Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_Email_Opt_Out_Submitter</fullName>
+        <field>Email_Opt_Out_Submitter__c</field>
+        <formula>$User.FirstName &amp; &quot; &quot; &amp; $User.LastName</formula>
+        <name>Populate Email Opt-Out Submitter</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_Lead_DataFlux_Id</fullName>
+        <description>move SFDC id to Dataflux id</description>
+        <field>Dataflux_Id__c</field>
+        <formula>Id</formula>
+        <name>Populate Lead DataFlux Id</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Recycle_Stage_Date</fullName>
+        <field>Recycle_Stage_Date__c</field>
+        <formula>Now()</formula>
+        <name>Recycle Stage Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Reject_Stage_Date</fullName>
+        <field>Reject_Stage_Date__c</field>
+        <formula>Now()</formula>
+        <name>Reject Stage Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Reset_Call_Counter</fullName>
+        <field>Call_Counter__c</field>
+        <formula>0</formula>
+        <name>Reset Call Counter</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Reset_Call_Counter_Flag</fullName>
+        <field>Call_Counter_Reset_WF_Set__c</field>
+        <literalValue>0</literalValue>
+        <name>Reset Call Counter Flag</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Set_Hold_Out</fullName>
+        <field>Hold_Out__c</field>
+        <literalValue>1</literalValue>
+        <name>Set Hold Out</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Set_Hold_Out_Expiration</fullName>
+        <field>Hold_Out_Expiration__c</field>
+        <formula>TODAY() + 90</formula>
+        <name>Set Hold Out Expiration</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Suspect_Stage_Date</fullName>
+        <field>Suspect_Stage_Date__c</field>
+        <formula>NOW()</formula>
+        <name>Suspect Stage Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>TAL_Stage_Date</fullName>
+        <field>TAL_Stage_Date__c</field>
+        <formula>Now()</formula>
+        <name>TAL Stage Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>UnselectMMSRecordType</fullName>
+        <field>MMS_Record_Type_Contact__c</field>
+        <literalValue>0</literalValue>
+        <name>Unselect MMS Record Type</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>UnselectMMSRecordTypeOpp</fullName>
+        <field>MMS_Record_Type_Opp__c</field>
+        <literalValue>0</literalValue>
+        <name>Unselect MMS Record Type--Opp</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>UpdateMMSRecordTypetoFalse</fullName>
+        <field>MMS_Record_Type__c</field>
+        <literalValue>0</literalValue>
+        <name>Update MMS Record Type to False</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Lead_Email_Address_for_Infogroup</fullName>
+        <description>This field update nulls out the email address when leads are imported with the value of INFOGROUP@NOEMAIL.COM</description>
+        <field>Email</field>
+        <name>Update Lead Email Address for Infogroup</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Original_Owner</fullName>
+        <description>Updates the Original Owner field, which should be who the Round Robin process first chose.</description>
+        <field>Original_Owner__c</field>
+        <formula>Owner:User.FirstName +&apos; &apos;+ Owner:User.LastName</formula>
+        <name>Update Original Owner</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>clear_Consent_to_Text</fullName>
+        <description>user changed Mobile phone to clear the Consent to Text</description>
+        <field>Consent_to_Text__c</field>
+        <literalValue>0</literalValue>
+        <name>clear Consent to Text</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>true</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>fillin_Consent_to_Text_Date</fullName>
+        <description>fill in date when check Consent to Text</description>
+        <field>Consent_to_Text_Date__c</field>
+        <formula>Now()</formula>
+        <name>fillin Consent to Text Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>set_Consent_to_Text_reason</fullName>
+        <description>case #26177053 set reason to Expired auto reset when time trigger workflow fires</description>
+        <field>Consent_to_Text_reason__c</field>
+        <literalValue>Expired auto reset</literalValue>
+        <name>set Consent to Text reason</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <outboundMessages>
+        <fullName>DaScoopComposer__Notify_Groove</fullName>
+        <apiVersion>40.0</apiVersion>
+        <description>Sends an outbound message to Groove with the record ID and owner ID. This is used for real-time auto-import to Groove Flow.</description>
+        <endpointUrl>https://app.grooveapp.com/salesforce/updates</endpointUrl>
+        <fields>Id</fields>
+        <fields>OwnerId</fields>
+        <includeSessionId>false</includeSessionId>
+        <integrationUser>jathippatta@paychex.com</integrationUser>
+        <name>Notify Groove (Managed)</name>
+        <protected>true</protected>
+        <useDeadLetterQueue>false</useDeadLetterQueue>
+    </outboundMessages>
+    <outboundMessages>
+        <fullName>Influitive_Lead_Already_Contacted</fullName>
+        <apiVersion>37.0</apiVersion>
+        <description>Sends the lead status of already contacted/duplicate to influitive</description>
+        <endpointUrl>https://api.influitive.com/referral-automation/sfdc/transition?auth_token=9aea76c38ce34f3ef35bdce4dc44908631de6928&amp;hub_id=8250f683-6f68-4e7f-9019-adb3614665c4&amp;status=alreadyContactedDuplicate</endpointUrl>
+        <fields>Id</fields>
+        <fields>Referral_ID__c</fields>
+        <includeSessionId>false</includeSessionId>
+        <integrationUser>influitive@paychex.com</integrationUser>
+        <name>Influitive Lead Already Contacted</name>
+        <protected>false</protected>
+        <useDeadLetterQueue>false</useDeadLetterQueue>
+    </outboundMessages>
+    <outboundMessages>
+        <fullName>Influitive_Lead_Current_Client</fullName>
+        <apiVersion>37.0</apiVersion>
+        <description>Sends the lead status of current client to influitive</description>
+        <endpointUrl>https://api.influitive.com/referral-automation/sfdc/transition?auth_token=9aea76c38ce34f3ef35bdce4dc44908631de6928&amp;hub_id=8250f683-6f68-4e7f-9019-adb3614665c4&amp;status=currentClient</endpointUrl>
+        <fields>Id</fields>
+        <fields>Referral_ID__c</fields>
+        <includeSessionId>false</includeSessionId>
+        <integrationUser>influitive@paychex.com</integrationUser>
+        <name>Influitive Lead Current Client</name>
+        <protected>false</protected>
+        <useDeadLetterQueue>false</useDeadLetterQueue>
+    </outboundMessages>
+    <outboundMessages>
+        <fullName>Influitive_Lead_Disqualified</fullName>
+        <apiVersion>37.0</apiVersion>
+        <description>Sends the lead status of disqualified to influitive</description>
+        <endpointUrl>https://api.influitive.com/referral-automation/sfdc/transition?auth_token=9aea76c38ce34f3ef35bdce4dc44908631de6928&amp;hub_id=8250f683-6f68-4e7f-9019-adb3614665c4&amp;status=disqualified</endpointUrl>
+        <fields>Id</fields>
+        <fields>Referral_ID__c</fields>
+        <includeSessionId>false</includeSessionId>
+        <integrationUser>influitive@paychex.com</integrationUser>
+        <name>Influitive Lead Disqualified</name>
+        <protected>false</protected>
+        <useDeadLetterQueue>false</useDeadLetterQueue>
+    </outboundMessages>
+    <outboundMessages>
+        <fullName>Influitive_Lead_Inaccurate_Data</fullName>
+        <apiVersion>37.0</apiVersion>
+        <description>Sends the lead status of contacted to influitive</description>
+        <endpointUrl>https://api.influitive.com/referral-automation/sfdc/transition?auth_token=9aea76c38ce34f3ef35bdce4dc44908631de6928&amp;hub_id=8250f683-6f68-4e7f-9019-adb3614665c4&amp;status=contacted</endpointUrl>
+        <fields>Id</fields>
+        <fields>Referral_ID__c</fields>
+        <includeSessionId>false</includeSessionId>
+        <integrationUser>influitive@paychex.com</integrationUser>
+        <name>Influitive Lead Inaccurate Data</name>
+        <protected>false</protected>
+        <useDeadLetterQueue>false</useDeadLetterQueue>
+    </outboundMessages>
+    <outboundMessages>
+        <fullName>Influitive_Lead_Lost_Client</fullName>
+        <apiVersion>37.0</apiVersion>
+        <description>Sends the lead status of lost client to influitive</description>
+        <endpointUrl>https://api.influitive.com/referral-automation/sfdc/transition?auth_token=9aea76c38ce34f3ef35bdce4dc44908631de6928&amp;hub_id=8250f683-6f68-4e7f-9019-adb3614665c4&amp;status=lostClient</endpointUrl>
+        <fields>Id</fields>
+        <fields>Referral_ID__c</fields>
+        <includeSessionId>false</includeSessionId>
+        <integrationUser>influitive@paychex.com</integrationUser>
+        <name>Influitive Lead Lost Client</name>
+        <protected>false</protected>
+        <useDeadLetterQueue>false</useDeadLetterQueue>
+    </outboundMessages>
+    <outboundMessages>
+        <fullName>Influitive_Lead_Not_Interested</fullName>
+        <apiVersion>37.0</apiVersion>
+        <description>Sends the lead status of not interested to influitive</description>
+        <endpointUrl>https://api.influitive.com/referral-automation/sfdc/transition?auth_token=9aea76c38ce34f3ef35bdce4dc44908631de6928&amp;hub_id=8250f683-6f68-4e7f-9019-adb3614665c4&amp;status=notInterested</endpointUrl>
+        <fields>Id</fields>
+        <fields>Referral_ID__c</fields>
+        <includeSessionId>false</includeSessionId>
+        <integrationUser>influitive@paychex.com</integrationUser>
+        <name>Influitive Lead Not Interested</name>
+        <protected>false</protected>
+        <useDeadLetterQueue>false</useDeadLetterQueue>
+    </outboundMessages>
+    <outboundMessages>
+        <fullName>Influitive_Lead_Qualified</fullName>
+        <apiVersion>37.0</apiVersion>
+        <description>Sends the lead status of qualified to influitive</description>
+        <endpointUrl>https://api.influitive.com/referral-automation/sfdc/transition?auth_token=9aea76c38ce34f3ef35bdce4dc44908631de6928&amp;hub_id=8250f683-6f68-4e7f-9019-adb3614665c4&amp;status=qualified</endpointUrl>
+        <fields>Id</fields>
+        <fields>Referral_ID__c</fields>
+        <includeSessionId>false</includeSessionId>
+        <integrationUser>influitive@paychex.com</integrationUser>
+        <name>Influitive Lead Qualified</name>
+        <protected>false</protected>
+        <useDeadLetterQueue>false</useDeadLetterQueue>
+    </outboundMessages>
+    <outboundMessages>
+        <fullName>Influitive_Lead_Submitted</fullName>
+        <apiVersion>37.0</apiVersion>
+        <description>Sends the lead status of submitted to influitive</description>
+        <endpointUrl>https://api.influitive.com/referral-automation/sfdc/transition?auth_token=9aea76c38ce34f3ef35bdce4dc44908631de6928&amp;hub_id=8250f683-6f68-4e7f-9019-adb3614665c4&amp;status=submitted</endpointUrl>
+        <fields>Id</fields>
+        <fields>Referral_ID__c</fields>
+        <includeSessionId>false</includeSessionId>
+        <integrationUser>influitive@paychex.com</integrationUser>
+        <name>Influitive Lead Submitted</name>
+        <protected>false</protected>
+        <useDeadLetterQueue>false</useDeadLetterQueue>
+    </outboundMessages>
+    <rules>
+        <fullName>Clear out email address for Infogroup list loads</fullName>
+        <actions>
+            <name>Update_Lead_Email_Address_for_Infogroup</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Lead.Email</field>
+            <operation>equals</operation>
+            <value>infogroup@noemail.com</value>
+        </criteriaItems>
+        <description>This workflow rule will null out the email field on the lead object when leads are loaded with the email address of infogroup@noemail.com This is a temporary rule until enhancements for NSS replacement to the dataflux loader are implemented.</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>DaScoopComposer__Notify Groove on Lead Created %28Managed%29</fullName>
+        <actions>
+            <name>DaScoopComposer__Notify_Groove</name>
+            <type>OutboundMessage</type>
+        </actions>
+        <active>false</active>
+        <description>This WF rule can be activated if you want to notify Groove that a new lead was created. That way Groove can e.g. instantly import the lead to a Groove Flow that has auto import enabled (and meets the auto-import rules of that Flow).</description>
+        <formula>ISNEW()</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>ExpenseWire Set Hold Out</fullName>
+        <actions>
+            <name>Set_Hold_Out</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Set_Hold_Out_Expiration</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Lead.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>MMS Lead Record Type</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Lead.CreatedById</field>
+            <operation>equals</operation>
+            <value>SFDC Data</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Lead.Mkt_Site_Client_s_Request__c</field>
+            <operation>notEqual</operation>
+            <value>EW</value>
+        </criteriaItems>
+        <description>Sets the hold out flag on the lead</description>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>Generate Bank Lead ID - Lead</fullName>
+        <actions>
+            <name>Generate_Bank_Lead_ID_Lead</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Lead.Bank_Lead_ID__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Lead.LeadSource</field>
+            <operation>equals</operation>
+            <value>Referral-Bank Referral</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Lead.Generate_Bank_Lead_Id__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <description>Populates the Bank Lead Id field.</description>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Lead clear Duplicate OK field</fullName>
+        <actions>
+            <name>Clear_Duplicate_OK</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Lead.Duplicate_OK__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <description>clear flag used in Dupe Blocker scenario filters</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Populate Lead DataFlux Id</fullName>
+        <actions>
+            <name>Populate_Lead_DataFlux_Id</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Lead.Dataflux_Id__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <description>move SFDC id to Dataflux id</description>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>Send Notification of DNC to Distribution list</fullName>
+        <actions>
+            <name>Email_DNC_Group_when_an_SFDC_user_flags_a_record_as_Do_Not_Call</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Lead.DoNotCall</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>User.ProfileId</field>
+            <operation>notContain</operation>
+            <value>System Administrator</value>
+        </criteriaItems>
+        <description>Email DNC Group when an SFDC user flags a record as Do Not Call</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Send Notification of Email Opt-Out to Distribution list</fullName>
+        <actions>
+            <name>Email_DNC_Group_when_an_SFDC_user_flags_a_record_as_Email_Opt_Out</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Lead.HasOptedOutOfEmail</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>User.ProfileId</field>
+            <operation>notContain</operation>
+            <value>System Administrator</value>
+        </criteriaItems>
+        <description>Email DNC Group when an SFDC user flags a record as Email Opt-Out</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>a2E70000000Nx8sEAC_Purge</fullName>
+        <actions>
+            <name>MALatitude_c_Purge</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>MALongitude_c_Purge</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <description>Lead.a2E70000000Nx8sEAC_Purge</description>
+        <formula>OR(ISCHANGED(Street),ISCHANGED(City),ISCHANGED(State),ISCHANGED(PostalCode),ISCHANGED(Country))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>check PEO Leasing</fullName>
+        <actions>
+            <name>Lead_check_PEO_Leasing</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Lead.PEOLeasing__c</field>
+            <operation>equals</operation>
+            <value>False</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Lead.Current_Prior_Method__c</field>
+            <operation>contains</operation>
+            <value>PEO</value>
+        </criteriaItems>
+        <description>if PEO current-prior method is selected, check PEO Leasing box,  case #18180245</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>uncheck PEO Leasing</fullName>
+        <actions>
+            <name>Lead_uncheck_PEO_Leasing</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Lead.PEOLeasing__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Lead.Current_Prior_Method__c</field>
+            <operation>notContain</operation>
+            <value>PEO</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Lead.Current_Prior_Method__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>uncheck PEO Leasing box if Payroll current-prior method is changed to not be a PEO method, case #18180245.  Will not uncheck PEO Leasing if PCPM is blank.</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

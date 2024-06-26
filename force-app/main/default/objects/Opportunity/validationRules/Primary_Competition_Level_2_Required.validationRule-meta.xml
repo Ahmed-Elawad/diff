@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Primary_Competition_Level_2_Required</fullName>
+    <active>false</active>
+    <description>Sales Reps populate Primary Comp Level 2 field when stage is &apos;Not Sold&apos; or at or above 50% prob, and before the rep marks it as Sold (80% prob)</description>
+    <errorConditionFormula>AND(
+OR(
+$User.Job_Name__c = &apos;Sales Representative&apos;,
+$Profile.Name = &apos;MMS SDR&apos;),
+
+$User.Sales_Division__c != &apos;Virtual TAA&apos;,
+ISCHANGED(StageName),
+NOT(BEGINS(PRIORVALUE(StageName), &apos;Sold&apos;)),
+ISBLANK(TEXT(Primary_Competition_Level_2__c)),
+
+OR(
+AND(
+OR(AND(Probability &gt;= 0.50, Probability &lt;= 0.80),
+ISPICKVAL(StageName, &apos;Lost&apos;)),
+
+OR($RecordType.Name = &apos;MMS Opportunity (DSA) Record Type&apos;
+,$RecordType.Name = &apos;MMS Opportunity Record Type&apos;)
+),
+
+AND(
+OR(Probability = 0.80,
+ISPICKVAL(StageName, &apos;Lost&apos;)),
+
+OR($RecordType.Name = &apos;MMS Opportunity (DSA) Record Type&apos;
+,$RecordType.Name = &apos;MMS Opportunity Record Type&apos;)
+)
+),
+
+NOT(BEGINS($Profile.Name, &apos;System Administrator&apos;))
+)</errorConditionFormula>
+    <errorMessage>You must complete the Primary Competition Level 2 field before saving this Opportunity to a higher Status or to Lost.</errorMessage>
+</ValidationRule>

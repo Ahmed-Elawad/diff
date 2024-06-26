@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prior_Year_completed_if_ROE</fullName>
+    <active>true</active>
+    <description>If ROE Needed? is Yes, rep must select prior year, current year, or BOTH</description>
+    <errorConditionFormula>ISPICKVAL( ROE_Needed__c ,&quot;Yes&quot;) &amp;&amp;
+(
+NOT( ISPICKVAL( Plan_Year__c ,&quot;Prior Year&quot;)) &amp;&amp;
+NOT( ISPICKVAL( Plan_Year__c ,&quot;Current Year&quot;))&amp;&amp;
+NOT( ISPICKVAL( Plan_Year__c ,&quot;Both&quot;))
+
+)</errorConditionFormula>
+    <errorDisplayField>ROE_Needed__c</errorDisplayField>
+    <errorMessage>If you select ROE you must indicate which year its for</errorMessage>
+</ValidationRule>

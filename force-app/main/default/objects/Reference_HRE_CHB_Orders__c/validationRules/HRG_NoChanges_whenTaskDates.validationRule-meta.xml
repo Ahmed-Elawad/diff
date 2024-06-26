@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRG_NoChanges_whenTaskDates</fullName>
+    <active>true</active>
+    <description>C2 - if Task Due Date = Not Null AND Task Complete Date = Null, then prevent the HRGS from updating any fields.</description>
+    <errorConditionFormula>AND( 
+(NOT(ISNULL(Task_Due_Date__c))), 
+(ISNULL(Sent_to_Print_Date__c)), 
+( (ISCHANGED(Copy_Handbook_From_Different_Client__c)) || 
+ (ISCHANGED(Copy_Handbook_Version_of_this_Client__c)) || 
+ (ISCHANGED(Different_Client_Handbook_Version_Title__c)) || 
+ (ISCHANGED(Handbook_Successfully_Exported__c)) || 
+ (ISCHANGED(Name_Of_Exported_Handbook__c)) || 
+ (ISCHANGED(Username_The_File_Was_Exported_Under__c)) || 
+ (ISCHANGED(X8_x_11__c)) || 
+ (ISCHANGED(Consecutive_Page_Numbers__c)) || 
+ (ISCHANGED(Handbooks_Process_Needed__c)) || 
+ (ISCHANGED(Logo_For_The_Title_Page__c)) || 
+ (ISCHANGED(Tab_Color__c)) || 
+ (ISCHANGED(Type_of_Request__c)) || 
+ (ISCHANGED(X8_x_11_Options__c)) || 
+ (ISCHANGED(Outside_Color__c)) || 
+ (ISCHANGED(Art__c)) || 
+ (ISCHANGED(Template__c)) || 
+ (ISCHANGED(Client_Name_to_be_Printed_on_Binder__c)) || 
+ (ISCHANGED(Electronic_Only__c)) || 
+ (ISCHANGED(HTML_Needed__c)) || 
+ (ISCHANGED(Inserts_Quantity__c)) || 
+ (ISCHANGED(Logo_for_the_Binder__c)) || 
+ (ISCHANGED(Spanish_Binder_Quantity__c)) || 
+ (ISCHANGED(Spanish_Inserts_Quantity__c)) || 
+ (ISCHANGED(Void_Reason__c)) ), 
+(NOT(BEGINS($Profile.Name,&quot;HR Essentials&quot;))), 
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))) 
+)</errorConditionFormula>
+    <errorMessage>You can NOT update any fields when the Task Due Date field is populated and the Task Complete Date is not populated.</errorMessage>
+</ValidationRule>

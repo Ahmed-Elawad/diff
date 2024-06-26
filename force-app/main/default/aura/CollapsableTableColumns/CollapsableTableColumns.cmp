@@ -1,0 +1,297 @@
+<aura:component controller="CommunitiesAccountUpdateController" implements="forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable,lightning:utilityItem,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:appHostable" access="global">
+    
+    <aura:attribute name='docName' type='String' />
+    <aura:attribute name='peoChecklist' type='PEO_Onboarding_Checklist__c' />
+    <aura:attribute name='parentChecklist' type='PEO_Onboarding_Checklist__c' />
+    <aura:attribute name='status' type='String' />
+    <aura:attribute name='discrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='documentId' type='Id' />
+    <aura:attribute name='isCommUser' type='boolean' />
+    <aura:attribute name="acceptFileTypes" type="String" default=".pdf, .jpg, .png, .doc, .docx, .txt, .xlsx, .xlsm"/>
+    <aura:attribute name="uploadMultiple" type="Boolean" default="true"/> 
+    <aura:attribute name='isDoc' type='boolean' />
+    <aura:attribute name='checklistId' type='String' />
+    <lightning:navigation aura:id="navigation"/>
+    <aura:attribute name='Account' type='Account' />
+    <aura:handler name="init" value="{!this}" action="{!c.onLoad}" />
+    <aura:attribute name="hsfStatusList" type="List" default="['FAVORABLE','UNFAVORABLE','RESULTS INCONCLUSIVE','SUCCESS','FAIL']"/>
+    
+    <!--Doc Management-->
+    <aura:attribute name="getDocChecklistId" type="String"/>
+    <aura:attribute name="docRecordList" type="List"/>
+    <aura:attribute name="completedDocRecordList" type="List"/>
+    <aura:attribute name="discDocRecordList" type="List"/>
+    <aura:attribute name="actionableDocRecordList" type="List"/>
+    <aura:attribute name="docFileColumns" type="List"/>
+    <aura:attribute name="docFileColumnsProspect" type="List"/>
+    <aura:attribute name="selectedFiles" type="List"/>    
+    <aura:attribute name="moveFileNewDoc" type="String"/>
+    <aura:attribute name="WCDeclaration" type="String" default="Workersʼ Comp Declaration Page"/>
+    <aura:attribute name='dispHSFmodal' type='boolean' default="false"/>
+    <aura:attribute name='waitingForResp' type='boolean' />
+    <aura:attribute name='refreshInProgress' type='boolean' />
+    <aura:attribute name='refreshNeeded' type='boolean' default="false"/>
+    <!--Added by Bharat to open doc and discrepancy in new subtab-->
+    <lightning:workspaceAPI aura:id="workspace"/>
+    
+    <lightning:accordion allowMultipleSectionsOpen='true' >
+        
+        <lightning:accordionSection name="{!v.docName}" label="{! v.docName+' - ' + v.status}"
+                                    class="{! or(equals(v.status, 'Discrepancy'),equals(v.status, 'Attention Needed')) ? 'Discrepancy' : 'Approved' }">
+            <aura:set attribute='body'>
+                <aura:if isTrue='{! greaterthan(v.discrepencies.length, 0)}'>
+                    <table class="slds-table slds-table--bordered slds-table--cell-buffer slds-table--striped slds-max-medium-table--stacked-horizontal"
+                           role="grid">
+                        <thead>
+                            <tr>
+                                <aura:if isTrue='{!!v.isCommUser}'>
+                                    <th class="slds-is-sortable slds-cell-wrap" scope="col">
+                                        Discrepency-ID
+                                    </th>
+                                </aura:if>
+                                <th class="slds-is-sortable slds-cell-wrap" scope="col">
+                                    Type
+                                </th>
+                                <th class="slds-is-sortable slds-cell-wrap" scope="col">
+                                    Sub-type
+                                </th>
+                               <!-- <aura:if isTrue='{! and(!v.isCommUser, v.isDoc)}'>
+                                    <th class="slds-is-sortable slds-cell-wrap" scope="col">
+                                        Document
+                                    </th>
+                                </aura:if> -->
+                                <aura:if isTrue='{! v.parentChecklist.Discrepancy_Communication_Method__c}'>
+                                    <aura:if isTrue= '{!!v.isCommUser}'>
+                                        <th class="slds-is-sortable slds-cell-wrap" scope="col">
+                                            Additional Information
+                                        </th>
+                                    </aura:if>
+                                    <aura:set attribute="else">
+                                        <th class="slds-is-sortable slds-cell-wrap" scope="col">
+                                            Additional Information
+                                        </th>
+                                    </aura:set>
+                                </aura:if>
+                                <!--<th class="slds-is-sortable slds-cell-wrap" scope="col">
+                                    Additional Information
+                                </th> -->
+                                <th class="slds-is-sortable slds-cell-wrap" scope="col">
+                                    <aura:if isTrue='{!(!v.isCommUser)}'> <!--SFDC-15863-->
+                                    Sales Comments
+                                    </aura:if>
+                                </th>
+                                <aura:if isTrue='{!v.isCommUser}'>
+                                    <th class="slds-is-sortable slds-cell-wrap" scope="col" />
+                                </aura:if>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items='{!v.discrepencies}' var='disc'>
+                               <!--SFDC-15863 added  comment='{!disc.Comment_Log__c}' -->
+                                <c:DiscrepencyIterableRows isDocument='{!v.isDoc}'
+                                                           discRec='{!disc}'
+                                                           communityUser='{!v.isCommUser}'
+                                                           discrepencyId='{!disc.Discrepancy_ID__c}' 
+                                                           type='{!disc.Discrepancy_Type__c}' 
+                                                           subType='{!disc.Discrepancy_Sub_Type__c}'
+                                                           additionalInfo='{!disc.additional_information__c}'
+                                                           comment='{!disc.Comment_Log__c}'
+                                                           docId='{!disc.PEO_Onboarding_Document__c}'
+                                                           discRecId='{!disc.Id}'
+                                                           peoChecklist = '{!v.peoChecklist}'
+                                                           parentChecklist = '{!v.parentChecklist}'/>
+                            </aura:iteration>
+                        </tbody>
+                    </table>
+                    <aura:set attribute='else'>
+                        <aura:if isTrue='{!v.isCommUser}'>
+                            <!-- shows for community user -->
+                            <aura:if isTrue="{! equals(v.status, or( 'Not Submitted','Needed') )}">
+                                Need to upload document
+                                <aura:set attribute='else'>
+                                  {!v.isDoc ? 'In Review' : 'In Progress'}
+                                </aura:set>
+                            </aura:if>
+                            <aura:set attribute='else'>
+                                <div>
+                                    <!--Added by Bharat to open Document in Subtab-->
+                                    <aura:if isTrue='{!v.isDoc}'>
+                                        <lightning:button name='goToDocument' label="Go To Document" onclick="{!c.openTab}" variant="brand"/> 
+                                    </aura:if>   
+                                    <aura:if isTrue="{!v.refreshNeeded}">
+                                        <lightning:buttonIcon class='refreshButtonDoc' iconName="utility:refresh" variant="brand" onclick="{!c.refresh}" alternativeText="refresh" title="refresh" disabled = "{!v.refreshInProgress}"/>
+                                    </aura:if>
+                                </div>
+                            </aura:set> 
+                        </aura:if> 
+                        <aura:if isTrue='{!v.isDoc}'>
+                            <aura:iteration var="doc" items="{! v.docRecordList }">	
+                                <aura:set attribute="body">	
+                                    <div id="{!doc.name+'Body'}">	
+                                        <aura:if isTrue="{!doc.docLinks}">
+                                            <aura:if isTrue='{!v.docName== doc.name}'>	
+                                                <div class="slds-align_absolute-center"><h1><b>Uploaded Files</b></h1></div>	
+                                                <lightning:datatable data="{!doc.docLinks}" 	
+                                                                     columns="{! v.docFileColumns }" 	
+                                                                     keyField="id"	
+                                                                     onrowselection="{!c.handleFileSelect}"	
+                                                                     onrowaction="{! c.handleFileAction }"/>	
+                                            </aura:if>	
+                                        </aura:if>	
+                                    </div>	
+                                </aura:set>	
+                            </aura:iteration>
+                        </aura:if>
+                    </aura:set>
+                </aura:if>
+                <aura:if isTrue="{! and(v.isDoc, (v.status != 'Approved' || v.status != 'Submitted to Clientspace')) }">
+                    <aura:if isTrue="{!v.docName != 'HSF Census'}">
+                        <lightning:fileUpload multiple="{!v.uploadMultiple}"   
+                                              accept="{!v.acceptFileTypes}" 
+                                              recordId="{!v.checklistId}"  
+                                              fileFieldName="Onboarding_Document_Id_fileupload__c"
+                                              fileFieldValue="{!v.documentId}"
+                                              onuploadfinished="{!c.uploadFinished}"/>
+                        <!--<aura:set attribute="else">
+                            <aura:if isTrue="{!or(or(v.peoChecklist.HSF_Submission_Status__c == 'Sent to ClientSpace',v.peoChecklist.HSF_Submission_Status__c == 'Submitted'),v.peoChecklist.HSF_Submission_Status__c == 'Success')}">
+                                <aura:if isTrue="{!v.peoChecklist.HSF_Submission_Status__c == 'Sent to ClientSpace'|| v.peoChecklist.HSF_Submission_Status__c == 'Success'}">
+                                    <div style="padding-top:3%"></div>
+                                    <lightning:icon iconName="utility:success" alternativeText="Success!" variant="Success"
+                                                    title="success variant" size='small' /><b>HSF Census Submitted from SF </b>
+                                    <div style="padding-top:1%"></div>
+                                    <div class="slds-grid">
+                                        <div class="slds-col">
+                                            <lightning:icon iconName="utility:success" alternativeText="Success!" variant="Success"
+                                                            title="success variant" size='small' /><b>HSF Census Submitted to CS </b>
+                                        </div>
+                                        <div style="padding-top:1%"></div>
+                                    </div>
+                                    <div class="slds-grid">
+                                        <div class="slds-col hsftimeStamp">
+                                            <lightning:icon iconName="standard:event" size='small' alternativeText="Event" title="Submission time" />
+                                            <lightning:input class='hsfTimeStamp' type="datetime" name="Submissiontime" label="Submission time" disabled="true" variant="label-hidden" value="{!v.peoChecklist.HSF_Status_Change_Date__c}" />
+                                        </div>
+                                    </div>
+                                </aura:if>
+                                <aura:if isTrue="{!v.peoChecklist.HSF_Submission_Status__c == 'Submitted'}">
+                                    <div style="padding-top:3%"></div>
+                                    <div class="slds-grid">
+                                        <div class="slds-col">
+                                            <lightning:icon iconName="utility:success" alternativeText="Success!" variant="Success"
+                                                            title="success variant" size='small'/><b>HSF Census Submitted from SF </b>
+                                        </div>
+                                    </div>
+                                    <div class="slds-grid">
+                                        <div class="slds-col hsftimeStampWithNoCs"> 
+                                            <lightning:icon iconName="standard:event" alternativeText="Event" title="Submission time" size='small'/>
+                                            <lightning:input class="dtField" type="datetime" name="Submissiontime" label="Submission time" disabled="true" variant="label-hidden" size='small' value="{!v.peoChecklist.HSF_Status_Change_Date__c}" />
+                                        </div>
+                                    </div>
+                                    <lightning:icon iconName="utility:warning" alternativeText="Warning!" title="Warning" size='small'/><b>HSF Census not available in CS</b>
+                                </aura:if>
+                                <aura:set attribute="else">
+                                    <div class="slds-grid">
+                                        <div class="slds-col" style="width: 0%;margin-top: -4%;margin-left: -3%;">
+                                            <lightning:fileUpload multiple="{!v.uploadMultiple}"   
+                                                                  accept="{!v.acceptFileTypes}" 
+                                                                  recordId="{!v.checklistId}"  
+                                                                  fileFieldName="Onboarding_Document_Id_fileupload__c"
+                                                                  fileFieldValue="{!v.documentId}"
+                                                                  onuploadfinished="{!c.uploadFinished}"/>
+                                        </div>
+                                        <div class="slds-col" style="margin-top: 2.45%;">
+                                            <aura:if isTrue= "{!and(v.isDoc, and(v.status == 'Approved',v.status != 'Submitted to Clientspace'))}"> 
+                                                <aura:if isTrue= "{!and(v.peoChecklist.PEO_Checklist_submission_status__c != 'Submitted',and(v.peoChecklist.HSF_Submission_Status__c != 'SUCCESS',v.peoChecklist.HSF_Submission_Status__c != 'Success'))}">
+                                                    <aura:if isTrue= "{!v.peoChecklist.pkzPEOUnderwritingChecklistID__c != null}">
+                                                        <lightning:button name='submitHSF' label="Submit Census for HSF" onclick="{!c.updateModal}" variant="brand"/> 
+                                                        <aura:set attribute="else">
+                                                            <lightning:button name='submitHSF' label="Submit Census for HSF" onclick="{!c.updateModal}" variant="brand" disabled = "true"/>
+                                                            <lightning:buttonIcon class='refreshButton' iconName="utility:refresh" variant="brand" onclick="{!c.refresh}" alternativeText="refresh" title="refresh" disabled = "{!v.refreshInProgress}"/>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </aura:if>
+                                            </aura:if>
+                                        </div>
+                                    </div>
+                                    <aura:if isTrue= "{!v.peoChecklist.pkzPEOUnderwritingChecklistID__c == null}">
+                                        <div class="slds-grid">
+                                            <lightning:card class="HSFSummaryCard">
+                                                <lightning:icon iconName="utility:sync" alternativeText="Sync" variant="Success" title="success variant" size="medium" style="margin-top: -0.4%;"/>
+                                                <b style="font-size: medium;">Clientspace record sync in Progress...</b>
+                                            </lightning:card>
+                                        </div>
+                                    </aura:if>
+                                    <aura:iteration items="{!v.hsfStatusList}" var="hsfStatus">
+                                        <aura:if isTrue="{!v.peoChecklist.HSF_Submission_Status__c == hsfStatus }">
+                                            <div class="slds-grid">
+                                                <lightning:card class="HSFSummaryCard">
+                                                    <aura:if isTrue="{!hsfStatus == 'SUCCESS'}">
+                                                        <lightning:icon iconName="action:change_record_type" alternativeText="Success!" variant="Success" title="success variant" size="small" style="margin-top: -0.4%;background-color: green;"/>
+                                                    </aura:if>
+                                                    <aura:if isTrue="{!hsfStatus == 'FAVORABLE'}">
+                                                        <lightning:icon iconName="utility:success" alternativeText="Success!" variant="Success" title="success variant" size="large" style="margin-top: -0.4%;"/>
+                                                    </aura:if>
+                                                    <aura:if isTrue="{!hsfStatus == 'UNFAVORABLE'}">
+                                                        <lightning:icon iconName="action:close" alternativeText="Success!" variant="error" title="success variant" size="small" style="margin-top: -0.4%;"/>
+                                                    </aura:if>
+                                                    <aura:if isTrue="{!hsfStatus == 'FAIL'}">
+                                                        <lightning:icon iconName="action:close" alternativeText="Success!" variant="error" title="success variant" size="small" style="margin-top: -0.4%;"/>
+                                                    </aura:if>
+                                                    <aura:if isTrue="{!hsfStatus == 'RESULTS INCONCLUSIVE'}">
+                                                        <lightning:icon iconName="utility:warning" alternativeText="Success!" variant="warning" title="success variant" size="small" style="margin-top: -0.4%;"/>
+                                                    </aura:if>
+                                                    <aura:if isTrue="{!and(hsfStatus != 'RESULTS INCONCLUSIVE',hsfStatus != 'SUCCESS')}">
+                                                        <b style="font-size: medium;">HSF Census Review Result :  {!v.peoChecklist.HSF_Submission_Status__c}  </b>
+                                                        <aura:set attribute="else">
+                                                            <aura:if isTrue="{!hsfStatus == 'RESULTS INCONCLUSIVE'}">
+                                                                <b style="font-size: medium;">HSF Census Review :  {!v.peoChecklist.HSF_Submission_Status__c}  </b>
+                                                            </aura:if>
+                                                            <aura:if isTrue="{!hsfStatus == 'SUCCESS'}">
+                                                                <b style="font-size: medium;">HSF Census Review Result:  IN PROGRESS  </b>
+                                                            </aura:if>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                    <aura:if isTrue="{!hsfStatus == 'FAIL'}">
+                                                        <lightning:accordionSection name="hsf_error_log" label="Show Error logs" class="hsfErrorLogSection">
+                                                            <lightning:textarea variant="label-hidden" name="HSF_Submission_Response__c" disabled="true" value="{!v.peoChecklist.HSF_Submission_Response__c}" label="Error Notes" />
+                                                        </lightning:accordionSection>
+                                                    </aura:if> 
+                                                </lightning:card>
+                                            </div>
+                                        </aura:if>
+                                    </aura:iteration>
+                                </aura:set>
+                            </aura:if> 
+                        </aura:set>-->
+                    </aura:if>
+                    <!--<aura:if isTrue="{!v.dispHSFmodal}">
+                        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-id-1" aria-modal="true" aria-describedby="modal-content-id-1"
+                                 class="slds-modal slds-fade-in-open hsfModalSection">
+                            <div class="slds-modal__container">
+                                <aura:if isTrue="{!v.waitingForResp}">
+                                    <div class="hsfModalSpinner">
+                                        <lightning:spinner aura:id="loadingSpinner" 
+                                                           alternativeText="Updating record for !v.currRecord.Name" 
+                                                           size="large" />
+                                    </div>
+                                </aura:if>
+                                <div class="slds-modal__header" style='background-color: white;'>
+                                    <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">
+                                        <lightning:icon iconName="standard:work_plan" title="work_plan" style='background-color: #0A66C2;'/> Please Confirm </h2>
+                                </div>
+                                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                    <c:PEOUWPeoWcFastPassHelpText helpTextType ='MedUwPath'/>
+                                </div>
+                                <footer class="slds-modal__footer">
+                                    <button class="slds-button slds-button_outline-brand" onclick="{!c.cancelModal}">Cancel</button>
+                                    <button class="slds-button slds-button_brand" onclick="{!c.confirmModal}">Confirm</button>
+                                </footer>
+                            </div>
+                        </section>
+                        <div class="slds-backdrop slds-backdrop_open"/>
+                    </aura:if>-->
+                </aura:if>
+            </aura:set>
+        </lightning:accordionSection>
+    </lightning:accordion>
+</aura:component>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRIS_Integrated_Rec_cant_change_FEIN</fullName>
+    <active>true</active>
+    <description>Prevent any profile beside System Admin from change the FEIN of a Current Client Integration Rule</description>
+    <errorConditionFormula>AND( 
+         NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)), RecordTypeId  &lt;&gt; &quot;012500000000rIR&quot;, ISCHANGED(  Federal_ID_Number__c  ),  NOT(ISNULL( Bis_ID__c )))</errorConditionFormula>
+    <errorDisplayField>Federal_ID_Number__c</errorDisplayField>
+    <errorMessage>**** This is an HRIS Integrated Record , the Federal ID Number can not be Modified</errorMessage>
+</ValidationRule>

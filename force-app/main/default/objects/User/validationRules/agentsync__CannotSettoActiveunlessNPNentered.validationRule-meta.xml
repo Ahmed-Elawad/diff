@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>agentsync__CannotSettoActiveunlessNPNentered</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+OR(
+ISCHANGED(agentsync__AgentSync_Tracking__c),
+ISNEW()
+),
+ISPICKVAL(agentsync__AgentSync_Tracking__c, &quot;Active&quot;),
+ISBLANK (agentsync__NPN__c)
+)</errorConditionFormula>
+    <errorMessage>NPN must be filled in to set NIPR Tracking to Active</errorMessage>
+</ValidationRule>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HBK_PreventCreateOfCompletedOrder</fullName>
+    <active>true</active>
+    <description>If the related Reference Handbooks/HRServices record&apos;s Current Step = Complete, then prevent creation of a new Reference HRE/CHB Order record</description>
+    <errorConditionFormula>AND(
+ISNEW(),
+TESTReferenceHandbooksHRServicesCurrStep__c = &quot;Completed&quot;, 
+(NOT(BEGINS($Profile.Name,&quot;HR Essentials&quot;))), 
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))) 
+)</errorConditionFormula>
+    <errorMessage>You cannot create a Order record on a Completed Reference Handbooks/HR Services record</errorMessage>
+</ValidationRule>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Crossover_Request_Approved_Alert_Email</fullName>
+        <description>Crossover Request Approved Alert Email</description>
+        <protected>false</protected>
+        <recipients>
+            <type>accountOwner</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>AutoresponseEmailTemplate/Crossover_Request_Approved</template>
+    </alerts>
+    <alerts>
+        <fullName>Crossover_Request_Rejected_Alert_Email</fullName>
+        <description>Crossover Request Rejected Alert Email</description>
+        <protected>false</protected>
+        <recipients>
+            <type>accountOwner</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>AutoresponseEmailTemplate/Crossover_Request_Rejected</template>
+    </alerts>
+    <alerts>
+        <fullName>Notify_Rep_of_Auto_Approval</fullName>
+        <description>Notify Rep of Auto-Approval</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>AutoresponseEmailTemplate/Crossover_Auto_Approved</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>Approve_Crossover_Request</fullName>
+        <field>Status__c</field>
+        <literalValue>Approved</literalValue>
+        <name>Approve Crossover Request</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Check_Auto_Approved_Box</fullName>
+        <field>Auto_Approved__c</field>
+        <literalValue>1</literalValue>
+        <name>Check Auto-Approved Box</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Requesor_Field_on_Crossover_Rec</fullName>
+        <description>To update the Requestor Field on the Transfer Request record</description>
+        <field>Requestor__c</field>
+        <formula>CreatedBy.FirstName  + &apos; &apos;+  CreatedBy.LastName</formula>
+        <name>Update Requesor Field on Crossover Rec</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Cross Req%3A Update Requestor Field</fullName>
+        <actions>
+            <name>Update_Requesor_Field_on_Crossover_Rec</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Transfer_Request__c.Account_Owner__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>To populate the Requestor field with the Record Owner name</description>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>Crossover Req%3A Auto Approve after 24 HRS</fullName>
+        <active>false</active>
+        <criteriaItems>
+            <field>Transfer_Request__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Submitted,Send to DSA</value>
+        </criteriaItems>
+        <description>Makes Request status Approved if Territory Rep has not responded within 24 hours of request</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Notify_Rep_of_Auto_Approval</name>
+                <type>Alert</type>
+            </actions>
+            <actions>
+                <name>Check_Auto_Approved_Box</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <offsetFromField>Transfer_Request__c.Auto_Approve_Date__c</offsetFromField>
+            <timeLength>1</timeLength>
+            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+    <rules>
+        <fullName>Send Crossover Approval Email</fullName>
+        <actions>
+            <name>Crossover_Request_Approved_Alert_Email</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Transfer_Request__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Approved</value>
+        </criteriaItems>
+        <description>Once Territory Rep clicks approve on the Crossover submit email, an email will be sent to the Rep crossing over</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Send Crossover Reject Email</fullName>
+        <actions>
+            <name>Crossover_Request_Rejected_Alert_Email</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Transfer_Request__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Declined</value>
+        </criteriaItems>
+        <description>Once Territory Rep clicks reject on the Crossover submit email, an email will be sent to the Rep crossing over</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

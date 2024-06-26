@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Week_Start_and_Week_End_Set_for_Ongoing</fullName>
+    <active>true</active>
+    <description>If this is for an ongoing cadence, the Week Start and Week End have to have values.</description>
+    <errorConditionFormula>AND(CadenceId__r.OngoingCadence__c 
+    ,OR(ISPICKVAL( WeekStart__c ,&quot;&quot;)
+       ,ISPICKVAL( WeekEnd__c ,&quot;&quot;))
+     )</errorConditionFormula>
+    <errorDisplayField>WeekStart__c</errorDisplayField>
+    <errorMessage>Week Start and Week End have to have values for an Ongoing Cadence.</errorMessage>
+</ValidationRule>

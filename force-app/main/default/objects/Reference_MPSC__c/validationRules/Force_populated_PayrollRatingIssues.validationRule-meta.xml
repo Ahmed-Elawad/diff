@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_populated_PayrollRatingIssues</fullName>
+    <active>true</active>
+    <description>If Payroll Rating is Not Complete, force Payroll Rating Issues to be populated</description>
+    <errorConditionFormula>AND(
+( (ISPICKVAL(Payroll_Rating__c, &apos;Not Complete&apos;)) ),
+( ISBLANK(Payroll_Rating_Issues__c) ),
+ $Profile.Name &lt;&gt;&quot;System Administrator&quot;
+)</errorConditionFormula>
+    <errorDisplayField>Payroll_Rating_Issues__c</errorDisplayField>
+    <errorMessage>You must select at least one Payroll Rating Issues value if the Payroll Rating is &apos;Not Complete&apos;</errorMessage>
+</ValidationRule>

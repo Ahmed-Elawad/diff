@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Close_Date</fullName>
+        <field>Closed_Date__c</field>
+        <name>Close Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Current_Step_to_Balanced_to_Wire_Wait</fullName>
+        <description>Current Step to “Balanced to Wire – Waiting on Trial Bal</description>
+        <field>Current_Step__c</field>
+        <literalValue>Balanced_to_Wire_Waiting_on Trial_Bal</literalValue>
+        <name>Current Step to “Balanced to Wire – Wait</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Step_1_Initial_Scrub</fullName>
+        <field>Current_Step__c</field>
+        <literalValue>Initial Scrub</literalValue>
+        <name>Step 1 - Initial Scrub</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Step_2_Additional_Documents_Needed</fullName>
+        <field>Retrieval_Status__c</field>
+        <literalValue>Additional Documents Needed,</literalValue>
+        <name>Step 2 - Additional Documents Needed</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Step_3_Waiting_on_Information</fullName>
+        <field>Current_Step__c</field>
+        <literalValue>Waiting on Information</literalValue>
+        <name>Step 3 - Waiting on Information</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Step_4_Info_Rec_d_Working_to_Balance</fullName>
+        <field>Current_Step__c</field>
+        <literalValue>Info_Recd_Working_to_Balance</literalValue>
+        <name>Step 4 - Info Rec&apos;d - Working to Balance</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Step_5_Balance_to_Wire_Discrepancy</fullName>
+        <field>Current_Step__c</field>
+        <literalValue>Balance to Wire Discrepancy</literalValue>
+        <name>Step 5 - Balance to Wire Discrepancy</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Step_6_Balanced_to_Wire_Waiting_on_T</fullName>
+        <field>Current_Step__c</field>
+        <literalValue>Balanced_to_Wire_Waiting_on Trial_Bal</literalValue>
+        <name>Step 6 - Balanced to Wire - Waiting on T</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Step_7_Trial_Balance_Discrepancy</fullName>
+        <field>Current_Step__c</field>
+        <literalValue>Trial Balance Discrepancy</literalValue>
+        <name>Step 7 - Trial Balance Discrepancy</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Step_8_Trial_Balance_Complete</fullName>
+        <field>Current_Step__c</field>
+        <literalValue>Trial Balance Complete</literalValue>
+        <name>Step 8 - Trial Balance Complete</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_owner</fullName>
+        <field>OwnerId</field>
+        <lookupValue>HRS_4S_Conv_5500_RAM</lookupValue>
+        <lookupValueType>Queue</lookupValueType>
+        <name>Update owner</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Automatic assign to HRS 4S Conv 5500 RAM</fullName>
+        <actions>
+            <name>Update_owner</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Reference_Account_Management__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>HRS 4S Conversion 5500</value>
+        </criteriaItems>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>Remove HRS 4S Conversion 5500 closed date</fullName>
+        <actions>
+            <name>Close_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_Account_Management__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>HRS 4S Conversion 5500</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_Account_Management__c.Trial_Balance_Complete__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update current step to Balanced to Wire %E2%80%93 Waiting on Trial Bal</fullName>
+        <actions>
+            <name>Current_Step_to_Balanced_to_Wire_Wait</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Reference_Account_Management__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>HRS 4S Conversion 5500</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Reference_Account_Management__c.Trial_Balance_Discrepancy_Resolved__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>Update current step to Balanced to Wire – Waiting on Trial Bal</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

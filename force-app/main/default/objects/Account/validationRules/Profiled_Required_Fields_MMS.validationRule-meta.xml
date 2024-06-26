@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Profiled_Required_Fields_MMS</fullName>
+    <active>false</active>
+    <description>Employee Count, Frequency, Industry, Payroll Current-Prior Method and Time &amp; Labor Current-Prior Method are required when Profiling a Prospect.  Will only fire when one of these fields are updated.</description>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),Profiled__c = True, $RecordType.Name= &apos;MMS Account Record Type&apos;,
+AND(
+OR(
+OR(ISBLANK(NumberOfEmployees),ISBLANK(TEXT(Industry)),
+ISBLANK(TEXT(Current_Prior_Method__c))),
+ISPICKVAL( Current_Prior_Method__c ,&apos;Unknown&apos;)),
+OR(
+ISCHANGED(NumberOfEmployees), ISCHANGED(Frequency__c),
+ISCHANGED(Industry), ISCHANGED(Current_Prior_Method__c), ISCHANGED(Time_Labor_Current_Prior_Method__c),ISCHANGED(Profiled__c))
+)
+)</errorConditionFormula>
+    <errorMessage>Industry, Payroll Current-Prior Method, Employee Count, and Phase are required when Qualifying a Prospect. Payroll Current-Prior Method cannot be None or Unknown..</errorMessage>
+</ValidationRule>

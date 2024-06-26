@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Attempt_1_Date</fullName>
+        <field>Attempt_1_Date__c</field>
+        <formula>TODAY()</formula>
+        <name>Attempt 1 Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Attempt_2_Date</fullName>
+        <field>Attempt_2_Date__c</field>
+        <formula>TODAY()</formula>
+        <name>Attempt 2 Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Attempt_3_Date</fullName>
+        <field>Attempt_3_Date__c</field>
+        <formula>TODAY()</formula>
+        <name>Attempt 3 Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>X401k_MM_Disc_Date_Attempt_Update</fullName>
+        <description>Date rep attempted to make contact with the client</description>
+        <field>Date_of_Attempt__c</field>
+        <formula>now()</formula>
+        <name>401k MM Disc Date Attempt Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>X401k_MM_Disc_Date_Opened</fullName>
+        <description>To mark the date the discrepency was opened</description>
+        <field>Date_of_Discrepancy__c</field>
+        <formula>now()</formula>
+        <name>401k MM Disc Date Opened</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>X401k_MM_Disc_Due_Date</fullName>
+        <field>Paperwork_Discrepancy_Due_Date__c</field>
+        <formula>today() + 90</formula>
+        <name>401k MM Disc Due Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>X401k_MM_Disc_Paperwork_recd</fullName>
+        <description>to mark when the paperwork was received.</description>
+        <field>Date_Discrepancy_Paperwork_Received__c</field>
+        <formula>now()</formula>
+        <name>401k MM Disc Paperwork recd</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>X401k_MM_Disc_Step_CPR</fullName>
+        <field>Current_Step__c</field>
+        <literalValue>Paperwork Discrepancy – CPR</literalValue>
+        <name>401k MM Disc Step CPR</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+        <targetObject>Reference_MM_Change__c</targetObject>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>X401k_MM_Disc_Step_FAST</fullName>
+        <field>Current_Step__c</field>
+        <literalValue>Paperwork Discrepancy - Fast</literalValue>
+        <name>401k MM Disc Step FAST</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+        <targetObject>Reference_MM_Change__c</targetObject>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>X401k_MM_Disc_Step_Platinum</fullName>
+        <field>Current_Step__c</field>
+        <literalValue>Paperwork Discrepancy - Platinum</literalValue>
+        <name>401k MM Disc Step Platinum</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+        <targetObject>Reference_MM_Change__c</targetObject>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>X401k_MM_Disc_Step_Ppwk_Rejected</fullName>
+        <field>Current_Step__c</field>
+        <literalValue>Rejected – Paperwork Incomplete</literalValue>
+        <name>401k MM Disc Step Ppwk Rejected</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+        <targetObject>Reference_MM_Change__c</targetObject>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>X401k_MM_Disc_Update_Name</fullName>
+        <field>Paperwork_Requested_By__c</field>
+        <formula>CreatedBy.FirstName &amp;&quot; &quot; &amp; CreatedBy.LastName</formula>
+        <name>401k MM Disc: Update Name</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>X401k_MM_Paperwork_Rejected</fullName>
+        <description>After 90  days update status to reject</description>
+        <field>Discrepancy_Status__c</field>
+        <literalValue>Rejected - Paperwork Incomplete</literalValue>
+        <name>401k MM Paperwork Rejected</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>X401k_MM_Step_IPC</fullName>
+        <field>Current_Step__c</field>
+        <literalValue>Paperwork Discrepancy - IPC</literalValue>
+        <name>401k MM Step IPC</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+        <targetObject>Reference_MM_Change__c</targetObject>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>X401k_MM_Update_Current_Step_Disc</fullName>
+        <field>Current_Step__c</field>
+        <literalValue>Pending Paperwork Review</literalValue>
+        <name>401k MM Update Current Step - Disc</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+        <targetObject>Reference_MM_Change__c</targetObject>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>X401k_MM_Update_Step_HRG</fullName>
+        <field>Current_Step__c</field>
+        <literalValue>Paperwork Discrepancy - HRG</literalValue>
+        <name>401k MM Update Step HRG</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+        <targetObject>Reference_MM_Change__c</targetObject>
+    </fieldUpdates>
+    <rules>
+        <fullName>401k MM - Attempt 1</fullName>
+        <actions>
+            <name>Attempt_1_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1</booleanFilter>
+        <criteriaItems>
+            <field>X401k_Discrepancy__c.Follow_up_Attempt_1_Details__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>Auto populate attempt 1 date when follow up attempt 1 details is completed</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>401k MM - Attempt 2</fullName>
+        <actions>
+            <name>Attempt_2_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1</booleanFilter>
+        <criteriaItems>
+            <field>X401k_Discrepancy__c.Follow_up_Attempt_2_Details__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>Auto populate attempt 2 date when follow up attempt 2 details is completed</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>401k MM - Attempt 3</fullName>
+        <actions>
+            <name>Attempt_3_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1</booleanFilter>
+        <criteriaItems>
+            <field>X401k_Discrepancy__c.Follow_up_Attempt_3_Details__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>Auto populate attempt 3 date when follow up attempt 3 details is completed</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

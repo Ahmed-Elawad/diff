@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PEO_CP_List</fullName>
+    <columns>NAME</columns>
+    <columns>OWNER.FIRST_NAME</columns>
+    <columns>OWNER.LAST_NAME</columns>
+    <columns>Referral_Source_Business_Type__c</columns>
+    <columns>State_Province__c</columns>
+    <columns>ReferralPaymentStart__c</columns>
+    <columns>PartnerId__c</columns>
+    <columns>Broker_Id__c</columns>
+    <columns>Oasis_Vendor_Code__c</columns>
+    <columns>Bank_Revenue_Percent__c</columns>
+    <columns>Bank_Referral_Fee__c</columns>
+    <columns>Referral_Payment_Agreement_Type__c</columns>
+    <columns>Referral_Payment_Agreement_Type_Details__c</columns>
+    <columns>Referral_Payment_Program_Name__c</columns>
+    <columns>ReferralSourceSubType__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Referral_Account__c.Sales_Channel_Referral_Account_Record_Type</value>
+    </filters>
+    <filters>
+        <field>ReferralSourceSubType__c</field>
+        <operation>equals</operation>
+        <value>Oasis</value>
+    </filters>
+    <filters>
+        <field>Referral_Source_Business_Type__c</field>
+        <operation>notEqual</operation>
+        <value>Bank,National Account,Other,Private Equity Firm,Strategic Account,Strategic Accountant Firm,Trusted Advisor</value>
+    </filters>
+    <filters>
+        <field>NAME</field>
+        <operation>contains</operation>
+        <value>Hub</value>
+    </filters>
+    <label>PEO_CP_List</label>
+</ListView>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>UserErrorMessage__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>IF ( (NOT(ISBLANK(RegistrationStatusCode__c)) &amp;&amp; RegistrationStatusCode__c != &apos;200&apos;)
+   , IF ( UserFacingError__c ,  RegistrationDetail2__c , &quot;An error occurred, Sales Enablement has been notified and will be in touch with you shortly.&quot;)
+  , IF ((NOT(ISBLANK( OSSKeysStatusCode__c)) &amp;&amp; OSSKeysStatusCode__c != &apos;200&apos;)
+     ,IF ( UserFacingError__c , OSSKeysDetail__c , &quot;An error occurred, Sales Enablement has been notified and will be in touch with you shortly.&quot;)
+     ,IF ((NOT(ISBLANK(  CPQKeysStatusCode__c )) &amp;&amp; CPQKeysStatusCode__c != &apos;200&apos;)
+      ,IF ( UserFacingError__c , CPQKeysDetail__c , &quot;An error occurred, Sales Enablement has been notified and will be in touch with you shortly.&quot;)
+      ,IF ((NOT(ISBLANK(   CPQSubStatusCode__c )) &amp;&amp; CPQSubStatusCode__c != &apos;200&apos;)
+        ,IF ( UserFacingError__c , CPQSubDetail__c , &quot;An error occurred, Sales Enablement has been notified and will be in touch with you shortly.&quot;)
+	    ,&quot;&quot;
+   ))))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>The message that will be displayed to the user</inlineHelpText>
+    <label>User Error Message</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

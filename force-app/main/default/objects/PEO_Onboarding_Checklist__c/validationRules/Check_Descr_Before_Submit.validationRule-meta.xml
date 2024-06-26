@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Check_Descr_Before_Submit</fullName>
+    <active>true</active>
+    <description>Checks whether there are any open discrepancies when the docs are being submitted to client space</description>
+    <errorConditionFormula>OR(
+AND(ISCHANGED( Submit_Docs_to_Clientspace__c),
+ISPICKVAL(Submit_Docs_to_Clientspace__c, &quot;Medical&quot;),
+NOT(Number_of_Open_Medical_Discrepancies__c = 0), NBSC_Bypass_discrepancy__c = false ),
+AND(ISCHANGED( Submit_Docs_to_Clientspace__c),
+ISPICKVAL(Submit_Docs_to_Clientspace__c, &quot;Risk&quot;),
+NOT(Number_of_Open_Risk_Discrepancies__c = 0), NBSC_Bypass_discrepancy__c = false),
+AND(ISCHANGED( Submit_Docs_to_Clientspace__c),
+ISPICKVAL(Submit_Docs_to_Clientspace__c, &quot;All&quot;),
+OR(Number_of_Open_Risk_Discrepancies__c &gt; 0,Number_of_Open_Medical_Discrepancies__c &gt; 0), NBSC_Bypass_discrepancy__c = false)
+)</errorConditionFormula>
+    <errorMessage>All Discrepancies must be resolved prior to submitting to ClientSpace. If you are getting this alert please check to make sure all discrepancies have been resolved.If you want to bypass discrepancy.Please check NBSC Bypass Discrepancy checkbox</errorMessage>
+</ValidationRule>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WC_underwriting_with_EE_Data_file</fullName>
+    <active>false</active>
+    <description>You must have all the employees prior to WC</description>
+    <errorConditionFormula>AND
+(
+RecordTypeId = &apos;012700000001jeX&apos;,
+ISBLANK( Final_EE_Data_File_Received__c ),
+NOT(ISBLANK( Sent_to_WC_Underwriting__c ))
+)</errorConditionFormula>
+    <errorDisplayField>Final_EE_Data_File_Received__c</errorDisplayField>
+    <errorMessage>You need to have a date in the Final EE Data File Received field prior to sending the deal to WC Underwriting</errorMessage>
+</ValidationRule>

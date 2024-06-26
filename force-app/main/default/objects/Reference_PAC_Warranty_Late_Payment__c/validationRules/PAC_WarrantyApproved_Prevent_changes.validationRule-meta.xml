@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PAC_WarrantyApproved_Prevent_changes</fullName>
+    <active>true</active>
+    <description>Need to prevent the Warranty Approved? and Payment Amount fields from being modified when the Warranty Approved? picklist value is Approved, except for specific Roles.</description>
+    <errorConditionFormula>AND(
+(ISPICKVAL(PRIORVALUE(Warranty_Approved__c),&quot;Approved&quot;)),
+(PRIORVALUE(Payment_Amount__c) &gt; 0),
+( ISCHANGED(Warranty_Approved__c) || ISCHANGED(Payment_Amount__c) ),
+($UserRole.Name &lt;&gt; &quot;SVP Operations&quot;),
+($UserRole.Name &lt;&gt; &quot;System Administrator&quot;)
+)</errorConditionFormula>
+    <errorMessage>You cannot change the value in the Warranty Approved? and Payment Amount fields when the Warranty Approved? picklist value is Approved</errorMessage>
+</ValidationRule>

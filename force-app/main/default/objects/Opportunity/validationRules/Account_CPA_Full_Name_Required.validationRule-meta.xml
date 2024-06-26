@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Account_CPA_Full_Name_Required</fullName>
+    <active>true</active>
+    <description>CPA Full Name is required on the Prospect Client Record before this opportunity can be marked Sold.</description>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)), 
+
+NOT(ISBLANK($User.Job_Name__c)),
+
+NOT($RecordType.Name = &apos;Core Virtual Sales&apos;),
+
+BEGINS($RecordType.Name,&apos;Core&apos;), 
+
+ISBLANK(Account.CPA_Name_Ref__c), 
+
+OR(ISPICKVAL(StageName,&apos;Sold&apos;),
+ISPICKVAL(StageName,&apos;Sold - Submitted to CTT&apos;)), 
+
+NOT(ISPICKVAL(PRIORVALUE(StageName),&apos;Sold&apos;)))</errorConditionFormula>
+    <errorMessage>CPA Full Name is required on the Prospect Client Record before this opportunity can be marked Sold.</errorMessage>
+</ValidationRule>

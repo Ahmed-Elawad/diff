@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cannot_enter_Plan_Transf_if_pending_task</fullName>
+    <active>true</active>
+    <description>Cannot enter a plan transfer date if there are pending transfer tasks</description>
+    <errorConditionFormula>NOT(ISNULL(  X401k_Plan_Asset_Transfer_Completed__c  ))&amp;&amp;
+(
+CONTAINS(  Pending_Transfer_Tasks__c , &quot;Unresolved Paperwork Discrepancy&quot;)||
+CONTAINS(  Pending_Transfer_Tasks__c,  &quot;CPR NPR Callout&quot;) ||
+CONTAINS(  Pending_Transfer_Tasks__c, &quot;Plan Liquidation&quot;)||
+CONTAINS(  Pending_Transfer_Tasks__c,  &quot;Resolve Valuation Edit Issue&quot;)||
+CONTAINS(  Pending_Transfer_Tasks__c, &quot;SDBA Balance Issue&quot;)||
+CONTAINS(  Pending_Transfer_Tasks__c, &quot;Resolve Plan Liquidation Issuet&quot;)
+
+)</errorConditionFormula>
+    <errorMessage>You cannot enter a Transfer Complete date until Pending Tasks are completed</errorMessage>
+</ValidationRule>

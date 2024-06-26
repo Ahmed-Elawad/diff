@@ -1,0 +1,31 @@
+<aura:component description="BannerReferralType">
+    <aura:attribute name="referralType" type="String" />
+    <aura:attribute name="businessType" type="String" />
+
+    <aura:attribute name="imageName" type="String" />
+    <aura:attribute name="displayText" type="String" />
+    <aura:attribute name="color" type="String" />
+
+    <aura:attribute name="referralPaymentProgramName" type="String" />
+    <aura:attribute name="recordTypeName" type="String" />
+    <!--<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>-->
+    <aura:handler name="change" value="{!v.referralType}" action="{!c.doInit}" />
+
+    <div class="box" title="Referral Partner">
+        <div class="banner-header slds-align_absolute-center">
+            <h4 class="slds-item_label slds-text-color_weak slds-truncate slds-text-align_center">Referral Partner</h4>
+        </div>
+        <div class="banner-body">
+            <div class="slds-item_detail slds-truncate slds-align_absolute-center column" title="Referral Partner">
+                <aura:if isTrue="{!v.imageName}">
+                    <img src="{!$Resource.BannerIcons + '/LightningIcons/' + v.imageName + '.png'}" />
+                </aura:if>
+                <span>{!v.displayText}</span>
+                <span>
+                    <aura:if isTrue="{!and(or(v.recordTypeName=='Referral Account Record Type',v.recordTypeName=='Sales Channel Referral Account Record Type'),not(empty(v.referralPaymentProgramName)))}" >Revenue Share Agreement in place-DNC</aura:if>
+                    
+                </span>
+            </div>
+        </div>
+    </div>
+</aura:component>

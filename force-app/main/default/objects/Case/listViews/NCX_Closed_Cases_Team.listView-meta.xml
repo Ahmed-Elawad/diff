@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NCX_Closed_Cases_Team</fullName>
+    <columns>OWNER_NAME</columns>
+    <columns>CASES.CLOSED_DATE</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>Sub_Product__c</columns>
+    <columns>Minutes_Worked__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CASES.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Case.HRS_NCX_Case_Record_Type</value>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>equals</operation>
+        <value>Closed</value>
+    </filters>
+    <filters>
+        <field>CASES.CLOSED_DATE</field>
+        <operation>greaterThan</operation>
+        <value>9/1/2022 12:00 AM</value>
+    </filters>
+    <filters>
+        <field>Sub_Product__c</field>
+        <operation>notEqual</operation>
+        <value>HRAM Beta,NCX</value>
+    </filters>
+    <filters>
+        <field>CORE.USERS.LAST_NAME</field>
+        <operation>contains</operation>
+        <value>Potter,Campb,Zamp,Juve,Wilke,Rozario,Schramm,Mastro</value>
+    </filters>
+    <label>NCX - Handbooks Closed Cases</label>
+    <sharedTo>
+        <role>HRE_Handbook_Supervisor_team_1</role>
+        <role>HRE_Handbook_Supervisor_team_2</role>
+        <role>HRE_Handbook_Supervisor_team_3</role>
+    </sharedTo>
+</ListView>

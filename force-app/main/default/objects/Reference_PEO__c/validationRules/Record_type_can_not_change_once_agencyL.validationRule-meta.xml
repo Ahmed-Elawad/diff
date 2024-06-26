@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Record_type_can_not_change_once_agencyL</fullName>
+    <active>true</active>
+    <description>Record type can not change once agency load complete</description>
+    <errorConditionFormula>AND 
+(    
+ISCHANGED(RecordTypeId) ,
+
+PRIORVALUE(RecordTypeId ) = &apos;0120g000000l3qD&apos; ,
+
+NOT(ISBLANK( Agency_Load_Complete__c))
+)</errorConditionFormula>
+    <errorMessage>You can not switch the record type after the agency load has been completed</errorMessage>
+</ValidationRule>

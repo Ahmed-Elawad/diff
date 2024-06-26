@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Area_Manager_Loss_Cases</fullName>
+    <columns>Case_Lookup__c</columns>
+    <columns>Latest_AM_Review_Date__c</columns>
+    <columns>AM_Forecast_Analysis_Notes__c</columns>
+    <columns>Branch_Client_Number__c</columns>
+    <columns>Prospect_Client_Name__c</columns>
+    <columns>Case_Description__c</columns>
+    <columns>Code_Lost_Date__c</columns>
+    <columns>Fiscal_Lost_Month__c</columns>
+    <columns>PEO_Calendar_Lost_Month__c</columns>
+    <columns>Fiscal_Year__c</columns>
+    <columns>Client_IDs_to_be_Coded_Lost__c</columns>
+    <columns>Total_of_Employees__c</columns>
+    <columns>Case_Status__c</columns>
+    <columns>Case_Owner__c</columns>
+    <columns>HRG_Name__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Code_Lost_Date__c</field>
+        <operation>greaterOrEqual</operation>
+        <value>LAST_N_DAYS:60</value>
+    </filters>
+    <filters>
+        <field>Case_Status__c</field>
+        <operation>notEqual</operation>
+        <value>Closed - Duplicate</value>
+    </filters>
+    <filters>
+        <field>Case_Type__c</field>
+        <operation>notEqual</operation>
+        <value>Retained</value>
+    </filters>
+    <filters>
+        <field>Area_Manager_Name__c</field>
+        <operation>equals</operation>
+        <value>marisa berkson</value>
+    </filters>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_HRS_Termination_Transfer__c.Reference_HRS_Termination_Transfer</value>
+    </filters>
+    <label>Area Manager Loss Cases</label>
+</ListView>

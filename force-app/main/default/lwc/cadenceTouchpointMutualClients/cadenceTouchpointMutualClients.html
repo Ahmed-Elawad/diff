@@ -1,0 +1,23 @@
+<template>
+   
+    <template if:true={mutualsPopulated}>
+        <div style="height: 300px;">
+            <lightning-datatable
+                    key-field="id"
+                    data={mutuals}
+                    columns={columns}
+                    sorted-by={sortBy}
+                    sorted-direction={sortDirection}
+                    onsort={doSorting}>
+            </lightning-datatable>
+        </div>    
+        <!-- <lightning-formatted-number value={sumPayChecx} format-style="currency" currency-code="USD"></lightning-formatted-number>
+        <lightning-formatted-number value={sumAggregate} format-style="currency" currency-code="USD"></lightning-formatted-number> -->
+        <!-- Sum of Paychex 401(k) Assets : {sumPayChecx} -->
+        Sum of Paychex 401(k) Assets : <lightning-formatted-number value={sumPayChecx} format-style="currency" currency-code="USD"></lightning-formatted-number>
+        <!-- Sum of Aggregate 401(k) Assets : {sumAggregate} -->
+        <br>
+        Sum of Aggregate 401(k) Assets : <lightning-formatted-number value={sumAggregate} format-style="currency" currency-code="USD"></lightning-formatted-number>
+    </template>
+    
+</template>

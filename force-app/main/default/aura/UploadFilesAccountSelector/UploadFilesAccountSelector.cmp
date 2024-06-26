@@ -1,0 +1,136 @@
+<aura:component controller="CommunityFileUploadController" implements="force:appHostable" access="global">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.checkAllowSubmission}"/>
+    
+    <!--<aura:attribute name="accountIndex" type="Integer" default="0"/>
+    <aura:attribute name="PEOMedicalChecklist" type="Object" />-->
+    <!--<aura:attribute name="fileList" type="String" default="Census,SUIRateForms,WCDeclarationPage,LossRuns,HealthInsuranceSummaryOfBenefits,Current Health Invoice,
+                                                           Recent 12 Months Claim History,Large Claims Report,Health Insurance Renewal,Payroll Register,Other Documents"/>-->
+    
+    <aura:attribute name="parentRecId" type="Id"/>
+    <aura:attribute name='parentToAccount' type='Id' />
+    <aura:attribute name='uploadFilesSelectedAccId' type='String'/>
+    <aura:attribute name="currentRunningUser" type="User"/>
+    <aura:attribute name="communityUser" type="Boolean"/>
+    <aura:attribute name="commUser" type="User"/>
+    <aura:attribute name="experienceChosen" type="String"/>
+    <aura:attribute name="allowSubmit" type="Boolean" default="false"/>
+    <aura:attribute name="docsAssigned" type="Boolean" default="true"/>
+    <aura:attribute name="accountList" type="Account[]"/>
+    <aura:attribute name="routeToStrategicAccount" type="Boolean" default="false"/>
+    <aura:attribute name="strategicAccountUser" type="User"/>
+    <!--Jidesh added-->
+    <aura:attribute name="submittedAnalyst" type="String"/>
+    <aura:attribute name="submissionStatus" type="String"/>
+    <aura:attribute name="finishButtonClicked" type="Boolean" default="false"/>
+    <aura:attribute name="PEOCheckListData" type="PEO_Onboarding_Checklist__c"/>
+    
+    <aura:attribute name="parentPEOChecklist" type="Object"/>
+    <aura:attribute name="currentPEOChecklist" type="Object"/>
+    
+    <aura:attribute name="PEOMedicalChecklist" type="Object" />
+    <aura:attribute name="currentPEOMedicalChecklist" type="Object" />
+    
+    <aura:attribute name='accountStatusNotProspect' type='boolean'/>
+    <aura:attribute name="uploadNumberOfEmployeesGreaterThanVerified2" type="Boolean"/>
+    <aura:attribute name="uploadNumberOfEmployeesLessThanVerified2" type="Boolean"/>
+    <aura:attribute name="uploadMedBenUnderwritingRequested2" type="Boolean"/>
+    <aura:attribute name="uploadInRenewalTimeframe2" type="Boolean"/>
+    <aura:attribute name="uploadHasSelfOrLevelFundedPlans2" type="Boolean"/>
+    <aura:attribute name="uploadHasClaims2" type="Boolean"/>
+    <aura:attribute name="uploadCurMedCoverageProvided2" type="Boolean"/>
+    <aura:attribute name="uploadCensusRequired2" type="Boolean"/>
+    <aura:attribute name="WCFastPassChosen" type="Boolean"/>
+    <aura:attribute name='disableFilesUpload' type='boolean'/>
+    <aura:attribute name='medicalRequested' type='boolean'/>
+    <aura:attribute name='loadedChecklist' type='boolean' default="false"/>
+    <aura:attribute name="tabType" type="String"/>
+    <aura:attribute name='misMedReqd' type='boolean' default="false"/>
+    
+    <!--Code refactoring: new attributes created:start-->
+    <aura:attribute name='censusRequired' type='boolean' default="false"/>
+    <aura:attribute name='claimsReportRequired' type='boolean' default="false"/>
+    <aura:attribute name='hlthInsRenwReqd' type='boolean' default="false"/>
+    <aura:attribute name='hlthInsSummReqd' type='boolean' default="false"/>
+    <aura:attribute name='hlthInvReqd' type='boolean' default="false"/>
+    <aura:attribute name='lossRunsReqd' type='boolean' default="false"/>
+    <aura:attribute name='payrollRegReqd' type='boolean' default="false"/>
+    <aura:attribute name='suiReqd' type='boolean' default="false"/>
+    <aura:attribute name='wcDecReqd' type='boolean' default="false"/>
+    <aura:attribute name='wcClsNWgsReqd' type='boolean' />
+    <!--Code refactoring: new attributes created:end-->
+    
+    <aura:if isTrue="{!v.docsAssigned}">
+        <lightning:tabset variant="{!v.tabType}" selectedTabId="{!v.uploadFilesSelectedAccId}">
+            
+            <aura:iteration items="{!v.accountList}" var="acc" indexVar="index">
+                <lightning:tab label="{!acc.Name}" id="{!acc.Id}" onactive="{!c.checkFilesNeeded}">
+                    <aura:if isTrue="{!v.loadedChecklist}">
+                        claimsReportRequired = {!v.claimsReportRequired}<br/> 
+                                       hlthInsRenwReqd = {!v.hlthInsRenwReqd} <br/> hlthInsSummReqd = {!v.hlthInsSummReqd}<br/> 
+                                       hlthInvReqd = {!v.hlthInvReqd}
+                        <c:UploadFiles tabOption="{!v.tabType}" 
+                                       PEOChecklist="{!v.currentPEOChecklist}" uploadParentPEOChecklist="{!v.parentPEOChecklist}" currentAccount="{!acc}" 
+                                       parentAccountToCurrentAccount='{!v.parentToAccount}' 
+                                       disableFilesUpload="{!v.disableFilesUpload}" 
+                                       WCFastPassSelected="{!v.WCFastPassChosen}" 
+                                       isCommunityUser="{!v.communityUser}" misMedReqd = "{!v.misMedReqd}"
+                                       censusRequired = "{!v.censusRequired}" claimsReportRequired = "{!v.claimsReportRequired}" 
+                                       hlthInsRenwReqd = "{!v.hlthInsRenwReqd}" hlthInsSummReqd = "{!v.hlthInsSummReqd}" 
+                                       hlthInvReqd = "{!v.hlthInvReqd}" lossRunsReqd = "{!v.lossRunsReqd}" 
+                                       payrollRegReqd = "{!v.payrollRegReqd}" suiReqd = "{!v.suiReqd}" 
+                                       wcDecReqd = "{!v.wcDecReqd}"
+                                       wcClsNWgsReqd = "{!v.wcClsNWgsReqd}"
+                                       />
+                        <aura:set attribute="else">
+                            <lightning:spinner alternativeText="Loading" />
+                        </aura:set>
+                    </aura:if>
+                    
+                </lightning:tab>
+            </aura:iteration>
+            <aura:if isTrue="{!v.allowSubmit}">
+                <lightning:tab label="Submit!" id="submit" onactive="{!c.checkSubmissionStatus}">
+                    <div aura:id="toggle0">
+                        <aura:if isTrue="{!v.routeToStrategicAccount}">
+                            <div class="slds-text-heading_small"><b>This Business is linked to a Strategic Account and will be routed to your assigned NBSC Partner - {!v.strategicAccountUser.Name}.</b></div>
+                            <aura:set attribute="else">
+                                <div class="slds-text-heading_small">When all required documents have been uploaded, click the button below to submit them for review. </div>
+                            </aura:set>
+                        </aura:if> 
+                       
+                        <div style="height:10px"></div>
+                        <label class="slds-form-element__label" style="margin-right: 0.5rem;">Medical Pre-Qualifier</label>
+                        <lightning:input name="Med_Pre_Qual"
+                                         type="checkbox"
+                                         checked="{!v.PEOCheckListData.PEO_Medical_Pre_Qualifier__c}"
+                                         label='Medical Pre-Qualifier'
+                                         variant="label-hidden"/>
+                        
+                        <div style="height:10px"></div>
+                        <label class="slds-form-element__label" style="margin-right: 0.5rem;">Discrepancy to Sales Rep</label>
+                        <lightning:helptext content="Please check this box if you want your Sales Analyst or NBSC to communicate all discrepancies directly to you. If you do not check this box your Sales Analyst or NBSC will share discrepancies directly with the prospect with you CC'd."></lightning:helptext>
+                        <lightning:input name="Communication_Method"
+                                         type="checkbox"
+                                         checked="{!v.PEOCheckListData.Discrepancy_Communication_Method__c}"
+                                         label="Discrepancy Communication Method"
+                                         variant="label-hidden"/>
+                        <div style="height:10px"></div>
+                        <lightning:textarea name="Sales_Notes" value="{!v.PEOCheckListData.PEO_Sales_Notes__c}" label="Sales Notes" />
+                     </div>
+                    <div aura:id="toggle1" class="slds-hide">
+                        The Documents are currently submitted to the following analyst: {!v.submittedAnalyst}
+                    </div>
+                        <div style="height:25px"></div>
+                    <div aura:id="disablebuttonidTag">
+                    <div class="slds-text-align_left"><lightning:button aura:id="disablebuttonid" variant="success" label="Finish" title="Finish" onclick="{!c.submitDocuments}" disabled="false"/></div>
+                    </div>
+                </lightning:tab>
+            </aura:if>
+        </lightning:tabset>
+        
+        <aura:set attribute="else">
+            <lightning:spinner alternativeText="Loading" />
+        </aura:set>
+    </aura:if>
+</aura:component>

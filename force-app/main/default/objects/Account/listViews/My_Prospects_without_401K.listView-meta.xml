@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>My_Prospects_without_401K</fullName>
+    <columns>ACCOUNT.ACCOUNT_NUMBER</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ACCOUNT.PHONE1</columns>
+    <columns>ACCOUNT.EMPLOYEES</columns>
+    <columns>Frequency__c</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>Current_Package__c</columns>
+    <columns>of_EE_on_H_B__c</columns>
+    <columns>H_B_Prospect_Notes__c</columns>
+    <columns>Larkspur_401K_Assets__c</columns>
+    <columns>POP__c</columns>
+    <columns>FSA__c</columns>
+    <filterScope>Team</filterScope>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>notEqual</operation>
+        <value>Prospect,Advantage Client,HRS Client (Only),Lost Client,PEO Client,Premier Advantage Client,PBS Client,HROi Client,Oasis Prospect,Oasis Client,HROi Prospect</value>
+    </filters>
+    <filters>
+        <field>X401_k__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Medical__c</field>
+        <operation>notEqual</operation>
+        <value>1</value>
+    </filters>
+    <filters>
+        <field>Any_Simple_IRA__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Any_401k__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Bis_ID__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Do_Not_Call__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <label>My Prospects without 401K</label>
+    <sharedTo>
+        <roleAndSubordinates>HNBFDIRECTOR</roleAndSubordinates>
+    </sharedTo>
+</ListView>

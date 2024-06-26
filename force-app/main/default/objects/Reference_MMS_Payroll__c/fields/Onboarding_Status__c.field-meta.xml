@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Onboarding_Status__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>(IF(CONTAINS( Onboarding_Progression__c , &quot;Company Shell/EE Static Complete&quot;) , &quot;√ Company Shell/EE Static Complete&quot; &amp;BR(), &quot;_ Company Shell/EE Static Complete&quot; &amp;BR())) &amp; 
+
+(IF(ISPICKVAL(ENS_Set_up_Mandatory__c, &quot;No&quot;), &quot;n/a-ENS Set-Up&quot; &amp;BR(), IF(CONTAINS(Onboarding_Progression__c, &quot;ENS Set-Up Complete&quot;),&quot;√   ENS Set-Up Complete&quot; &amp;BR(), &quot;_    ENS Set-Up Complete&quot; &amp;BR()))) 
+
+&amp;
+(IF(ISPICKVAL(Tax_Wage_and_Balance_Manatory__c, &quot;No&quot;), &quot;n/a- Tax, Wage and Balance&quot; &amp;BR(), IF(CONTAINS( Onboarding_Progression__c , &quot;Tax, Wage and Balance Complete&quot;) , &quot;√   Tax, Wage and Balance Complete&quot; &amp;BR(), &quot;_    Tax, Wage and Balance Complete&quot; &amp;BR())))  &amp;
+(IF(ISPICKVAL(Interfaces_Set_up_Mandatory__c , &quot;No&quot;), &quot;n/a-Interfaces Set-Up&quot; &amp;BR(), IF(CONTAINS( Onboarding_Progression__c , &quot;Interfaces Set-up Complete&quot;) , &quot;√   Interfaces Set-up Complete&quot; &amp;BR(), &quot;_    Interfaces Set-up Complete&quot; &amp;BR())))  &amp;
+(IF(CONTAINS( Onboarding_Progression__c , &quot;Installation and Training Complete&quot;) , &quot;√   Installation and Training Complete&quot; &amp;BR(), &quot;_    Installation and Training Complete&quot; &amp;BR()))  &amp;
+(IF  (NOT(First_Payroll_has_Run__c), &quot;_    First Payroll Processing Complete&quot; &amp;BR(), &quot;√   First Payroll Processing Complete&quot; &amp;BR()))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Onboarding Status</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

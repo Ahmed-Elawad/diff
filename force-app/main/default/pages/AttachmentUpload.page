@@ -1,0 +1,24 @@
+<!-- Page for uploading a single attachment
+     Created 5/8/2013 - Justin Stouffer
+	 10/17/2016 - Updated to allow multiple attachments
+-->
+<apex:page controller="AttachmentUploadController">
+    <apex:pageMessages />
+    <apex:form >
+         <apex:pageBlock title="Attachment Upload" >
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!saveAttachment}" value="Continue"/>
+                <apex:commandButton action="{!saveAndAddMore}" value="Add Another Attachment"/>
+            </apex:pageBlockButtons>          
+            <apex:pageblockSection columns="1">
+                <apex:pageBlockSectionItem >
+                    <apex:outputText style="white-space:pre" value="{!savedList}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Add Attachment?"/>
+                    <apex:inputfile value="{!att.body}" filename="{!att.name}" />
+                </apex:pageBlockSectionItem>
+             </apex:pageblockSection>
+        </apex:pageBlock>      
+    </apex:form>
+</apex:page>

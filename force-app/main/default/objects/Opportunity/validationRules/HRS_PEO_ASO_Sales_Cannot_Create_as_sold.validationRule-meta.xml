@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRS_PEO_ASO_Sales_Cannot_Create_as_sold</fullName>
+    <active>false</active>
+    <description>This will require the PEO/ASO opty to be created in the qualified or gained access state</description>
+    <errorConditionFormula>AND(
+not(ISPICKVAL(StageName, &apos;Qualified&apos;)),
+not(ISPICKVAL(StageName, &apos;Gained Access&apos;)),
+isnew(),
+NOT(BEGINS($Profile.Name,&apos;System Administrator&apos;)),
+OR(RecordType.Id=&apos;012500000000ntY&apos;,RecordType.Id=&apos;012500000000n4V&apos;,RecordType.Id=&apos;0120g000000EAgt&apos;,RecordType.Id=&apos;0120g000000EAgo&apos;))</errorConditionFormula>
+    <errorDisplayField>StageName</errorDisplayField>
+    <errorMessage>Opportunities can only be created in the &quot;Qualified&quot; or &quot;Gained Access&quot; status.</errorMessage>
+</ValidationRule>

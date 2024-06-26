@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Business_Days_for_CAM_Process__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>If(
+
+NOT(ISNULL(Tentative_Trade_Date_Entered_by_CAM__c)), 
+
+((Tentative_Trade_Date_Entered_by_CAM__c) - (Ready_for_Trade__c) - 2*( floor(((Tentative_Trade_Date_Entered_by_CAM__c) - DATE(1985, 6, 24))/7) - floor(((Ready_for_Trade__c) - DATE(1985, 6, 24))/7))), 
+
+null
+
+)</formula>
+    <label>Business Days for CAM Process</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

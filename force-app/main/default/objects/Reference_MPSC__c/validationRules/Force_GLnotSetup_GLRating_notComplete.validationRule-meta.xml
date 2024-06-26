@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_GLnotSetup_GLRating_notComplete</fullName>
+    <active>true</active>
+    <description>If GL Rating = &quot;Not Complete&quot;, then force an entry in the GL Service not setup  or the GL not setup correctly fields</description>
+    <errorConditionFormula>AND(
+ ISPICKVAL(GL_Rating__c,&quot;Not Complete&quot;),
+ ( ISBLANK(GL_not_setup_correctly__c) &amp;&amp; ISBLANK(GL_Service_not_setup__c) ),
+ $Profile.Name &lt;&gt;&quot;System Administrator&quot;
+)</errorConditionFormula>
+    <errorDisplayField>GL_Service_not_setup__c</errorDisplayField>
+    <errorMessage>You must populate the GL Service not setup or the GL not setup correctly fields when setting GL Rating = Not Complete.</errorMessage>
+</ValidationRule>

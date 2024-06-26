@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Verify_Participant_Acct_Balance_Required</fullName>
+    <active>true</active>
+    <description>This field is required if Negative Balance is Yes</description>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&quot;System Admin&quot;)),ISPICKVAL( Negative_Collection__c ,&quot;Yes&quot;),ISBLANK(TEXT(Verify_Participant_Acct_Balance__c )))</errorConditionFormula>
+    <errorDisplayField>Verify_Participant_Acct_Balance__c</errorDisplayField>
+    <errorMessage>This field is required if Negative Balance is Yes</errorMessage>
+</ValidationRule>

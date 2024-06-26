@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>HRS_4S_Disc_Send_to_MATC</fullName>
+        <ccEmails>discrepancymatc@paychex.com</ccEmails>
+        <description>HRS 4S Disc Send to MATC</description>
+        <protected>false</protected>
+        <senderType>CurrentUser</senderType>
+        <template>HRS_4S_E_mail_Templates/HRS_4S_Disc_Send_to_MATC</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>Close_when_Disregarded</fullName>
+        <description>Enter a Resolved Date to the discrepancy record when &quot;Disregard&quot; is marked True</description>
+        <field>Discrepancy_Resolved_Date__c</field>
+        <formula>TODAY()</formula>
+        <name>Close when Disregarded</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_Discrepancy_Resolved_By</fullName>
+        <description>case 23393571: put name of user that filled in Discrepancy Resolved Date</description>
+        <field>Discrepancy_Resolved_By__c</field>
+        <formula>$User.FirstName &amp; &quot; &quot; &amp; $User.LastName</formula>
+        <name>Populate Discrepancy Resolved By</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Close when Disregarded</fullName>
+        <actions>
+            <name>Close_when_Disregarded</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>HRS_4S_Discrepancy__c.Review_Error__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>HRS_4S_Discrepancy__c.Discrepancy_Resolved_Date__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <description>Close the Discrepancy when it was marked as disregarded</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>HRS 4S Disc%3A Send to MATC</fullName>
+        <actions>
+            <name>HRS_4S_Disc_Send_to_MATC</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>HRS_4S_Discrepancy__c.Discrepancy_Resolved_Date__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>HRS_4S_Discrepancy__c.MATC_Discrepancy__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Set Discrepancy Resolved By</fullName>
+        <actions>
+            <name>Populate_Discrepancy_Resolved_By</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>case #23393571: when Discrepancy Resolved Date is populated, put user in Resolved By field,</description>
+        <formula>ISCHANGED(Discrepancy_Resolved_Date__c) &amp;&amp; 
+NOT(ISNULL(Discrepancy_Resolved_Date__c))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

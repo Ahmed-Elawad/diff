@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Oppty_Discount_Field_Update</fullName>
+        <description>Updates the Discount Percentage field on the Opportunity from the Product Manager Discount.</description>
+        <field>WIN__c</field>
+        <formula>Discount_Percent__c</formula>
+        <name>Oppty Discount Field Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+        <targetObject>OpportunityId</targetObject>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Set_Revenue_to_0</fullName>
+        <field>UnitPrice</field>
+        <formula>0</formula>
+        <name>Set Revenue to 0</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Exclude Rev from Opportunity Band-Aid</fullName>
+        <actions>
+            <name>Set_Revenue_to_0</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Product2.Exclude_Revenue_from_Opportunity__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>OpportunityLineItem.TotalPrice</field>
+            <operation>notEqual</operation>
+            <value>0</value>
+        </criteriaItems>
+        <description>Temporary until we can figure out why steelbrick is overwriting our code</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

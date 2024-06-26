@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>My_Prospect_Clients_Virtual</fullName>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ACCOUNT.ADDRESS1_STATE</columns>
+    <columns>SignificantContact__c</columns>
+    <columns>ACCOUNT.PHONE1</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <columns>ACCOUNT.LAST_ACTIVITY</columns>
+    <columns>Email__c</columns>
+    <columns>NSSStatus__c</columns>
+    <columns>NSSCallDisposition__c</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>equals</operation>
+        <value>Prospect,HRS Client (Only),Lost Client</value>
+    </filters>
+    <filters>
+        <field>NSSStatus__c</field>
+        <operation>notEqual</operation>
+        <value>Not Interested,Qualified,Disqualified,Wash</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.PHONE1</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>NSS_WorkablePayroll__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <label>My Prospect-Clients Virtual PAY</label>
+    <sharedTo>
+        <role>VIRTUAL_SALES_CORE_DISTRICT_236_ROBERTSON_PAY</role>
+        <role>VIRTUAL_SALES_CORE_REP_DISTRICT_236_ROBERTSON_PAY</role>
+        <role>VIRTUAL_SALES_DISTRICT_201_HICKS_PAY</role>
+        <role>VIRTUAL_SALES_DISTRICT_214_MANGIAVELLANO_PAY</role>
+        <role>VIRTUAL_SALES_REP_DISTRICT_201_HICKS_PAY</role>
+        <role>VIRTUAL_SALES_REP_DISTRICT_214_MANGIAVELLANO_PAY</role>
+    </sharedTo>
+</ListView>

@@ -1,0 +1,244 @@
+<aura:component >
+    
+    <!-- auto save -->
+    <aura:registerEvent name='autoSave' type='c:CommunityFormsAutoSave' />
+    <aura:attribute name='autoSaveRecords' type='map' />
+    
+    <aura:attribute name='golfIndRec' type='Object' />
+    <aura:attribute name='radioGroupOptions' type='List' default="[{'label': 'Yes', 'value':'Yes'},{'label':'No','value':'No'}]" />
+    <aura:attribute name='radioOptionsSold' type='List' default="[{'label': 'Storefront', 'value':'Storefront'},{'label':'Internet','value':'Internet'},{'label':'Both','value':'Both'}]" />
+    <aura:attribute name='radioOptionsserviceType' type='List' default="[{'label': 'Self Service Only', 'value':'Self Service Only'},{'label':'Full Service Only','value':'Full Service Only'},{'label':'Both Full and Self Service','value':'Both Full and Self Service'}]" />
+    <aura:attribute name='radioOptionsBathroomOptions' type='List' default="[{'label': 'Restrooms Inside Only', 'value':'Restrooms Inside Only'},{'label':'Restrooms Outside Only','value':'Restrooms Outside Only'},{'label':'No Restrooms','value':'No Restrooms'},{'label':'Both inside and Outside Restrooms ','value':'Both inside and Outside Restrooms '}]" />
+    <aura:attribute name="disableEdit" type="Boolean" default="true" />
+    <aura:attribute name="parentAccount" type="Account"/>
+    <aura:attribute name="allAccounts" type="Account[]" />
+    
+    <aura:method name="validateFields" action="{!c.validate}" access="public"/>
+    
+    <lightning:layout multipleRows="true">
+        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+            <!--lightning:radioGroup disabled='{!v.disableEdit}' 
+                                  name='Is_it_private_semi_private_or_public__c'
+                                  label="Is risk a Private, Semi-Private or Public Golf Course?"
+                                  options='{!v.radioGroupOptions}'
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.golfIndRec.Is_it_private_semi_private_or_public__c}" />
+            <aura:if isTrue="{!v.golfIndRec.Is_it_private_semi_private_or_public__c=='Yes'}">
+                <lightning:input disabled='{!v.disableEdit}' 
+                                 name='Is_risk_equity_owned_or_privately_owned__c'
+                                 label="Is risk equity-owned or privately-owned club?"
+                                 onchange='{!c.handleChange}'
+                                 value="{!v.golfIndRec.Is_risk_equity_owned_or_privately_owned__c}" />
+            </aura:if-->
+            <lightning:radioGroup aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                  name='Do_you_have_full_service_food_Beverage__c'
+                                  label="Do you have full-service food Beverage?"
+                                  options='{!v.radioGroupOptions}'
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.golfIndRec.Do_you_have_full_service_food_Beverage__c}" />
+            
+            <lightning:radioGroup aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                  name='Do_you_cater_events_off_site__c'
+                                  label="Do you cater events off-site?"
+                                  options='{!v.radioGroupOptions}'
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.golfIndRec.Do_you_cater_events_off_site__c}" />
+            
+            <lightning:radioGroup aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                  name='Do_you_have_seasonal_lay_offs__c'
+                                  label="Do you have seasonal lay-offs?"
+                                  options='{!v.radioGroupOptions}'
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.golfIndRec.Do_you_have_seasonal_lay_offs__c}" />
+            
+            <lightning:radioGroup aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                  name='Do_you_have_a_pool__c'
+                                  label="Do you have a pool?"
+                                  options='{!v.radioGroupOptions}'
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.golfIndRec.Do_you_have_a_pool__c}" />
+            <aura:if isTrue="{!v.golfIndRec.Do_you_have_a_pool__c=='Yes'}">
+                <lightning:radioGroup aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                      name='Do_you_employ_lifeguards__c'
+                                      label="Do you employ lifeguards?"
+                                      options='{!v.radioGroupOptions}'
+                                      onchange='{!c.handleChange}'
+                                      value="{!v.golfIndRec.Do_you_employ_lifeguards__c}" />
+            </aura:if>
+            
+            <lightning:input aura:id='isqQue' disabled='{!v.disableEdit}' 
+                             name='golf_additional_ancillary_svcs_offered__c'
+                             label="What additional ancillary services are offered (spa, tennis, etc.)?"
+                             onchange='{!c.handleChange}'
+                             value="{!v.golfIndRec.golf_additional_ancillary_svcs_offered__c}" />          
+            
+            <lightning:radioGroup aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                  name='Do_you_provide_Valet_Parking__c'
+                                  label="Do you provide Valet Parking?"
+                                  options='{!v.radioGroupOptions}'
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.golfIndRec.Do_you_provide_Valet_Parking__c}" />
+            <lightning:radioGroup aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                  name='Are_all_employees_paid_under_one_entity__c'
+                                  label="Are all employees paid under this one entity?"
+                                  options='{!v.radioGroupOptions}'
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.golfIndRec.Are_all_employees_paid_under_one_entity__c}" />
+            <lightning:radioGroup aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                  name='Are_golf_caddies_on_staff__c'
+                                  label="Are golf caddies on staff?"
+                                  options='{!v.radioGroupOptions}'
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.golfIndRec.Are_golf_caddies_on_staff__c}" />
+            <lightning:radioGroup aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                  name='Do_you_employ_any_Security_Guards_golf__c'
+                                  label="Do you employ any Security Guards?"
+                                  options='{!v.radioGroupOptions}'
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.golfIndRec.Do_you_employ_any_Security_Guards_golf__c}" />
+            <aura:if isTrue="{!v.golfIndRec.Do_you_employ_any_Security_Guards_golf__c=='Yes'}">
+                <lightning:input aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                 name='Where_are_golf_course_security_placed__c'
+                                 label="Where (access gate, mobile through community, etc.)?"
+                                 onchange='{!c.handleChange}'
+                                 value="{!v.golfIndRec.Where_are_golf_course_security_placed__c}" />
+                <lightning:radioGroup aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                      name='Are_any_course_guards_armed__c'
+                                      label="Are any guards armed?"
+                                      options='{!v.radioGroupOptions}'
+                                      onchange='{!c.handleChange}'
+                                      value="{!v.golfIndRec.Are_any_course_guards_armed__c}" />
+            </aura:if>
+            
+            <lightning:radioGroup aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                  name='Golf_club_offers_overnight_accommodation__c'
+                                  label="Does club offer any overnight accommodations?"
+                                  options='{!v.radioGroupOptions}'
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.golfIndRec.Golf_club_offers_overnight_accommodation__c}" />
+            
+            <lightning:radioGroup aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                  name='Do_all_employees_work_at_one_site__c'
+                                  label="Do all employees work at one site?"
+                                  options='{!v.radioGroupOptions}'
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.golfIndRec.Do_all_employees_work_at_one_site__c}" />
+            
+            <lightning:radioGroup aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                  name='Any_driving_within_community__c'
+                                  label="Any driving within community?"
+                                  options='{!v.radioGroupOptions}'
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.golfIndRec.Any_driving_within_community__c}" />
+            
+            <lightning:radioGroup aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                  name='Emp_allowered_to_ride_in_open_area__c'
+                                  label="Are any employees ever allowed to ride in the open area of a vehicle?"
+                                  options='{!v.radioGroupOptions}'
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.golfIndRec.Emp_allowered_to_ride_in_open_area__c}" />
+            <lightning:radioGroup aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                  name='Are_restraints_in_place_for_all_riders__c'
+                                  label="Are restraints in place for all riders?"
+                                  options='{!v.radioGroupOptions}'
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.golfIndRec.Are_restraints_in_place_for_all_riders__c}" />
+        </lightning:layoutItem>
+        <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6"  padding="around-small">
+            <lightning:radioGroup aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                  name='Does_lawn_maintenance_for_homeowners__c'
+                                  label="Are you a Country Club Community where you do the lawn maintenance for homeowners?"
+                                  options='{!v.radioGroupOptions}'
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.golfIndRec.Does_lawn_maintenance_for_homeowners__c}" />
+            <!--lightning:radioGroup disabled='{!v.disableEdit}' 
+                                      name='Has_designated_leader_of_each_crew__c'
+                                      label="Is there a designated supervisor / leader of each crew?"
+                                      options='{!v.radioGroupOptions}'
+                                      onchange='{!c.handleChange}'
+                                      value="{!v.golfIndRec.Has_designated_leader_of_each_crew__c}" />
+                <lightning:input disabled='{!v.disableEdit}' 
+                                 name='How_many_employees_are_on_each_crew__c'
+                                 type='Number'
+                                 min='0'
+                                 fieldLevelHelp='Please enter a number'
+                                 label="How many employees are on each crew?"
+                                 onchange='{!c.handleChange}'
+                                 value="{!v.golfIndRec.How_many_employees_are_on_each_crew__c}" /-->
+            
+            
+            <lightning:radioGroup aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                  name='Do_you_apply_any_pesticides__c'
+                                  label="Do you apply any pesticides?"
+                                  options='{!v.radioGroupOptions}'
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.golfIndRec.Do_you_apply_any_pesticides__c}" />
+            
+            <aura:if isTrue="{!v.golfIndRec.Do_you_apply_any_pesticides__c=='Yes'}">
+                <lightning:radioGroup aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                      name='Pesticides_designated_as_restricted__c'
+                                      label="Are any designated as restricted use substances?"
+                                      options='{!v.radioGroupOptions}'
+                                      onchange='{!c.handleChange}'
+                                      value="{!v.golfIndRec.Pesticides_designated_as_restricted__c}" />
+            </aura:if>
+            
+            <lightning:radioGroup aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                  name='Provides_nuisance_animal_control__c'
+                                  label="Do you provide any type of nuisance animal control / removal (rodents, snakes, raccoons, etc.)?"
+                                  options='{!v.radioGroupOptions}'
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.golfIndRec.Provides_nuisance_animal_control__c}" />
+            
+            <lightning:input aura:id='isqQue' disabled='{!v.disableEdit}' 
+                             name='What_roles_are_subcontracted__c'
+                             label="What roles do you sub-contract out? E.G. tree trimming, hardscaping, irrigation, etc.?"                                  
+                             onchange='{!c.handleChange}'
+                             value="{!v.golfIndRec.What_roles_are_subcontracted__c}" />
+            
+            <lightning:radioGroup aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                  name='Works_next_to_roads_or_medians__c'
+                                  label="Do you have any work next to roads or in medians?"
+                                  options='{!v.radioGroupOptions}'
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.golfIndRec.Works_next_to_roads_or_medians__c}" />
+            <aura:if isTrue="{!v.golfIndRec.Works_next_to_roads_or_medians__c=='Yes'}">
+                <lightning:input aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                 name='what_of_the_overall_work_would_this_re__c'
+                                 type='Number'
+                                 min='0'
+                                 fieldLevelHelp='Please enter a number'
+                                 label="What % of the overall work would this represent?"
+                                 onchange='{!c.handleChange}'
+                                 value="{!v.golfIndRec.what_of_the_overall_work_would_this_re__c}" />
+                <lightning:input aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                 name='Additional_safety_for_work_near_road__c'
+                                 label="What additional safety measures are put in place?"
+                                 onchange='{!c.handleChange}'
+                                 value="{!v.golfIndRec.Additional_safety_for_work_near_road__c}" />
+            </aura:if>
+            <lightning:radioGroup aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                  name='Weight_restriction_for_one_EE_to_lift__c'
+                                  label="Is there a weight restriction any one EE may/would lift (lbs)?"
+                                  options='{!v.radioGroupOptions}'
+                                  onchange='{!c.handleChange}'
+                                  value="{!v.golfIndRec.Weight_restriction_for_one_EE_to_lift__c}" />
+            <aura:if isTrue="{!v.golfIndRec.Weight_restriction_for_one_EE_to_lift__c=='Yes'}">
+                <lightning:input aura:id='isqQue' disabled='{!v.disableEdit}' 
+                                 name='What_is_the_maximum_weight_golf__c'
+                                 type='Number'
+                                 min='0'
+                                 fieldLevelHelp='Please enter a number'
+                                 label="What is the maximum weight?"
+                                 onchange='{!c.handleChange}'
+                                 value="{!v.golfIndRec.What_is_the_maximum_weight_golf__c}" />
+            </aura:if>
+            
+            <lightning:input aura:id='isqQue' disabled='{!v.disableEdit}' 
+                             name='Seasonal_services_offered_by_Risk__c'
+                             label="Does risk offer different services in the other seasons (raking leaves in the fall, snow removal in the winter, etc.)?"
+                             onchange='{!c.handleChange}'
+                             value="{!v.golfIndRec.Seasonal_services_offered_by_Risk__c}" />           
+        </lightning:layoutItem>
+    </lightning:layout>
+</aura:component>

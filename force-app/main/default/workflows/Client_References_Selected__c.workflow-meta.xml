@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>reminder_to_approve_reject_Client_Reference_Request</fullName>
+        <description>reminder to approve/reject Client Reference Request</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>VoC_Approval</recipient>
+            <type>group</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>AutoresponseEmailTemplate/Client_Reference_Approval_Reminder</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>Client_Reference_Selected_Recalled</fullName>
+        <description>change status to Recalled</description>
+        <field>Status__c</field>
+        <literalValue>Recalled</literalValue>
+        <name>Client Reference Selected Recalled</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>true</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Client_Reference_Seleted_Approved</fullName>
+        <field>Status__c</field>
+        <literalValue>Approved</literalValue>
+        <name>Client Reference Seleted Approved</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>true</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Client_Reference_Seleted_Rejected</fullName>
+        <field>Status__c</field>
+        <literalValue>Rejected</literalValue>
+        <name>Client Reference Seleted Rejected</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>true</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>check_Client_Ref_Approval_reminder</fullName>
+        <description>check Approval Reminder on Client Reference Selected so workflow will send reminder if not approved/rejected within 3 days</description>
+        <field>Approval_Reminder_Email__c</field>
+        <literalValue>1</literalValue>
+        <name>check Client Ref Approval reminder</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>clear_Approval_reminder</fullName>
+        <description>once reminder is sent, clear the Reminder email checkbox</description>
+        <field>Approval_Reminder_Email__c</field>
+        <literalValue>0</literalValue>
+        <name>clear Approval reminder</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>clear_Reject_Reason</fullName>
+        <description>if approved clear Rejected Reason</description>
+        <field>Rejected_Reason__c</field>
+        <name>clear Reject Reason</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>clear_Used_Email_Reminder</fullName>
+        <description>when user populated Actually Used, clear the Used Email flag to time based process builder doesnt fire.</description>
+        <field>Used_Reminder_Email__c</field>
+        <literalValue>0</literalValue>
+        <name>clear Used Email Reminder</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>fill_Reject_Reason</fullName>
+        <description>if rejected put &apos;Rejected&apos; in reason to fire trigger to move Comments</description>
+        <field>Rejected_Reason__c</field>
+        <formula>&quot;Rejected&quot;</formula>
+        <name>fill Reject Reason</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>set_Approved_datetime</fullName>
+        <field>Approved_Date__c</field>
+        <formula>Now()</formula>
+        <name>set Approved datetime</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>set_Client_Ref_completed</fullName>
+        <description>when Actually Used is populated, change status to Completed</description>
+        <field>Status__c</field>
+        <literalValue>Completed</literalValue>
+        <name>set Client Ref completed</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>set_Client_Reference_Used_email</fullName>
+        <description>set Used Email Reminder to true to fires in timebased processbuilder</description>
+        <field>Used_Reminder_Email__c</field>
+        <literalValue>1</literalValue>
+        <name>set Client Reference Used email</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>uncheck_Client_Ref_Approval_reminder</fullName>
+        <description>Client Reference Selected has been approved/rejected so dont need to send reminder</description>
+        <field>Approval_Reminder_Email__c</field>
+        <literalValue>0</literalValue>
+        <name>uncheck Client Ref Approval reminder</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>send Client Reference Approval reminder</fullName>
+        <active>true</active>
+        <criteriaItems>
+            <field>Client_References_Selected__c.Approval_Reminder_Email__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Client_References_Selected__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Waiting on Approval</value>
+        </criteriaItems>
+        <description>if the Client Reference Selected isn&apos;t approved in 1 day, send reminder</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>reminder_to_approve_reject_Client_Reference_Request</name>
+                <type>Alert</type>
+            </actions>
+            <actions>
+                <name>clear_Approval_reminder</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <timeLength>1</timeLength>
+            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+</Workflow>

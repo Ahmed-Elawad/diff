@@ -1,0 +1,34 @@
+<!--
+History
+10/13/2023 Carrie Marciano      Created
+
+-->
+<aura:component description="BannerTotalReferenceClientRetention">
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="totalRCRs" type="Object" />
+    <aura:attribute name="objectType" type="String" />
+    
+    <div class="box" title="Total RCRs">
+    	<div class="banner-header slds-align_absolute-center">
+            <h4 class="slds-item_label slds-text-color_weak slds-truncate slds-text-align_center">All Reference Client Retentions</h4>
+        </div>
+       
+        <div class="banner-body">
+            <div class="{!'slds-item_detail slds-truncate slds-align_absolute-center column ' + (not(empty(v.recordId)) ? ' clickable-banner-item' : '') }"  title="All Reference Client Retentions"  onclick="{!c.navigateToRelatedList}">
+                <img src="{!$Resource.BannerIcons + '/LightningIcons/mutual_client.png'}" />
+                <span>{!v.totalRCRs.length}</span>
+            </div>
+        </div>
+      
+       <!--  
+        <div class="banner-body">
+            <div class="{!'slds-item_detail slds-truncate slds-align_absolute-center column '}" title="Total RCRs" >
+                {!v.totalRCRs}
+                <lightning:icon iconName="standard.related_list" />
+                <span>{!v.totalRCRs.length}</span>
+            </div>
+        </div>
+	 -->
+    </div>
+    
+</aura:component>

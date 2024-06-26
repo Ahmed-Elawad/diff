@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Require_Payroll_Deductions_sent_to_PR</fullName>
+    <active>true</active>
+    <description>Requires a value in the Do deductions need to be sent to Payroll field when  Deduction Management field equals Agency</description>
+    <errorConditionFormula>ISPICKVAL(Deduction_Management__c,&quot;Agency&quot;) &amp;&amp;
+(ISPICKVAL(Do_deductions_need_to_be_sent_to_Payroll__c ,&quot;&quot;))</errorConditionFormula>
+    <errorMessage>You must enter a value in Do deductions need to be sent to Payroll if Deduction Management equals Agency</errorMessage>
+</ValidationRule>

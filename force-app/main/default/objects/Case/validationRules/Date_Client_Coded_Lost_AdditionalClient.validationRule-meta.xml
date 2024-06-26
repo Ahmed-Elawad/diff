@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Date_Client_Coded_Lost_AdditionalClient</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND 
+( 
+ISPICKVAL( Product__c ,&quot;MMS&quot;), 
+ISPICKVAL( Issue__c ,&quot;Lost Client&quot;), 
+
+ISBLANK( Date_Client_Coded_Lost__c ), 
+ISBLANK( Additional_Client_IDs__c ) 
+)</errorConditionFormula>
+    <errorMessage>&apos;Date Client Coded Lost&apos; and &apos;Additional Client IDs&apos; are required when sub-classification Lost-Client is selected.</errorMessage>
+</ValidationRule>

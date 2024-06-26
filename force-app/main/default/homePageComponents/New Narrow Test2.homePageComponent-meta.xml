@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HomePageComponent xmlns="http://soap.sforce.com/2006/04/metadata">
+    <body>&lt;script type=&quot;text/javascript&quot; src=&quot;https://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js&quot;&gt;&lt;/script&gt;
+
+&lt;script src=&quot;/soap/ajax/26.0/connection.js&quot;&gt;&lt;/script&gt;
+
+&lt;script&gt;
+$(document).ready(function(){
+    var ptl = $(&quot;h1.pageType&quot;).html();
+    if (ptl != undefined &amp;&amp; ptl.indexOf(&quot;Case Edit&quot;) &gt; -1)
+    {
+        $(&quot;#sidebarRA&quot;).css(&quot;display&quot;, &quot;block&quot;);
+    }
+    else
+    {
+        $(&quot;#sidebarRA&quot;).css(&quot;display&quot;, &quot;none&quot;);
+    }
+    querytext = $(&quot;#cas14&quot;).val();
+    if (document.forms[&apos;editPage&apos;] == null) 
+    {
+        //do absolutely nothing;
+    } 
+    else 
+    {
+        var cs = readCookie(&apos;sid&apos;);
+        getUser(cs);
+        $(&quot;#cas14&quot;).focusout(function(event) { lookIt(&apos;&apos;, 1);});
+        $(&quot;input[name=cancel]&quot;).click(function() { deleteSolution(); });
+    }
+});
+&lt;/script&gt;
+
+&lt;script&gt;
+function lookIt(s0, pg)
+{ 
+    var portaluser = document.getElementById(&quot;RAUserName&quot;).value;
+    var portalgroup = document.getElementById(&quot;RAUserGroup&quot;).value;
+    document.getElementById(&quot;rsltRA&quot;).innerHTML = &quot;&lt;center&gt;&lt;img alt=\&quot;\&quot; src=\&quot;data:image/gif;base64,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\&quot; /&gt;&lt;/center&gt;&quot;
+    var s1 = document.forms[&apos;editPage&apos;].elements[&quot;cas14&quot;].value;
+    var s2 = document.getElementById(&quot;searchRA&quot;);
+    var sq;
+    if (s0 == &quot;searchRA&quot;)
+    {
+        sq = s2.value;
+    }
+    else
+    {
+        s2.value = s1;
+        sq = s1;
+    }
+ 
+    var envelope =
+            &apos;&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&apos; +
+            &apos;&lt;soap:Body&gt;&apos; +
+            &apos;&lt;doSearchXML xmlns=&quot;http://rightanswers.com/portal&quot;&gt;&apos; + 
+            &apos;&lt;arg0 xmlns=&quot;&quot;&gt;&apos; + portaluser + &apos;&lt;/arg0&gt;&apos; + 
+            &apos;&lt;arg1 xmlns=&quot;&quot;&gt;&apos; + portalgroup + &apos;&lt;/arg1&gt;&apos; + 
+            &apos;&lt;arg2 xmlns=&quot;&quot;&gt;&apos; + sq + &apos;&lt;/arg2&gt;&apos; + 
+            &apos;&lt;arg3 xmlns=&quot;&quot;&gt;&lt;/arg3&gt;&apos; + 
+            &apos;&lt;arg4 xmlns=&quot;&quot;&gt;&lt;/arg4&gt;&apos; + 
+            &apos;&lt;arg5 xmlns=&quot;&quot;&gt;1&lt;/arg5&gt;&apos; + 
+            &apos;&lt;arg6 xmlns=&quot;&quot;&gt;&lt;/arg6&gt;&apos; + 
+            &apos;&lt;arg7 xmlns=&quot;&quot;&gt;&lt;/arg7&gt;&apos; + 
+            &apos;&lt;arg8 xmlns=&quot;&quot;&gt;&apos; + pg + &apos;&lt;/arg8&gt;&apos; + 
+            &apos;&lt;arg9 xmlns=&quot;&quot;&gt;&lt;/arg9&gt;&apos; + 
+            &apos;&lt;arg10 xmlns=&quot;&quot;&gt;&lt;/arg10&gt;&apos; + 
+            &apos;&lt;arg11 xmlns=&quot;&quot;&gt;&lt;/arg11&gt;&apos; + 
+            &apos;&lt;arg12 xmlns=&quot;&quot;&gt;&lt;/arg12&gt;&apos; + 
+            &apos;&lt;arg13 xmlns=&quot;&quot;&gt;&lt;/arg13&gt;&apos; + 
+            &apos;&lt;arg14 xmlns=&quot;&quot;&gt;&lt;/arg14&gt;&apos; + 
+            &apos;&lt;arg15 xmlns=&quot;&quot;&gt;&lt;/arg15&gt;&apos; + 
+            &apos;&lt;arg16 xmlns=&quot;&quot;&gt;&lt;/arg16&gt;&apos; + 
+            &apos;&lt;arg17 xmlns=&quot;&quot;&gt;&lt;/arg17&gt;&apos; +
+            &apos;&lt;arg18 xmlns=&quot;&quot;&gt;&lt;/arg18&gt;&apos; +
+            &apos;&lt;/doSearchXML&gt;&apos; +
+            &apos;&lt;/soap:Body&gt;&apos; +
+            &apos;&lt;/soap:Envelope&gt;&apos;;
+    sforce.connection.sessionId = readCookie(&apos;sid&apos;);
+    sforce.connection.remoteFunction({
+            url: &quot;https://&quot; + getRADomain() + &quot;/portal/RAWebAPI&quot;,
+            requestHeaders: {
+              &quot;Content-Type&quot;:&quot;text/xml; charset=utf-8&quot;,
+              &quot;SOAPAction&quot;: &quot;\&quot;urn:DoSearchXML\&quot;&quot;,
+              &quot;Authorization&quot;:getAuthKey()
+            },
+            requestData: envelope,
+            method: &quot;POST&quot;,
+            onSuccess : function(response) {
+                parseIt(response, pg);
+            },
+            onFailure : function(response) {
+                document.getElementById(&quot;rsltRA&quot;).innerHTML = &quot;Failed&quot; + response;
+            }
+    });
+}
+function parseIt(txt, pq)
+{
+      if (window.DOMParser)
+      {
+          parser=new DOMParser();
+          xmlDoc=parser.parseFromString(txt,&quot;text/xml&quot;);
+      }
+      else // Internet Explorer
+      {
+          xmlDoc=new ActiveXObject(&quot;Microsoft.XMLDOM&quot;);
+          xmlDoc.async=false;
+          xmlDoc.loadXML(txt);
+     }
+     var sesapi = readCookie(&apos;sid&apos;);
+     var root = xmlDoc.documentElement;
+     var t=xmlDoc.getElementsByTagName(&quot;title&quot;);
+     var sid=xmlDoc.getElementsByTagName(&quot;solutionid&quot;);
+     var pgs=xmlDoc.getElementsByTagName(&quot;pages&quot;);
+     var scr=xmlDoc.getElementsByTagName(&quot;score&quot;);
+     var apiserver = &quot;https://&quot; + window.location.host + &quot;/services/Soap/u/24.0/&quot; + readCookie(&apos;oid&apos;);
+     var q1 = document.forms[&apos;editPage&apos;].elements[&quot;cas14&quot;].value;
+     var ct1 = document.title;
+     var tld1 = ct1.indexOf(&quot;~&quot;) - 1;
+     ct1 = ct1.substring(0, tld1);
+     $.trim(ct1);
+     ct1 = escape(ct1);
+     var pages = &quot;&quot;;
+     var val = &quot;&quot;;
+     for (i=0;i&lt;t.length;i++)
+     {
+         if (window.DOMParser)
+          {
+              q1 = q1.replace(/\s/g, &apos;%20&apos;);
+              var s = sid[i].childNodes[0].textContent;
+             pages = pgs[i].childNodes[0].textContent;
+              val += &quot;&lt;a href=https://&quot; + getRADomain() + &quot;/portal/app/portlets/results/viewsolution.jsp?interface=sa&amp;assert=true&amp;sesapi=&quot; + sesapi + &quot;&amp;caseid=&quot; + ct1 + &quot;&amp;QueryText=&quot; + q1 + &quot;&amp;apiserver=&quot; + apiserver + &quot;&amp;solutionid=&quot; + s + &quot; target=\&quot;_blank\&quot;&gt;&quot; + t[i].childNodes[0].textContent + &quot;&lt;/a&gt;&amp;nbsp;&amp;nbsp&lt;img alt=\&quot;\&quot; src=\&quot;data:image/gif;base64,R0lGODlhEAAQANU4AIWizVx4p4L/WGN/rT+XUkueYVDpHcj/tZCq0mv/OmOArT+WUjiPS132Kp2z1pL/bV98q4D/VYWhzVRvoWn/N0zlGWP8MI3/Z3D/QFHqHrb/nV99q1h1o3T/RlFsnXL/Q1Nwoae72ll1o53/fDLGAWR/rV99qlFtnlz1Kae82oahzTqRTVh0pIaizEKVWGB9q4aiza/B3VBtnVFtnQSAAFh0owCyDWaCr////wAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAADgALAAAAAAQABAAAAaNQJxQWLAZCcNk0qY5HGjKqO3SGUGjQoIxgnrQaAWsTSBoZBqCz1WpxRhIBgoYi1vZEpUEzaW8+W84DDYWNAw4f4A3MTGAOAs0C0KKjDgKMQoDWAMDMSU4ECEvdDgmKRs4AQ4Bo6mrIgg1LBw1tLW0sDggMDAAMCq8AC0wErwTODMyMifIyTIzzx7Po3RBADs=\&quot; onclick=\&quot;getIt(&apos;&quot; + s + &quot;&apos;);\&quot; style=\&quot;cursor: pointer;\&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&quot;;
+          }
+          else // Internet Explorer
+          {
+              q1 = q1.replace(/\s/g, &apos;%20&apos;);
+              var s = sid[i].firstChild.nodeValue;
+             pages = pgs[i].firstChild.nodeValue;
+              val += &quot;&lt;a href=https://&quot; + getRADomain() + &quot;/portal/app/portlets/results/viewsolution.jsp?interface=sa&amp;assert=true&amp;sesapi=&quot; + sesapi + &quot;&amp;caseid=&quot; + ct1 + &quot;&amp;QueryText=&quot; + q1 + &quot;&amp;apiserver=&quot; + apiserver + &quot;&amp;solutionid=&quot; + s + &quot; target=\&quot;_blank\&quot;&gt;&quot; + t[i].firstChild.nodeValue + &quot;&lt;/a&gt;&amp;nbsp;&amp;nbsp&lt;img alt=\&quot;\&quot; src=\&quot;data:image/gif;base64,R0lGODlhEAAQANU4AIWizVx4p4L/WGN/rT+XUkueYVDpHcj/tZCq0mv/OmOArT+WUjiPS132Kp2z1pL/bV98q4D/VYWhzVRvoWn/N0zlGWP8MI3/Z3D/QFHqHrb/nV99q1h1o3T/RlFsnXL/Q1Nwoae72ll1o53/fDLGAWR/rV99qlFtnlz1Kae82oahzTqRTVh0pIaizEKVWGB9q4aiza/B3VBtnVFtnQSAAFh0owCyDWaCr////wAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAADgALAAAAAAQABAAAAaNQJxQWLAZCcNk0qY5HGjKqO3SGUGjQoIxgnrQaAWsTSBoZBqCz1WpxRhIBgoYi1vZEpUEzaW8+W84DDYWNAw4f4A3MTGAOAs0C0KKjDgKMQoDWAMDMSU4ECEvdDgmKRs4AQ4Bo6mrIgg1LBw1tLW0sDggMDAAMCq8AC0wErwTODMyMifIyTIzzx7Po3RBADs=\&quot; onclick=\&quot;getIt(&apos;&quot; + s + &quot;&apos;);\&quot; style=\&quot;cursor: pointer;\&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&quot;;
+         }     
+    }
+    if (val.length &lt; 1)
+    {
+        val= &quot;No Results&quot;;
+    }
+    else
+    {
+        if (pages &gt; 10)
+        {
+            pages = 10;
+        }
+        var pagelinks = &quot;&quot;;
+        for(var i=0; i &lt; pages; i++)
+        {
+            var ii = i+1;
+            pagelinks += &quot;&lt;a style=\&quot;font-family:Arial;font-size:10pt;\&quot; href=\&quot;javascript:lookIt(&apos;&quot;+ q1 + &quot;&apos;, &quot; + ii + &quot;);\&quot;&gt;&quot;;
+            if (pq == ii)
+            {
+                pagelinks += &apos;&lt;b style=&quot;color:red;&quot;&gt;&lt;u&gt;&apos; + ii + &apos;&lt;/u&gt;&lt;/b&gt;&apos;; 
+            }
+            else
+            {
+                pagelinks += ii
+            }
+            pagelinks += &apos;&lt;/a&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&apos;;
+        }
+        val += pagelinks;
+    }
+    document.getElementById(&quot;rsltRA&quot;).innerHTML = val;
+}
+
+function getIt(sol1)
+{
+    var resurl3 = &quot;https://&quot; + getDomain() + &quot;/resource/11369787576000/loading_tiny&quot;;
+    document.getElementById(&quot;lnkRA&quot;).innerHTML = &quot;&lt;center&gt;&lt;img alt=\&quot;\&quot; src=\&quot;data:image/gif;base64,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\&quot; /&gt;&lt;/center&gt;&quot;
+    var portaluser = document.getElementById(&quot;RAUserName&quot;).value;
+    var portalgroup = document.getElementById(&quot;RAUserGroup&quot;).value;
+    var envelope =
+            &apos;&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&apos; +
+            &apos;&lt;soap:Body&gt;&apos; +
+            &apos;&lt;getSolutionXML xmlns=&quot;http://rightanswers.com/portal&quot;&gt;&apos; + 
+            &apos;&lt;arg0 xmlns=&quot;&quot;&gt;&apos; + portaluser + &apos;&lt;/arg0&gt;&apos; + 
+            &apos;&lt;arg1 xmlns=&quot;&quot;&gt;&apos; + portalgroup + &apos;&lt;/arg1&gt;&apos; + 
+            &apos;&lt;arg2 xmlns=&quot;&quot;&gt;&apos; + sol1 + &apos;&lt;/arg2&gt;&apos; + 
+            &apos;&lt;arg3 xmlns=&quot;&quot;&gt;&lt;/arg3&gt;&apos; + 
+            &apos;&lt;/getSolutionXML&gt;&apos; +
+            &apos;&lt;/soap:Body&gt;&apos; +
+            &apos;&lt;/soap:Envelope&gt;&apos;;
+    sforce.connection.sessionId = readCookie(&apos;sid&apos;);
+    sforce.connection.remoteFunction({
+            url: &quot;https://&quot; + getRADomain() + &quot;/portal/RAWebAPI&quot;,
+            requestHeaders: {
+              &quot;Content-Type&quot;:&quot;text/xml; charset=utf-8&quot;,
+              &quot;SOAPAction&quot;: &quot;\&quot;urn:GetSolutionXML\&quot;&quot;,
+              &quot;Authorization&quot;:getAuthKey()
+            },
+            requestData: envelope,
+            method: &quot;POST&quot;,
+            onSuccess : function(response) {
+                parseSolution(response);
+            },
+            onFailure : function(response) {
+                document.getElementById(&quot;rsltRA&quot;).innerHTML = &quot;Failed&quot; + response;
+            }
+    });
+}
+
+function parseSolution(txt)
+{
+    if (window.DOMParser)
+    {
+        parser=new DOMParser();
+        xmlDoc=parser.parseFromString(txt,&quot;text/xml&quot;);
+    }
+    else // Internet Explorer
+    {
+         xmlDoc=new ActiveXObject(&quot;Microsoft.XMLDOM&quot;);
+         xmlDoc.async=false;
+         xmlDoc.loadXML(txt);
+    }
+    var sesapi = readCookie(&apos;sid&apos;);
+    var apiserver = &quot;https://&quot; + window.location.host + &quot;/services/Soap/u/24.0/&quot; + readCookie(&apos;oid&apos;);
+    var root = xmlDoc.documentElement;
+    var t=xmlDoc.getElementsByTagName(&quot;title&quot;)[0].childNodes[0].nodeValue;
+    t = t.replace(&quot;&lt;SMSOLUTION&gt;&quot;,&quot;&quot;);
+    var sid=xmlDoc.getElementsByTagName(&quot;solutionid&quot;)[0].childNodes[0].nodeValue;
+    var sln=xmlDoc.getElementsByTagName(&quot;solution&quot;)[0].childNodes[0].nodeValue;
+    var q1 = document.forms[&apos;editPage&apos;].elements[&quot;cas14&quot;].value;
+    var ct1 = document.title;
+    var tld1 = ct1.indexOf(&quot;~&quot;) - 1;
+    ct1 = ct1.substring(0, tld1);
+    $.trim(ct1);
+    ct1 = escape(ct1);
+    var dat = &quot;&quot;;
+    document.getElementById(&quot;lnkRA&quot;).innerHTML = &quot;&quot;;
+    dat += &quot;sesapi=&quot; + sesapi;
+    dat += &quot;&amp;caseid=&quot; + ct1;
+    dat += &quot;&amp;QueryText=&quot; + q1;
+    dat += &quot;&amp;apiserver=&quot; + apiserver;
+    dat += &quot;&amp;solutionid=&quot; + sid;
+    dat += &quot;&amp;solutiontitle=&quot; + t;
+    dat += &quot;&amp;solutionsum=&quot; + sln;
+    sforce.connection.sessionId = sesapi;
+    sforce.connection.remoteFunction({
+        url: &quot;https://&quot; + getRADomain() + &quot;/portal/remlinktoticket.jsp&quot;,
+        requestHeaders: {
+              &quot;Content-Type&quot;:&quot;application/x-www-form-urlencoded; charset=utf-8&quot;
+        },
+        method: &quot;POST&quot;,
+        requestData: dat,
+        onSuccess: function(response)
+        {
+            alert($.trim(response));
+        },
+        onFailure:function(response)
+        {
+           alert(&quot;Error: &quot; + $.trim(response));
+        }   
+    }); 
+}
+function deleteSolution()
+{
+    var sesapi = readCookie(&apos;sid&apos;);
+    var apiserver = &quot;https://&quot; + window.location.host + &quot;/services/Soap/u/24.0/&quot; + readCookie(&apos;oid&apos;);
+    var dat = &quot;&quot;;
+    dat += &quot;sesapi=&quot; + sesapi;
+    dat += &quot;&amp;apiserver=&quot; + apiserver;
+    sforce.connection.sessionId = sesapi;
+    sforce.connection.remoteFunction({
+        url: &quot;https://&quot; + getRADomain() + &quot;/portal/remcasecancel.jsp&quot;,
+        requestHeaders: {
+              &quot;Content-Type&quot;:&quot;application/x-www-form-urlencoded; charset=utf-8&quot;
+        },
+        method: &quot;POST&quot;,
+        requestData: dat,
+        onSuccess: function(response)
+        {
+            alert($.trim(response));
+        },
+        onFailure:function(response)
+        {
+           alert(&quot;Error: &quot; + $.trim(response));
+        }   
+    }); 
+}
+function readCookie (name) 
+{  
+    var nameEQ = name + &quot;=&quot;;
+    var ca = document.cookie.split(&apos;;&apos;);
+    for(var i=0;i &lt; ca.length;i++) 
+    {   
+         var c = ca[i];
+         while (c.charAt(0)==&apos; &apos;)
+         {
+             c = c.substring(1,c.length);
+         }
+         if (c.indexOf(nameEQ) == 0)
+         {
+             return c.substring(nameEQ.length,c.length);
+         }
+    }
+    return null;
+}
+function getUser(asid) 
+{                
+    sforce.connection.sessionId = asid;
+    var user = sforce.connection.getUserInfo().userName;
+    sforce.connection.query(&quot;select Username, Right_Answers_Group__c from User where Username = &apos;&quot; + user + &quot;&apos;&quot;,
+    {
+        onSuccess: querySuccess,
+        onFailure: function(response) 
+        {
+             document.getElementById(&quot;RAUserName&quot;).value = response;
+             document.getElementById(&quot;RAUserGroup&quot;).value = response;
+        }
+    });
+}
+function querySuccess(result) 
+{
+    var records = result.getArray(&quot;records&quot;);
+    document.getElementById(&quot;RAUserName&quot;).value = records[0].Username;
+    document.getElementById(&quot;RAUserGroup&quot;).value = records[0].Right_Answers_Group__c;
+}
+function getDomain()
+{
+    return location.host;
+}
+function getRADomain()
+{
+    return &quot;paychex123.rightanswers.com&quot;;
+}
+function getAuthKey()
+{
+    var f1 = &quot;BASIC&quot;;
+    var f2 = &quot;YXZvZ2Fkcm9zX251bWJlcjo2LjAyMyoxMF4yMw==&quot;;
+    return f1 + &quot; &quot; + f2;
+}
+&lt;/script&gt;
+
+&lt;div id=&quot;sidebarRA&quot; style=&quot;display: none;&quot;&gt;&lt;input id=&quot;RAUserName&quot; type=&quot;hidden&quot;&gt; &lt;input id=&quot;RAUserGroup&quot; type=&quot;hidden&quot;&gt; &lt;input id=&quot;searchRA&quot; size=&quot;19&quot;&gt;&amp;nbsp;&lt;input onclick=&quot;lookIt(&apos;searchRA&apos;, 1);&quot; class=&quot;btn&quot; type=&quot;button&quot; value=&quot;Go!&quot;&gt; &lt;br&gt;
+&lt;div id=&quot;lnkRA&quot;&gt;&lt;/div&gt;&lt;br&gt;
+&lt;div id=&quot;rsltRA&quot;&gt;&lt;/div&gt;
+&lt;form name=&quot;lnkFrmRA&quot;&gt;&lt;input id=&quot;solutionidRA&quot; type=&quot;hidden&quot; name=&quot;solutionidRA&quot;&gt; &lt;input id=&quot;solutiontitleRA&quot; type=&quot;hidden&quot; name=&quot;solutiontitleRA&quot;&gt; &lt;input id=&quot;solutionsumRA&quot; type=&quot;hidden&quot; name=&quot;solutionsumRA&quot;&gt; &lt;input id=&quot;sesapiRA&quot; type=&quot;hidden&quot; name=&quot;sesapiRA&quot;&gt; &lt;input id=&quot;caseidRA&quot; type=&quot;hidden&quot; name=&quot;caseidRA&quot;&gt; &lt;input id=&quot;QueryTextRA&quot; type=&quot;hidden&quot; name=&quot;QueryTextRA&quot;&gt; &lt;/form&gt;&lt;/div&gt;</body>
+    <pageComponentType>htmlArea</pageComponentType>
+    <width>narrow</width>
+</HomePageComponent>

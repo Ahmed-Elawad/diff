@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Initial_client_contact_completed_is_true</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND 
+( 
+RecordTypeId=&quot;0120g000000l3kj&quot;, 
+Initial_Client_Contact_Completed__c=TRUE, 
+ISBLANK ( Client_Contact_Person__c), 
+ISBLANK (Date_Client_Contacted__c) 
+
+)</errorConditionFormula>
+    <errorMessage>“Client contact person” and “Date contacted” required if the “initial client contact completed” is True.</errorMessage>
+</ValidationRule>

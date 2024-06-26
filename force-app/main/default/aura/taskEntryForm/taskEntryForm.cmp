@@ -1,0 +1,182 @@
+<aura:component controller="CreateActivityController">
+
+	<aura:attribute name="sobjecttype" type="String"/>
+	<aura:attribute name="activityType" type="String" required="true"/>
+	<aura:attribute name="sourceRecordId" type="Id" />
+    <aura:attribute name="attendeesAddOn" type="String" default=""/>
+    <aura:attribute name="carId" type="Id" default="" />
+
+    <aura:attribute name="tskStatus" type="String" />
+	<aura:attribute name="recordLoaded" type="Boolean" default="false" />
+	<aura:attribute name="profileName" type="String" />
+    <aura:attribute name="descriptionAddOn" type="String"/>
+	
+	<aura:attribute name="statusOptions" type="List" default="[]"/>
+	<aura:attribute name="typeOptions" type="List" default="[]"/>
+	<aura:attribute name="callTypeOptions" type="List" default="[]"/>
+	<aura:attribute name="outcomeOptions" type="List" default="[]"/>
+	<aura:attribute name="priorityOptions" type="List" default="[]"/>
+	<aura:attribute name="appointmentTypeOptions" type="List" default="[]"/>
+    <aura:attribute name="tapTopicOptions" type="List" default="[]"/> 
+
+	<aura:attribute name="popupVisible" type="Boolean" default="false"/>
+	<aura:attribute name="isFollowUpActivity" type="Boolean" default="false"/>
+	<aura:attribute name="shouldCloseModal" type="Boolean" default="false"/>
+	<aura:attribute type="Date" name="activityDate" />
+	
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler event="c:activityTypeChangedEvent" action="{!c.handleActivityTypeChange}"/>
+    <aura:handler name="change" value="{!v.newTask.IsReminderSet}" action="{!c.handleDateValueChange}"/>
+    <aura:handler name="change" value="{!v.activityDate}" action="{!c.handleDateValueChange}"/>
+	<aura:attribute name="newTask" type="Task"
+			  default="{'sobjectType':'Task'
+					   ,'Status':'Not Started'
+					   ,'Lead_Source_WAR_Call_Type__c':'Call'
+					   ,'Type':'Type'
+					   ,'Subject':'Subject'
+					   ,'Description':''
+					   ,'ActivityDate':''
+                       , 'TAP_Topic__c': ''
+					   }" />
+
+	<h1 class="error-text">{!v.tskStatus} </h1> 
+	
+	<ui:spinner aura:id="spinner" />
+		
+	<c:PopupModal isVisible="{!v.popupVisible}" popupClass="followUpTaskPopup">
+		<aura:set attribute="content">
+			<c:createActivitySuccessPopup activityType="{!v.activityType}" isVisible="{!v.popupVisible}" isFollowUpActivity="{!v.isFollowUpActivity}" shouldCloseModal="{!v.shouldCloseModal}"/>
+		</aura:set>
+	</c:PopupModal>
+	
+	<aura:if isTrue="{!v.recordLoaded}">
+
+	   <form class="slds-form_stacked">
+
+			<aura:if isTrue="{!not(equals(v.profileName, 'Sales Engineer'))}">
+
+		   		<lightning:combobox aura:id="taskform" name="status" label="Status"
+				   	  class="form-component" 
+					  placeholder="Choose Activity Type"
+					  value="{!v.newTask.Status}"
+					  options="{!v.statusOptions}"
+					  required="true"/>
+
+				<lightning:combobox aura:id="taskform" name="callType" label="Call Type"
+						  class="form-component" 
+						  placeholder="Choose Call Type"
+						  value="{!v.newTask.Lead_Source_WAR_Call_Type__c}"
+						  options="{!v.callTypeOptions}"
+						  required="false"/>
+
+				<lightning:combobox aura:id="taskform" name="type" label="Type"
+						  class="form-component" 
+						  placeholder="Choose Type"
+						  value="{!v.newTask.Type}"
+						  options="{!v.typeOptions}"
+						  required="true"/>
+                
+				<lightning:combobox aura:id="taskform" name="TAPTopic" label="Prescriptive Topic"
+						  class="form-component" 
+						  placeholder="Choose Prescriptive Topic"
+						  value="{!v.newTask.TAP_Topic__c}"
+						  options="{!v.tapTopicOptions}"
+						  required="false"/>
+                
+				<lightning:combobox aura:id="taskform" name="priority" label="Priority"
+						  class="form-component" 
+						  placeholder="Choose Priority"
+						  value="{!v.newTask.Priority}"
+						  options="{!v.priorityOptions}"
+						  required="true"/>
+
+				<lightning:input aura:id="taskform" label="Subject"
+							 name="subject"
+							 class="form-component" 
+							 value="{!v.newTask.Subject}"
+							 required="false"/>
+
+				<ui:inputDate aura:id="taskform" class="form-component" required="true" label="Due Date" value="{!v.activityDate}" displayDatePicker="true"/>
+
+				<lightning:combobox aura:id="taskform" name="outcome" label="Outcome"
+		    			  class="form-component" 
+						  placeholder="Choose Outcome"
+						  value="{!v.newTask.Outcome__c}"
+						  options="{!v.outcomeOptions}"/>
+
+	            
+                <lightning:textarea aura:id="taskform" class="description-text-area form-component" name="myTextArea" value="{!v.newTask.Description}" 
+                                    label="Description" maxlength="32000"/>
+                <aura:if isTrue="{!(v.newTask.ActivityDate != Null)}">
+                    <ui:inputCheckbox aura:id="taskform" name="reminderSet" label="Add a reminder?"
+                                      value="{!v.newTask.IsReminderSet}" required="false"/>
+                    <aura:if isTrue="{!v.newTask.IsReminderSet}">
+                        <ui:inputDateTime aura:id="taskform" class="form-component"  label="Reminder Date" value="{!v.newTask.ReminderDateTime}" displayDatePicker="true"/>
+                    </aura:if>
+                </aura:if>
+				<aura:set attribute="else">
+
+		   			<lightning:combobox aura:id="taskform" name="status" label="Status"
+					   	  class="form-component" 
+						  placeholder="Choose Activity Type"
+						  value="{!v.newTask.Status}"
+						  options="{!v.statusOptions}"
+						  required="true"/>
+
+					<lightning:combobox aura:id="taskform" name="callType" label="Appointment Type"
+						  placeholder="Choose Appointment Type"
+						  value="{!v.newTask.Appointment_Type__c}"
+						  options="{!v.appointmentTypeOptions}"
+						  required="false"/>
+
+					<div class="form-component">
+						<ui:inputCheckbox aura:id="taskform" label="Pre-Plan"
+							name="prePlan"
+							value="{!v.newTask.Pre_Plan__c}"/>
+					</div>
+					
+					<div class="form-component">
+						<ui:inputCheckbox aura:id="taskform" label="Notes Received"
+							name="notesReceived"
+							value="{!v.newTask.Notes_Received__c}"/>
+					</div>
+
+					<lightning:combobox aura:id="taskform" name="priority" label="Priority"
+							  class="form-component" 
+							  placeholder="Choose Priority"
+							  value="{!v.newTask.Priority}"
+							  options="{!v.priorityOptions}"
+							  required="true"/>
+
+					<lightning:input aura:id="taskform" label="Subject"
+								 name="subject"
+								 class="form-component" 
+								 value="{!v.newTask.Subject}"
+								 required="false"/>
+
+					<ui:inputDate aura:id="taskform" class="form-component" required="true" label="Due Date" value="{!v.activityDate}" displayDatePicker="true"/>
+                    
+                    <lightning:textarea aura:id="taskform" class="description-text-area form-component" name="myTextArea" value="{!v.newTask.Description}" 
+                                        label="Description" maxlength="32000"/>
+                    <aura:if isTrue="{!(v.newTask.ActivityDate != Null)}">
+                        <ui:inputCheckbox aura:id="taskform" name="reminderSet" label="Add a reminder?"
+                                          value="{!v.newTask.IsReminderSet}" required="false"/>
+                        <aura:if isTrue="{!v.newTask.IsReminderSet}">
+                            <ui:inputDateTime aura:id="taskform" class="form-component"  label="Reminder Date" value="{!v.newTask.ReminderDateTime}" displayDatePicker="true"/>
+                        </aura:if>   
+                    </aura:if>
+                </aura:set>
+			</aura:if>
+
+			
+		</form>
+
+		<div class="modal-footer">
+			<lightning:button label="Save"
+					  class="slds-m-top--medium"
+					  variant="brand"
+					  onclick="{!c.clickSaveTask}"/>
+		</div>
+
+	</aura:if>
+</aura:component>

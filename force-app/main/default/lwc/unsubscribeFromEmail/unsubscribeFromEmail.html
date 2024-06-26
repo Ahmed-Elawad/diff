@@ -1,0 +1,49 @@
+<!-- sldsValidatorIgnore -->
+<template>
+    <lightning-card>
+        <div class="slds-align_absolute-center slds-grid_vertical">
+            <h1 slot="title">
+                <img src={headerPng} alt="lampIcon" class="customIcon">
+            </h1>
+            </br>
+            <div data-id="toastModel" style="height: 4rem;" class="slds-hide">
+                <div class="slds-notify_container slds-is-relative">
+                    <div class={mainDivClass} role="status">
+                        <span class="slds-assistive-text"></span>
+                          <span class={messageDivClass}>
+                          <lightning-icon icon-name={iconName} size="small" variant="inverse"></lightning-icon>
+                        </span>
+                        <div class="slds-notify__content">
+                            <h2 class="slds-text-heading_small ">Successfully unsubscribed!</h2>
+                        </div>
+                        <div class="slds-notify__close">
+                            <button class={closeDivClass} title="Close" onclick={closeModel}>
+                                <lightning-icon icon-name={closeIconName} size="small" variant="inverse"> </lightning-icon>
+                                <span class="slds-assistive-text">Close</span>
+                            </button>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+
+            <lightning-input 
+                class="inputClass" 
+                required=true 
+                type="text" 
+                data-id="txtEmailAddress"
+                label="Email Address"
+                onchange={chkEmailAddress}>
+            </lightning-input>
+            </br>
+            <lightning-button 
+                type="button"
+                variant="brand"
+                label="Unsubscribe" 
+                onclick={unsubscribe}>
+            </lightning-button>
+        </div>
+</lightning-card>
+
+
+
+</template>

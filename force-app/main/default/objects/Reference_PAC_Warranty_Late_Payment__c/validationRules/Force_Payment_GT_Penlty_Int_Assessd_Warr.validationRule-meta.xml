@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_Payment_GT_Penlty_Int_Assessd_Warr</fullName>
+    <active>true</active>
+    <description>Force the related Reference PAC.Penalty &amp; Interest Assessed value via the Penalty &amp; Interest Assessed link field to have a value greater than the Payment Amount when the Payment Type = Warranty.</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;PAC Warranty Record Type&quot;),
+(Payment_Amount__c &gt;= 0),
+(Payment_Amount__c &gt; Penalty_Interest_Assessed_link__c),
+($Profile.Name &lt;&gt;&quot;System Administrator&quot;)
+)</errorConditionFormula>
+    <errorDisplayField>Payment_Amount__c</errorDisplayField>
+    <errorMessage>Payment amount requested is higher than P&amp;I assessment field on Reference PAC record.  Update payment amount being requested or correct P&amp;I assessment field on Reference PAC record and resubmit warranty request.</errorMessage>
+</ValidationRule>

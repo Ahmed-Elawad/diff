@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WC_Workable__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>Case 34379186
+
+IF(AND(
+Do_Not_Call__c = FALSE,
+Email_Opt_Out__c = FALSE,
+Out_of_Business__c = FALSE,
+OR(ISBLANK(SensitivityList__c),NOT(CONTAINS(SensitivityList__c, &quot;Workers Comp&quot;))),
+NOT(ISPICKVAL(Workers_Compensation__c , &apos;Workers Comp Payment Service&apos;)),
+NOT(ISPICKVAL(Type,&apos;HROi Client&apos;)),
+OR(ISBLANK(OpportunityTypes__c),NOT(CONTAINS(OpportunityTypes__c, &quot;Workers Comp&quot;)))
+), TRUE, FALSE)
+
+IF(AND(
+Do_Not_Call__c = FALSE,
+Email_Opt_Out__c = FALSE,
+Out_of_Business__c = FALSE,
+NOT(CONTAINS(SensitivityList__c , &apos;Workers Comp&apos;)),
+NOT(ISPICKVAL(Workers_Compensation__c , &apos;Workers Comp Payment Service&apos;)),
+NOT(ISPICKVAL(Type,&apos;HROi Client&apos;)),
+NOT(CONTAINS(OpportunityTypes__c,&apos;Workers Comp&apos;))), TRUE, FALSE)</description>
+    <formula>IF(ISPICKVAL(Restricted_Industry__c,&apos;CRB&apos;),false,
+IF(
+		AND(
+			Do_Not_Call__c = FALSE
+			,Email_Opt_Out__c = FALSE
+			,Out_of_Business__c = FALSE
+                        ,Benetrac_Indicator__c = false
+			,NOT(ISPICKVAL(Permanent_Hold_Out_Description__c,&apos;Ecommerce&apos;))
+			,OR(ISBLANK(SensitivityList__c),NOT(CONTAINS(SensitivityList__c, &quot;Workers Comp&quot;)))
+			,NOT(ISPICKVAL(Workers_Compensation__c , &apos;Workers Comp Payment Service&apos;))
+			,NOT(ISPICKVAL(Type,&apos;HROi Client&apos;))
+			, NOT(ISPICKVAL(Type,&apos;Oasis Client&apos;))
+			, NOT(ISPICKVAL(Type,&apos;PEO Client&apos;))
+			,OR(ISBLANK(OpportunityTypes__c),NOT(CONTAINS(OpportunityTypes__c, &quot;Workers Comp&quot;)))
+			,(ISBLANK( Insurance_Broker_Name_Ref__c) || Insurance_Broker_Name_Ref__r.Sensitivity_BenAdmin__c = false)
+		), 
+		TRUE, 
+		FALSE
+	)
+)</formula>
+    <label>WC Workable</label>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

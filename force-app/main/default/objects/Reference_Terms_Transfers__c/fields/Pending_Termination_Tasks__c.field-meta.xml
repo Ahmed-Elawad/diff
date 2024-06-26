@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pending_Termination_Tasks__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>IF(NOT (ISBLANK ( Term_Transfer_Stopped__c )) , &quot;Term/Transfer Stopped&quot;&amp;BR()&amp; 
+( 
+IF(ISPICKVAL( NPR_CPR_Resolution__c , &quot;Client Saved - Keeping Payroll&quot;), &quot;Client Saved - Keeping Payroll&quot;&amp;BR(),&quot;&quot;)&amp; 
+
+IF(ISPICKVAL( NPR_CPR_Resolution__c , &quot;Client Saved - Set Up Non Payroll&quot;), &quot;Client Saved - Set Up Non Payroll&quot;&amp;BR(),&quot;&quot;)&amp; 
+
+IF(ISPICKVAL(SH_CPR_Resolution__c , &quot;Client Postponed Termination&quot;), &quot;Client Postponed Termination&quot;&amp;BR(),&quot;&quot;)&amp; 
+
+IF(ISPICKVAL(SH_CPR_Resolution__c, &quot;Client Saved&quot;), &quot;Client Saved - Safe Harbor Call&quot;&amp;BR(),&quot;&quot;)&amp; 
+
+
+IF( Flag_Notes_as_Important__c ==True, &quot;See Termination Milestone Notes&quot;&amp;BR(), &quot;&quot;) 
+
+) 
+, 
+( 
+IF( ISPICKVAL( Discrepancy__c , &quot;Yes&quot;) &amp;&amp; ISBLANK( Discrepancy_Closed_Date__c ) , &quot;Unresolved Paperwork Discrepancy&quot;&amp;BR(), &quot;&quot;) &amp; 
+IF( Last_Check_Date__c &gt; Today(), &quot;Future Last Check Date&quot;&amp;BR(), &quot;&quot;) &amp; 
+IF(NOT (ISBLANK ( Date_NPR_Callout_Sent_to_CPR__c )) &amp;&amp; ISBLANK( Retention_Call_Completed__c ) , &quot;CPR NPR Callout&quot;&amp;BR(), &quot;&quot;) &amp; 
+IF(NOT (ISBLANK ( Date_SH_Callout_Sent_to_CPR__c )) &amp;&amp; ISBLANK( CPR_SH_Compliance_Call_Completed__c ), &quot;CPR Safe Harbor Call&quot;&amp;BR(),&quot;&quot;) &amp; 
+IF(NOT (ISBLANK ( Date_Sent_to_LDPS__c )) &amp;&amp; ( ISBLANK( ROE_Completed_Date__c )&amp;&amp; ISBLANK( ROE_Returned_Date__c )), &quot;Process ROE&apos;s&quot;&amp;BR(),&quot;&quot;) &amp; 
+IF(NOT (ISBLANK ( Date_Sent_to_Service_Support__c )) &amp;&amp; ISBLANK( Forfeiture_Allocation_Completed_Attached__c ),&quot;Prepare Forfeiture Allocation&quot;&amp;BR(),&quot;&quot;) &amp; 
+IF(NOT (ISBLANK ( Date_Forfeitures_Send_to_CAM__c )) &amp;&amp; ISBLANK( Forfeiture_Trade_Date__c ), &quot;Trade Forfeiture Account&quot;&amp;BR(),&quot;&quot;)&amp; 
+IF( Flag_Notes_as_Important__c ==True, &quot;See Termination Milestone Notes&quot;&amp;BR(), &quot;&quot;)&amp; 
+IF(NOT (ISBLANK ( Send_to_CAM_to_Trade_Holding_Acct__c )) &amp;&amp; ISBLANK( Holding_Account_Trade_Date__c ), &quot;Trade Holding Account &quot;&amp;BR(),&quot;&quot;)&amp; 
+IF((Unresolved_Allocation__c ) &amp;&amp; (ISBLANK ( Allocation_Issue_Resolved__c )), &quot;Unresolved Allocation Issue&quot; &amp;BR(),&quot;&quot;)&amp; 
+IF(NOT (ISBLANK ( Email_Sent_to_Guided_Choice__c )) &amp;&amp; ISBLANK( Managed_Accounts_Resolved__c ), &quot;Managed Accounts Issue&quot;&amp;BR(),&quot;&quot;) &amp; 
+IF(NOT (ISBLANK ( Bank_Detail_Issue_Sent_to_Audit__c )) &amp;&amp; ISBLANK( Bank_Detail_Issue_Resolved__c ), &quot;Bank Detail Issue&quot;&amp;BR(),&quot;&quot;) &amp; 
+IF(NOT (ISBLANK ( Alerts_Sent_to_CAT__c )) &amp;&amp; ISBLANK( Alerts_Resolved__c ), &quot;Clear Outstanding Alerts&quot;&amp;BR(),&quot;&quot;) &amp; 
+IF(NOT (ISBLANK ( Contributions_on_Hold_Sent_to_CAT__c )) &amp;&amp; ISBLANK( Contributions_on_Hold_Resolved__c ), &quot;Contributions on Hold&quot;&amp;BR(),&quot;&quot;) &amp; 
+IF(ISPICKVAL (Holding_Account_Balance__c, &quot;Yes&quot;) &amp;&amp; ISBLANK( Send_to_CAM_to_Trade_Holding_Acct__c), &quot;Holding Account Balance&quot;&amp;BR(),&quot;&quot;)&amp; 
+IF(ISPICKVAL( NPR_CPR_Resolution__c , &quot;Client Saved - Keeping Payroll&quot;), &quot;Client Saved - Keeping Payroll&quot;&amp;BR(),&quot;&quot;)&amp; 
+IF(ISPICKVAL( NPR_CPR_Resolution__c , &quot;Client Saved - Set Up Non Payroll&quot;), &quot;Client Saved - Set Up Non Payroll&quot;&amp;BR(),&quot;&quot;)&amp; 
+IF(ISPICKVAL(SH_CPR_Resolution__c , &quot;Client Postponed Termination&quot;), &quot;Client Postponed Termination&quot;&amp;BR(),&quot;&quot;)&amp; 
+IF(ISPICKVAL(SH_CPR_Resolution__c, &quot;Client Saved&quot;), &quot;Client Saved - Safe Harbor Call&quot;&amp;BR(),&quot;&quot;) 
+) 
+)</formula>
+    <label>Pending Termination Tasks</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

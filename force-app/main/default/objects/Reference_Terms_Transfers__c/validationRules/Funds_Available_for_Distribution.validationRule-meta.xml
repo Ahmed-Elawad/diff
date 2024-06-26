@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Funds_Available_for_Distribution</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name, &quot;System Admin&quot;)),
+OR($Profile.Name = &quot;2008-09 HRS 4S Operations&quot;,$Profile.Name = &quot;2008-09 HRS 4S Operations B&quot;,$Profile.Name =&quot;2008-09 HRS 4S Service Manager&quot;),
+
+RecordType.Name = &quot;HRS 4S Manual Trade&quot;
+,
+
+
+NOT(ISBLANK(Distribution_Entered__c)), ISBLANK(Funds_Available_for_Distribution__c)
+)</errorConditionFormula>
+    <errorMessage>Please fill in the Funds Available for Distribution to continue.</errorMessage>
+</ValidationRule>

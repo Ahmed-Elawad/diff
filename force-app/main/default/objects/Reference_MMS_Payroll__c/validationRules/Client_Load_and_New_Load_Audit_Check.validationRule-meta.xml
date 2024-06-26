@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Client_Load_and_New_Load_Audit_Check</fullName>
+    <active>true</active>
+    <description>Client Load and New Load Audit cannot be performed by the same person</description>
+    <errorConditionFormula>(ISCHANGED(Client_Load_Completion_Date__c) || ISCHANGED( New_Load_Audit_Date__c)) &amp;&amp;  NOT(ISNULL(Client_Load_Completion_Date__c)) &amp;&amp; Client_Load_Completed_by__c = ($User.FirstName + &quot; &quot; + $User.LastName)</errorConditionFormula>
+    <errorDisplayField>New_Load_Audit_Performed_by__c</errorDisplayField>
+    <errorMessage>Client Load and New Load Audit cannot be performed by the same person</errorMessage>
+</ValidationRule>

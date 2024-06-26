@@ -1,0 +1,111 @@
+<!-- A component to setup meeting information.
+
+   History
+   -------
+   02/22/2011 Dan Carmen        Created.
+   04/15/2011 Dan Carmen        Expanded visible size of Subject field. 
+   04/06/2016 Justin Stouffer   Added in logic to display differently in Salesforce1.
+   02/17/2017 Jacob Hinds       Adding in extra Ids for rerendering.
+   07/17/2020 Michael Karcz		Added "Onsite or Virtual" field
+   03/11/2021 Carrie Marciano	Added styleClass="required-opp-meeting-input" for the Onsite or Virtual field
+ -->
+<apex:component id="meetingCMPId" controller="MeetingController">
+<!-- 
+	<apex:attribute name="pageController" 
+		type="PageControllerBase" 
+		assignTo="{!pageController}" 
+		required="true" 
+		description="The controller for the page." /> -->
+	<apex:attribute name="meetingEvent"
+		type="Event"
+		assignTo="{!evnt}"
+		required="true"
+		description="The Meeting Event." />
+	<apex:attribute name="isSF1" 
+		description="Is this SalesForce 1"
+		type="Boolean" 
+		required="false" 
+		default="false" />
+
+	<apex:outputPanel rendered="{!NOT(isSF1)}" id="meetingOutputPanel">
+		<hr/>
+
+		<apex:outputPanel id="StartEndDateComponent">
+			<div class="slds-section slds-is-open">
+
+
+				<h3 class="slds-section__title">
+					<button aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action">
+						<span class="slds-truncate banner-lightning" title="Section Title">
+							New Meeting
+							<span class="titleSeparatingColon">:</span>
+						</span>
+					</button>
+				</h3>
+
+				<div class="slds-grid slds-wrap">
+					<div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+						<label class="slds-form-element__label block-display">Type</label>
+						<apex:inputField styleClass="slds-input" value="{!evnt.Type}" />
+					</div>
+				</div>
+				
+				<div class="slds-grid slds-wrap">
+
+					<div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+						<label class="slds-form-element__label block-display">Meeting Date</label>
+						<apex:inputField styleClass="slds-input" value="{!evnt.ActivityDate}" id="meet_date" >
+							<apex:actionSupport event="onchange" action="{!changeDateTime}" rerender="StartEndDateComponent" />
+						</apex:inputField>
+					</div>
+
+					<div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+						<label class="slds-form-element__label block-display">Subject</label>
+						<apex:inputText styleClass="slds-input" id="event_subject" value="{!evnt.Subject}" size="50" />
+					</div>
+
+					<div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+						<label class="slds-form-element__label block-display">Meeting Time</label>
+						<apex:selectList styleClass="slds-select" value="{!timeSelection}" id="meet_time" title="Meeting Time" size="1">
+							<apex:selectOptions value="{!timeOptions}"/>
+							<apex:actionSupport event="onchange" action="{!changeDateTime}" rerender="StartEndDateComponent" />
+						</apex:selectList>
+					</div>
+
+					<div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+						<label class="slds-form-element__label block-display">Meeting Duration</label>
+						<apex:selectList styleClass="slds-select" value="{!durationSelection}" id="meet_duration" title="Meeting Duration" size="1">
+							<apex:selectOptions value="{!durationOptions}"/>
+							<apex:actionSupport event="onchange" action="{!changeDateTime}" rerender="StartEndDateComponent" />
+						</apex:selectList>
+					</div>
+
+					<div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+						<label class="slds-form-element__label block-display">Meeting Start</label>
+						<span class="slds-form-element__static">
+							<apex:outputField styleClass="slds-form-element__static" value="{!evnt.ActivityDateTime}" id="meet_start" />
+						</span>
+					</div>
+
+					<div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+						<label class="slds-form-element__label block-display">Meeting End</label>
+						<apex:outputText styleClass="slds-form-element__static" value="{!formattedEndDateTime}" id="meet_end" />
+					</div>
+                    
+                    <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+						<label class="slds-form-element__label block-display">Onsite or Virtual</label>
+						<apex:inputField styleClass="slds-input required-opp-meeting-input" value="{!evnt.Onsite_or_Virtual__c}" />
+					</div>
+
+				</div>
+				
+				<div class="slds-p-horizontal_large">
+					<label class="slds-form-element__label block-display">Description</label>
+					<apex:inputTextArea styleClass="slds-textarea" value="{!evnt.Description}" rows="6" cols="30" id="event_description"/>
+				</div>
+
+			</div>
+
+		</apex:outputPanel>
+	</apex:outputPanel>
+</apex:component>

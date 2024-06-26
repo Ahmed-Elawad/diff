@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Payroll_Issue_Reason_Required</fullName>
+    <active>true</active>
+    <description>Required to enter an Issue Reason if there is an Issue</description>
+    <errorConditionFormula>NOT(ISNULL(Payroll_Issue__c))&amp;&amp;(ISPICKVAL(Payroll_Issue_Reason__c,&quot;&quot;))</errorConditionFormula>
+    <errorDisplayField>Payroll_Issue__c</errorDisplayField>
+    <errorMessage>Payroll Issue Reason Must Be Filled Out Before Saving With Payroll Issue</errorMessage>
+</ValidationRule>

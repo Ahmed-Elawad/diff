@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>P_C_Future_Renewal_Stage_Required_Fields</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+ISCHANGED( StageName),
+ISPICKVAL(StageName,&apos;Future Renewal&apos;),
+Contains($Label.OpptyRecordTypeForPCFutureRenewalStageRequiredFields,$RecordType.DeveloperName),
+ OR(
+ISPICKVAL(Account.Work_Comp_Renewal_Date__c,&apos;&apos;),
+ISBLANK(Account.Workers_Comp_Carrier__c),
+ISBLANK(Follow_Up_Date__c)
+) 
+
+)</errorConditionFormula>
+    <errorMessage>Work Comp Renewal Date and Workers Comp Carrier on the Prospect-Client is required. Follow Up Date on Opportunity is required</errorMessage>
+</ValidationRule>

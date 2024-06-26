@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Time_Attendance_Billing_Seasonal_Hold</fullName>
+    <columns>NAME</columns>
+    <columns>Prospect_Client_Name__c</columns>
+    <columns>Branch_Client_ID__c</columns>
+    <columns>Client_Type__c</columns>
+    <columns>Case_Lookup__c</columns>
+    <columns>Seasonal_Hold__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Seasonal_Hold__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <filters>
+        <field>TAA_Status__c</field>
+        <operation>notEqual</operation>
+        <value>,Cancelled,Refused</value>
+    </filters>
+    <label>Time Attendance Billing - Seasonal Hold</label>
+    <sharedTo>
+        <role>TimeAttendanceBilling</role>
+        <role>TimeAttendanceManager</role>
+        <role>TimeAttendanceSupervisorOperations</role>
+    </sharedTo>
+</ListView>

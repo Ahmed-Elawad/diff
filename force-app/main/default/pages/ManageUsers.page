@@ -1,0 +1,237 @@
+<!-- A wizard to manager User events
+
+   History
+   -------
+   10/29/2010 Dan Carmen   Created 
+   11/21/2011 Dan Carmen   Add in logic to maintain queues
+   11/26/2018 Jake Hinds   Adding in license request
+   8/25/2020  Carrie Marciano Adding Oracle CPQ license functionality
+   06/01/2023 Carrie Marciano FY24 Transfer User options (originally done by Bindu)
+
+           tabStyle="Manage_Users__tab"   
+
+ -->
+<apex:page controller="ManageUserController" 
+           showHeader="true"
+           id="ManageUsersPage">
+  <c:PageMessage />
+  
+  
+  <apex:form >
+    <!-- Initial entry and prompting of the page -->
+    <apex:pageBlock id="allStepsBlock" rendered="{!showMainBlock}">
+      <apex:pageMessages />
+      <apex:pageBlockSection rendered="{!step1}" columns="1" title="What would you like to do?">
+        <apex:selectRadio layout="pageDirection" 
+                          required="true" 
+                          value="{!userTransfer.Manage_Type__c}"
+                          title="What would you like to do?">
+           <apex:selectOptions value="{!manageOptions}"/>
+         
+        </apex:selectRadio>
+        <apex:outputLabel value="If Transferring, Ending, or managing the Queue/Group/Licensing for an Existing User, enter the User information here." /> 
+        <apex:inputField value="{!userTransfer.Existing_User__c}" />  
+        <apex:inputField value="{!userTransfer.Effective_Date__c}" />
+
+        <apex:outputLabel value="If you are tranferring the Existing User, select a User to Mirror for the Transfer." />
+        <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Select a User to Mirror for the Transfer"/>
+           <apex:inputField value="{!userTransfer.CopyUserFrom__c}" />
+        </apex:pageBlockSectionItem>
+        <apex:outputLabel value="If you do not have a User to Mirror, enter Profile, Role and Sales Org that should be used." />   
+        <apex:pageBlockSectionItem >  
+            <apex:outputLabel value="Profile"/>
+            <apex:inputField value="{!userTransfer.Profile__c}" /> 
+        </apex:pageBlockSectionItem>  
+        <apex:pageBlockSectionItem >  
+            <apex:outputLabel value="Role"/>
+            <apex:inputField value="{!userTransfer.Role__c}" />           
+        </apex:pageBlockSectionItem>   
+        <apex:pageBlockSectionItem >  
+            <apex:outputLabel value="Sales Org"/>
+            <apex:inputField value="{!userTransfer.Sales_Org__c}" />           
+        </apex:pageBlockSectionItem>    
+        <apex:commandButton rendered="{!step1}" action="{!selectManageType}" value="Next" styleClass="btn"/>  
+      </apex:pageBlockSection>
+ 
+        <!--   *******************  Step 2  ************************* -->
+        
+       <apex:pageBlockSection rendered="{!step2}"  columns="2">
+
+          <apex:outputLabel rendered="{!isTxfer}" value="Verify the new User information"/>
+          <apex:pageBlockSectionItem rendered="{!isTxfer}" />
+          
+          <apex:outputField rendered="{!isTxfer}" value="{!existingUser.FirstName}" />
+          <apex:outputField rendered="{!AND(isTxfer,(userToMirror!= null))}" value="{!userToMirror.UserRoleId}" />	
+          	
+          <apex:outputField rendered="{!isTxfer}" value="{!existingUser.LastName}" />	
+          <apex:outputField rendered="{!AND(isTxfer,(userToMirror!= null))}" value="{!userToMirror.ProfileId}" />         
+          <apex:inputField rendered="{!isTxfer}" required="true" value="{!userTransfer.Email__c}" />
+          <apex:pageBlockSectionItem rendered="{!isTxfer}" />
+          
+          <apex:inputField rendered="{!isTxfer}" required="true" value="{!userTransfer.Username__c}" />
+          <apex:pageBlockSectionItem rendered="{!isTxfer}" />
+           
+          <apex:inputField rendered="{!isTxfer}" required="true" value="{!userTransfer.CostCenter__c}" />
+          <apex:pageBlockSectionItem rendered="{!isTxfer}" />
+           
+          <apex:outputText rendered="{!AND(userTransfer.HasOpenActivity__c,OR(AND(isTxfer,NOT(isExistingSales)),isEnd))}" style="color:BLUE; font-weight: bold;" value="There is open activity for this User. If you wish to transfer the open activity, select a User. Otherwise it will remain with the user record you are transferring from (the inactive User)." />
+          <apex:outputText rendered="{!AND(userTransfer.HasOpenActivity__c,isTxferActivity)}" style="color:BLUE; font-weight: bold;" value="There is open activity for this User. Select a User to transfer the activity to." />
+          <apex:pageBlockSectionItem rendered="{!AND(userTransfer.HasOpenActivity__c,OR(AND(isTxfer,NOT(isExistingSales)),isTxferActivity,isEnd))}" />
+          
+          <apex:pageBlockSectionItem rendered="{!AND(userTransfer.HasOpenActivity__c,OR(NOT(isTxfer),NOT(isExistingSales)))}">
+             <apex:outputLabel value="Select a User to transfer open Activity to" />
+             <apex:inputField value="{!userTransfer.Activity_Xfer_To__c}" />
+          </apex:pageBlockSectionItem>
+          <apex:pageBlockSectionItem rendered="{!AND(userTransfer.HasOpenActivity__c,OR(NOT(isTxfer),NOT(isExistingSales)))}" />
+          
+       <!--   <apex:selectList size="1" required="true" value="{!selectedValue}" label="Records to Transfer" multiselect="false" style="width: 200px;">
+              <apex:selectOptions value="{!transferExistingUsers}"></apex:selectOptions>
+          </apex:selectList>        
+ 		  <apex:pageBlockSectionItem rendered="{!AND(isExistingSales,isTxfer)}" /> -->
+           
+          <apex:pageBlockSectionItem rendered="{!AND(isExistingSales,isTxfer)}" >
+                <apex:outputLabel value="Type of Transfer" />
+                <apex:outputPanel >
+                    <div class="requiredInput">
+                        <div class="requiredBlock"></div>
+                        <apex:selectList size="1" required="true" value="{!userTransfer.Transfer_Type__c}" multiselect="false" style="width: 200px;">
+              				<apex:selectOptions value="{!typeOptions}"></apex:selectOptions>
+          				</apex:selectList>
+                    </div>
+                </apex:outputPanel>
+           </apex:pageBlockSectionItem>
+           <!-- <apex:pageBlockSectionItem rendered="{!AND(isExistingSales,isTxfer)}" /> -->
+           
+           <apex:pageBlockSectionItem >
+              <apex:outputPanel >
+                <apex:commandButton rendered="{!isTxfer}" action="{!saveTransfer}" value="Submit Transfer" styleClass="btn"/>
+                <apex:commandButton rendered="{!NOT(isTxfer)}" action="{!prepareToTransfer}" value="Next" styleClass="btn"/>
+                <apex:commandButton action="{!cancel}" immediate="true" value="Cancel-Start Over" styleClass="btn"/>
+              </apex:outputPanel>
+		   </apex:pageBlockSectionItem>
+       </apex:pageBlockSection>
+  
+    </apex:pageBlock>
+    
+    <!-- For Adding/Removing users From Queues/Groups -->
+    <apex:pageBlock id="queueBlock" rendered="{!maintainGroup}" title="Add/Remove User from Queue/Group">
+     <apex:pageMessages />
+      <apex:pageBlockSection rendered="{!hasGroups}" columns="1" title="Groups currently in">
+        <apex:actionStatus startText="Removing User from Group..." id="removeFromGroupStatus"/>
+        <apex:pageBlockTable value="{!gms}" var="gm" cellPadding="4" border="1">
+          <apex:column headerValue="Action">
+             <apex:commandLink immediate="true" rerender="queueBlock" status="removeFromGroupStatus" action="{!handleRecordAction}">Remove
+                <apex:param name="actionType" value="remove"/>
+                <apex:param name="recId" value="{!gm.Id}" />
+             </apex:commandLink>
+          </apex:column>
+          <apex:column headervalue="Group Member Id">
+             <apex:outputField value="{!gm.Id}" />
+          </apex:column>
+          <apex:column headervalue="Group/Queue Name">
+             <apex:outputField value="{!gm.Group.Name}" />
+          </apex:column>
+          <apex:column headerValue="Date Added">
+             <apex:outputField value="{!gm.SystemModStamp}" />
+          </apex:column>
+           <!--
+          <apex:column headervalue="Group/Queue Type">
+             <apex:outputField value="{!gm.Group.Type}" /> 
+          </apex:column>
+           -->
+        </apex:pageBlockTable>
+        
+      </apex:pageBlockSection>
+      
+      <apex:pageBlockSection title="Add User to Group">
+         <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Group/Queue Name"/>
+            <apex:inputText required="true" value="{!groupName}" />
+         </apex:pageBlockSectionItem>
+
+         <apex:commandButton action="{!addToGroup}" value="Add To Group" rerender="queueBlock" status="addToGroupStatus"/>
+         <apex:actionStatus startText="Adding User to Group..." id="addToGroupStatus"/>
+
+      </apex:pageBlockSection>
+      <apex:commandButton action="{!cancel}" immediate="true" value="Done-Start Over" styleClass="btn"/>
+    </apex:pageBlock>
+
+    <apex:pageBlock id="userTransferEntered" rendered="{!showFinishedBlock}" title="All of the information needed entered successfully">
+       <apex:pageBlockSection columns="1">
+          <apex:outputField value="{!userTransfer.Manage_Type__c}" />
+          <apex:outputField value="{!userTransfer.Existing_User__c}" />
+          <apex:outputField value="{!userTransfer.Effective_Date__c}" />
+          <apex:outputField rendered="{!isTxfer}" value="{!userTransfer.New_User__c}" />
+          <apex:outputField rendered="{!isTxfer}" value="{!userTransfer.CopyUserFrom__c}" />
+          <apex:outputField rendered="{!userTransfer.HasOpenActivity__c}" value="{!userTransfer.Activity_Xfer_To__c}" />
+          <apex:outputField rendered="{!isTxfer}" value="{!userTransfer.ExistingUserIsSurvivor__c}" />
+          <apex:outputField rendered="{!isTxfer}" value="{!userTransfer.HasClosedActivity__c}" />
+          <apex:outputField value="{!userTransfer.HasOpenActivity__c}" />
+          <apex:outputField rendered="{!isTxfer}" value="{!userTransfer.IsExistingSales__c}" />
+          <apex:outputField rendered="{!isTxfer}" value="{!userTransfer.IsTxferSales__c}" />
+          <apex:outputField value="{!userTransfer.Status__c}" />
+          
+          <apex:outputText style="color:RED; font-weight: bold;" value="You must click Finished to complete this process!" />
+          
+          <apex:commandButton action="{!finished}" immediate="true" value="Finished" styleClass="btn"/>
+
+       </apex:pageBlockSection>
+       
+       <!-- For Adding Package Lisences From Users -->
+    </apex:pageBlock>
+        <apex:variable var="rowNum" value="{!0}"/>  
+    <apex:pageBlock id="manageLicenseBlock" rendered="{!packageSelected}" title="Manage Package Licences">
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:pageblockTable value="{!licenseWrapList}" var="a" rendered="{!packageSelected}">
+            <apex:column headerValue="Select" width="10%">
+                <apex:inputcheckbox value="{!a.selectedval}"/>
+            </apex:column>
+            <apex:column value="{!a.csettingname}" headerValue="Package Name"/>
+            <apex:column value="{!a.namePrefix}" headerValue="Package Name Prefix"/>
+             <!-- Commented as draft to change the picklist to multi select  -->    
+            <!--  <apex:column rendered="{!a.cpqLicense}" headerValue="CPQ User Type">
+                <apex:selectList value="{!a.cpqUserType}" multiselect="true" size="6" >
+                    <apex:selectOptions value="{!cpqUserTypes}" />
+                </apex:selectList>
+            </apex:column>   -->
+             <apex:column rendered="{!a.cpqLicense}" headerValue="CPQ User Type" style="height:5cm, width:5cm"> 
+               <apex:panelGrid columns="3" id="abcd">   
+                  <apex:selectList id="sel1" value="{!leftselected}" multiselect="true" style="width:200px" size="10">  
+                      <apex:selectOptions value="{!unselectedvalues}" />    
+                  </apex:selectList>    
+                      <apex:panelGroup >    
+                          <br/>     
+                          <div align="center" draggable="false" >                       
+                          <apex:commandLink action="{!selectclick}"  value="Add" rerender="abcd">   
+                           <apex:param value="{!a.indxvalue}" name="index"/>    
+                          </apex:commandLink>   
+                        </div>      
+                          <br/><br/>    
+                          <apex:commandLink action="{!unselectclick}"  value="Remove" rerender="abcd">  
+                           <apex:param value="{!a.indxvalue}" name="index1"/>   
+                           </apex:commandLink>  
+                      </apex:panelGroup>    
+                  <apex:selectList id="sel2" value="{!rightselected}" multiselect="true" style="width:200px" size="10"> 
+                      <apex:selectOptions value="{!SelectedValues}" />  
+                  </apex:selectList>    
+              </apex:panelGrid> 
+            </apex:column>  
+            <apex:variable var="rowNum" value="{!rowNum+1}"/>
+        </apex:pageblockTable>    
+        <!--<apex:commandButton action="{!ManageLicenses}" value="Request for License" rerender="manageLicenseBlock" status="request status"/>-->
+        <apex:actionStatus id="packageSaveStatus">
+            <apex:facet name="stop">
+                <apex:commandButton action="{!ManageLicenses}" status="packageSaveStatus" value="{!buttonName}" disabled="false" rerender="manageLicenseBlock"> 
+                </apex:commandButton>
+                
+            </apex:facet>
+            <apex:facet name="start">
+                <apex:commandButton action="{!ManageLicenses}" status="packageSaveStatus" value="Processing..." disabled="true"/> 
+            </apex:facet>
+        </apex:actionStatus>
+        <apex:commandButton action="{!cancel}" immediate="true" value="Return" styleClass="btn"/>
+    </apex:pageBlock>
+  </apex:form>
+
+</apex:page>

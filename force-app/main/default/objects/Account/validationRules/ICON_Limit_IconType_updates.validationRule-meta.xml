@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ICON_Limit_IconType_updates</fullName>
+    <active>true</active>
+    <description>Only certain User.Roles are allowed to update certain Icon Type picklist values.</description>
+    <errorConditionFormula>AND( 
+ISCHANGED(Icon_Type__c), 
+( (ISPICKVAL(Icon_Type__c, &apos;Reseller - Brick and Mortar&apos;)) || (ISPICKVAL(Icon_Type__c, &apos;Reseller - Online&apos;)) || (ISPICKVAL(Icon_Type__c, &apos;Reseller - Partner&apos;)) || (ISPICKVAL(Icon_Type__c, &apos;Reseller - New Dealer&apos;)) ), 
+($UserRole.Name &lt;&gt; &quot;Icon Service Manager&quot;), 
+($UserRole.Name &lt;&gt; &quot;Icon General Manager&quot;), 
+($UserRole.Name &lt;&gt; &quot;System Administrator&quot;) 
+)</errorConditionFormula>
+    <errorDisplayField>Icon_Type__c</errorDisplayField>
+    <errorMessage>Your User Role will not allow you to update this Icon Type picklist value.</errorMessage>
+</ValidationRule>

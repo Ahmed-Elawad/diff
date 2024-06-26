@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>TimeTrade_SF1__Notify_Event_Owner_on_Web_Conference_Failure</fullName>
+        <description>Notify Event Owner on Web Conference Failure</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>TimeTrade_SF1__TimeTrade_Emails/TimeTrade_SF1__TimeTrade_Meeting_Error_New</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>Initial_Presentation_checkbox_update</fullName>
+        <description>This will update the initial presentation checkbox</description>
+        <field>Initial_Presentation__c</field>
+        <literalValue>1</literalValue>
+        <name>Initial Presentation checkbox update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Location</fullName>
+        <description>Update Location field to Phone Appointment</description>
+        <field>Location</field>
+        <formula>&quot;Phone Appointment&quot;</formula>
+        <name>Location</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Un_check_Initial_Presentation</fullName>
+        <description>This will un-check initial presentation checkbox if necessary</description>
+        <field>Initial_Presentation__c</field>
+        <literalValue>0</literalValue>
+        <name>Un-check Initial Presentation</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>UpdateDescriptionFieldonNCTEvent</fullName>
+        <field>Description</field>
+        <formula>&quot;Welcome to Paychex HR Online&quot; &amp;BR()&amp;BR()&amp;BR()&amp;
+&quot;I am looking forward to assisting you in your utilization of the HR Online application.  Per our earlier conversation, you are registered to attend our live web-based New Client Training.  The session lasts approximately one hour and will give you an introductory overview of the main features of the application. You will receive a separate confirmation and instruction e-mail for your live training session, along with a reminder as your training date approaches.  If you are unable to attend, please contact me at the number below so we can reschedule your training.&quot;&amp;BR()&amp;BR()&amp;&quot;Once you have attended this training session, I will personally assist you in furthering your understanding of the system with detailed training regarding:&quot;&amp;BR()&amp;BR()&amp;
+&quot;•   Employee Access&quot;&amp;BR()&amp;
+&quot;•   Security&quot;&amp;BR()&amp;
+&quot;•   Hiring an Employee&quot;&amp;BR()&amp;
+&quot;•   Documents and Help Menu&quot;&amp;BR()&amp;
+&quot;•   Training Library&quot;&amp;BR()&amp;BR()&amp;
+
+&quot;As we go forward, I will also serve as your dedicated Paychex HR Online Advisor.  Within this letter, I have included a list of frequently asked questions that are typical of new HR Online clients.   Also for your convenience, I have attached an “HR Online Experience” Workbook that can be used as your ongoing reference guide.&quot;&amp;BR()&amp;BR()&amp;
+
+&quot;Please call me should you need assistance.&quot;</formula>
+        <name>Update Description Field on NCT Event</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>UpdateLocationField</fullName>
+        <description>Update Location Field with &quot;Phone Appointment&quot;</description>
+        <field>Location</field>
+        <formula>&quot;Phone Appointment&quot;</formula>
+        <name>Update Location Field</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_field_ActivityTypeValue</fullName>
+        <description>Update the field &quot;Activity Type Value&quot; - Set to value of Event Type.</description>
+        <field>Activity_Type_Value__c</field>
+        <formula>TEXT(Type)</formula>
+        <name>Update field ActivityTypeValue</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Set ActivityTypeValue</fullName>
+        <actions>
+            <name>Update_field_ActivityTypeValue</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Event.Type</field>
+            <operation>notContain</operation>
+            <value>zzz</value>
+        </criteriaItems>
+        <description>Set/update the field Activity Type Value on the Event obj.</description>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>TimeTrade_SF1__Web Conference Failure</fullName>
+        <actions>
+            <name>TimeTrade_SF1__Notify_Event_Owner_on_Web_Conference_Failure</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <formula>false</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

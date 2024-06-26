@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_LocalNameOther_populated_OH</fullName>
+    <active>true</active>
+    <description>Force users to populate the Local Name (if other/tax collector) field, depending on specific Tax Agency, Tax Type, Local Name and Status values for Ohio</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;Reference PAC Record Type&quot; ), 
+ ( (LEN(Local_Name_if_other_tax_collector__c) = 0) ),
+ ( (ISPICKVAL(Local_Name__c, &apos;RITA&apos;)) || (ISPICKVAL(Local_Name__c, &apos;CCA - Central Collection Agency&apos;)) ),
+ (ISPICKVAL(Tax_Type__c, &apos;Local/Other&apos;) ),
+ (ISPICKVAL(Tax_Agency__c, &apos;OH - OHIO&apos;)),
+ ( (NOT(ISPICKVAL(Status__c, &apos;Pending PAC Review - New Notice Received&apos;)))  &amp;&amp;   (NOT(ISPICKVAL(Status__c, &apos;Pending PAC Review - Additional Notice Received&apos;)))  &amp;&amp;  (NOT(ISPICKVAL(Status__c, &apos;Pending PAC Review - Transferring to PAC Service &amp; Support Team&apos;)))  ),
+ ($Profile.Name &lt;&gt;&quot;System Administrator&quot;)
+)</errorConditionFormula>
+    <errorDisplayField>Local_Name_if_other_tax_collector__c</errorDisplayField>
+    <errorMessage>You must enter a value in the Local Name (if other/tax collector) field, when selecting a Local Name value of RITA or CCA - Central Collection Agency.</errorMessage>
+</ValidationRule>

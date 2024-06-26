@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Client_Referral_Required</fullName>
+    <active>true</active>
+    <description>Client Referral is required when Referral-Name Dropper is selected from the Situation Field</description>
+    <errorConditionFormula>ISPICKVAL(Situation__c, &quot;Referral-Name Dropper&quot; )&amp;&amp; 
+ISBLANK( Client_Referral__c)</errorConditionFormula>
+    <errorDisplayField>Client_Referral__c</errorDisplayField>
+    <errorMessage>If Referral-Name Dropper is selected from the Situation field you must add a value in the Client Referral Field</errorMessage>
+</ValidationRule>

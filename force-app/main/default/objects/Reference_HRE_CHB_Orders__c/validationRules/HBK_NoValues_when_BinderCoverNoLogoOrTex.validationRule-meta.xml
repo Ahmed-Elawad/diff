@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HBK_NoValues_when_BinderCoverNoLogoOrTex</fullName>
+    <active>true</active>
+    <description>C52 - if  Binder Cover Option (Art__c) value = &apos;No Logo or Text,&apos; then the  Logo for the Binder and Client Name to be Printed on Binder fields must be Null.</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;Handbook HR Solutions Order Record Type&quot;), 
+( ISPICKVAL(Art__c, &apos;No Logo or Text&apos;) ), 
+( (NOT(ISPICKVAL(Logo_for_the_Binder__c, &apos;&apos;))) || (NOT(ISBLANK(Client_Name_to_be_Printed_on_Binder__c))) ),
+(Historical_Order_Indicator__c = 0), 
+(NOT(BEGINS($Profile.Name,&quot;HR Essentials&quot;))), 
+(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))) 
+)</errorConditionFormula>
+    <errorDisplayField>Art__c</errorDisplayField>
+    <errorMessage>You can not select a value for the Logo for the Binder and Client Name to be Printed on Binder fields when selecting a Binder Cover Option value of &apos;No Logo or Text.</errorMessage>
+</ValidationRule>

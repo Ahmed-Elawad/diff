@@ -1,0 +1,88 @@
+<!--Created by Bharat to show Discrepancy Summary-->
+<aura:component implements="forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable,lightning:utilityItem,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:appHostable" access="global">
+    <aura:attribute name="CensusDiscrepenciesLength" type="Integer"/>  
+    <aura:attribute name="CurrentHealthInvoiceDiscrepenciesLength" type="Integer"/> 
+    <aura:attribute name="HealthInsuranceSummaryOfBenefitsDiscrepenciesLength" type="Integer"/> 
+    <aura:attribute name="SUIRateFormsDiscrepenciesLength" type="Integer"/> 
+    <aura:attribute name="WCDeclarationPagePEOCurrentRateDiscrepenciesLength" type="Integer"/> 
+    <aura:attribute name="LossRunsDiscrepenciesLength" type="Integer"/> 
+    <aura:attribute name="WCClassesandWagesDiscrepenciesLength" type="Integer"/> 
+    <aura:attribute name="PayrollRegisterDiscrepenciesLength" type="Integer"/> 
+    <aura:attribute name="Recent12MonthsClaimHistoryDiscrepenciesLength" type="Integer"/> 
+    <aura:attribute name="LargeClaimsReportDiscrepenciesLength" type="Integer"/> 
+    <aura:attribute name="HealthInsuranceRenewalDiscrepenciesLength" type="Integer"/> 
+    <aura:attribute name="OtherDocumentsDiscrepenciesLength" type="Integer"/> 
+    
+    <!-- questionnaire item discs -->
+    <aura:attribute name='MedicalQuestionnaireDiscrepenciesLength' type="Integer"/> 
+    <aura:attribute name='CovidQuestionnaireDiscrepenciesLength' type="Integer"/> 
+    <aura:attribute name='d401KQuestionnaireDiscrepenciesLength' type="Integer"/> 
+    <aura:attribute name='PEOInformationSheetDiscrepenciesLength' type="Integer"/> 
+    <aura:attribute name='EPLIQuestionnaireDiscrepenciesLength' type="Integer"/> 
+    <aura:attribute name='WorkersCompQuestionnaireDiscrepenciesLength' type="Integer"/> 
+    <aura:attribute name="TotalDiscrepencies" type="Integer"/>
+    <aura:attribute name='commUser' type='boolean' />
+    
+    <ui:message severity="info" closable="false">
+        <center>
+            <h4 class="title slds-text-heading--medium">Discrepancy Summary</h4>
+            <ul>
+             	<li>Total - {!v.TotalDiscrepencies} Discrepancy</li>
+                <aura:if isTrue="{!v.CensusDiscrepenciesLength > 0}">  
+                    <li> Census - {!v.CensusDiscrepenciesLength} Discrepancy</li>
+                </aura:if>
+                <aura:if isTrue="{!v.CurrentHealthInvoiceDiscrepenciesLength > 0}">  
+                    <li> Current Health Invoice - {!v.CurrentHealthInvoiceDiscrepenciesLength} Discrepancy</li>
+                </aura:if>
+                <aura:if isTrue="{!v.HealthInsuranceSummaryOfBenefitsDiscrepenciesLength > 0}">  
+                    <li> Health Insurance Summary Of Benefit - {!v.HealthInsuranceSummaryOfBenefitsDiscrepenciesLength} Discrepancy</li>
+                </aura:if>
+                <aura:if isTrue="{!v.SUIRateFormsDiscrepenciesLength > 0}">  
+                    <li> SUI Rate Forms - {!v.SUIRateFormsDiscrepenciesLength} Discrepancy</li>
+                </aura:if>
+                <aura:if isTrue="{!v.WCDeclarationPagePEOCurrentRateDiscrepenciesLength > 0}">  
+                    <li> WC Declaration Page/PEO Current Rate- {!v.WCDeclarationPagePEOCurrentRateDiscrepenciesLength} Discrepancy</li>
+                </aura:if>
+                <aura:if isTrue="{!and (v.WCClassesandWagesDiscrepenciesLength > 0, v.commUser != true)}">  
+                    <li> Workers' Comp Classes and Wages- {!v.WCClassesandWagesDiscrepenciesLength} Discrepancy</li>
+                </aura:if>
+                <aura:if isTrue="{!v.LossRunsDiscrepenciesLength > 0}">  
+                    <li> Loss Runs - {!v.LossRunsDiscrepenciesLength} Discrepancy</li>
+                </aura:if>
+                <aura:if isTrue="{!v.PayrollRegisterDiscrepenciesLength > 0}">  
+                    <li> Payroll Register - {!v.PayrollRegisterDiscrepenciesLength} Discrepancy</li>
+                </aura:if>
+                <aura:if isTrue="{!v.Recent12MonthsClaimHistoryDiscrepenciesLength > 0}">  
+                    <li> Recent 12 Months Claim History - {!v.Recent12MonthsClaimHistoryDiscrepenciesLength} Discrepancy</li>
+                </aura:if>
+                <aura:if isTrue="{!v.LargeClaimsReportDiscrepenciesLength > 0}">  
+                    <li> Large Claims Report - {!v.LargeClaimsReportDiscrepenciesLength} Discrepancy</li>
+                </aura:if>
+                <aura:if isTrue="{!v.HealthInsuranceRenewalDiscrepenciesLength > 0}">  
+                    <li> Health Insurance Renewal - {!v.HealthInsuranceRenewalDiscrepenciesLength} Discrepancy</li>
+                </aura:if>
+                <aura:if isTrue="{! and((v.OtherDocumentsDiscrepenciesLength > 0),(v.commUser ==false))}">
+                    <li> Others - {!v.OtherDocumentsDiscrepenciesLength} Discrepancy</li>
+                </aura:if>
+                <aura:if isTrue="{!v.MedicalQuestionnaireDiscrepenciesLength > 0}">  
+                    <li> Medical Questionaire - {!v.MedicalQuestionnaireDiscrepenciesLength} Discrepancy</li>
+                </aura:if>
+                <aura:if isTrue="{!v.CovidQuestionnaireDiscrepenciesLength > 0}">  
+                    <li> Covid Questionnaire - {!v.CovidQuestionnaireDiscrepenciesLength} Discrepancy</li>
+                </aura:if>
+                <aura:if isTrue="{!v.d401KQuestionnaireDiscrepenciesLength > 0}">  
+                    <li> 401k Questionnaire - {!v.d401KQuestionnaireDiscrepenciesLength} Discrepancy</li>
+                </aura:if>
+                <aura:if isTrue="{!v.PEOInformationSheetDiscrepenciesLength > 0}">  
+                    <li> PEO Information Sheet - {!v.PEOInformationSheetDiscrepenciesLength} Discrepancy</li>
+                </aura:if>
+                <aura:if isTrue="{!v.EPLIQuestionnaireDiscrepenciesLength > 0}">  
+                    <li> EPLI Questionnaire - {!v.EPLIQuestionnaireDiscrepenciesLength} Discrepancy</li>
+                </aura:if>
+                <aura:if isTrue="{!v.WorkersCompQuestionnaireDiscrepenciesLength > 0}">  
+                    <li> Workers Comp Questionnaire - {!v.WorkersCompQuestionnaireDiscrepenciesLength} Discrepancy</li>
+                </aura:if>
+        	</ul>
+        </center>
+     </ui:message>    
+</aura:component>

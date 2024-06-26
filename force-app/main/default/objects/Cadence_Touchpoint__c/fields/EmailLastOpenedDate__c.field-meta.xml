@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>EmailLastOpenedDate__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <formula>IF(NOT(ISBLANK(AccountId__c)),AccountId__r.EmailLastOpened__c,
+IF(NOT(ISBLANK(ContactId__c)),ContactId__r.EmailLastOpened__c,
+IF(NOT(ISBLANK(LeadId__c)),LeadId__r.EmailLastOpened__c,
+IF(NOT(ISBLANK( ReferralAccount__c )),ReferralAccount__r.Account__r.EmailLastOpened__c,null)))
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Email Last Opened Date</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Date</type>
+</CustomField>

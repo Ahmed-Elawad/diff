@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Recycle_Lead_Contact__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>will be set to true only when Cadence type is “Inbound-Forms” or “Inbound -Oasis”</description>
+    <formula>If(CASE(Cadence_Type__c,&quot;Inbound-Forms&quot;, &quot;True&quot;, &quot;Inbound-Oasis&quot;, &quot;True&quot;, &quot;SMB INB&quot;, &quot;True&quot;, &quot;False&quot;) = &quot;True&quot;,
+true,
+false)
+
+/*IF((ISPICKVAL(Cadence_Type__c , &quot;Inbound-Forms&quot;) || ISPICKVAL(Cadence_Type__c , &quot;Inbound-Oasis&quot;)|| ISPICKVAL(Cadence_Type__c , &quot;SMB INB&quot;)), true, false) */</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>Indicates this is an Inbound Cadence and the Lead or Contact Stage will be set to Recycle with a reason of Cadence Completed if the sales rep completes all of the assigned steps</inlineHelpText>
+    <label>Recycle Lead/Contact</label>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

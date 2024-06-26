@@ -1,0 +1,87 @@
+<!-- 
+    Created By: Mendel Guillaume - BlackTab Group
+    Date Created: 2015-05-11
+    Description: Displays 5 buttons for appointment groupings
+ -->
+<apex:page docType="html-5.0" standardStylesheets="false" controller="MyAppointmentsLandingController" title="My Meetings">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <apex:includeScript value="{!$Resource.jQuery2_0_3}" />  
+
+   <apex:stylesheet value="{!URLFOR($Resource.Salesforce1Bootstrap, 'bootstrap-sf1-010-beta15/dist/css/bootstrap-namespaced.css')}"/>
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        .bootstrap-sf1 { margin-left: auto; margin-right: auto;}
+        .content { width: 98%; margin-left: auto; margin-right: auto;}
+        .button-row{padding: 10px;}
+    </style>
+        <div id="divContainer" class="bootstrap-sf1" >
+            <div class="page-header page-header-compact context-c-alarmclock">
+                <h1>My Appointments <span class="page-header-label">All</span></h1>
+            </div> 
+            <div class="content">
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-4  button-row">
+                        <a class="btn btn-success btn-lg btn-block" type="button" onclick="redirect('Today');">Today ({!TodayAppointmentCount})</a> 
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-4  button-row"> 
+                        <a class="btn btn-primary btn-lg btn-block" type="button" onclick="redirect('Week');">This Week ({!WeekAppointmentCount})</a> 
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-4  button-row">
+                        <a class="btn btn-warning btn-lg btn-block" type="button" onclick="redirect('Future');">Future ({!FutureAppointmentCount})</a> 
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-4  button-row">
+                        <a class="btn btn-info btn-lg btn-block" type="button" onclick="redirect('Last');">Last Week ({!LastWeekAppointmentCount})</a> 
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-4  button-row">
+                        <button class="btn btn-danger btn-lg btn-block" type="button" onclick="redirect('Past');">Past - Not Yet Updated ({!PastAppointmentCount})</button> 
+                    </div>
+                </div> 
+            </div>
+        </div>
+
+        <script> 
+            (function(){try{var a=navigator.userAgent; 
+                if((a.indexOf('Salesforce')!=-1)&&(a.indexOf('iPhone')!=-1||a.indexOf('iPad')!=-1)&&(a.indexOf('OS/8')!=-1||a.indexOf('OS 8')!=-1)&&(a.indexOf('Safari')==-1)){ 
+                var s=document.createElement('style'); 
+                s.innerHTML="html,html body{overflow: auto;-webkit-overflow-scrolling:touch;}body{position:absolute;left:0;right:0;top:0;bottom:0;}"; 
+                document.getElementsByTagName('head')[0].appendChild(s);}}catch(e){}})(); 
+        </script>
+                
+       <script type="text/javascript">
+            var sf1 = false;
+            
+            //Determines if using mobile app or desktop
+            if((typeof sforce != 'undefined') && (sforce != null)) 
+            {
+                sf1 = true;
+            }
+            
+            function redirect(meetingType)
+            {
+                //Salesforce1 redirect
+               if(sf1) 
+               {
+                    sforce.one.navigateToURL('/apex/MyAppointmentsList?type=' + meetingType , false);
+               }
+               else //Desktop redirect
+               {
+                    window.location = '/apex/MyAppointmentsList?type=' + meetingType;
+               }
+            }
+            
+            
+        </script>
+</apex:page>

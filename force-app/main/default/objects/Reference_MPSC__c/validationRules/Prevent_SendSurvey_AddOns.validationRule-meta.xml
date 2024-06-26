@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_SendSurvey_AddOns</fullName>
+    <active>true</active>
+    <description>Prevent user from populating Send Survey when one of the Add-on Ancillary fields is checked.</description>
+    <errorConditionFormula>AND( 
+( (Stand_alone_Flex_HR__c = true) || (Stand_alone_TAA__c = true) ), 
+ISCHANGED(Send_Survey__c), 
+(Send_Survey__c = true), 
+$Profile.Name &lt;&gt;&quot;System Administrator&quot; 
+)</errorConditionFormula>
+    <errorDisplayField>Send_Survey__c</errorDisplayField>
+    <errorMessage>You cannot send a Survey for an Add-On service.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Additional_Notes_field_is_manadatory</fullName>
+    <active>true</active>
+    <errorConditionFormula>And( 
+RecordTypeId = &quot;0120g000000EAXS&quot; , 
+ISBLANK( Additional_Notes__c ), 
+
+OR( 
+ISPICKVAL( Sub_Category__c ,&quot;Other (See Notes)&quot;), 
+ISPICKVAL( Check_Address__c ,&quot;Other - See Notes&quot;) 
+) 
+)</errorConditionFormula>
+    <errorMessage>&apos;Additional Notes&apos; field mandatory before it can be saved.</errorMessage>
+</ValidationRule>

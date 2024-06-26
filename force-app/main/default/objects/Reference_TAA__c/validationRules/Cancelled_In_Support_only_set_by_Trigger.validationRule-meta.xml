@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cancelled_In_Support_only_set_by_Trigger</fullName>
+    <active>true</active>
+    <description>Based action from the AssetTrigger the Support Ref Obj Current Step will be set to Cancelled in Support.  A &quot;person&quot; should not set this value, it is based on the Plan Cancel Date set by HRIS. A user with the profile of 2008-2009 Ops Admin may update this</description>
+    <errorConditionFormula>AND(RecordTypeId=&apos;01270000000UJwJ&apos;,  ISPICKVAL(Current_Step__c , &apos;Cancelled In Support&apos;))&amp;&amp;
+(
+NOT(BEGINS($UserRole.Name, &apos;System&apos;)) &amp;&amp;
+NOT($User.ProfileId = &apos;00e700000013gAF&apos;)   
+)</errorConditionFormula>
+    <errorDisplayField>Current_Step__c</errorDisplayField>
+    <errorMessage>Current Step cannot manually be set to Cancelled in Support.  Please choose another value before you can save the record.</errorMessage>
+</ValidationRule>

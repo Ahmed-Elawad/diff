@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Other_Specification_Notes_required</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND
+(
+ISPICKVAL( Type_of_Check__c , &quot;Other&quot;) ,
+ISBLANK(Other_Specification_Notes__c ), 
+OR
+(
+ RecordType.Name = &quot;401k Overnight Request&quot;,
+RecordType.Name = &quot;401k Address Change Request&quot;
+)
+)</errorConditionFormula>
+    <errorDisplayField>Other_Specification_Notes__c</errorDisplayField>
+    <errorMessage>This field is required when &apos;Type of Check&apos; = Other</errorMessage>
+</ValidationRule>

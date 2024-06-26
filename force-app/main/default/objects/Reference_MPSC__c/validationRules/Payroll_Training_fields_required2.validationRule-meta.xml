@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Payroll_Training_fields_required2</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+NOT(ISBLANK(TEXT(Payroll_Training_Completed__c ))),
+NOT(BEGINS($Profile.Name, &quot;System Admin&quot;)),
+OR(ISBLANK($User.Job_Name__c),NOT(CONTAINS(&quot;District Sales Manager:District Sales Assistant:Sales Leader:Sales Enablement:Sales Representative:Sales Engineer:Area Manager:Area Assistant:Zone Manager:Zone Assistant&quot;,$User.Job_Name__c))),
+ISBLANK(TEXT(State_IDs_on_File__c))||
+EE_Demographic_Data_Scanned__c=FALSE||
+Wage_Info_Scanned__c=FALSE||
+LiabDeposits_and_Returns_Scanned__c=FALSE)</errorConditionFormula>
+    <errorMessage>Fields required:
+&quot;State IDs on File&quot;,
+&quot;EE Demographic Data Scanned&quot;,
+&quot;Wage Info Scanned&quot;,
+&quot;Liab/Deposits and Returns Scanned&quot;.</errorMessage>
+</ValidationRule>

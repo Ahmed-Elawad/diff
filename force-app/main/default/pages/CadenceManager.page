@@ -1,0 +1,529 @@
+<!-- 
+
+    History 
+    ----------
+    05/05/2020 Dan Carmen       Created   
+    09/17/2020 Jermaine Stukes  Updated
+    01/17/2024 Reetesh Pandey   Updated code for Service User
+    02/07/2024 Susmitha Somavarapu Removed rendered logic(AND(mzac.hasZoneOptions)at 293line to dispaly the District field to users(INC3629101).
+-->   
+ 
+<apex:page Controller="CadenceManagerController" tabStyle="CadenceManager__tab"
+           showHeader="true"
+           sidebar="true"
+           title="Cadence Manager"
+           lightningStylesheets="true">
+
+<apex:includeScript value="{!$Resource.selectCheckboxesJs}" />  
+    
+<apex:stylesheet value="{!URLFOR($Resource.jQueryDataTablesZip, 'css/jquery.dataTables.css')}"/>
+<style type="text/css">
+.sorting {
+    background: #f2f3f3 url('{! URLFOR($Resource.jQueryDataTablesZip, 'images/sort_both.png') }') no-repeat center right !important;
+    padding-right: 20px !important;
+}
+.sorting_asc {
+    background: #f2f3f3 url('{! URLFOR($Resource.jQueryDataTablesZip, 'images/sort_asc.png') }') no-repeat center right !important;
+    padding-right: 20px !important;
+}
+.sorting_desc {
+    background: #f2f3f3 url('{! URLFOR($Resource.jQueryDataTablesZip, 'images/sort_desc.png') }') no-repeat center right !important;
+    padding-right: 20px !important;
+}
+.sorting_asc_disabled {
+    background: #f2f3f3 url('{! URLFOR($Resource.jQueryDataTablesZip, 'images/sort_asc_disabled.png') }') no-repeat center right !important;
+    padding-right: 20px !important;
+}
+.sorting_desc_disabled {
+    background: #f2f3f3 url('{! URLFOR($Resource.jQueryDataTablesZip, 'images/sort_desc_disabled.png') }') no-repeat center right !important;
+    padding-right: 20px !important;
+}
+table.dataTable tr.odd { background-color: white; }
+table.dataTable tr.even { background-color: white; }
+table.dataTable tr.odd td.sorting_1 { background-color: white; }
+table.dataTable tr.odd td.sorting_2 { background-color: white; }
+table.dataTable tr.odd td.sorting_3 { background-color: white; }
+table.dataTable tr.even td.sorting_1 { background-color: white; }
+table.dataTable tr.even td.sorting_2 { background-color: white; }
+table.dataTable tr.even td.sorting_3 { background-color: white; }
+.dataTables_length, .dataTables_filter, .dataTables_info, .dataTables_paginate {
+    padding: 3px;
+}
+.scroll-zone{
+    overflow: scroll; 
+    max-height: 500px;
+}
+</style>
+        <script type="text/javascript">
+        function SubmitOnClick(objSubmitBtn)
+        {
+            objSubmitBtn.disabled = true;
+            objSubmitBtn.value = 'Applying Filter(s)…';
+            addFilters();
+        }
+        </script> 
+    <apex:form >
+        <apex:sectionHeader title="Cadence Manager" />
+        <div id="lightning-scroll" >
+            <apex:pageBlock rendered="{!AND(NOT(mzac.isValidUser),NOT(isSvcManager))}" id="NotValidBlock">
+                <apex:pageMessages />
+                <h1>You do not have access to this form! {!mzac.noAccessReason}</h1>
+            </apex:pageBlock>
+            <apex:pageBlock id="MainCadenceBlock" rendered="{!AND(mzac.isValidUser,NOT(isSvcManager),screenMode=='MainEntry')}">
+                <apex:pagemessages />
+                <apex:pageBlockSection columns="1">
+                    <apex:pageBlockSectionItem > 
+                        <apex:outputLabel value="Sales Org"/> 
+                        <apex:outputPanel >
+                            <apex:selectList rendered="{!mzac.hasMultipleSalesOrgs}" value="{!mzac.searchZa.Sales_Org__c}" title="Available Sales Orgs" size="1">
+                                <apex:selectOptions value="{!mzac.salesOrgPicklist}"/>
+                                <apex:actionSupport event="onchange" action="{!salesOrgSelected}" rerender="MainCadenceBlock" status="retrievingZoneListStatus" />  
+                            </apex:selectList>
+                            <apex:outputField rendered="{!NOT(mzac.hasMultipleSalesOrgs)}" value="{!mzac.searchZa.Sales_Org__c}" />
+                            <apex:actionStatus startText="Retrieving Zone List..." id="retrievingZoneListStatus"/>
+                        </apex:outputPanel>              
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem rendered="{!mzac.hasZoneOptions}" >
+                        <apex:outputLabel value="Zone"/>
+                        <apex:outputPanel >
+                            <apex:selectList value="{!mzac.selectedZoneId}" title="Available Zones" size="1">
+                                <apex:selectOptions value="{!mzac.zoneOptions}"/>
+                                <apex:actionSupport event="onchange" action="{!zoneSelected}" rerender="MainCadenceBlock" status="retrievingDistrictsStatus" />  
+                            </apex:selectList>
+                            <apex:actionStatus startText="Retrieving District List..." id="retrievingDistrictsStatus"/>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="District" />
+                        <apex:outputPanel >
+                            <apex:selectList rendered="{!mzac.hasDistrictOptions}" value="{!mzac.selectedDistrictId}" title="Available Districts" size="1">
+                                <apex:selectOptions value="{!mzac.districtOptions}"/>
+                                <apex:actionSupport event="onchange" action="{!districtSelected}" rerender="MainCadenceBlock" status="retrievingRepsStatus" />  
+                            </apex:selectList>
+                            <apex:outputText rendered="{!NOT(mzac.hasDistrictOptions)}" value="{!mzac.districtName}" />
+                            <apex:actionStatus startText="Retrieving Rep List..." id="retrievingRepsStatus"/>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Rep" />
+                        <apex:outputPanel >
+                            <apex:selectList rendered="{!hasRepOptions}" value="{!selectedRepId}" title="Available Reps" size="1">
+                                <apex:selectOptions value="{!repOptions}"/>
+                                <apex:actionSupport event="onchange" action="{!repSelected}" rerender="MainCadenceBlock" status="touchpointStatus" />
+                            </apex:selectList>
+                            <apex:outputText rendered="{!NOT(hasRepOptions)}" value="No Reps Found" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>            
+                    <apex:actionStatus startText="Checking for Open Touchpoints..." id="touchpointStatus"/>
+                    
+                </apex:pageBlockSection>
+                <apex:pageBlockSection title="Filters" columns="3">
+                    <apex:PageBlockSectionItem >
+                        <apex:outputLabel value="Cadence " for="CadenceSelection" />
+                        <apex:selectList id="CadenceSelection" label="Cadence" value="{!filterCadenceId}" size="1">
+                            <apex:selectOptions value="{!filterCadenceOptions}"/>
+                            <!--<apex:actionSupport event="onchange" action="{!applyFilter}" rerender="MainCadenceBlock" status="applyingFilterStatus" />  -->
+                        </apex:selectList>
+                    </apex:PageBlockSectionItem>
+                    
+                    <apex:PageBlockSectionItem >
+                        <apex:outputLabel value="Cadence Started? " for="StartedSelection" />
+                        <apex:selectList id="StartedSelection" label="Started?" value="{!filterStartedSelection}" size="1">
+                            <apex:selectOptions value="{!filterStartedOptions}"/>
+                            <!--<apex:actionSupport event="onchange" action="{!applyFilter}" rerender="MainCadenceBlock" status="applyingFilterStatus" />  -->
+                        </apex:selectList>
+                    </apex:PageBlockSectionItem>
+                    <apex:PageBlockSectionItem >
+                        <apex:outputLabel value="Sales Program" for="SalesProgramSelection" />
+                        <apex:selectList id="SalesProgramSelection" label="Sales Program" value="{!salesProgramSelected}" size="1">
+                            <apex:selectOptions value="{!salesProgramOptions}"/>
+                            <!--<apex:actionSupport event="onchange" action="{!applyFilter}" rerender="MainCadenceBlock" status="applyingFilterStatus" />  -->
+                        </apex:selectList>
+                    </apex:PageBlockSectionItem>
+                    <apex:PageBlockSectionItem >
+                        <apex:outputLabel value="Zip Code: " for="ZipCodeLow"/>
+                        <apex:inputText id="ZipCodeLow" value="{!filterZipLow}" size="7">
+                            <!--<apex:actionSupport event="onchange" action="{!applyFilter}" rerender="MainCadenceBlock" status="applyingFilterStatus" />  -->
+                        </apex:inputText>
+                    </apex:PageBlockSectionItem>
+                    <apex:PageBlockSectionItem >
+                        <apex:outputLabel value="State: " for="stateSelection"/>
+                        <apex:inputText id="stateSelection" value="{!stateSelected}" size="15">
+                            <!--<apex:actionSupport event="onchange" action="{!applyFilter}" rerender="MainCadenceBlock" status="applyingFilterStatus" /> --> 
+                        </apex:inputText>
+                    </apex:PageBlockSectionItem>
+                    <apex:actionStatus startText="Applying Filter..." id="applyingFilterStatus"/>
+                    <div align="center">
+                        <apex:commandbutton value="Apply Filters" onclick="SubmitOnClick(this);" />
+                        <apex:actionFunction name="addFilters" action="{!applyFilter}" />
+                    </div>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1">
+                    <apex:outputPanel style="width:100%; overflow: scroll;  max-height: 500px;" styleClass="scroll-zone">             
+                        <!--
+<apex:commandButton value="{!IF(useFilter,'Remove','Use')} Filter" action="{!toggleUseFilter}" rerender="manageHoldOutBlock" status="updatingStructureStatus"/>
+&nbsp;              
+<apex:commandbutton rendered="{!hasDisplayList}" value="Re-Assign Hold Outs" action="{!reAssignHoldOut}"/>  
+&nbsp;          
+<apex:commandbutton rendered="{!hasDisplayList}" value="Remove Hold Outs"  onclick="return confirmRemoveHoldOut()"/>
+-->
+                        <apex:commandbutton rendered="{!hasOpenTouchpoints}" value="Reassign Touchpoint Records" action="{!reassignCARs}"/> 
+                        &nbsp;          
+                        <apex:commandbutton rendered="{!AND(hasOpenTouchpoints,reassignCurrentStepOnly)}" value="Reassign Current Step Only" action="{!reassignTPs}"/>  
+                    </apex:outputPanel>
+                    
+                    <apex:outputPanel rendered="{!NOT(hasOpenTouchpoints)}"> 
+                        <h1>
+                            No Records were found!
+                        </h1>
+                        
+                    </apex:outputPanel>
+                    
+                    <apex:pageBlockTable rendered="{!hasOpenTouchpoints}" id="touchpointTable" value="{!displayList}" var="rec" cellPadding="2" border="1" styleClass="dataTable">
+                        
+                        <apex:facet name="header">
+                            <apex:panelGrid columns="3" width="100%" border="0" cellPadding="0" cellSpacing="0" rules="none">
+                                <apex:outputText >
+                                    {!(tpController.pageNumber * tpController.pageSize)+1-tpController.pageSize}-{!IF((tpController.pageNumber * tpController.pageSize)>tpController.resultSize, tpController.resultSize,(tpController.pageNumber * tpController.pageSize))} of {!tpController.resultSize}
+                                </apex:outputText>
+                                <apex:outputPanel >
+                                    <CENTER>
+                                        <apex:commandButton disabled="{!NOT(tpController.hasPrevious)}" value="|<" action="{!firstPage}" rerender="MainCadenceBlock" title="First Page"/>  
+                                        <apex:commandButton disabled="{!NOT(tpController.hasPrevious)}" value="<" action="{!previous}" rerender="MainCadenceBlock" title="Previous Page"/>
+                                        &nbsp;
+                                        <apex:commandButton disabled="{!NOT(tpController.hasNext)}" value=">" action="{!next}" rerender="MainCadenceBlock" title="Next Page"/>      
+                                        <apex:commandButton disabled="{!NOT(tpController.hasNext)}" value=">|" action="{!lastPage}" rerender="MainCadenceBlock" title="Last Page"/>
+                                    </CENTER>
+                                </apex:outputPanel>
+                                <apex:outputText style="text-align:right;">
+                                    <CENTER>
+                                        Page {!tpController.pageNumber} of {!numOfPages}
+                                    </CENTER>
+                                </apex:outputText>      
+                            </apex:panelGrid>   
+                        </apex:facet>
+                        <apex:facet name="footer">
+                            <apex:panelGrid columns="3" width="100%" border="0" cellPadding="0" cellSpacing="0" rules="none">
+                                <apex:outputText >
+                                    {!(tpController.pageNumber * tpController.pageSize)+1-tpController.pageSize}-{!IF((tpController.pageNumber * tpController.pageSize)>tpController.resultSize, tpController.resultSize,(tpController.pageNumber * tpController.pageSize))} of {!tpController.resultSize}
+                                </apex:outputText>
+                                <apex:outputPanel >
+                                    <CENTER>
+                                        <apex:commandButton disabled="{!NOT(tpController.hasPrevious)}" value="|<" action="{!firstPage}" rerender="MainCadenceBlock" title="First Page"/>  
+                                        <apex:commandButton disabled="{!NOT(tpController.hasPrevious)}" value="<" action="{!previous}" rerender="MainCadenceBlock" title="Previous Page"/>
+                                        &nbsp;
+                                        <apex:commandButton disabled="{!NOT(tpController.hasNext)}" value=">" action="{!next}" rerender="MainCadenceBlock" title="Next Page"/>      
+                                        <apex:commandButton disabled="{!NOT(tpController.hasNext)}" value=">|" action="{!lastPage}" rerender="MainCadenceBlock" title="Last Page"/>
+                                    </CENTER>
+                                </apex:outputPanel>
+                                <apex:outputText style="text-align:right;">
+                                    <CENTER>
+                                        Page {!tpController.pageNumber} of {!numOfPages}
+                                    </CENTER>
+                                </apex:outputText>      
+                            </apex:panelGrid>   
+                        </apex:facet>
+                        
+                        <apex:column >
+                            <apex:facet name="header"> 
+                                <apex:outputPanel >
+                                    <apex:inputCheckbox value="{!selectAll}" id="holdOutSelectAll" title="Select All" onclick="selectAll('holdOutSelectCheckbox',this)" >
+                                        
+                                    </apex:inputCheckbox>
+                                    Selected
+                                </apex:outputPanel>
+                            </apex:facet>
+                            <apex:inputCheckbox value="{!rec.selected}" id="holdOutSelectCheckbox" >
+                            </apex:inputCheckbox>
+                        </apex:column>
+                        
+                        <!-- Cadence Fields for Display Table  -->  
+                        <apex:column value="{!rec.car.CompanyName__c}"/>
+                        <apex:column value="{!rec.car.Cadence__r.Name}"/>
+                        <apex:column value="{!rec.car.Sales_Program__c}"/>
+                        <apex:column value="{!rec.step.Name}"/>
+                        <apex:column value="{!rec.step.Step_Number__c}"/>
+                        <apex:column value="{!rec.tp.Due_Date__c}"/>
+                        <apex:column value="{!rec.tp.Past_Due_Date__c}"/>
+                        
+                        <!--
+<apex:column value="{!rec.car.SalesProgramEndDate__c}"/>
+-->
+                        <apex:column value="{!rec.car.ParentZipCode__c}"/>
+                        <apex:column value="{!rec.car.Started__c}"/>
+                        <apex:column value="{!rec.car.State__c}"/>
+                    </apex:pageBlockTable>
+                    
+                </apex:pageBlockSection>
+                
+                <script type="text/javascript" language="javascript" src="{!URLFOR($Resource.jQueryDataTablesZip, 'js/jquery.js')}"></script>
+                <script type="text/javascript" language="javascript" src="{!URLFOR($Resource.jQueryDataTablesZip, 'js/jquery.dataTables.js')}"></script>
+                <script type="text/javascript" language="javascript">
+                var j$ = jQuery.noConflict();
+                j$('table.dataTable').dataTable({
+                    "paging":   false,
+                    "ordering": true,
+                    "info":     false,
+                    "filter":   false,
+                    "order" : [[1, "asc"]]
+                    ,"columnDefs": [
+                        { "orderable": false, "targets" : [0]}
+                    ]
+                });
+                </script>       
+                
+            </apex:pageBlock>
+            <apex:pageBlock id="ReassignBlock" rendered="{!OR(AND(mzac.isValidUser,NOT(isSvcManager),screenMode=='Reassign'),AND(isSvcManager,screenMode=='Reassign'))}">
+                <apex:pagemessages />
+                <apex:pageBlockSection columns="1" >
+                    <apex:pageBlockSectionItem rendered="{!AND(mzac.hasZoneOptions,NOT(isSvcManager))}" >
+                        <apex:outputLabel value="Zone"/>
+                        <apex:outputPanel >
+                            <apex:selectList value="{!mzac.selectedReassignZoneId}" title="Available Zones" size="1">
+                                <apex:selectOptions value="{!mzac.zoneOptions}"/>
+                                <apex:actionSupport event="onchange" action="{!reassignZoneSelected}" rerender="ReassignBlock" status="updatingReassignZoneStatus" />  
+                            </apex:selectList>
+                            <apex:actionStatus startText="Updating District List..." id="updatingReassignZoneStatus"/>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem rendered="{!NOT(isSvcManager)}">
+                        <apex:outputLabel value="District" />
+                        <apex:outputPanel >
+                            <apex:selectList rendered="{!mzac.hasDistrictReassignOptions}" value="{!mzac.selectedReassignDistrictId}" title="Available Districts" size="1">
+                                <apex:selectOptions value="{!mzac.districtReassignOptions}"/>
+                                <apex:actionSupport event="onchange" action="{!reAssignDistrictSelected}" rerender="ReassignBlock" status="updatingReassignDistrictStatus" />  
+                            </apex:selectList>
+                            <apex:outputText rendered="{!NOT(mzac.hasDistrictReassignOptions)}" value="{!mzac.districtName}" />
+                            <apex:actionStatus startText="Updating Rep List..." id="updatingReassignDistrictStatus"/>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem rendered="{!NOT(isSvcManager)}">
+                        <apex:outputLabel value="Rep" />                        
+                        <apex:outputPanel >
+                            <apex:selectList rendered="{!hasReassignRepOptions}" value="{!selectedReassignRepId}" title="Available Reps" size="1">
+                                <apex:selectOptions value="{!reassignRepOptions}"/>
+                            </apex:selectList>
+                            <apex:outputText rendered="{!NOT(hasReassignRepOptions)}" value="No Reps Found" />
+                        </apex:outputPanel>
+                        
+                    </apex:pageBlockSectionItem>  
+                    <apex:pageBlockSectionItem rendered="{!isSvcManager}">
+                        <apex:outputLabel value="Assign to Service Rep"/>
+                        <apex:outputPanel >
+                            <apex:selectList rendered="{!hasReassignRepOptions}" value="{!selectedReassignRepId}" title="Available Reps" size="1">
+                                <apex:selectOptions value="{!reassignRepOptions}"/>
+                            </apex:selectList>
+                            <apex:outputText rendered="{!NOT(hasReassignRepOptions)}" value="No Reps Found" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:outputPanel >
+                        <apex:commandbutton value="Cancel Reassign" action="{!cancelReassign}"/> 
+                        <apex:commandbutton value="Perform Reassign" action="{!performReassign}"/> 
+                    </apex:outputPanel>
+                    <apex:pageBlockTable id="touchpointTable" value="{!selectedList}" var="rec" cellPadding="2" border="1" styleClass="dataTable">
+                        
+                        <apex:column >
+                            <apex:facet name="header"> 
+                                Selected
+                            </apex:facet>
+                            <apex:inputCheckbox value="{!rec.selected}" id="holdOutSelectCheckboxView" disabled="true" >
+                            </apex:inputCheckbox>
+                        </apex:column>
+                        
+                        <!-- Cadence Fields for Display Table  -->  
+                        <apex:column value="{!rec.car.CompanyName__c}"/>
+                        <apex:column value="{!rec.car.Cadence__r.Name}"/>
+                        <apex:column value="{!rec.step.Name}"/>
+                        <apex:column value="{!rec.step.Step_Number__c}"/>
+                        <apex:column value="{!rec.tp.Due_Date__c}"/>
+                        <apex:column value="{!rec.tp.Past_Due_Date__c}"/>
+                        <!--
+<apex:column value="{!rec.car.Sales_Program__c}"/>
+<apex:column value="{!rec.car.SalesProgramEndDate__c}"/>
+-->
+                        <apex:column value="{!rec.car.ParentZipCode__c}"/>
+                        <apex:column value="{!rec.car.Started__c}"/>
+                        <apex:column value="{!rec.car.State__c}"/>
+                        
+                    </apex:pageBlockTable>
+                    
+                    
+                </apex:pageBlockSection>                                                      
+            </apex:pageBlock>
+            <apex:pageBlock id="SecondaryOwnerBlock" rendered="{!AND(isSvcManager,screenMode=='SecondaryOwner')}">
+                <apex:pagemessages />
+                <apex:pageBlockSection columns="1">
+                    <apex:pageBlockSectionItem > 
+                        <apex:outputLabel value="Service Manager"/> 
+                        <apex:outputPanel >                            
+                            <apex:outputText rendered="{!isSvcManager}" value="{!managerName}" />                            
+                        </apex:outputPanel>          
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Service Rep" />
+                        <apex:outputPanel >
+                            <apex:selectList rendered="{!hasRepOptions}" value="{!selectedRepId}" title="Available Reps" size="1">
+                                <apex:selectOptions value="{!repOptions}"/>
+                                <apex:actionSupport event="onchange" action="{!repSelected}" rerender="SecondaryOwnerBlock" status="touchpointStatusSO" />
+                            </apex:selectList>
+                            <apex:outputText rendered="{!NOT(hasRepOptions)}" value="No Reps Found" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>            
+                    <apex:actionStatus startText="Checking for Open Touchpoints..." id="touchpointStatusSO"/>
+                    
+                </apex:pageBlockSection>
+                <apex:pageBlockSection title="Filters" columns="3">
+                    <apex:PageBlockSectionItem >
+                        <apex:outputLabel value="Cadence " for="CadenceSelectionSO" />
+                        <apex:selectList id="CadenceSelectionSO" label="Cadence" value="{!filterCadenceId}" size="1">
+                            <apex:selectOptions value="{!filterCadenceOptions}"/>
+                            <!--<apex:actionSupport event="onchange" action="{!applyFilter}" rerender="MainCadenceBlock" status="applyingFilterStatus" />  -->
+                        </apex:selectList>
+                    </apex:PageBlockSectionItem>
+                    
+                    <apex:PageBlockSectionItem >
+                        <apex:outputLabel value="Cadence Started? " for="StartedSelectionSO" />
+                        <apex:selectList id="StartedSelectionSO" label="Started?" value="{!filterStartedSelection}" size="1">
+                            <apex:selectOptions value="{!filterStartedOptions}"/>
+                            <!--<apex:actionSupport event="onchange" action="{!applyFilter}" rerender="MainCadenceBlock" status="applyingFilterStatus" />  -->
+                        </apex:selectList>
+                    </apex:PageBlockSectionItem>
+                    <apex:PageBlockSectionItem >
+                        <apex:outputLabel value="Sales Program" for="SalesProgramSelectionSO" />
+                        <apex:selectList id="SalesProgramSelectionSO" label="Sales Program" value="{!salesProgramSelected}" size="1">
+                            <apex:selectOptions value="{!salesProgramOptions}"/>
+                            <!--<apex:actionSupport event="onchange" action="{!applyFilter}" rerender="MainCadenceBlock" status="applyingFilterStatus" />  -->
+                        </apex:selectList>
+                    </apex:PageBlockSectionItem>
+                    <apex:PageBlockSectionItem >
+                        <apex:outputLabel value="Zip Code: " for="ZipCodeLowSO"/>
+                        <apex:inputText id="ZipCodeLowSO" value="{!filterZipLow}" size="7">
+                            <!--<apex:actionSupport event="onchange" action="{!applyFilter}" rerender="MainCadenceBlock" status="applyingFilterStatus" />  -->
+                        </apex:inputText>
+                    </apex:PageBlockSectionItem>
+                    <apex:PageBlockSectionItem >
+                        <apex:outputLabel value="State: " for="stateSelectionSO"/>
+                        <apex:inputText id="stateSelectionSO" value="{!stateSelected}" size="15">
+                            <!--<apex:actionSupport event="onchange" action="{!applyFilter}" rerender="MainCadenceBlock" status="applyingFilterStatus" /> --> 
+                        </apex:inputText>
+                    </apex:PageBlockSectionItem>
+                    <apex:actionStatus startText="Applying Filter..." id="applyingFilterStatusSO"/>
+                    <div align="center">
+                        <apex:commandbutton value="Apply Filters" onclick="SubmitOnClick(this);" />
+                        <apex:actionFunction name="addFilters" action="{!applyFilter}" />
+                    </div>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1">
+                    <apex:outputPanel style="width:100%; overflow: scroll;  max-height: 500px;" styleClass="scroll-zone">           
+                       
+                        <apex:commandbutton rendered="{!hasOpenTouchpoints}" value="Reassign Touchpoint Records" action="{!reassignCARs}"/> 
+                        &nbsp;          
+                     <!--   <apex:commandbutton rendered="{!AND(hasOpenTouchpoints,reassignCurrentStepOnly)}" value="Reassign Current Step Only" action="{!reassignTPs}"/>  -->
+                    </apex:outputPanel> 
+                    
+                    <apex:outputPanel rendered="{!NOT(hasOpenTouchpoints)}"> 
+                        <h1>
+                            No Records were found!
+                        </h1>
+                        
+                    </apex:outputPanel>
+                    
+                    <apex:pageBlockTable rendered="{!hasOpenTouchpoints}" id="touchpointTableSO" value="{!displayList}" var="rec" cellPadding="2" border="1" styleClass="dataTable">
+                        
+                        <apex:facet name="header">
+                            <apex:panelGrid columns="3" width="100%" border="0" cellPadding="0" cellSpacing="0" rules="none">
+                                <apex:outputText >
+                                    {!(tpController.pageNumber * tpController.pageSize)+1-tpController.pageSize}-{!IF((tpController.pageNumber * tpController.pageSize)>tpController.resultSize, tpController.resultSize,(tpController.pageNumber * tpController.pageSize))} of {!tpController.resultSize}
+                                </apex:outputText>
+                                <apex:outputPanel >
+                                    <CENTER>
+                                        <apex:commandButton disabled="{!NOT(tpController.hasPrevious)}" value="|<" action="{!firstPage}" rerender="MainCadenceBlock" title="First Page"/>  
+                                        <apex:commandButton disabled="{!NOT(tpController.hasPrevious)}" value="<" action="{!previous}" rerender="MainCadenceBlock" title="Previous Page"/>
+                                        &nbsp;
+                                        <apex:commandButton disabled="{!NOT(tpController.hasNext)}" value=">" action="{!next}" rerender="MainCadenceBlock" title="Next Page"/>      
+                                        <apex:commandButton disabled="{!NOT(tpController.hasNext)}" value=">|" action="{!lastPage}" rerender="MainCadenceBlock" title="Last Page"/>
+                                    </CENTER>
+                                </apex:outputPanel>
+                                <apex:outputText style="text-align:right;">
+                                    <CENTER>
+                                        Page {!tpController.pageNumber} of {!numOfPages}
+                                    </CENTER>
+                                </apex:outputText>      
+                            </apex:panelGrid>   
+                        </apex:facet>
+                        <apex:facet name="footer">
+                            <apex:panelGrid columns="3" width="100%" border="0" cellPadding="0" cellSpacing="0" rules="none">
+                                <apex:outputText >
+                                    {!(tpController.pageNumber * tpController.pageSize)+1-tpController.pageSize}-{!IF((tpController.pageNumber * tpController.pageSize)>tpController.resultSize, tpController.resultSize,(tpController.pageNumber * tpController.pageSize))} of {!tpController.resultSize}
+                                </apex:outputText>
+                                <apex:outputPanel >
+                                    <CENTER>
+                                        <apex:commandButton disabled="{!NOT(tpController.hasPrevious)}" value="|<" action="{!firstPage}" rerender="MainCadenceBlock" title="First Page"/>  
+                                        <apex:commandButton disabled="{!NOT(tpController.hasPrevious)}" value="<" action="{!previous}" rerender="MainCadenceBlock" title="Previous Page"/>
+                                        &nbsp;
+                                        <apex:commandButton disabled="{!NOT(tpController.hasNext)}" value=">" action="{!next}" rerender="MainCadenceBlock" title="Next Page"/>      
+                                        <apex:commandButton disabled="{!NOT(tpController.hasNext)}" value=">|" action="{!lastPage}" rerender="MainCadenceBlock" title="Last Page"/>
+                                    </CENTER>
+                                </apex:outputPanel>
+                                <apex:outputText style="text-align:right;">
+                                    <CENTER>
+                                        Page {!tpController.pageNumber} of {!numOfPages}
+                                    </CENTER>
+                                </apex:outputText>      
+                            </apex:panelGrid>   
+                        </apex:facet>
+                        
+                        <apex:column >
+                            <apex:facet name="header"> 
+                                <apex:outputPanel >
+                                    <apex:inputCheckbox value="{!selectAll}" id="holdOutSelectAllSO" title="Select All" onclick="selectAll('holdOutSelectCheckbox',this)" >
+                                        
+                                    </apex:inputCheckbox>
+                                    Selected
+                                </apex:outputPanel>
+                            </apex:facet>
+                            <apex:inputCheckbox value="{!rec.selected}" id="holdOutSelectCheckboxSO" >
+                            </apex:inputCheckbox>
+                        </apex:column>
+                        
+                        <!-- Cadence Fields for Display Table  -->  
+                        <apex:column value="{!rec.car.CompanyName__c}"/>
+                        <apex:column value="{!rec.car.Cadence__r.Name}"/>
+                        <apex:column value="{!rec.car.Sales_Program__c}"/>
+                        <apex:column value="{!rec.step.Name}"/>
+                        <apex:column value="{!rec.step.Step_Number__c}"/>
+                        <apex:column value="{!rec.tp.Due_Date__c}"/>
+                        <apex:column value="{!rec.tp.Past_Due_Date__c}"/> 
+                        <apex:column value="{!rec.car.ParentZipCode__c}"/>
+                        <apex:column value="{!rec.car.Started__c}"/>
+                        <apex:column value="{!rec.car.State__c}"/>
+                    </apex:pageBlockTable>
+                    
+                </apex:pageBlockSection>
+                
+                <script type="text/javascript" language="javascript" src="{!URLFOR($Resource.jQueryDataTablesZip, 'js/jquery.js')}"></script>
+                <script type="text/javascript" language="javascript" src="{!URLFOR($Resource.jQueryDataTablesZip, 'js/jquery.dataTables.js')}"></script>
+                <script type="text/javascript" language="javascript">
+                var j$ = jQuery.noConflict();
+                j$('table.dataTable').dataTable({
+                    "paging":   false,
+                    "ordering": true,
+                    "info":     false,
+                    "filter":   false,
+                    "order" : [[1, "asc"]]
+                    ,"columnDefs": [
+                        { "orderable": false, "targets" : [0]}
+                    ]
+                });
+                </script>               
+            </apex:pageBlock>
+        </div>
+    </apex:form>
+</apex:page>

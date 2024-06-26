@@ -1,0 +1,62 @@
+<aura:component controller="CommunityIndustrySpecificController" implements="force:appHostable,flexipage:availableForAllPageTypes" access="global" >
+    
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    
+    <aura:attribute name="parentRecId" type="Id"/>
+    <aura:attribute name="PEOChecklist" type="Object"/>
+    <aura:attribute name="parentAccount" type="Account"/>
+    <aura:attribute name="answersChanged" type="Boolean" default="false"/>
+    <aura:attribute name="policyPeriodChanged" type="Boolean" default="false"/>
+    <aura:attribute name="readOnly" type="Boolean" default="true" />
+    <aura:attribute name='readOnlyMsg' type='String' />
+    <!-- flag for error in return value -->
+    <aura:attribute name='noMatchingQuestions' type='boolean' />
+    
+    <aura:attribute name='communityUser' type='boolean' />
+    <aura:attribute name="allAccounts" type="Account[]" />
+    <aura:attribute name='user' type='User' />
+    <aura:attribute name="loadingSpin" type="Boolean" default="true" />
+    <aura:attribute name='industries' type='String[]' />
+    <aura:attribute name='selectedTab' type='String' />
+    <!--Added by jidesh:7893-->
+    
+    <!-- new attributes for parent containment of all records -->
+    <aura:attribute name='industryStruct' type='Object' />
+    <aura:attribute name='wcCompTabs' type='String[]' />
+    <aura:attribute name='activeWcCompTab' type='String' />
+    
+    <lightning:tabset variant="{!v.tabType}" selectedTabId='{!v.selectedTab}' >
+        <aura:if isTrue='{!not(v.loadingSpin)}'>
+            <aura:iteration items="{!v.industries}" var="industry" indexVar="index">
+                <lightning:tab label="{!industry}" id="{!industry}">
+                    
+                    <c:IndustrySpecific readOnly='{!v.lockEditing}' 
+                                        readOnlyString='{!v.readOnlyMsg}'
+                                        user='{!v.user}' 
+                                        parentRecId="{!v.parentRecId}" 
+                                        PEOChecklist="{!v.PEOChecklist}" 
+                                        communityUser="{!v.communityUser}" 
+                                        answersChanged="{!v.answersChanged}" 
+                                        parentAccount="{!v.parentAccount}" 
+                                        policyPeriodChanged="{!v.policyPeriodChanged}" 
+                                        allAccounts="{!v.allAccounts}" 
+                                        industryStruct='{!v.industryStruct}'
+                                        industryName="{!industry}"
+                                        parentTabs='{!v.industries}' 
+                                        activeParent='{!v.selectedTab}' 
+                                        activeWcCompTab='{!v.activeWcCompTab}'
+                                        wcCompTabs='{!v.wcCompTabs}'/>
+                    
+                </lightning:tab>
+            </aura:iteration>
+            <aura:set attribute="else">
+                <lightning:spinner alternativeText="Loading" />
+            </aura:set>
+        </aura:if>
+    </lightning:tabset>
+    
+    <aura:if isTrue='{!v.noMatchingQuestions}' >
+        <h2>There no match with the NAICS code for this Account, please correct the value on Account.</h2>
+    </aura:if>
+    
+</aura:component>

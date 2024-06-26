@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Additional_Information_for_Reason_Won</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+AND(NOT(BEGINS($Profile.Name, &quot;System Admin&quot;)), NOT(BEGINS($Profile.Name, &quot;Sales Enablement&quot;)),
+NOT(BEGINS($Profile.Name, &quot;Paychex Marketing Admin&quot;))),
+ISBLANK(Additional_Information_for_Reason_Won__c),
+OR($RecordType.Name = &apos;MMS Opportunity Record Type&apos;, $RecordType.Name = &apos;Core Opportunity Record Type&apos;, $RecordType.Name = &apos;Core Virtual Sales&apos;),
+(ISPICKVAL(Reason_Won__c,&quot;Other&quot;)))</errorConditionFormula>
+    <errorDisplayField>Additional_Information_for_Reason_Won__c</errorDisplayField>
+    <errorMessage>Additional Information for Reason Won is required when the opportunity&apos;s Reason Won is Other.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Workload_Team_Prints_copy</fullName>
+    <booleanFilter>(1 and 2 and 3 and 4 and 5 and 6 and 8 and not 7 and 9)</booleanFilter>
+    <columns>NAME</columns>
+    <columns>Product_Type__c</columns>
+    <columns>BIS_ID__c</columns>
+    <columns>Prospect_Client_Name__c</columns>
+    <columns>Handbook_Version_Title__c</columns>
+    <columns>Order_Date__c</columns>
+    <columns>Task_Type__c</columns>
+    <columns>Task_Due_Date__c</columns>
+    <columns>HRG__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Sent_to_Print_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Void_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Task_Due_Date__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>OWNER.ALIAS</field>
+        <operation>equals</operation>
+        <value>Handbook Production Queue</value>
+    </filters>
+    <filters>
+        <field>Handbook_Production_Specialist__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Type_of_Request__c</field>
+        <operation>notEqual</operation>
+        <value>Binders Only</value>
+    </filters>
+    <filters>
+        <field>Product_Type__c</field>
+        <operation>contains</operation>
+        <value>HROi</value>
+    </filters>
+    <filters>
+        <field>Order_Date__c</field>
+        <operation>greaterThan</operation>
+        <value>1/1/2019</value>
+    </filters>
+    <filters>
+        <field>Task_Type__c</field>
+        <operation>equals</operation>
+        <value>Ok to Print,Reorder</value>
+    </filters>
+    <label>Workload - Team (Prints) do not use</label>
+    <sharedTo>
+        <role>HRE_Handbook_Supervisor_team_1</role>
+        <role>HRE_Handbook_Supervisor_team_2</role>
+        <role>HRE_Handbook_Supervisor_team_3</role>
+    </sharedTo>
+</ListView>

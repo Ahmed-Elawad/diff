@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Users_cant_update_delivery_date_for_COE</fullName>
+    <active>false</active>
+    <description>only the system admin can update the delivery date on the COE Enhancement case</description>
+    <errorConditionFormula>ISCHANGED( Delivery_Date__c )&amp;&amp;
+ RecordTypeId ==&quot;01270000000Q6dD&quot;&amp;&amp;
+$User.ProfileId&lt;&gt;&quot;00e30000000mTjP&quot;</errorConditionFormula>
+    <errorMessage>Only a system admin can update the delivery date on the COE Enhancement Submission Case</errorMessage>
+</ValidationRule>

@@ -1,0 +1,208 @@
+<aura:component controller="CommunitySummaryController" implements="forceCommunity:availableForAllPageTypes,lightning:isUrlAddressable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:appHostable" access="global">
+    
+    <aura:handler name='init' value='{!this}' action='{!c.setup}' />
+    
+    <!-- user record attributes -->
+    <aura:attribute name='commUser' type='boolean' />
+    
+    <aura:attribute name='recordId' type='String' />
+    <aura:attribute name='peoChecklist' type='PEO_Onboarding_Checklist__c' />
+    <aura:attribute name='parentChecklist' type='PEO_Onboarding_Checklist__c' />
+    <aura:attribute name='medicalQuestionnaire' type='Map' />
+    <aura:attribute name='parentAccId' type='String' />
+    <aura:attribute name='isParent' type='boolean' />
+    <aura:attribute name='Account' type='Account' />
+    <aura:attribute name='documentList' type='List' />
+    <aura:attribute name='requiredMap' type='Map' />
+    <aura:attribute name='statuss' type='map' />
+     <aura:attribute name='CLDocumentList' type='map' />    
+    <aura:attribute name='docNamesAndIds' type='map' />
+    <aura:attribute name='totalNumberOfRequiredDocs' type='Integer' />
+    <aura:attribute name='approvedDocs' type='Integer' />
+    <aura:attribute name='runningUserProfile' type='String' />
+    <aura:attribute name='CensusId' type='Id' />
+    <aura:attribute name='MedicalInvoiceId' type='Id' />
+    <aura:attribute name='BenefitSummaryId' type='Id' />
+    <aura:attribute name='HealthInvoiceId' type='Id' />
+    <aura:attribute name='HealthInsuranceSummaryId' type='Id' />
+    <aura:attribute name='SUIRateFormsId' type='Id' />
+    <aura:attribute name='WCDeclarationsPagePEOCurrentRateId' type='Id' />
+    <aura:attribute name='WCDeclarationsPageId' type='Id' />
+    <aura:attribute name='WCRatesandPricingId' type='Id' />
+    <aura:attribute name='WCClassesandWagesId' type='Id' />
+    <aura:attribute name='LossRunsId' type='Id' />
+    <aura:attribute name='PayrollRegisterId' type='Id' />
+    <aura:attribute name='PayrollReportId' type='Id' />
+    <aura:attribute name='ClaimsReportId' type='Id' />
+    <aura:attribute name='LargeClaimsReportId' type='Id' />
+    <aura:attribute name='HealthInsuranceRenewalId' type='Id' />
+    <aura:attribute name='OtherId' type='Id' />
+    <aura:attribute name='percent' type='Integer' />
+    <aura:attribute name='errMsg' type='String' />
+    <aura:attribute name='isClientAddOn' type='boolean' default='{!v.parentChecklist.Client_Add_on__c}' />
+    
+    <aura:attribute name='curMedCoverageProvided' type='boolean' />
+    <aura:attribute name='hasClaims' type='boolean' />
+    <aura:attribute name='hasSelfOrLevelFundedPlans' type='boolean' />
+    <aura:attribute name='inRenewalTimeframe' type='boolean' />
+    <aura:attribute name='medBenUnderwritingRequested' type='boolean' />
+    <aura:attribute name='numberOfEmployeesGreaterThanVerified' type='boolean' />
+    <aura:attribute name='numberOfEmployeesLessThanVerified' type='boolean' />
+    <aura:attribute name='numOfRequiredDocs' type='Integer' default='10'/>
+    <aura:attribute name='covidSummaryNeeded' type='Boolean' />
+    <aura:attribute name="WCFastPassSelected" type="Boolean"/>
+    
+    <!--Code refactoring: new attributes created:start-->
+    <aura:attribute name='censusRequired' type='boolean' />
+    <aura:attribute name='claimsReportRequired' type='boolean' />
+    <aura:attribute name='hlthInsRenwReqd' type='boolean' />
+    <aura:attribute name='hlthInsSummReqd' type='boolean' />
+    <aura:attribute name='hlthInvReqd' type='boolean' />
+    <aura:attribute name='lossRunsReqd' type='boolean' />
+    <aura:attribute name='payrollRegReqd' type='boolean' />
+    <aura:attribute name='suiReqd' type='boolean' />
+    <aura:attribute name='wcDecReqd' type='boolean' />
+    <aura:attribute name='wcClsAndWgReqd' type='boolean' />
+    <aura:attribute name='medicalinvoicereq' type='boolean' />
+    <aura:attribute name='BenSummaryreq' type='boolean' />
+    <aura:attribute name='miscfilesmedreq' type='boolean' />
+    <aura:attribute name='miscfilesWCreq' type='boolean' />
+    <aura:attribute name='AddMiscFilesreq' type='boolean' />	
+    <aura:attribute name='payreportReqd' type='boolean' />
+    
+    <aura:attribute name='wcRtNPrcReqd' type='boolean' default="false"/>
+    <!--Code refactoring: new attributes created:end-->
+    	
+    <!-- storage attributes for discrepency lists -->
+    <aura:attribute name='TotalDiscrepencies' type='Integer'/>
+    <aura:attribute name='CensusDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='HealthInvoiceDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='HealthInsuranceSummaryDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='SUIRateFormsDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='WCDeclarationsPagePEOCurrentRateDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='WCClassesandWagesDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='WCRatesandPricingDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='LossRunsDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='BenefitSummaryDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='MedicalInvoiceDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='PayrollRegisterDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='ClaimsReportDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='ClaimsInformationDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />    
+    <aura:attribute name='PayrollReportDiscrepenciess' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='HealthInsuranceRenewalDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='ChecklistRejectDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='OtherDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <!-- section for general overview -->
+    <!-- show all required docs for parent & children combined -->
+    <!-- provide a drill down option to see required docs for each child -->
+    
+    <!-- general form discrepancies -->
+    <aura:attribute name='MedicalQuestionnaireDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='CovidQuestionnaireDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='d401KQuestionnaireDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='PEOInformationSheetDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='EPLIQuestionnaireDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='PricingDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='SUIDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />    
+    <aura:attribute name='WorkersCompQuestionnaireDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='MedicalQuestionnaireStatus' type='String' default=''/>
+    <aura:attribute name='CovidQuestionnaireStatus' type='String' default=''/>
+    <aura:attribute name='d401KQuestionnaireStatus' type='String' default=''/>
+    <aura:attribute name='PEOInformationSheetStatus' type='String' default=''/>
+    <aura:attribute name='EPLIQuestionnaireStatus' type='String' default=''/>
+    <aura:attribute name='WorkersCompQuestionnaireStatus' type='String' default=''/>
+    <aura:attribute name='IndustrySpecificQuestionnaireStatus' type='String' default=''/>
+    <aura:attribute name='IndustrySpecificQuestionnaireDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='industryStruct' type='Object' />
+    <aura:attribute name='industrySpecificRequiredWithFastPass' type='boolean' default="true"/>
+    <aura:attribute name='MedicalStatus' type='String' default=''/>
+    <aura:attribute name='industrySpecificStatus' type='Object' />
+    <!--New attr set-->
+    <aura:attribute name='CensusStatus' type='String' default=''/>
+    <aura:attribute name='OtherStatus' type='String' default=''/>
+    
+    <!-- summary section dynamic rendering attributes -->
+    <aura:attribute name='sectionSortList' type='Map' />
+    <aura:attribute name='actionNeededItems' type='List' />
+    <aura:attribute name='notSubmittedItems' type='List' />
+    <aura:attribute name='completedItems' type='List' />
+    <aura:dependency resource='markup://c:CollapsableTableColumns' />
+    
+    <!--Sfdc-10683-->
+    <aura:attribute name='medPreQualWithNotAppr' type='boolean' default="false"/>
+    <aura:attribute name='MiscFilesMedicalId' type='Id' />
+    <aura:attribute name='MiscFilesMedicalDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    
+    <!--Sfdc-11580-->
+    <aura:attribute name='MiscFilesWorkersCompId' type='Id' />
+    <aura:attribute name='MiscFilesWorkersCompDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <aura:attribute name='AdditionalMiscDocumentsId' type='Id' />
+    <aura:attribute name='AdditionalMiscDocumentsDiscrepencies' type='PEO_Onboarding_Document_Discrepency__c[]' />
+    <!--HSF-->
+    <aura:attribute name='HSFCensusId' type='Id' />
+    <aura:attribute name='portalExperience' type='String' />
+    
+    <lightning:card >
+        <div class="modal-header slds-modal__header slds-size_1-of-1">
+            <h4 class="title slds-text-heading--medium">Summary</h4>
+            <aura:if isTrue='{!v.commUser}'>
+                <p>
+                    This page reflects a summary of all of the documents that you have submitted 
+                    and the forms that you have filled out. If you have been redirected to this 
+                    page to resolve an open item the document status will indicate "Attention 
+                    Needed." Please click the arrow next to the document title to show 
+                    additional details.
+                </p>
+            </aura:if>
+        </div>
+        
+        <aura:if isTrue='{! not(v.commUser)}'>
+            <div class="slds-p-around_small">
+                <center>
+                    Risk Underwriting Status: {!v.parentChecklist.CS_CM_WC_UW_Status__c}<br/>
+                    Medical Underwriting Status: {!v.parentChecklist.CS_CM_Medical_UW_Status__c}<br/>
+                    Financial Underwriting Status: {!v.parentChecklist.Financial_Underwriting_Status__c}<br/> <!--SFDC-15545-->
+                	CS CM Contract Status: {!v.parentChecklist.CS_CM_Contract_Status__c}<br/>
+                </center>
+                Prior to submitting for review, please ensure that you have accounted for all documents needed as well 
+                as checked all questionnaires to ensure there are no missing answers.<br/><br/>
+                Documents Approved:  {!v.approvedDocs}/{!v.totalNumberOfRequiredDocs} ({!v.percent}%)
+                <lightning:progressBar value="{! (v.approvedDocs / v.totalNumberOfRequiredDocs) * 100}" size="large" />
+            </div>
+        </aura:if>
+        
+        <!-- new sections for dynamic placement of docs/questionnair secctions on render -->
+        <!-- the helper initRender method will push component definitions into the appropriate list -->
+        <div class="slds-p-around_small">
+            <lightning:icon class='utility-icon' iconName="utility:error" alternativeText="Error!" variant="error" title='Items Needing Attention' size='x-small'/>
+            Items Needing Attention
+            <div class='summary_discrepancy_columns-actionNeeded'>
+                {!v.actionNeededItems}
+            </div>
+        </div>
+        <div class="slds-p-around_small">
+            <lightning:icon iconName='utility:warning' alternativeText="Not Submitted"  title='Not Submitted' size='x-small'/>Not Submitted
+            <div class='summary_discrepancy_columns-notSubmitted'>
+                {!v.notSubmittedItems}
+            </div>
+        </div>
+        <div class="slds-p-around_small">
+            <lightning:icon class='utility-icon' iconName="utility:success" alternativeText="Success!" variant="Success" title='Not Submitted' size='x-small'/>
+            Complete
+            <div class='summary_discrepancy_columns-completed'>
+                {!v.completedItems}
+            </div>
+        </div>
+        
+        
+    </lightning:card>
+    <aura:if isTrue='{! not(v.commUser)}'>
+    	<c:communityFormNavButtons tabNameList='{!v.tabList}' 
+                                   currentPos='summary' 
+                                   hideBackButton="false" 
+                                   skipSaveEvt="true" 
+                                   />
+    </aura:if>
+    <!-- commmunity forms section -->
+    
+</aura:component>

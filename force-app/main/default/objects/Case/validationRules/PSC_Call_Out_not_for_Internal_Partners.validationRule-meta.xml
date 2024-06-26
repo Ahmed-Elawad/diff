@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PSC_Call_Out_not_for_Internal_Partners</fullName>
+    <active>true</active>
+    <description>PSC callouts cannot be requested for internal Paychex partners.</description>
+    <errorConditionFormula>NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)) &amp;&amp;
+RecordTypeId = &quot;012700000001U2z&quot; &amp;&amp; 
+ISPICKVAL( Reassign_Category_1__c, &quot;PSC&quot;) &amp;&amp; 
+OR(ISPICKVAL( Disposition_2__c,&quot;Branch&quot;), 
+ISPICKVAL( Disposition_2__c,&quot;Client Retention&quot;), 
+ISPICKVAL( Disposition_2__c,&quot;CSS&quot;), 
+ISPICKVAL( Disposition_2__c,&quot;DSM - Post&quot;), 
+ISPICKVAL( Disposition_2__c,&quot;DSM - Pre&quot;), 
+ISPICKVAL( Disposition_2__c,&quot;ERR&quot;), 
+ISPICKVAL( Disposition_2__c,&quot;HRG&quot;), 
+ISPICKVAL( Disposition_2__c,&quot;HRS Internal Partner&quot;), 
+ISPICKVAL( Disposition_2__c,&quot;HRS Manager&quot;), 
+ISPICKVAL( Disposition_2__c,&quot;IT Rep&quot;), 
+ISPICKVAL( Disposition_2__c,&quot;Non-HRIS Internal Partner&quot;), 
+ISPICKVAL( Disposition_2__c,&quot;Paychex Sales - Post&quot;), 
+ISPICKVAL( Disposition_2__c,&quot;Paychex Sales - Pre&quot;))</errorConditionFormula>
+    <errorDisplayField>Reassign_Category_1__c</errorDisplayField>
+    <errorMessage>PSC call outs cannot be requested for internal Paychex partners. Please remove the Reassign-Categories to save the case, as these discussions cannot be made with unlicensed Paychex employees.</errorMessage>
+</ValidationRule>

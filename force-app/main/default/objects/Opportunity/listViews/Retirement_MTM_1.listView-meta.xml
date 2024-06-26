@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Retirement_MTM_1</fullName>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>OPPORTUNITY.CLOSE_DATE</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>OPPORTUNITY.PROBABILITY</columns>
+    <columns>Revenue__c</columns>
+    <columns>OPPORTUNITY.NEXT_STEP</columns>
+    <columns>OpportunityType__c</columns>
+    <columns>Referring_Employee__c</columns>
+    <columns>OPPORTUNITY.CREATED_DATE</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>OPPORTUNITY.PROBABILITY</field>
+        <operation>greaterThan</operation>
+        <value>5</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.PROBABILITY</field>
+        <operation>lessThan</operation>
+        <value>90</value>
+    </filters>
+    <filters>
+        <field>OpportunityType__c</field>
+        <operation>equals</operation>
+        <value>New Plan</value>
+    </filters>
+    <label>Retirement - My Open New Plan Ops</label>
+    <sharedTo>
+        <roleAndSubordinatesInternal>HRS_SR_DIR_RETIREMENT</roleAndSubordinatesInternal>
+    </sharedTo>
+</ListView>

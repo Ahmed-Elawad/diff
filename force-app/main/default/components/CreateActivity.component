@@ -1,0 +1,77 @@
+<!-- Component for creation of Activity - tasks and events.
+
+   History
+   -------
+   09/20/2017 Dan Carmen          Created 
+   03/26/2018 Jermaine Stukes	  Added style to description per case #27823247
+ -->
+<apex:component allowDML="true"  controller="MassCreateActivity" >
+
+<apex:form rendered="{!newObjectType == 'Activity Saved'}">
+   <h1>Your activity has been saved!</h1>
+   <br/>
+   <apex:commandButton value="Create Another Activity Record" action="{!createAnother}"/>   
+</apex:form>
+
+<apex:form rendered="{!newObjectType != 'Activity Saved'}">
+   <apex:pageBlock >
+      <apex:pageMessages /> 
+      <apex:pageBlockButtons >
+         <apex:commandButton rendered="{!hasRecords}" value="Save" action="{!save}"/>
+         <apex:commandButton value="Cancel" action="{!cancel}"/>
+      </apex:pageBlockButtons>
+
+    <apex:pageBlockSection columns="1">
+
+      <apex:pageBlockSectionItem >
+         <apex:outputLabel value="Select the Activity Type" />
+         <apex:selectList value="{!activityType}"
+                          title="Select a Package."
+                          size="1" >
+            <apex:selectOptions value="{!activityTypes}"/>
+            <apex:actionSupport event="onchange" action="{!changeActivity}" />
+         </apex:selectList>
+      </apex:pageBlockSectionItem>
+
+     </apex:pageBlockSection>
+
+    <apex:pageBlockSection columns="1" rendered="{!AND(hasRecords,newObjectType == 'Task') }" id="taskSectionClassic">
+
+       <!-- 
+       <apex:outputField value="{!newTask.RecordTypeId}"/>
+       <apex:outputField value="{!newTask.WhatId}" label="Related To"/>
+       <apex:outputField value="{!newTask.WhoId}" label="Name"/>
+        -->
+        
+       <apex:inputField value="{!firstTask.Status}" />
+       <apex:inputField value="{!firstTask.Lead_Source_WAR_Call_Type__c}" />
+       <apex:inputField value="{!firstTask.Type}" />
+       <apex:inputField value="{!firstTask.Subject}" />
+       <apex:inputField value="{!firstTask.ActivityDate}" label="Due Date" />
+       <apex:inputField value="{!firstTask.Description}" style="width: 300px; height: 80px" required="false"/>
+
+    </apex:pageBlockSection>
+
+    <apex:pageBlockSection columns="1" rendered="{!AND(hasRecords,newObjectType == 'Event')}" id="eventSection">
+
+       <!-- 
+       <apex:outputField value="{!newMeeting.evnt.RecordTypeId}"/>
+       <apex:outputField rendered="{!useWhat}" value="{!newMeeting.evnt.WhatId}" label="Name"/>
+       <apex:outputField rendered="{!useWho}" value="{!newMeeting.evnt.WhoId}" label="Name"/>
+        -->
+
+       <apex:inputField value="{!firstMeeting.evnt.Lead_Source_WAR_Call_Type__c}" />
+       <apex:inputField value="{!firstMeeting.evnt.Type}" />
+       <apex:inputField value="{!firstMeeting.evnt.Subject}" />
+
+       <apex:inputField value="{!firstMeeting.evnt.ActivityDate}" id="meet_date" label="Meeting Date"/>
+       <apex:inputField value="{!firstMeeting.meeting.Meeting_Time__c}" id="meet_time" label="Meeting Time"/>
+
+       <apex:inputField value="{!firstMeeting.meeting.Meeting_Duration__c}" id="meet_duration" label="Meeting Duration"/>
+       <apex:inputField value="{!firstMeeting.evnt.Description}" style="width: 300px; height: 50px"  required="false"/>
+
+   </apex:pageBlockSection>
+
+   </apex:pageBlock>
+</apex:form>
+</apex:component>

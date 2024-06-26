@@ -1,0 +1,141 @@
+<!-- Component for creation of Activity - tasks and events.
+
+   History
+   -------
+   09/20/2017 Dan Carmen          Created 
+   
+ -->
+<apex:component allowDML="true" controller="MassCreateActivity" >
+
+  <apex:slds />
+
+  <apex:pageBlock rendered="{!newObjectType == 'Activity Saved'}">
+       <div class="slds-scope">
+           <legend class="slds-form-element__label slds-text-title--caps">Activity Saved!</legend>
+       </div>
+  </apex:pageBlock>
+
+  <apex:form rendered="{!newObjectType != 'Activity Saved'}">
+   
+     <apex:pageMessages />
+       
+       <div class="slds-scope">
+          <div class="myapp">
+             <div class="slds-form-element slds-size--1-of-2">
+                  <label class="slds-form-element__label">Select the Activity Type</label>
+                  <div class="slds-listbox__option slds-listbox__option_plain slds-media_small slds-media_center ">
+                       <apex:selectList value="{!activityType}"
+                          title="Select the Activity Type"
+                          size="1" >
+                            <apex:selectOptions value="{!activityTypes}"/>
+                            <apex:actionSupport event="onchange" action="{!changeActivity}" />
+                        </apex:selectList>
+                  </div>
+           </div>
+
+                <apex:actionFunction action="{!save}" name="saveActivity" />
+                <button type="button" class="slds-button slds-button_brand" onClick="saveActivity();">Save Activity</button>
+
+   <apex:pageBlock rendered="{!AND(newObjectType == 'Task',hasRecords)}" >
+            
+             
+             <div class="slds-form-element slds-size--1-of-2">
+                  <label class="slds-form-element__label">{!$ObjectType.Task.fields.Status.label}</label>
+                  <div class="slds-form-element__control ">
+                       <apex:inputField styleClass="slds-input" value="{!firstTask.Status}"/>
+                  </div>
+             </div>
+
+             <div class="slds-form-element slds-size--1-of-2">
+                  <label class="slds-form-element__label">{!$ObjectType.Task.fields.Lead_Source_WAR_Call_Type__c.label}</label>
+                  <div class="slds-form-element__control ">
+                       <apex:inputField styleClass="slds-input" value="{!firstTask.Lead_Source_WAR_Call_Type__c}"/>
+                  </div>
+             </div>
+             
+             <div class="slds-form-element slds-size--1-of-2">
+                  <label class="slds-form-element__label">{!$ObjectType.Task.fields.Type.label}</label>
+                  <div class="slds-form-element__control ">
+                       <apex:inputField styleClass="slds-input" value="{!firstTask.Type}"/>
+                  </div>
+             </div>
+
+             <div class="slds-form-element slds-size--1-of-2">
+                  <label class="slds-form-element__label">{!$ObjectType.Task.fields.Subject.label}</label>
+                  <div class="slds-form-element__control ">
+                       <apex:inputField styleClass="slds-input" value="{!firstTask.Subject}"/>
+                  </div>
+             </div>
+
+             <div class="slds-form-element slds-size--1-of-2">
+                  <label class="slds-form-element__label">{!$ObjectType.Task.fields.ActivityDate.label}</label>
+                  <div class="slds-form-element__control ">
+                       <apex:inputField styleClass="slds-input" value="{!firstTask.ActivityDate}"/>
+                  </div>
+             </div>
+
+             <div class="slds-form-element slds-size--1-of-2">
+                  <label class="slds-form-element__label">{!$ObjectType.Task.fields.Description.label}</label>
+                  <div class="slds-form-element__control ">
+                       <apex:inputField styleClass="slds-input" value="{!firstTask.Description}"/>
+                  </div>
+             </div>
+  </apex:pageBlock>
+
+   <apex:pageBlock rendered="{!AND(newObjectType == 'Event',hasRecords)}" >
+   
+                <div class="slds-form-element slds-size--1-of-2">
+                  <label class="slds-form-element__label">{!$ObjectType.Event.fields.Lead_Source_WAR_Call_Type__c.label}</label>
+                  <div class="slds-form-element__control ">
+                       <apex:inputField styleClass="slds-input" value="{!firstMeeting.evnt.Lead_Source_WAR_Call_Type__c}"/>
+                  </div>
+             </div>
+             
+             <div class="slds-form-element slds-size--1-of-2">
+                  <label class="slds-form-element__label">{!$ObjectType.Event.fields.Type.label}</label>
+                  <div class="slds-form-element__control ">
+                       <apex:inputField styleClass="slds-input" value="{!firstMeeting.evnt.Type}"/>
+                  </div>
+             </div>
+
+             <div class="slds-form-element slds-size--1-of-2">
+                  <label class="slds-form-element__label">{!$ObjectType.Event.fields.Subject.label}</label>
+                  <div class="slds-form-element__control ">
+                       <apex:inputField styleClass="slds-input" value="{!firstMeeting.evnt.Subject}"/>
+                  </div>
+             </div>
+
+             <div class="slds-form-element slds-size--1-of-2">
+                  <label class="slds-form-element__label">Meeting Date</label>
+                  <div class="slds-form-element__control ">
+                       <apex:inputField styleClass="slds-input" value="{!firstMeeting.evnt.ActivityDate}"/>
+                  </div>
+             </div>
+
+             <div class="slds-form-element slds-size--1-of-2">
+                  <label class="slds-form-element__label">Meeting Time</label>
+                  <div class="slds-form-element__control ">
+                       <apex:inputField styleClass="slds-input" value="{!firstMeeting.meeting.Meeting_Time__c}"/>
+                  </div>
+             </div>
+
+             <div class="slds-form-element slds-size--1-of-2">
+                  <label class="slds-form-element__label">Meeting Duration</label>
+                  <div class="slds-form-element__control ">
+                       <apex:inputField styleClass="slds-input" value="{!firstMeeting.meeting.Meeting_Duration__c}"/>
+                  </div>
+             </div>
+
+             <div class="slds-form-element slds-size--1-of-2">
+                  <label class="slds-form-element__label">{!$ObjectType.Event.fields.Description.label}</label>
+                  <div class="slds-form-element__control ">
+                       <apex:inputField styleClass="slds-input" value="{!firstMeeting.evnt.Description}"/>
+                  </div>
+             </div>
+             
+   </apex:pageBlock>  
+         </div>
+       </div>
+</apex:form>
+
+</apex:component>

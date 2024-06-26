@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Clients_with_no_CPA</fullName>
+    <columns>ACCOUNT.ACCOUNT_NUMBER</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>Do_Not_Call_Flag__c</columns>
+    <columns>ACCOUNT.PHONE1</columns>
+    <columns>ACCOUNT.ADDRESS1_STREET</columns>
+    <columns>ACCOUNT.ADDRESS1_CITY</columns>
+    <columns>ACCOUNT.ADDRESS1_ZIP</columns>
+    <columns>ACCOUNT.EMPLOYEES</columns>
+    <columns>Frequency__c</columns>
+    <columns>Current_Package__c</columns>
+    <columns>ACCOUNT.INDUSTRY</columns>
+    <columns>First_Run_Date__c</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>SalesParent__c</columns>
+    <columns>Target_Field__c</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>Bis_ID__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>notEqual</operation>
+        <value>HRS Client (Only),Lost Client,Prospect,Prospect - January</value>
+    </filters>
+    <filters>
+        <field>First_Run_Date__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>ACCOUNT.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Account.CoreAccountRecordType</value>
+    </filters>
+    <filters>
+        <field>CPA_Name_Ref__c</field>
+        <operation>equals</operation>
+        <value>,no CPA,unknown</value>
+    </filters>
+    <filters>
+        <field>Do_Not_Call__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>CurrentClient__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <label>Clients with no CPA</label>
+</ListView>

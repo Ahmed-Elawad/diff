@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RefPartnerNSSSource__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>APR0112505</description>
+    <externalId>false</externalId>
+    <formula>/*
+IF (AND(BLANKVALUE(DestinationNbrDays__c,0)&gt;0, ISPICKVAL( Destination__c , &apos;Paychex&apos;))
+,&apos;Inbound&apos;
+,IF (AND(BLANKVALUE(DestinationNbrDays__c,0)&gt;0, ISPICKVAL( Destination__c , &apos;Oasis&apos;))
+,&apos;Inbound-Oasis&apos;,&apos;&apos;))
+*/
+&quot;&quot;</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>Which NSS Source we should use when selecting the Referral Partners for the Submit Referral Form.</inlineHelpText>
+    <label>Ref Partner NSS Source</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

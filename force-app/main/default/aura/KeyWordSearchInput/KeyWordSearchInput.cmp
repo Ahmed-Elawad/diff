@@ -1,0 +1,126 @@
+<aura:component controller="KeyWordSearchController"  implements="flexipage:availableForAllPageTypes,lightning:isUrlAddressable,force:hasRecordId,force:appHostable" access="global">
+    <aura:handler name='init' value='{!this}' action='{!c.init}' />
+    
+    <!-- attributes to be received from parent component-->
+    <aura:attribute name="label" type="String" />
+    <aura:attribute name="objectApiName" type="String" />
+    <aura:attribute name="idFieldApiName" type="String" />
+    <aura:attribute name="valueFieldApiName" type="String" />
+    <aura:attribute name="extendedWhereClause" type="String" />
+    <aura:attribute name="maxRecords" type="Integer" default="50"/>
+    <aura:attribute name='disable' type='boolean' default='false' />
+    <aura:attribute name='recordId' type='String' />
+    <aura:attribute name='required' type='Boolean' default="false"/>
+    
+    <!-- Attributes specific to component-->
+    <aura:attribute name="results" type="List" />
+    <aura:attribute name="openDropDown" type="Boolean" default="false" />
+    <aura:attribute name="selectedOption" type="String" />
+    <aura:attribute name="inputValue" type="String" />
+    <aura:attribute name="inputSearchFunction" type="Object" />
+    <aura:attribute name='emptyResult' type='Boolean' default='false' />
+    <aura:attribute name='allowInlineSave' type='Boolean' default='false' />
+    <aura:attribute name="inputDescr" type="String" />
+    
+    <!--<div class="slds-form__row">
+        <div class="slds-form__item" role="listitem">
+            <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_stacked slds-hint-parent">
+                <label class="slds-form-element__label" for="combobox-id-21"
+                       style="{! empty(v.label) ? 'display:hidden;' : 'display:block;'}">{!v.label}</label>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static">{!v.inputValue}</div>
+                    <button class="test-id__inline-edit-trigger slds-shrink-none inline-edit-trigger slds-button slds-button_icon-bare" title=">Edit NAICS Code">
+                        <span class='inline-edit-trigger-icon slds-button__icon slds-button__icon_hint' aria-hidden='true' >
+                              <lightning:icon iconName="utility:edit" alternativeText="Edit NAICS Code" size="xx-small" title="Edit NAICS Code" />
+                        </span>
+                    </button>
+                </div>
+            </div>
+            <input type="text"
+                       class="slds-input slds-combobox__input slds-has-focus slds-combobox__input-value"
+                       id="combobox-id-21" aria-autocomplete="list" aria-controls="listbox-id-11"
+                       autoComplete="off" onkeyup="{!c.searchHandler}" role="textbox" placeholder="Search..."
+                       value="{!v.inputValue}" />
+            <aura:if isTrue="{! empty(v.selectedOption)}">
+                <span
+                      class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
+                    <lightning:icon iconName="utility:search" size="x-small" />
+                </span>
+                <aura:set attribute="else">
+                    <button class="slds-button slds-button_icon slds-input__icon slds-input__icon_right"
+                            title="Clear the text input" onclick="{!c.clearOption}">
+                        <lightning:icon iconName="utility:clear" size="x-small" />
+                    </button>
+                </aura:set>
+            </aura:if>
+        </div>
+    </div>-->
+    <lightning:card title="{!v.allowInlineSave ? 'Search NAICs Codes' : ''}" >
+        
+        <div class="slds-form-element indent" style="{!v.required ? 'width: 96% !important;padding-left: 1rem' : 'width: 98% !important; padding-left: 4%; padding-right: 8% !important;'}">
+            <label class="slds-form-element__label" for="combobox-id-21"
+                   style="{! empty(v.label) ? 'display:hidden;' : 'display:block;'}">
+                <aura:if isTrue="{!v.required}">
+                    <abbr title="required" class="slds-required">*</abbr>
+                </aura:if>
+                {!v.label}
+            </label>
+            <div class="{! v.openDropDown ? 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open' : 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click'}"
+                 aria-expanded="true" aria-haspopup="listbox" role="combobox">
+                <div class="slds-form-element_edit slds-input-has-icon slds-input-has-icon_right" role="none">
+                    <input aura:id='naicsInput' type="text" onchange='{!c.updateInput}' disabled="{!v.disable}"
+                           class="slds-input slds-combobox__input slds-has-focus slds-combobox__input-value"
+                           id="combobox-id-21" aria-autocomplete="list" aria-controls="listbox-id-11"
+                           autoComplete="off" onkeyup="{!c.searchHandler}" role="textbox" placeholder="Search..."
+                           value="{!v.inputValue}" />
+                    <!--<aura:if isTrue="{! empty(v.selectedOption)}">
+                        <span
+                              class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
+                            <lightning:icon iconName="utility:search" size="x-small" />
+                        </span>
+                        <aura:set attribute="else">
+                            <button class="slds-button slds-button_icon slds-input__icon slds-input__icon_right"
+                                    title="Clear the text input" onclick="{!c.clearOption}">
+                                <lightning:icon iconName="utility:clear" size="x-small" />
+                            </button>
+                        </aura:set>
+                    </aura:if>-->
+                </div>
+                <aura:if isTrue='{!v.emptyResult}'>
+                    <span  class="slds-text-color_error">No matching codes for the provided entry. Please try another value</span>
+                </aura:if>
+                <div id="listbox-id-11" class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid"
+                     role="listbox">
+                    <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                        <aura:iteration items="{!v.results}" var="result">
+                            <li role="presentation" class="slds-listbox__item" data-id="{!result.id}"
+                                data-value="{!result.value}" onclick="{!c.optionClickHandler}">
+                                <div id="{!result.id}"
+                                     class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small"
+                                     role="option">
+                                    <span class="slds-media__figure slds-listbox__option-icon"></span>
+                                    <span class="slds-media__body">
+                                        <span class="slds-truncate" title="NAICS Codes">
+                                            <span>{!result.value}</span>
+                                        </span>
+                                    </span>
+                                </div>
+                            </li>
+                        </aura:iteration>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <aura:if isTrue='{!v.allowInlineSave}'>
+            <div class="modal-footer slds-modal__footer slds-size_1-of-1 slds-p-">
+                <lightning:button disabled="{! or(v.disable, v.emptyResult) }"
+                                  class="slds-m-top_small" 
+                                  variant="brand" 
+                                  type="Submit" 
+                                  name="Save_NAICs_Code" 
+                                  label="Save NAICs Code" 
+                                  onclick="{!c.save}" />
+            </div>
+        </aura:if>
+    </lightning:card>
+</aura:component>

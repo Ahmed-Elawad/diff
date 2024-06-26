@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Plan_Activated_Date_is_todays_date</fullName>
+    <active>true</active>
+    <description>Plan activated date should be today.</description>
+    <errorConditionFormula>AND(  ISNULL(PRIORVALUE(Plan_Activated__c)),
+ISCHANGED( Plan_Activated__c),
+
+NOT(Plan_Activated__c = TODAY()))</errorConditionFormula>
+    <errorDisplayField>of_Initial_Call_Attempts__c</errorDisplayField>
+    <errorMessage>Plan Activated Date must be today&apos;s date.</errorMessage>
+</ValidationRule>

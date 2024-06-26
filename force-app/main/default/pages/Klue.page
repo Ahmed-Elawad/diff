@@ -1,0 +1,26 @@
+<!-- Wrapper page to control visibility to Klue Canvas App
+    Created 5/17/2018 Justin Stouffer 
+    Updated 1/28/2019 Justin Stouffer Added Extension and Javascript to fix impersonated user access.
+-->
+<apex:page ><!-- standardController="Opportunity" extensions="klueControllerExt" showHeader="false" sidebar="false"
+            rendered="{!AND($Permission.Klue,!CONTAINS($Label.Klue_Exclude, $User.Alias))}">
+    <apex:form >
+        <apex:actionFunction name="setImpersonate" action="{!reload}" rerender="klueCanvas">
+            <apex:param name="param1" assignTo="{!impersonate}" value="" />
+        </apex:actionFunction>
+    </apex:form>-->
+    /*<script type="text/javascript">
+        setImpersonate(document.cookie.match(/(;|^)\s*RSID=/i) ? 1 : 2);
+    </script>*/
+    <!--<apex:outputPanel id="klueCanvas">
+        <apex:outputPanel rendered="{!impersonate == 0}">
+            <p>Loading...</p>
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!impersonate == 1}">
+            <p><b>Klue Battlecards not available due to security restrictions when impersonating.</b></p>
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!impersonate == 2}">    
+            <apex:canvasApp applicationName="klue_canvas" namespacePrefix="klue" width="100%" height="100%"/>
+        </apex:outputPanel>
+  </apex:outputPanel>-->
+</apex:page>

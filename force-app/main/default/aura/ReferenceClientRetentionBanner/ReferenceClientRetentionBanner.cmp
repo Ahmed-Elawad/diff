@@ -1,0 +1,37 @@
+<!--
+History
+10/13/2023 Carrie Marciano	created
+
+-->
+<aura:component description="ReferenceClientRetentionBanner" controller="ObjectBannerAuraService">
+    <aura:attribute name="refClientRetId" type="Id" required="true" />  
+    <aura:attribute name="refClientRet" type="Object" />
+    
+    <aura:attribute name="ReferenceClientRetentionWrapper" type="Object" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" /> 
+    
+    <force:recordData aura:id="refClientRetLoader"
+                      fields="Id, RecordTypeId, OwnerId, Owner.Name, Name, Current_Step__c, 
+                        Prospect_Client_Name__c,
+                        Prospect_Client_Name__r.Name,
+                        Prospect_Client_Name__r.LastActivityDate,
+                        Prospect_Client_Number__c,
+                        Case__c,
+                        Case__r.Account.Id,
+                        Case__r.Current_Step__c,
+                        Case__r.Origin,
+                        Case__r.Status"
+                      recordId="{!v.refClientRetId}"                      
+                      targetFields="{!v.refClientRet}"
+                      mode="VIEW" />       
+    
+    <div class="slds-tile__detail">
+        <div class="grid-wrapper">
+            <!-- Open RCRs -->
+            <c:BannerOpenReferenceClientRetention recordId="{!v.refClientRetId}" openRCRs="{!v.ReferenceClientRetentionWrapper.openRCRs}" />
+            <!-- Total RCRs -->
+            <c:BannerTotalReferenceClientRetention recordId="{!v.refClientRetId}" totalRCRs="{!v.ReferenceClientRetentionWrapper.totalRCRs}" objectType="Reference_Client_Retention__c"  />
+        </div>
+    </div>
+</aura:component>

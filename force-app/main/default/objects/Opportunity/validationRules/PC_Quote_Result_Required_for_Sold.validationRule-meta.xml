@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PC_Quote_Result_Required_for_Sold</fullName>
+    <active>true</active>
+    <description>Ensures the P&amp;C Quote Result field is populated prior to moving Oppty to Sold or better</description>
+    <errorConditionFormula>AND(
+$Permission.P_C_Quote_Data_Access,
+Probability &gt;= 0.70,
+ISBLANK( TEXT(P_C_Quote_Result__c) ),
+NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+OR(AND(RecordType.Name=&apos;Core Opportunity Record Type&apos;,
+OR(
+ISPICKVAL(OpportunityType__c, &quot;Payroll&quot;),
+ISPICKVAL(OpportunityType__c, &quot;Payroll-HR Pro&quot;)
+)),
+AND(RecordType.Name=&apos;Core Virtual Sales&apos;,
+OR(
+ISPICKVAL(OpportunityType__c, &quot;Payroll&quot;),
+ISPICKVAL(OpportunityType__c, &quot;Payroll-HR Pro&quot;)
+)),
+AND(
+RecordType.Name=&apos;MMS Opportunity Record Type&apos;,
+OR(
+ISPICKVAL(OpportunityType__c, &quot;Payroll&quot;),
+ISPICKVAL(OpportunityType__c, &quot;Payroll-HR Pro&quot;)
+),
+OR(
+$User.District__c = &quot;402&quot;,
+$User.District__c = &quot;448&quot;
+)
+),
+AND(
+RecordType.Name=&apos;PC Opportunity Record Type&apos;,
+OR(ISPICKVAL(OpportunityType__c, &quot;Workers Comp&quot;),
+ISPICKVAL(OpportunityType__c, &quot;BOP (Business Owners Package)&quot;)
+),
+ISBLANK(Tarmika_Quote__c))
+)
+)</errorConditionFormula>
+    <errorMessage>You must populate the PC Quote Result field before marking your Opportunity as Verbal Commit or higher.</errorMessage>
+</ValidationRule>

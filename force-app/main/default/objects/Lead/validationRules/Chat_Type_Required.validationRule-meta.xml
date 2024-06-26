@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Chat_Type_Required</fullName>
+    <active>true</active>
+    <description>Require Chat Type if Lead Source is Corp Marketing - Chat
+Case #26588916</description>
+    <errorConditionFormula>AND(RecordType.DeveloperName = &quot;CoreLeadRecordType&quot;
+,NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;))
+,ISPICKVAL(LeadSource, &quot;Corp Marketing-Chat&quot;)
+,ISPICKVAL(Chat_Type__c, &quot;&quot;))</errorConditionFormula>
+    <errorMessage>&quot;Chat Type&quot; field required for selected lead source</errorMessage>
+</ValidationRule>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>StageIsCurrent__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <formula>AND( NextStage__c == null
+,IF( Contact__c != null, TEXT(Contact__r.Contact_Stage__c) =  New_Stage__c 
+   , IF (Lead__c != null, TEXT(Lead__r.Lead_Stage__c) = New_Stage__c
+      , IF (Opportunity__c != null, TEXT(Opportunity__r.StageName) = New_Stage__c, false)))
+)</formula>
+    <inlineHelpText>Does the stage on the Stage History record equal the current stage on the contact/lead?</inlineHelpText>
+    <label>Stage Is Current</label>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

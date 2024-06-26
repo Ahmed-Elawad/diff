@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All_Terminations_in_Process</fullName>
+    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 and 6 and 7</booleanFilter>
+    <columns>NAME</columns>
+    <columns>Branch_Client_Number__c</columns>
+    <columns>Prospect_Client_Name__c</columns>
+    <columns>Case_Owner__c</columns>
+    <columns>Case_Status__c</columns>
+    <columns>Total_of_IDs__c</columns>
+    <columns>Client_IDs_to_be_Coded_Lost__c</columns>
+    <columns>Date_Status_Updated__c</columns>
+    <columns>Estimated_Code_Lost_Date__c</columns>
+    <columns>Fiscal_Lost_Month__c</columns>
+    <columns>Fiscal_Year__c</columns>
+    <columns>HRG_Name__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Case_Type__c</field>
+        <operation>notEqual</operation>
+        <value>Retained</value>
+    </filters>
+    <filters>
+        <field>Case_Status__c</field>
+        <operation>notContain</operation>
+        <value>Closed,Solved</value>
+    </filters>
+    <filters>
+        <field>Fiscal_Year__c</field>
+        <operation>equals</operation>
+        <value>FY24</value>
+    </filters>
+    <filters>
+        <field>Termination_or_Transfer__c</field>
+        <operation>equals</operation>
+        <value>Termination</value>
+    </filters>
+    <filters>
+        <field>Fiscal_Lost_Month__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Revenue_Location__c</field>
+        <operation>equals</operation>
+        <value>940,942,943,944,1240,1242,1243,1244</value>
+    </filters>
+    <filters>
+        <field>Case_Status__c</field>
+        <operation>notEqual</operation>
+        <value>Waiting on Ops</value>
+    </filters>
+    <label>MPSC Terminations in Process</label>
+    <sharedTo>
+        <role>HRE_Handbook_Supervisor_team_2</role>
+    </sharedTo>
+</ListView>

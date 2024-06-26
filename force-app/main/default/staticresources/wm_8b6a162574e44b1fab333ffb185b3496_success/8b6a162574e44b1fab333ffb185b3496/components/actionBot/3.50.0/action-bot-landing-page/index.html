@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="theme-color" content="#000000">
+
+  <title>ActionBot Landing Page</title>
+
+  <style>
+    body {
+      align-items: center;
+      background: #fff;
+      display: flex;
+      height: 100vh;
+      justify-content: center;
+      margin: 0;
+    }
+
+    .walkme-logo {
+      width: 200px;
+    }
+
+    .huge-loader {
+      align-items: center;
+      display: flex;
+      height: 320px;
+      justify-content: center;
+      position: relative;
+      width: 320px;
+    }
+
+    .huge-loader div {
+      animation: loader-animation 1.2s linear infinite;
+      background-color: #e3f4ff;
+      border-radius: 50%;
+      height: 24px;
+      position: absolute;
+      width: 24px;
+    }
+
+    .huge-loader div:nth-child(1) {
+      animation-delay: 0s;
+      left: 296px;
+      top: 148px;
+    }
+
+    .huge-loader div:nth-child(2) {
+      animation-delay: 0.1s;
+      left: 276px;
+      top: 222px;
+    }
+
+    .huge-loader div:nth-child(3) {
+      animation-delay: 0.2s;
+      left: 222px;
+      top: 276px;
+    }
+
+    .huge-loader div:nth-child(4) {
+      animation-delay: 0.3s;
+      left: 148px;
+      top: 296px;
+    }
+
+    .huge-loader div:nth-child(5) {
+      animation-delay: 0.4s;
+      left: 74px;
+      top: 276px;
+    }
+
+    .huge-loader div:nth-child(6) {
+      animation-delay: 0.5s;
+      left: 20px;
+      top: 222px;
+    }
+
+    .huge-loader div:nth-child(7) {
+      animation-delay: 0.6s;
+      left: 0;
+      top: 148px;
+    }
+
+    .huge-loader div:nth-child(8) {
+      animation-delay: 0.7s;
+      left: 20px;
+      top: 74px;
+    }
+
+    .huge-loader div:nth-child(9) {
+      animation-delay: 0.8s;
+      left: 74px;
+      top: 20px;
+    }
+
+    .huge-loader div:nth-child(10) {
+      animation-delay: 0.9s;
+      left: 148px;
+      top: 0;
+    }
+
+    .huge-loader div:nth-child(11) {
+      animation-delay: 1s;
+      left: 222px;
+      top: 20px;
+    }
+
+    .huge-loader div:nth-child(12) {
+      animation-delay: 1.1s;
+      left: 276px;
+      top: 74px;
+    }
+
+    @keyframes loader-animation {
+      0%,
+      20%,
+      80%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        background-color: #3393d1;
+        transform: scale(1.2);
+      }
+    }
+  </style>
+</head>
+<body>
+  <noscript>
+    You need to enable JavaScript to run this app.
+  </noscript>
+
+  <div class="huge-loader">
+    <div></div><div></div><div></div><div></div>
+    <div></div><div></div><div></div><div></div>
+    <div></div><div></div><div></div><div></div>
+    <img class="walkme-logo" src="./walkme-logo-color.png" alt="WalkMe-logo"/>
+  </div>
+
+  <script>
+    function onDocumentReady(callback) {
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(callback, 1);
+      } else {
+        document.addEventListener('DOMContentLoaded', callback);
+      }
+    }
+
+    onDocumentReady(() => {
+      const { origin } = window.location;
+      const API_CONFIG = {
+        cdnUrl: origin.includes('localhost') ? 'https://cdn.walkmeqa.com' : origin,
+        papiUrl: `https://papi.walkme${origin.includes('localhost') || origin.includes('walkmeqa') ? 'qa' : ''}.com`,
+      };
+      const PREFIX = 'wm-ab-';
+      const VALUES_LIFE_TIME = 60 * 10;
+
+      const supportedAppTypes = [
+        'START_WALKTHRU',
+        'START_SMARTWALKTHRU',
+        'SMARTWALKTHRU',
+        'WALKTHRU',
+        'SURVEY',
+        'SHOUTOUT',
+        'RESOURCE',
+        'SHUTTLE',
+      ];
+      const appTypesWithDataMapping = supportedAppTypes; // According to EUI they all have dataMapping
+      const envIdToEnvPath = { 0: '', 3: '/test', 95: '/success' };
+      const params = new URLSearchParams(window.location.search);
+
+      const paramsAreValid = (searchParams) => {
+        const requiredParamKeys = ['userGuid', 'jwt', 'envId', 'botId', 'conversationId', 'dialogId', 'nodeId'];
+
+        return requiredParamKeys.every((key) => searchParams.has(key)) &&
+                envIdToEnvPath.hasOwnProperty(searchParams.get('envId'));
+      };
+
+      const getDialog = async ({ botId, conversationId, dialogId, envId, jwt }) => {
+        // TODO: take into account that fetch API is supported by not all browsers
+        const fetchData = await fetch(`${API_CONFIG.papiUrl}/chatbot/bots/${botId}/conversations/${conversationId}/dialogs/${dialogId}`, {
+          method: 'GET',
+          headers: {
+            'content-type': 'application/json',
+            authorization: `Bearer ${jwt}`,
+            'x-wmab-wmenv': envId,
+          }
+        });
+
+        return await fetchData.json();
+      };
+
+      const getNode = async ({ botId, conversationId, dialogId, nodeId, envId, jwt }) => {
+        const fetchData = await fetch(`${API_CONFIG.papiUrl}/chatbot/bots/${botId}/conversations/${conversationId}/dialogs/${dialogId}/nodes/${nodeId}`, {
+          method: 'GET',
+          headers: {
+            'content-type': 'application/json',
+            authorization: `Bearer ${jwt}`,
+            'x-wmab-wmenv': envId,
+          }
+        });
+
+        return await fetchData.json();
+      };
+
+      const normalizeAnswers = (rawAnswers, nodeData) => {
+        const { settings = {} } = nodeData;
+        const { app } = settings;
+
+        const answers = Object.entries(rawAnswers).reduce((acc, [key, descriptor]) => {
+          if (descriptor && descriptor.type === 'conversationVariable') {
+            return typeof descriptor.value === 'object'
+                    ? {
+                      ...acc,
+                      ...Object.entries(descriptor.value).reduce(
+                              (innerAcc, [innerKey, innerValue]) => ({
+                                ...innerAcc,
+                                [innerKey]: { value: innerValue, nodeId: Number(key) },
+                              }),
+                              {}
+                      ),
+                    }
+                    : acc;
+          }
+
+          return { ...acc, [key]: { ...descriptor, nodeId: Number(key) } };
+        }, {});
+
+        if (appTypesWithDataMapping.includes(app)) {
+          const { dataMapping = {} } = nodeData;
+
+          return Object.entries(dataMapping).reduce((acc, [key, value]) => {
+            return { ...acc, [value]: answers[key] };
+          }, {});
+        }
+
+        return {};
+      };
+
+      const runDeployable = async (params) => {
+        const userGuid = params.get('userGuid');
+        const jwt = params.get('jwt');
+        const botId = params.get('botId');
+        const conversationId = params.get('conversationId');
+        const dialogId = params.get('dialogId');
+        const envId = params.get('envId');
+        const nodeId = params.get('nodeId');
+
+        const clientStorageManager = window._walkmeInternals.ctx.get('ClientStorageManager');
+        const classWalkMeAPI = window._walkmeInternals.ctx.get('ClassWalkMeAPI');
+        const shoutOutsManager = window._walkmeInternals.ctx.get('ShoutOutsManager');
+        const shuttlesManager = window._walkmeInternals.ctx.get('ShuttlesManager');
+        const commonEvents = window._walkmeInternals.ctx.get('CommonEvents');
+
+        const appTypeToWmActionHandler = {
+          START_WALKTHRU: (id) => classWalkMeAPI.startFlowById(id),
+          START_SMARTWALKTHRU: (id) => classWalkMeAPI.startFlowById(id),
+          SMARTWALKTHRU: (id) => classWalkMeAPI.startFlowById(id),
+          WALKTHRU: (id) => classWalkMeAPI.startWalkthruById(id),
+          SURVEY: (id) => classWalkMeAPI.startSurveyById(id),
+          SHOUTOUT: (id) => shoutOutsManager.activateById(id),
+          RESOURCE: (id) => classWalkMeAPI.startContentById(id),
+          SHUTTLE: (id) => shuttlesManager.activateById(id),
+        };
+
+        try {
+          const { data: rawAnswers } = await getDialog({ botId, conversationId, dialogId, envId, jwt });
+          const rawNode = await getNode({ botId, conversationId, dialogId, nodeId, envId, jwt });
+
+          const answers = normalizeAnswers(rawAnswers, rawNode);
+
+          Object.entries(answers).forEach(([key, value]) => {
+            clientStorageManager.saveData(`${PREFIX}${key}`, value, VALUES_LIFE_TIME);
+          });
+
+          clientStorageManager.refreshGetData(null, async () => {
+            const nodeSettings = rawNode.settings || {};
+            const wmActionHandler = appTypeToWmActionHandler[nodeSettings.app];
+
+            if (wmActionHandler && nodeSettings.id) {
+              const payload = {
+                settings: nodeSettings,
+                answers,
+                options: { botId, conversationId, dialogId },
+              };
+
+              commonEvents.raiseEvent('WM_BOT_DUI_ACTION', payload);
+
+              await wmActionHandler(nodeSettings.id);
+            }
+          });
+        } catch(e) {
+          console.error(e);
+          console.warn('Unable to launch deployable. Please reload the page or check parameters validity.');
+        }
+      };
+
+      const loadUserSnippet = (params, onReadyCallback) => {
+        window.walkme_ready = onReadyCallback;
+
+        const userGuid = params.get('userGuid');
+        const envPath = envIdToEnvPath[params.get('envId')];
+        const snippetSrc = `${API_CONFIG.cdnUrl}/users/${userGuid}${envPath}/walkme_${userGuid}_https.js`;
+        const walkmeScript = document.createElement('script');
+
+        walkmeScript.type = 'text/javascript';
+        walkmeScript.src = snippetSrc;
+
+        document.body.append(walkmeScript);
+      };
+
+      if (paramsAreValid(params)) {
+        loadUserSnippet(params, () => runDeployable(params));
+      } else {
+        console.warn('Required parameter is missing or malformed.')
+      }
+    });
+  </script>
+</body>
+</html>

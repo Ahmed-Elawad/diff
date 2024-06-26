@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CSA_Cases_Requires_CSA_Inquiry_Record</fullName>
+    <active>true</active>
+    <description>CSA recordy type cases require a CSA inquries record. this is done via the support tab or manually adding the custom record to the case.</description>
+    <errorConditionFormula>if(
+NOT(ISPICKVAL(Type , &quot;CSA Inquiry&quot;)) &amp;&amp; CONTAINS($RecordType.Name, &apos;CSA&apos;), TRUE, FALSE)</errorConditionFormula>
+    <errorMessage>*** NOTE: ALL SALES COMMISSION DISCREPANCY REQUESTS MUST BE SUBMITTED FROM THE SUPPORT TAB ***</errorMessage>
+</ValidationRule>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRE_FCR_or_FUN_when_ContactReason</fullName>
+    <active>true</active>
+    <description>Either the First Call Resolution or the Follow Up Needed field must be checked, in order to select a picklist value for the Contact Reason field, for Handbook Support HRE/CHB Ref Object record type ONLY.</description>
+    <errorConditionFormula>AND( 
+(First_Call_Resolution__c = FALSE), 
+(Follow_Up_Needed__c = FALSE), 
+( NOT(ISPICKVAL(Contact_Reason__c, &apos;&apos;)) ),
+( RecordType.Name = &quot;Service Support HRE/CHB Ref Object&quot; ), 
+($UserRole.Name &lt;&gt; &quot;System Administrator&quot;) 
+)</errorConditionFormula>
+    <errorMessage>Please check either the First Call Resolution or Follow Up Needed field.</errorMessage>
+</ValidationRule>

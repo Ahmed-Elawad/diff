@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>NSS_Sales_NSRApproved_Change_Sup_RecType</fullName>
+        <field>RecordTypeId</field>
+        <lookupValue>Submitted</lookupValue>
+        <lookupValueType>RecordType</lookupValueType>
+        <name>NSS Sales NSRApproved Change Sup RecType</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>NSS_Sales_Rejected_Change_Audit_RecType</fullName>
+        <description>change rcd type back to NSS if Audit is rejected for Inbound</description>
+        <field>RecordTypeId</field>
+        <lookupValue>NSR_Record_Type</lookupValue>
+        <lookupValueType>RecordType</lookupValueType>
+        <name>NSS Sales Rejected Change Audit RecType</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>NSS_Sales_Update_Rcd_Type_to_Audit</fullName>
+        <description>Updates the record type to Audit</description>
+        <field>RecordTypeId</field>
+        <lookupValue>Audit</lookupValue>
+        <lookupValueType>RecordType</lookupValueType>
+        <name>NSS Sales Update Rcd Type to Audit</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>NSS_Sales_Update_Record_Type_To_Supervis</fullName>
+        <description>Updates the record type of NSS Sales Record to Supervisor after the Audit record has been rejected.</description>
+        <field>RecordTypeId</field>
+        <lookupValue>Submitted</lookupValue>
+        <lookupValueType>RecordType</lookupValueType>
+        <name>NSS Sales Update Record Type To Supervis</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>NSS_Sales_Update_Record_Type_to_Audit</fullName>
+        <description>Updates the record type from Supervisor to Audit</description>
+        <field>RecordTypeId</field>
+        <lookupValue>Audit</lookupValue>
+        <lookupValueType>RecordType</lookupValueType>
+        <name>NSS Sales Update Record Type to Audit</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>NSS_Sales_Update_Record_Type_to_NSR</fullName>
+        <description>Changes Rcd Type from Audit to NSR if Audit Rejected and Inbound</description>
+        <field>RecordTypeId</field>
+        <lookupValue>NSR_Record_Type</lookupValue>
+        <lookupValueType>RecordType</lookupValueType>
+        <name>NSS Sales Update Record Type to NSR</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>NSS_populate_Credit_Date</fullName>
+        <description>when Status changes to submitted, put today() in credit date</description>
+        <field>CreditDate__c</field>
+        <formula>TODAY()</formula>
+        <name>NSS populate Credit Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>NSS_populate_approve_reject_date</fullName>
+        <description>put todays date in approve/reject date</description>
+        <field>Approve_Reject_Date__c</field>
+        <formula>TODAY()</formula>
+        <name>NSS populate approve/reject date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>NSS NSR to Audit Record Type</fullName>
+        <actions>
+            <name>NSS_Sales_Update_Rcd_Type_to_Audit</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>NSSAudit__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Inbound Approved,Inbound Re-Approved</value>
+        </criteriaItems>
+        <description>Changes the record type from NSR to Audit when Inbound Approved</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>NSS NSR to Supervisor Record Type</fullName>
+        <actions>
+            <name>NSS_Sales_NSRApproved_Change_Sup_RecType</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>NSSAudit__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Submitted</value>
+        </criteriaItems>
+        <description>Changes the record type from NSR to Supervisor when submitted</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>NSS Supervisor to Audit Record Type</fullName>
+        <actions>
+            <name>NSS_Sales_Update_Record_Type_to_Audit</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>NSSAudit__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Supervisor Approved,Supervisor Re-Approved</value>
+        </criteriaItems>
+        <description>Changes the record type of the NSS Sale record from Supervisor to Audit when status = Approved</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>NSS Update Rcd Type To NSR if Reject and Inbound</fullName>
+        <actions>
+            <name>NSS_Sales_Update_Record_Type_to_NSR</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>NSSAudit__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Audit Record Type</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>NSSAudit__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Audit Rejected</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>NSSAudit__c.Source__c</field>
+            <operation>equals</operation>
+            <value>Inbound</value>
+        </criteriaItems>
+        <description>Updates the record type back to the NSR record type if the Audit record is rejected.</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>NSS Update Record Type To Supervisor After Reject</fullName>
+        <actions>
+            <name>NSS_Sales_Update_Record_Type_To_Supervis</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>NSSAudit__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Audit Rejected</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>NSSAudit__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Audit Record Type</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>NSSAudit__c.Source__c</field>
+            <operation>equals</operation>
+            <value>Outbound</value>
+        </criteriaItems>
+        <description>Updates the record type back to the Supervisor record type if the Audit record is rejected.</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>NSS populate Credit Date</fullName>
+        <actions>
+            <name>NSS_populate_Credit_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>NSS_populate_approve_reject_date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <description>when status changes to Submitted, put Today in Credit Date and Approve/Reject Date</description>
+        <formula>AND(OR(ISPICKVAL(Status__c, &apos;Supervisor Approved&apos;), ISPICKVAL(Status__c, &apos;Inbound Approved&apos;), ISPICKVAL(Status__c, &apos;Inbound Re-Approved&apos;)), OR ( ISCHANGED(Status__c), ISNEW() ))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update Inbound Incorrect Record Types</fullName>
+        <actions>
+            <name>NSS_Sales_Update_Rcd_Type_to_Audit</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>NSSAudit__c.NSS_Source__c</field>
+            <operation>equals</operation>
+            <value>Inbound</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>NSSAudit__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>NSR Record Type</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>NSSAudit__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Inbound Approved,Inbound Re-Approved</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

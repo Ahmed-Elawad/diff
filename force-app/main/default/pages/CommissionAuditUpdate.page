@@ -1,0 +1,51 @@
+<apex:page controller="CommissionAuditUpdate">
+    <apex:form >
+        <apex:pagemessages />
+        <apex:pageBlock >
+            <apex:pageBlockSection columns="4"> 
+                <apex:inputFile value="{!csvFileBody}"  filename="{!csvAsString}"/>
+                <apex:outputPanel >
+                    <apex:commandButton value="Update Cases" style="left:0px;position:relative;" action="{!CSA_InquiriesMethod}"/> 
+                    <apex:commandButton value="Update Referrals" style="left:20px;position:relative;"  action="{!ReferralsMethod}"/>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:actionRegion id="aRegion" renderRegionOnly="false" rendered="{!ShowCases}">
+        <apex:pageBlock id="table" title="Updated Records">
+           <apex:pageblocktable value="{!getTableRows}" var="row">
+              <apex:column value="{!row.csaRec.Id}" />
+              <apex:column value="{!row.csaRec.Approved_Reject_Status__c}" />
+              <apex:column value="{!row.csaRec.Reason_Code__c}" />
+              <apex:column value="{!row.csaRec.Corporate_Comment__c}" />
+              <apex:column value="{!row.caseRec.Id}" />
+              <apex:column value="{!row.caseRec.Status}" />
+              <apex:column headerValue="Case Comments" value="{!row.caseComments.CommentBody}" />
+            </apex:pageblocktable>
+            <apex:commandButton action="{!Beginning}" title="Beginning" value="<<" disabled="{!disablePrevious}" reRender="table"/>
+            <apex:commandButton action="{!Previous}" title="Previous" value="<" disabled="{!disablePrevious}" reRender="table"/>
+            <apex:outputLabel value="{!currentCount} - {!pageSize} of {!totalSize}"/>       
+            <apex:commandButton action="{!Next}" title="Next" value=">" disabled="{!disableNext}" reRender="table"/>
+            <apex:commandButton action="{!End}" title="End" value=">>" disabled="{!disableNext}" reRender="table"/>
+        </apex:pageBlock>
+        </apex:actionRegion>
+         <apex:actionRegion id="aReferralRegion" renderRegionOnly="false" rendered="{!ShowReferrals}">
+        <apex:pageBlock id="RefferalTable" title="Updated Records">
+           <apex:pageblocktable value="{!getReferralList}" var="row">
+              <apex:column value="{!row.MonthSaleReported__c}" />
+              <apex:column value="{!row.PendingRunOfPayroll__c}" />
+              <apex:column value="{!row.NbrOfEmployees__c}" />
+              <apex:column value="{!row.ActualRevenue__c}" />
+              <apex:column value="{!row.Disposition__c}" />
+              <apex:column value="{!row.BankLeadNotes__c}" />
+              <apex:column value="{!row.CommissionOverride__c}" />
+              <apex:column value="{!row.Referral_Id__c}" />
+            </apex:pageblocktable>
+            <apex:commandButton action="{!Beginning}" title="Beginning" value="<<" disabled="{!disablePrevious}" reRender="RefferalTable"/>
+            <apex:commandButton action="{!Previous}" title="Previous" value="<" disabled="{!disablePrevious}" reRender="RefferalTable"/>
+            <apex:outputLabel value="{!currentCount} - {!pageSize} of {!totalSize}"/>       
+            <apex:commandButton action="{!Next}" title="Next" value=">" disabled="{!disableNext}" reRender="RefferalTable"/>
+            <apex:commandButton action="{!End}" title="End" value=">>" disabled="{!disableNext}" reRender="RefferalTable"/>
+        </apex:pageBlock>
+        </apex:actionRegion>
+   </apex:form>
+</apex:page>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Enforce_PaymentType_Warranty_RecType</fullName>
+    <active>true</active>
+    <description>Prevent users from saving records with Payment Type = Warranty and a PAC Late Payment Record Type</description>
+    <errorConditionFormula>AND( 
+RecordType.Name=&apos;PAC Late Payment Record Type&apos;,
+NOT(BEGINS($Profile.Name,&apos;System Administrator&apos;)),
+ISPICKVAL(Payment_Type__c,&apos;Warranty&apos;)
+)</errorConditionFormula>
+    <errorDisplayField>Payment_Type__c</errorDisplayField>
+    <errorMessage>The Payment Type cannot equal Warranty for records with the PAC Late Payment Record Type.</errorMessage>
+</ValidationRule>

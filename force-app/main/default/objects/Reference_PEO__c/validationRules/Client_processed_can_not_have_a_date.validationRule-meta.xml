@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Client_processed_can_not_have_a_date</fullName>
+    <active>true</active>
+    <description>Client processed can not have a date unless ready to process payroll-milestone has a date</description>
+    <errorConditionFormula>AND(
+NOT(ISBLANK(Client_Processed__c)),
+ISBLANK(Ready_to_Process_Payroll2__c),
+
+OR(
+RecordTypeId = &apos;012700000001jeX&apos;,
+RecordTypeId = &apos;012700000001kKx&apos;,
+RecordTypeId = &quot;0120g000000grzo&quot;, 
+RecordTypeId=&quot;0120g000000l3qD&quot;
+)
+)</errorConditionFormula>
+    <errorDisplayField>Client_Processed__c</errorDisplayField>
+    <errorMessage>Ready to process payroll-Milestone must have a date entered</errorMessage>
+</ValidationRule>

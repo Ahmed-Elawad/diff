@@ -1,0 +1,1036 @@
+<!-- A wizard to clone a Prospect-Client record, it's Contacts, and Opportunities
+
+History
+-------
+09/13/2012 Dan Carmen   Created 
+11/06/2012 Dan Carmen   Added in logic for maintaining existing multi-ids
+1/15/15 Josh Cartwright - added HRO Client Type to clone
+11/10/2016 Justin Stouffer - Updated to work in SF1
+03/27/2017 Cindy Freeman    changed to use Employees__c instead of NumberOfEmployees
+2/13/2020  Carrie Marciano added columns to create/update/delete Account Junction records for Multi-Id relationships used by Oracle CPQ
+07/01/2020 Carrie Marciano	Added Type column as read only and Frequency column as editable to Multi-id view
+07/07/2020 Matt Fritschi	Added ability to search off of additional Account/Contact fields.
+09/03/2021 Josh Cartwright added limit to the number of child accts displayed and a message when the count is over the limit
+
+-->
+<apex:page id="AccountClonePage" standardController="Account" extensions="AccountCloneController"
+           tabStyle="Account" lightningStylesheets="true">
+    <apex:includeScript value="{!URLFOR($Resource.iOSFix)}"/>
+    <style type="text/css">
+      .blueButton {
+          color:white !important;
+          background-color:#1B5297 !important;
+       }
+        
+        .redButton {
+          color:white !important;
+          background-color:#D93025 !important;
+       }
+        
+        .biggerFont {
+          font-size: 20px;
+       }
+        
+    </style>
+    
+    <apex:form id="theForm" >
+        <apex:outputPanel id="Desktop" rendered="{!NOT(isMobile)}" style="border: none">
+            <apex:sectionHeader title="Clone Prospect-Client"
+                                subtitle="{!acct.Name}"/>
+            <!--  If there's an error on loading it will go into this block -->
+            <apex:pageBlock rendered="{!NOT(okayToProceed)}">
+                <apex:pageMessages />
+                <apex:pageBlockButtons >
+                    <apex:commandButton styleClass="blueButton" value="Cancel" immediate="true" action="{!cancel}" />
+                </apex:pageBlockButtons>
+                
+                <apex:pageBlockSection columns="1" rendered="{!isSystemAdmin}">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Which Mode are you using?"/>
+                        <apex:selectRadio value="{!runningMode}" layout="lineDirection">
+                            <apex:selectOption itemValue="MMS" itemLabel="MMS"/>
+                            <apex:selectOption itemValue="HRO" itemLabel="HRO"/>
+                            <apex:actionSupport event="onclick" action="{!changeRunningMode}"  />
+                        </apex:selectRadio>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                
+            </apex:pageBlock>
+            
+            <!-- If everything is okay will load into this block -->
+            <apex:pageBlock id="mainEntryBlock" rendered="{!AND(okayToProceed,NOT(isStepLast))}">
+                <apex:pageMessages />
+                <apex:pageBlockButtons >
+                    <apex:commandButton styleClass="blueButton" rendered="{!OR(isStep1,isStep2)}" value="Next" action="{!nextStep}" rerender="mainEntryBlock" />
+                    <apex:commandButton styleClass="blueButton" rendered="{!AND(isStepVerify,NOT(onlyModifyingExisting))}" value="Start Clone" action="{!nextStep}" />
+                    <apex:commandButton styleClass="blueButton" rendered="{!AND(isStepVerify,onlyModifyingExisting)}" value="Save Changes" action="{!nextStep}" />
+                    <apex:commandButton styleClass="blueButton" rendered="{!isStepDelete}" value="Delete" action="{!deleteAccts}" />
+                    
+                    <apex:commandButton styleClass="blueButton" rendered="{!NOT(isStep1)}" value="Previous" action="{!previousStep}" />
+                    <apex:commandButton styleClass="blueButton" value="Cancel" immediate="true" action="{!cancel}" />
+                </apex:pageBlockButtons>
+                
+                <apex:pageBlockSection columns="1" rendered="{!isStep1}" >
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel style="white-space:nowrap;" styleClass="biggerFont" value="How many copies of this Prospect-Client are you creating?" />
+                        <apex:outputPanel >
+                            <apex:inputText value="{!nbrCloneRecords}" size="4">
+                                <apex:actionSupport event="onchange" action="{!changeNbrAccounts}" rerender="acctSection" status="changeNbrAccountsStatus" />
+                            </apex:inputText>
+                            <apex:commandButton styleClass="blueButton" value="Update" action="{!changeNbrAccounts}" rerender="acctSection" status="changeNbrAccountsStatus" />         
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:actionStatus startText="Changing Nbr of Ids..." id="changeNbrAccountsStatus"/>
+                </apex:pageBlockSection>
+                
+                <apex:outputText rendered="{!AND(isStepVerify,NOT(onlyModifyingExisting))}" style="color:BLUE; font-weight: bold;" value="Verify the data you selected and click Start Clone to create the records." />
+                
+                <apex:outputText rendered="{!AND(isStepVerify,onlyModifyingExisting)}" style="color:BLUE; font-weight: bold;" value="Verify you want to make the selected changes and click Save Changes." />
+                
+                <br/>
+                <apex:outputText rendered="{!AND(isStepVerify,NOT(isModeHRO))}" style="color:BLUE; font-weight: bold;" value="If you have changed the Number of Employees on any existing Prospect-Client then all open Opportunities will be recalculated." />
+                
+                <apex:outputText rendered="{!AND(isStep1,isModeHRO)}" style="color:BLUE; font-weight: bold;" value="The HRO Number will be copied to all other Prospect-Client records upon save, along with the other HRO specific fields.   " />
+                
+                <apex:outputText rendered="{!isStepDelete}" style="color:RED; font-weight: bold;" value="Click the Delete button to confirm the delete of the selected record and all of its Contacts and Opportunities." />
+                
+                
+                
+                <apex:pageBlockSection rendered="{!OR(isStep1,isStepVerify,isStepDelete)}" title="Prospect-Client Information" id="acctSection" columns="1">
+                <apex:outputText rendered="{!hasLargeChildCount}" style="color:BLUE; font-weight: bold;" value="{!largeChildCountMsg}" />
+    
+                    
+                    <apex:pageBlockTable id="acctTable" value="{!displayAccts}" var="rec" cellPadding="2" border="0">
+                        
+                        <apex:column rendered="{!isStep1}">
+                            <apex:facet name="header">Nbr</apex:facet>
+                            <apex:outputText rendered="{!NOT(rec.isParent)}" value="{!rec.curRecNum}" />
+                        </apex:column>
+                        
+                        <apex:column rendered="{!AND(isStep1,hasExistingChild,NOT(isModeHRO),NOT(isMultiId))}" title="Do you wish to delete this record and all of its components? You are only allowed to delete records currently existing and not part of the integration with Paychex.">
+                            <apex:facet name="header">Delete?</apex:facet>
+                            <apex:commandButton styleClass="redButton" rendered="{!AND(rec.isExisting,NOT(rec.isParent),NOT(rec.isIntegrated),NOT(isMultiId))}" value="Delete?" action="{!verifyDeleteRec}" immediate="false">
+                                <apex:param name="deleteRecNum" value="{!rec.curRecNum}" assignTo="{!delRecNum}" />
+                            </apex:commandButton>
+                            <!--
+                            <apex:commandLink rendered="{!AND(rec.isExisting,NOT(rec.isParent),NOT(rec.isIntegrated),NOT(isMultiId))}" value="Delete?" action="{!verifyDeleteRec}" immediate="false">
+                                <apex:param name="deleteRecNum" value="{!rec.curRecNum}" assignTo="{!delRecNum}" />
+                            </apex:commandLink>
+                            -->
+                        </apex:column>
+                        <apex:column rendered="{!isMultiId}" title="Enter Relationship Type.">
+                            <apex:facet name="header">Relationship Type</apex:facet>
+                            <apex:inputField rendered="{!AND(NOT(isStepVerify),NOT(isStepDelete),NOT(rec.isParent))}" value="{!rec.aj.Type__c}" /> 
+                            <apex:outputField rendered="{!OR(isStepVerify,isStepDelete)}" value="{!rec.aj.Type__c}" /> 
+                        </apex:column>
+                        <apex:column rendered="{!AND(NOT(isModeHRO),isMultiId)}" title="Should assets and employee count roll up to parent?">
+                            <apex:facet name="header">Parent-Child?</apex:facet>
+                                <apex:inputField rendered="{!AND(NOT(isStepVerify),NOT(isStepDelete),NOT(rec.isParent))}" value="{!rec.aj.SalesParentChild__c}" /> 
+                                <apex:outputField rendered="{!OR(isStepVerify,isStepDelete)}" value="{!rec.aj.SalesParentChild__c}" /> 
+                        </apex:column>
+                        <apex:column rendered="{!AND(NOT(isModeHRO),NOT(isMultiId))}" title="Is this a combo client? Use the same Combo Client value on the records to indicate which are part of the combo.">
+                            <apex:facet name="header">Combo?</apex:facet>
+                            <apex:selectList rendered="{!AND(NOT(isStepVerify),NOT(isStepDelete))}" value="{!rec.comboIndicator}" title="Is this a combo client? Use the same Combo Client value on the records to indicate which are part of the combo." size="1">
+                                <apex:selectOptions value="{!comboGroupOptions}"/>
+                            </apex:selectList>
+                            <!-- <apex:inputText value="{!rec.comboIndicator}" size="5" />  -->
+                            <apex:outputText rendered="{!OR(isStepVerify,isStepDelete)}" style="color: {!rec.styleColor};white-space:nowrap;" value="{!rec.comboIndicator}" />
+                        </apex:column>
+                        
+                        <apex:column rendered="{!AND(NOT(isModeHRO),NOT(isMultiId))}" title="Is this the primary Prospect-Client in the combo? Each combo must have 1 and only 1 record marked as the primary.">
+                            <apex:facet name="header">Primary</apex:facet>
+                            <apex:inputField rendered="{!AND(NOT(isStepVerify),NOT(isStepDelete))}" value="{!rec.acct.Consolidate_Primary__c}" /> 
+                            <apex:outputField rendered="{!OR(isStepVerify,isStepDelete)}" value="{!rec.acct.Consolidate_Primary__c}" /> 
+                        </apex:column>
+                        
+                        <apex:column >
+                            <apex:facet name="header">Prospect-Client Number</apex:facet>
+                            <apex:outputText rendered="{!OR(isStepVerify,isStepDelete,AND(NOT(isStepVerify),rec.isIntegrated))}" style="color: {!rec.styleColor};white-space:nowrap;" value="{!rec.acct.AccountNumber}" />
+                            <apex:inputField rendered="{!AND(NOT(isStepVerify),NOT(isStepDelete),NOT(rec.isIntegrated))}" value="{!rec.acct.AccountNumber}" >
+                                <!-- <apex:actionSupport event="onchange" rerender="SummarySection"  />  -->
+                            </apex:inputField>
+                        </apex:column>
+                        
+                        <apex:column rendered="{!AND(isModeHRO,NOT(isMultiId))}" >
+                            <apex:facet name="header">HRO Number</apex:facet>
+                            <apex:outputText rendered="{!OR(NOT(isStep1),NOT(rec.isParent))}" style="color: {!rec.styleColor};white-space:nowrap;" value="{!rec.acct.HRO_Number__c}" />
+                            <apex:inputField rendered="{!AND(isStep1,rec.isParent)}" value="{!rec.acct.HRO_Number__c}" >
+                                <!-- <apex:actionSupport event="onchange" rerender="SummarySection"  />  -->
+                            </apex:inputField>
+                        </apex:column>
+                        
+                        <apex:column title="An Integrated Prospect-Client has a BIS Client Id and feeds in from Paychex.">
+                            <apex:facet name="header">Prospect-Client Name</apex:facet>
+                            <apex:outputPanel rendered="{!rec.isParent}" >
+                                <apex:outputText style="color:#3399FF; font-weight: bold; white-space:nowrap;" value="#" />
+                                &nbsp;
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!rec.isIntegrated}" >
+                                <apex:outputText style="color:#0000CC; font-weight: bold; white-space:nowrap;" value="$" />
+                                &nbsp;
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!NOT(rec.isExisting)}" >
+                                <apex:outputText style="color:#0066CC; font-weight: bold; white-space:nowrap;" value="+" />
+                                &nbsp;
+                            </apex:outputPanel>
+                            
+                            <apex:outputText rendered="{!OR(isStepVerify,isStepDelete,AND(NOT(isStepVerify),rec.isIntegrated))}" style="color: {!rec.styleColor};white-space:nowrap;" value="{!rec.acct.Name}" />
+                            <apex:inputField rendered="{!AND(NOT(isStepVerify),NOT(isStepDelete),NOT(rec.isIntegrated))}" required="false" value="{!rec.acct.Name}" />
+                            <apex:facet name="footer">
+                                <apex:outputPanel rendered="{!NOT(isStepDelete)}">
+                                    <apex:outputText rendered="{!hasIntegratedAcct}" style="color:#0000CC; font-weight: bold; white-space:nowrap;" value="$=Integrated With Paychex" />
+                                    <br/>
+                                    <apex:outputText style="color:#3399FF; font-weight: bold; white-space:nowrap;" value="#=Parent Prospect-Client" />
+                                    <br/>
+                                    <apex:outputText rendered="{!nbrCloneRecords>0}" style="color:#0066CC; font-weight: bold; white-space:nowrap;" value="+=New Prospect-Client" />
+                                </apex:outputPanel>
+                            </apex:facet>
+                        </apex:column>
+                        
+                        <apex:column rendered="{!isMultiId}">
+                            <apex:facet name="header">Type</apex:facet>
+                            <!-- <apex:outputText rendered="{!OR(isStepVerify,isStepDelete,AND(NOT(isStepVerify),rec.isIntegrated))}" style="color: {!rec.styleColor};white-space:nowrap;" value="{!rec.acct.Type}" />-->
+                            <apex:outputText rendered="{!isMultiId}" style="color: {!rec.styleColor};white-space:nowrap;" value="{!rec.acct.Type}" />
+                            <!-- <apex:inputField rendered="{!AND(NOT(isStepVerify),NOT(isStepDelete),NOT(rec.isIntegrated))}" value="{!rec.acct.Type}"  /> -->
+                        </apex:column>
+                        
+                        <apex:column >
+                            <apex:facet name="header">Fed Id Number</apex:facet>
+                            <apex:outputText rendered="{!OR(isStepVerify,isStepDelete,AND(NOT(isStepVerify),rec.isIntegrated))}" style="color: {!rec.styleColor};white-space:nowrap;" value="{!rec.acct.Federal_ID_Number__c}" />
+                            <apex:inputField rendered="{!AND(NOT(isStepVerify),NOT(isStepDelete),NOT(rec.isIntegrated))}" value="{!rec.acct.Federal_ID_Number__c}"  />
+                        </apex:column>
+                        
+                        <apex:column rendered="{!isMultiId}">
+                            <apex:facet name="header">Frequency</apex:facet>
+                            <apex:outputText rendered="{!OR(isStepVerify,isStepDelete,AND(NOT(isStepVerify),rec.isIntegrated))}" style="color: {!rec.styleColor};white-space:nowrap;" value="{!rec.acct.Frequency__c}" />
+                            <apex:inputField rendered="{!AND(NOT(isStepVerify),NOT(isStepDelete),NOT(rec.isIntegrated))}" value="{!rec.acct.Frequency__c}"  />
+                        </apex:column>
+                        
+                        <apex:column >
+                            <apex:facet name="header">Nbr of Employees</apex:facet>
+                            <apex:outputField rendered="{!OR(isStepVerify,isStepDelete,AND(NOT(isStepVerify),rec.isIntegrated))}" style="color: {!rec.styleColor};white-space:nowrap;" value="{!rec.acct.Employees__c}" />
+                            <apex:inputText rendered="{!AND(NOT(isStepVerify),NOT(isStepDelete),NOT(rec.isIntegrated))}" value="{!rec.acct.Employees__c}" size="5" />
+                        </apex:column>
+                        
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection rendered="{!AND(isModeHRO,AND(OR(isStepVerify,isStep2),NOT(isMultiId)))}"
+                                       title="{!IF(isStep2,'Select the Products and Services to clone with the Prospect-Client','Products and Services Information')}" 
+                                       id="prodServiceSection" columns="1" collapsible="false">       
+                    <apex:outputText rendered="{!AND(isStep2,NOT(hasAssets))}" style="color:BLUE; font-weight: bold;" value="This Prospect-Client has no available Products and Services" />
+                    <apex:outputText rendered="{!AND(isStepVerify,NOT(hasSelectedAssets))}" style="color:BLUE; font-weight: bold;" value="You have not selected any Products and Services" />
+                    
+                    <apex:pageBlockTable rendered="{!OR(AND(isStep2,hasAssets),AND(isStepVerify,hasSelectedAssets))}" 
+                                         id="assetTable" 
+                                         value="{!IF(isStepVerify,selectedAssets,assets)}" 
+                                         var="rec" cellPadding="2" border="1" title="Products and Services">
+                        <apex:column rendered="{!isStep2}">
+                            <apex:facet name="header">Selected</apex:facet>
+                            <apex:inputCheckbox disabled="false" value="{!rec.selected}" >
+                                <!--  <apex:actionSupport event="onclick" rerender="SummarySection"  />  -->
+                            </apex:inputCheckbox>
+                        </apex:column>
+                        
+                        <apex:column >
+                            <apex:facet name="header">Name</apex:facet>
+                            <apex:outputField value="{!rec.asst.Name}" />
+                        </apex:column>
+                        
+                        <apex:column value="{!rec.asst.Product_Plan_Code__c}"/>
+                        
+                        <apex:column value="{!rec.asst.Start_Date__c}"/>
+                        <apex:column value="{!rec.asst.Product_End_Date__c}" />
+                        <apex:column rendered="{!isModeHRO}" value="{!rec.asst.HRO_Client_Type__c}" /> 
+                        
+                        
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection rendered="{!AND(OR(isStepVerify,isStep2),NOT(onlyModifyingExisting))}"
+                                       title="{!IF(isStep2,'Select the Contacts to clone with the Prospect-Client','Contact Information')}" 
+                                       id="ctctSection" columns="1" collapsible="false">
+                    
+                    <apex:outputText rendered="{!AND(isStep2,NOT(hasCtcts))}" style="color:BLUE; font-weight: bold;" value="This Prospect-Client has no available Contacts!" />
+                    <apex:outputText rendered="{!AND(isStepVerify,NOT(hasSelectedCtcts))}" style="color:BLUE; font-weight: bold;" value="You have not selected any contacts!" />
+                    
+                    <apex:pageBlockTable rendered="{!OR(AND(isStep2,hasCtcts),AND(isStepVerify,hasSelectedCtcts))}" 
+                                         id="ctctTable" 
+                                         value="{!IF(isStepVerify,selectedCtcts,ctcts)}" 
+                                         var="rec" cellPadding="2" border="1" title="Contacts">
+                        <apex:column rendered="{!NOT(isStepVerify)}">
+                            <apex:facet name="header">Selected</apex:facet>
+                            <apex:inputCheckbox disabled="false" value="{!rec.selected}" >
+                                <!-- <apex:actionSupport event="onclick" rerender="SummarySection"  />  -->
+                            </apex:inputCheckbox>
+                        </apex:column>
+                        
+                        <apex:column >
+                            <apex:facet name="header">Contact Name</apex:facet>
+                            <apex:outputField value="{!rec.ctct.Name}" />
+                        </apex:column>
+                        
+                        <apex:column >
+                            <apex:facet name="header">Title</apex:facet>
+                            <apex:outputField value="{!rec.ctct.Title}" />
+                        </apex:column>
+                        
+                        <apex:column >
+                            <apex:facet name="header">Email</apex:facet>
+                            <apex:outputField value="{!rec.ctct.Email}" />
+                        </apex:column>
+                        
+                        <apex:column >
+                            <apex:facet name="header">Phone</apex:facet>
+                            <apex:outputField value="{!rec.ctct.Phone}" />
+                        </apex:column>
+                        
+                        
+                    </apex:pageBlockTable>
+                    
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection rendered="{!AND(NOT(isModeHRO),AND(OR(isStepVerify,isStep2),NOT(isMultiId)),NOT(onlyModifyingExisting))}"
+                                       title="{!IF(isStep2,'Select the Opportunities to clone with the Prospect-Client','Opportunity Information')}" 
+                                       id="opptySection" columns="1" collapsible="false">       
+                    <apex:outputText rendered="{!AND(isStep2,NOT(hasOpptys))}" style="color:BLUE; font-weight: bold;" value="This Prospect-Client has no available Opportunities!" />
+                    <apex:outputText rendered="{!AND(isStepVerify,NOT(hasSelectedOpptys))}" style="color:BLUE; font-weight: bold;" value="You have not selected any opportunities!" />
+                    
+                    <apex:pageBlockTable rendered="{!OR(AND(isStep2,hasOpptys),AND(isStepVerify,hasSelectedOpptys))}" 
+                                         id="opptyTable" 
+                                         value="{!IF(isStepVerify,selectedOpptys,opptys)}" 
+                                         var="rec" cellPadding="2" border="1" title="Opportunities">
+                        <apex:column rendered="{!isStep2}">
+                            <apex:facet name="header">Selected</apex:facet>
+                            <apex:inputCheckbox disabled="false" value="{!rec.selected}" >
+                                <!--  <apex:actionSupport event="onclick" rerender="SummarySection"  />  -->
+                            </apex:inputCheckbox>
+                        </apex:column>
+                        
+                        <apex:column >
+                            <apex:facet name="header">Opportunity Name</apex:facet>
+                            <apex:outputField value="{!rec.oppty.Name}" />
+                        </apex:column>
+                        
+                        <apex:column value="{!rec.oppty.StageName}"/>
+                        
+                        <apex:column value="{!rec.oppty.CloseDate}"/>
+                        <apex:column value="{!rec.oppty.Amount}" />
+                        
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>                         
+      <!-- account search information -->
+                <apex:outputPanel id="accountSearchResults" > 
+                    <apex:PageBlockSection id="accountSearch" rendered="{!AND(isStep1,isMultiId,NOT(isStepVerify),NOT(isStep2))}" title="Search for related Prospect-Clients." columns="1">
+              		      
+                       <apex:pageMessages />
+                        Search by:
+                        <apex:selectRadio value="{!selectedValue}">
+                            <apex:selectOption id="accountRadio" itemLabel="Prospect-Client" itemValue="acct"  />
+                            <apex:selectOption id="contactRadio" itemLabel="Contact" itemvalue="ctct" />   
+                            <apex:actionSupport event="onchange" reRender="inputQueryFields" />
+                        </apex:selectRadio>
+                        
+                        <apex:pageBlockSection id="inputQueryFields">
+                            <apex:inputField required="false" value="{!searchCtct.FirstName}" id="CtctFirstName" label="Contact First Name:" rendered="{!IF(selectedValue == 'ctct', true, false)}"></apex:inputField>
+                            <apex:inputField required="false" value="{!searchCtct.LastName}" id="CtctLastName" label="Contact Last Name:" rendered="{!IF(selectedValue == 'ctct', true, false)}"></apex:inputField>
+                            <apex:inputField required="false" value="{!searchCtct.Phone}" id="CtctPhone" label="Phone:" rendered="{!IF(selectedValue == 'ctct', true, false)}"></apex:inputField>
+                            <apex:inputField required="false" value="{!searchAcct.Name}" id="AcctName" label="Prospect-Client Name:" rendered="{!IF(selectedValue == 'acct', true, false)}"></apex:inputField>
+                            <apex:inputField required="false" value="{!searchAcct.AccountNumber}" id="AcctNumber" label="Prospect-Client Number:" rendered="{!IF(selectedValue == 'acct', true, false)}"></apex:inputField>
+                            <apex:inputField required="false" value="{!searchAcct.Federal_ID_Number__c}" id="AcctFedId" label="Federal Id:" rendered="{!IF(selectedValue == 'acct', true, false)}"></apex:inputField>
+                            <apex:inputField required="false" value="{!searchAcct.ShippingStreet}" id="AcctStreet" label="Street Name:" rendered="{!IF(selectedValue == 'acct', true, false)}"></apex:inputField>
+                            <apex:inputField required="false" value="{!searchAcct.Phone}" id="AcctPhone" label="Phone:" rendered="{!IF(selectedValue == 'acct', true, false)}"></apex:inputField>         
+                        </apex:pageBlockSection>
+        
+                       <apex:outputPanel >
+                      <!--    <apex:commandButton id="search" styleClass="blueButton" action="{!performSearch}" value="Search" onComplete="setFocusSearch()" status="searchingStatus"/>  -->
+                          <apex:commandButton id="search" styleClass="blueButton" action="{!performSearch}" value="Search" status="searchingStatus"/> 
+                          <apex:actionStatus startText="Searching on Name..." id="searchAccounts"/>
+                          <apex:commandButton styleClass="blueButton" action="{!handleRecordAction}" value="Add to Prospect-Client List" status="addingtolist"/> 
+                       </apex:outputPanel>
+                    </apex:PageBlockSection>         
+                    
+               <!--     <apex:actionFunction name="setFocusSearch" focus="search" rerender="accountSearchResults" />  
+                    <apex:actionFunction name="setFocusSearch" focus="search" />    -->
+                        
+        <!--  If results are returned from a account search --> 
+                    <apex:PageBlockSection rendered="{!AND(searchCompleted,isMultiId,NOT(isStepVerify),NOT(isStep2))}" title="Search Results" columns="1">
+                        <script type="text/javascript">
+                            window.onload = setFocus
+                            function setFocus() {
+                                document.getElementById('{!$Component.AccountClonePage.theForm.mainEntryBlock.accountSearch.Name}').focus();
+                            }
+                        </script>
+                       <apex:outputText rendered="{!NOT(hasSearchResults)}" style="color:BLUE; font-weight: bold;" value="No Prospect-Client records found!" /> 
+                       <apex:pageBlockTable rendered="{!hasSearchResults}" value="{!faccts}" var="rec" cellPadding="4" border="1">
+                          <apex:column >
+                            <apex:facet name="header">Selected</apex:facet>
+                            <apex:outputPanel rendered="{!rec.alreadyRelated}" >
+                                <apex:outputText style="color:#FF0000; font-weight: bold; white-space:nowrap;" value="In a Relationship" />
+                                &nbsp;
+                            </apex:outputPanel>  
+                            <apex:inputCheckbox rendered="{!NOT(rec.alreadyRelated)}" disabled="false" value="{!rec.selectedForRelate}" >
+                                <!--  <apex:actionSupport event="onclick" rerender="SummarySection"  />  -->
+                            </apex:inputCheckbox>  
+                           </apex:column> 
+                          <apex:column headerValue="Prospect-Client Name"> 
+                             <apex:outputField value="{!rec.acct.Name}"/>
+                          </apex:column>
+                          <apex:column headerValue="Prospect-Client Number"> 
+                             <apex:outputField value="{!rec.acct.AccountNumber}"/>
+                          </apex:column>
+                          <apex:column headerValue="BIS Id"> 
+                             <apex:outputField value="{!rec.acct.Bis_ID__c}" />
+                          </apex:column>
+                          <apex:column headerValue="Zip Code"> 
+                             <apex:outputField value="{!rec.acct.ShippingPostalCode}" />
+                          </apex:column>
+                          <apex:column headerValue="Type"> 
+                             <apex:outputField value="{!rec.acct.Type}" />
+                          </apex:column>
+                          <apex:column headerValue="Prospect-Client Owner" >
+                             <apex:outputField value="{!rec.acct.Owner.Name}" />
+                          </apex:column>
+                       </apex:pageBlockTable>
+                    </apex:PageBlockSection>      
+                </apex:outputPanel> 
+            </apex:pageBlock> 
+            
+            <apex:pageBlock rendered="{!AND(okayToProceed,isStepLast)}">
+                <apex:pageMessages />
+                
+                <apex:pageBlockButtons >
+                    <apex:commandButton rendered="{!NOT(isMultiId)}" styleClass="blueButton" value="Return to {!acct.Name}" action="{!returnToAccount}"/>
+                    <apex:commandButton rendered="{!isMultiId}" styleClass="blueButton" value="Return to Opportunity" action="{!returnToOpportunity}"/>
+                </apex:pageBlockButtons>
+                
+                <apex:pageBlockSection columns="1">
+                    <apex:pageBlockTable id="resultsTable" value="{!copyWrappers}" var="rec" cellPadding="2" border="1">
+                        <apex:column headerValue="Prospect-Client Name" style="white-space:nowrap;">
+                            <apex:commandLink value="{!rec.acct.Name}" onclick="window.open('/' + '{!rec.acct.Id}');" />
+                        </apex:column>
+                        
+                        <apex:column headerValue="Status" style="white-space:nowrap;">
+                            <apex:outputText rendered="{!rec.isExisting}" value="Parent Prospect-Client Updated" />
+                            <apex:outputText rendered="{!NOT(rec.isExisting)}" value="Prospect-Client Created" />
+                        </apex:column>
+                        
+                        <apex:column headerValue="Contacts" style="white-space:nowrap;">
+                            <apex:repeat rendered="{!NOT(rec.isParent)}" value="{!rec.ctcts}" var="ctct" id="ctctRepeat">
+                                <apex:commandLink value="{!ctct.Name}" onclick="window.open('/' + '{!ctct.Id}')" />
+                                <br/>
+                            </apex:repeat>
+                        </apex:column>
+                        
+                        <apex:column headerValue="Opportunities" style="white-space:nowrap;">
+                            <apex:repeat rendered="{!NOT(rec.isParent)}" value="{!rec.opptyCopyWrappers}" var="opp" id="opptyRepeat">
+                                <apex:commandLink value="{!opp.oppty.Name}" onclick="window.open('/' + '{!opp.oppty.Id}')" />
+                                <br/>
+                            </apex:repeat>
+                        </apex:column>
+                        
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+            </apex:pageBlock>   
+        </apex:outputPanel>  
+        <!--------------------------------------------------------Above this line is the Desktop Version. Below is Salesforce1------------------------------------>
+        <apex:outputPanel id="SF1" rendered="{!isMobile}">
+            <apex:stylesheet value="{!URLFOR($Resource.Salesforce1Bootstrap, 'bootstrap-sf1-010-beta15/dist/css/bootstrap-namespaced.css')}"/>
+            <apex:includeScript value="{!URLFOR($Resource.jQuery_Mobile,'jquery-1.11.2.min.js')}"/>
+            <script>
+                  var found = $('span[id$=SF1]').html();
+                  console.log('Test!'+found);
+                  $(window).on('touchmove scroll', scrollHandler );
+            //$(window).on('onscroll', scrollEnd );
+                  var timer;
+                  function scrollHandler( event ){ 
+                      var $scrollingDiv = $('div[id$=scrollingDiv]');
+                      $scrollingDiv.stop().hide(); //.removeClass('shown').addClass('hidden');
+                      clearTimeout(timer);
+                      timer = window.setTimeout(scrollEnd, 1000);
+                  }
+                  function scrollEnd( event ){ 
+                      var $scrollingDiv = $('div[id$=scrollingDiv]');
+                      $scrollingDiv.fadeIn(); //removeClass('hidden').addClass('shown').slideUp().fadeIn();     
+                  }
+            </script>  
+            <style>
+                .btn {
+                    -webkit-appearance: none;
+                }
+                .hidden{
+                    width:100%; 
+                    position:fixed; 
+                    z-index:500; 
+                    Bottom:-250px; 
+                    right:0px; 
+                    left:0px"
+                }
+                .shown{
+                    width:100%; 
+                    position:fixed; 
+                    z-index:500; 
+                    Bottom:10px; 
+                    right:0px; 
+                    left:0px"
+                }
+            </style>
+            <apex:actionStatus id="spinnerSF1">
+                <apex:facet name="start">
+                    <apex:outputPanel >
+                        <div>
+                            <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+                                &nbsp;
+                            </div>
+                            <div style="position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin-top: 30% ;Text-align:center">
+                                <div style="display: inline-block; padding: 2px; background-color: #fff; width: 125px;">
+                                    <img src="/img/loading.gif" style="float: left; margin: 8px;" />
+                                    <span style="display: inline-block; padding: 10px 0px;">Please Wait...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </apex:outputPanel>
+                </apex:facet>
+            </apex:actionStatus>
+            <div class="bootstrap-sf1" id="bootstrap-sf1" style="padding: 10px;">
+                <div class="page-header page-header-anchor context-account">
+                    <h1>Clone Prospect-Client</h1>
+                    <h2>{!acct.Name}</h2> 
+                </div>
+                <!--  If there's an error on loading it will go into this block -->
+                
+                <apex:outputPanel rendered="{!NOT(okayToProceed)}">
+                    <apex:outputPanel rendered="{!isSystemAdmin}">
+                        <div class="form-group">
+                            <label class="control-label">Which Mode are you using?</label>
+                            <apex:selectRadio value="{!runningMode}" layout="pageDirection">
+                                <apex:selectOption itemValue="MMS" itemLabel="MMS"/>
+                                <apex:selectOption itemValue="HRO" itemLabel="HRO"/>
+                                <apex:actionSupport event="onclick" action="{!changeRunningMode}"  />
+                            </apex:selectRadio>
+                        </div>
+                    </apex:outputPanel>
+                    <apex:commandButton styleClass="btn btn-default" value="Cancel" immediate="true" action="{!cancel}" />
+                </apex:outputPanel>
+                
+                <!-- If everything is okay will load into this block -->
+                <apex:outputPanel id="mainEntryBlockSF1" rendered="{!AND(okayToProceed,NOT(isStepLast))}">
+                    <apex:pageMessages />
+                    <div id="scrollingDiv" class="shown" >
+                        <apex:panelGrid id="scrollingButtons" style="width:100%; text-align:center;" >
+                            <apex:outputPanel >                      
+                                <apex:commandButton styleClass="btn btn-default" rendered="{!OR(isStep1,isStep2,isStep3)}" value="Next" action="{!nextStep}" rerender="mainEntryBlockSF1" status="spinnerSF1" />
+                                <apex:commandButton styleClass="btn btn-default" rendered="{!AND(isStepVerify,NOT(onlyModifyingExisting))}" value="Start Clone" action="{!nextStep}" reRender="theForm" status="spinnerSF1"/>
+                                <apex:commandButton styleClass="btn btn-default" rendered="{!AND(isStepVerify,onlyModifyingExisting)}" value="Save Changes" action="{!nextStep}" reRender="theForm" status="spinnerSF1"/>
+                                <apex:commandButton styleClass="btn btn-default" rendered="{!isStepDelete}" value="Delete" action="{!deleteAccts}" rerender="mainEntryBlockSF1" status="spinnerSF1" />
+                                <apex:commandButton styleClass="btn btn-default" rendered="{!NOT(isStep1)}" value="Previous" action="{!previousStep}" rerender="mainEntryBlockSF1" status="spinnerSF1"/>
+                                <apex:commandButton styleClass="btn btn-default" rendered="TRUE" value="Cancel" immediate="true" action="{!cancel}" /><br/>
+                            </apex:outputPanel>
+                        </apex:panelGrid>
+                    </div>
+                    
+                    <apex:outputPanel rendered="{!isStep1}" >
+                        <apex:outputPanel >
+                            <apex:outputLabel value="How many copies of this Prospect-Client are you creating?" />
+                            <apex:outputPanel >
+                                <apex:inputText value="{!nbrCloneRecords}" size="4">
+                                    <apex:actionSupport event="onchange" action="{!changeNbrAccounts}" rerender="acctSection" status="changeNbrAccountsStatus" />
+                                </apex:inputText>
+                                <apex:commandButton styleClass="btn btn-default" rendered="TRUE" value="Update" action="{!changeNbrAccounts}" rerender="acctSection" status="changeNbrAccountsStatus" />         
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                        <apex:actionStatus startText="Changing Nbr of Ids..." id="changeNbrAccountsStatus"/>
+                    </apex:outputPanel>
+                    
+                    <apex:outputText rendered="{!AND(isStepVerify,NOT(onlyModifyingExisting))}" style="color:BLUE; font-weight: bold;" value="Verify the data you selected and click Start Clone to create the records." />
+                    
+                    <apex:outputText rendered="{!AND(isStepVerify,onlyModifyingExisting)}" style="color:BLUE; font-weight: bold;" value="Verify you want to make the selected changes and click Save Changes." />
+                    
+                    <br/>
+                    <apex:outputText rendered="{!AND(isStepVerify,NOT(isModeHRO))}" style="color:BLUE; font-weight: bold;" value="If you have changed the Number of Employees on any existing Prospect-Client then all open Opportunities will be recalculated." />
+                    
+                    <apex:outputText rendered="{!AND(isStep1,isModeHRO)}" style="color:BLUE; font-weight: bold;" value="The HRO Number will be copied to all other Prospect-Client records upon save, along with the other HRO specific fields.   " />
+                    
+                    <apex:outputText rendered="{!isStepDelete}" style="color:RED; font-weight: bold;" value="Click the Delete button to confirm the delete of the selected record and all of its Contacts and Opportunities." />
+                    
+                    
+                    
+                    <apex:outputPanel rendered="{!OR(isStep1,isStepVerify,isStepDelete)}" id="acctSection" >
+                        <h2 class="section-head">Prospect-Client Information</h2>
+                        
+                        <apex:repeat id="acctTable" value="{!displayAccts}" var="rec">
+                            <div class="card-heading">
+                                <div class="form-group col-xs-12">
+                                    <apex:outputText rendered="{!AND(NOT(rec.isParent),isStep1)}" value="{!rec.curRecNum}" />
+                                </div>
+                            </div>
+                            <div class="card container">
+                                <ul class="card-detail col-xs-12" style="list-style-type:none">    
+                                    <apex:outputPanel rendered="{!AND(isStep1,hasExistingChild,NOT(isModeHRO),NOT(isMultiId))}">
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">Delete?</label>
+                                                <apex:commandLink rendered="{!AND(rec.isExisting,NOT(rec.isParent),NOT(rec.isIntegrated),NOT(isMultiId))}" value="Delete?" action="{!verifyDeleteRec}" reRender="theForm" status="spinnerSF1" immediate="false">
+                                                    <apex:param name="deleteRecNum" value="{!rec.curRecNum}" assignTo="{!delRecNum}" />
+                                                </apex:commandLink>
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!AND(NOT(isModeHRO),isMultiId)}">
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">Relationship Type</label>
+                                              <!--  <apex:inputText styleClass="form-control" rendered="{!AND(NOT(isStepVerify),NOT(isStepDelete),NOT(rec.isParent))}" value="{!rec.aj.Type__c}" /> 
+                                                <apex:outputText styleClass="col-xs-7" rendered="{!OR(isStepVerify,isStepDelete)}" value="{!rec.aj.Type__c}" /> -->
+                                                <apex:inputField rendered="{!AND(NOT(isStepVerify),NOT(isStepDelete),NOT(rec.isParent))}" value="{!rec.aj.Type__c}" /> 
+                                                <apex:outputField rendered="{!OR(isStepVerify,isStepDelete)}" value="{!rec.aj.Type__c}" /> 
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!AND(NOT(isModeHRO),isMultiId)}">
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">Parent-Child?</label>
+                                                <apex:inputText styleClass="form-control" rendered="{!AND(NOT(isStepVerify),NOT(isStepDelete),NOT(rec.isParent))}" value="{!rec.aj.SalesParentChild__c}" /> 
+                                                <apex:outputText styleClass="col-xs-7" rendered="{!OR(isStepVerify,isStepDelete)}" value="{!rec.aj.SalesParentChild__c}" />  
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!AND(NOT(isModeHRO),NOT(isMultiId))}">
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">Combo1?</label>
+                                                <apex:selectList styleClass="form-control" rendered="{!AND(NOT(isStepVerify),NOT(isStepDelete),NOT(isMultiId))}" value="{!rec.comboIndicator}" title="Is this a combo client? Use the same Combo Client value on the records to indicate which are part of the combo." size="1">
+                                                    <apex:selectOptions value="{!comboGroupOptions}"/>
+                                                </apex:selectList>
+                                                <apex:outputText styleClass="col-xs-7" rendered="{!OR(isStepVerify,isStepDelete)}" style="color: {!rec.styleColor};white-space:nowrap;" value="{!rec.comboIndicator}" />
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!AND(NOT(isModeHRO),NOT(isMultiId))}">
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">Primary</label>
+                                                <apex:inputField rendered="{!AND(NOT(isStepVerify),NOT(isStepDelete))}" value="{!rec.acct.Consolidate_Primary__c}" />
+                                                <apex:outputField rendered="{!OR(isStepVerify,isStepDelete)}" value="{!rec.acct.Consolidate_Primary__c}" />
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel >
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">Prospect-Client Nbr</label>
+                                                <apex:outputText styleClass="col-xs-7" rendered="{!OR(isStepVerify,isStepDelete,AND(NOT(isStepVerify),rec.isIntegrated))}" style="color: {!rec.styleColor};white-space:nowrap;" value="{!rec.acct.AccountNumber}" />
+                                                <apex:inputField styleClass="form-control" rendered="{!AND(NOT(isStepVerify),NOT(isStepDelete),NOT(rec.isIntegrated))}" value="{!rec.acct.AccountNumber}" >
+                                                </apex:inputField>
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!AND(isModeHRO,NOT(isMultiId))}">
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">HRO Number</label>
+                                                <apex:outputText styleClass="col-xs-7" rendered="{!OR(NOT(isStep1),NOT(rec.isParent))}" style="color: {!rec.styleColor};white-space:nowrap;" value="{!rec.acct.HRO_Number__c}" />
+                                                <apex:inputField styleClass="form-control" rendered="{!AND(isStep1,rec.isParent)}" value="{!rec.acct.HRO_Number__c}" >
+                                                </apex:inputField>
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel >
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">Prospect-Client Name</label>
+                                                <apex:outputPanel rendered="{!rec.isParent}" >
+                                                    <apex:outputText style="color:#3399FF; font-weight: bold; white-space:nowrap;" value="#" />
+                                                    &nbsp;
+                                                </apex:outputPanel>
+                                                <apex:outputPanel rendered="{!rec.isIntegrated}" >
+                                                    <apex:outputText style="color:#0000CC; font-weight: bold; white-space:nowrap;" value="$" />
+                                                    &nbsp;
+                                                </apex:outputPanel>
+                                                <apex:outputPanel rendered="{!NOT(rec.isExisting)}" >
+                                                    <apex:outputText style="color:#0066CC; font-weight: bold; white-space:nowrap;" value="+" />
+                                                    &nbsp;
+                                                </apex:outputPanel>
+                                                <apex:outputText styleClass="col-xs-7" rendered="{!OR(isStepVerify,isStepDelete,AND(NOT(isStepVerify),rec.isIntegrated))}" style="color: {!rec.styleColor};white-space:nowrap;" value="{!rec.acct.Name}" />
+                                                <apex:inputField styleClass="form-control" rendered="{!AND(NOT(isStepVerify),NOT(isStepDelete),NOT(rec.isIntegrated))}" required="false" value="{!rec.acct.Name}" />
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!isMultiId}">
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">Type</label> 
+                                                <apex:outputText rendered="{!isMultiId}" value="{!rec.acct.Type}" /> 
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel >
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">Fed ID Number</label>
+                                                <apex:outputText styleClass="col-xs-7" rendered="{!OR(isStepVerify,isStepDelete,AND(NOT(isStepVerify),rec.isIntegrated))}" style="color: {!rec.styleColor};white-space:nowrap;" value="{!rec.acct.Federal_ID_Number__c}" />
+                                                <apex:inputField styleClass="form-control" rendered="{!AND(NOT(isStepVerify),NOT(isStepDelete),NOT(rec.isIntegrated))}" value="{!rec.acct.Federal_ID_Number__c}"  />
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!isMultiId}">
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">Frequency</label> 
+                                                <apex:outputText rendered="{!OR(isStepVerify,isStepDelete,AND(NOT(isStepVerify),rec.isIntegrated))}" style="color: {!rec.styleColor};white-space:nowrap;" value="{!rec.acct.Frequency__c}" />
+                            					<apex:inputField rendered="{!AND(NOT(isStepVerify),NOT(isStepDelete),NOT(rec.isIntegrated))}" value="{!rec.acct.Frequency__c}"  /> 
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel >
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">Number of Employees</label>
+                                                <apex:outputText styleClass="col-xs-7" rendered="{!OR(isStepVerify,isStepDelete,AND(NOT(isStepVerify),rec.isIntegrated))}" style="color: {!rec.styleColor};white-space:nowrap;" value="{!rec.acct.Employees__c}" />
+                                                <apex:inputText styleClass="form-control" rendered="{!AND(NOT(isStepVerify),NOT(isStepDelete),NOT(rec.isIntegrated))}" value="{!rec.acct.Employees__c}" size="5" />
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!NOT(isStepDelete)}">
+                                        <li> 
+                                            <apex:outputText styleClass="col-xs-7" rendered="{!hasIntegratedAcct}" style="color:#0000CC; font-weight: bold; white-space:nowrap;" value="$=Integrated With Paychex" />
+                                            <br/>
+                                            <apex:outputText styleClass="col-xs-7" style="color:#3399FF; font-weight: bold; white-space:nowrap;" value="#=Parent Prospect-Client" />
+                                            <br/>
+                                            <apex:outputText styleClass="col-xs-7" rendered="{!nbrCloneRecords>0}" style="color:#0066CC; font-weight: bold; white-space:nowrap;" value="+=New Prospect-Client" />
+                                        </li>
+                                    </apex:outputPanel>
+                                </ul>
+                            </div>  
+                        </apex:repeat>
+                    </apex:outputPanel>
+                    
+                    <apex:outputPanel rendered="{!AND(isModeHRO,AND(OR(isStepVerify,isStep2),NOT(isMultiId)))}" 
+                                      id="prodServiceSection" >
+                        <h2 class="section-head">{!IF(isStep2,'Select the Products and Services to clone with the Prospect-Client','Products and Services Information')}</h2>
+                        <apex:outputText rendered="{!AND(isStep2,NOT(hasAssets))}" style="color:BLUE; font-weight: bold;" value="This Prospect-Client has no available Products and Services!" />
+                        <apex:outputText rendered="{!AND(isStepVerify,NOT(hasSelectedAssets))}" style="color:BLUE; font-weight: bold;" value="You have not selected any Products and Services!" />
+                        
+                        
+                        <apex:repeat rendered="{!OR(AND(isStep2,hasAssets),AND(isStepVerify,hasSelectedAssets))}"
+                                     value="{!IF(isStepVerify,selectedAssets,assets)}" 
+                                     var="rec">
+                            <div class="card-heading">
+                                <div class="form-group col-xs-12">
+                                    <apex:inputCheckbox rendered="{!isStep2}" disabled="false" value="{!rec.selected}" >
+                                    </apex:inputCheckbox>
+                                </div>
+                            </div>
+                            <div class="card container">
+                                <ul class="card-detail col-xs-12" style="list-style-type:none">    
+                                    <apex:outputPanel >
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">Name</label>
+                                                <apex:outputField styleClass="col-xs-7" value="{!rec.asst.Name}" />
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel >
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">Product Plan Code</label>
+                                                <apex:outputField styleClass="col-xs-7" value="{!rec.asst.Product_Plan_Code__c}" />
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel >
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">Start Date</label>
+                                                <apex:outputField styleClass="col-xs-7" value="{!rec.asst.Start_Date__c}" />
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel >
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">Product End Date</label>
+                                                <apex:outputField styleClass="col-xs-7" value="{!rec.asst.Product_End_Date__c}" />
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel >
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">HRO Client Type</label>
+                                                <apex:outputField styleClass="col-xs-7" value="{!rec.asst.HRO_Client_Type__c}" />
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                </ul>
+                            </div>
+                        </apex:repeat>
+                    </apex:outputPanel>
+                    
+                    <apex:outputPanel rendered="{!AND(OR(isStepVerify,isStep3),NOT(onlyModifyingExisting))}"
+                                      id="ctctSection">
+                        <h2 class="section-head">{!IF(isStep3,'Select the Contacts to clone with the Prospect-Client','Contact Information')}</h2><!-- 
+                        isStep3 = {!isStep3}
+                        isStep2 = {!isStep2} -->
+                        <apex:outputText rendered="{!AND(isStep3,NOT(hasCtcts))}" style="color:BLUE; font-weight: bold;" value="This Prospect-Client has no available Contacts!" />
+                        <apex:outputText rendered="{!AND(isStepVerify,NOT(hasSelectedCtcts))}" style="color:BLUE; font-weight: bold;" value="You have not selected any contacts!" />
+                        
+                        
+                        <apex:repeat rendered="{!OR(AND(isStep3,hasCtcts),AND(isStepVerify,hasSelectedCtcts))}" 
+                                     value="{!IF(isStepVerify,selectedCtcts,ctcts)}" 
+                                     var="rec">
+                            <div class="card-heading">
+                                <div class="form-group col-xs-12">
+                                    <apex:inputCheckbox rendered="{!NOT(isStepVerify)}" disabled="false" value="{!rec.selected}" >
+                                    </apex:inputCheckbox>
+                                </div>
+                            </div>
+                            <div class="card container">
+                                <ul class="card-detail col-xs-12" style="list-style-type:none">    
+                                    <apex:outputPanel >
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">Contact Name</label>
+                                                <apex:outputField styleClass="col-xs-7" value="{!rec.ctct.Name}" />
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel >
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">Title</label>
+                                                <apex:outputField styleClass="col-xs-7" value="{!rec.ctct.Title}" />
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel >
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">Email</label>
+                                                <apex:outputField styleClass="col-xs-7" value="{!rec.ctct.Email}" />
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel >
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">Phone</label>
+                                                <apex:outputField styleClass="col-xs-7" value="{!rec.ctct.Phone}" />
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                </ul>
+                            </div>
+                        </apex:repeat>
+                        
+                    </apex:outputPanel>
+                    
+                    <apex:outputPanel rendered="{!AND(NOT(isModeHRO),AND(OR(isStepVerify,isStep2),NOT(isMultiId)),NOT(onlyModifyingExisting))}"
+                                     id="opptySection">  
+                        <h2 class="section-head">{!IF(isStep2,'Select the Opportunities to clone with the Prospect-Client','Opportunity Information')}</h2>
+                        <apex:outputText rendered="{!AND(isStep2,NOT(hasOpptys))}" style="color:BLUE; font-weight: bold;" value="This Prospect-Client has no available Opportunities!" />
+                        <apex:outputText rendered="{!AND(isStepVerify,NOT(hasSelectedOpptys))}" style="color:BLUE; font-weight: bold;" value="You have not selected any opportunities!" />
+                        
+                        <apex:repeat rendered="{!OR(AND(isStep2,hasOpptys),AND(isStepVerify,hasSelectedOpptys))}" 
+                                     value="{!IF(isStepVerify,selectedOpptys,opptys)}" 
+                                     var="rec">
+                            <div class="card-heading">
+                                <div class="form-group col-xs-12">
+                                    <apex:inputCheckbox rendered="{!isStep2}" disabled="false" value="{!rec.selected}" >
+                                    </apex:inputCheckbox>
+                                </div>
+                            </div>
+                            <div class="card container">
+                                <ul class="card-detail col-xs-12" style="list-style-type:none">    
+                                    <apex:outputPanel >
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">Opportunity Name</label>
+                                                <apex:outputField styleClass="col-xs-7" value="{!rec.oppty.Name}" />
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel >
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">Status</label>
+                                                <apex:outputField styleClass="col-xs-7" value="{!rec.oppty.StageName}" />
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel >
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">Run-Effective Date</label>
+                                                <apex:outputField styleClass="col-xs-7" value="{!rec.oppty.CloseDate}" />
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel >
+                                        <li> 
+                                            <div class="form-group col-xs-12">
+                                                <label class="col-xs-6">Net Revenue</label>
+                                                <apex:outputField styleClass="col-xs-7" value="{!rec.oppty.Amount}" />
+                                            </div>
+                                        </li>
+                                    </apex:outputPanel>
+                                </ul>
+                            </div>
+                        </apex:repeat>
+                    </apex:outputPanel>
+     <!-- Account Search for MultiId functionality --> 
+                        <apex:outputPanel rendered="{!AND(isStep1,isMultiId,NOT(isStepVerify),NOT(isStep2))}"
+                                         id="accountSearchResults">  
+                            <h2 class="section-head">Search for related Prospect-Clients.</h2>
+                            <apex:inputField required="false" value="{!searchAcct.Name}" id="Name" >
+                            </apex:inputField>
+                            <apex:outputPanel >
+                              <apex:commandButton id="search" styleClass="blueButton" action="{!performSearch}" value="Search" status="searchingStatus"/>
+                              <apex:actionStatus startText="Searching on Name..." id="searchAccounts"/>
+                              <apex:commandButton styleClass="blueButton" action="{!handleRecordAction}" value="Add to Prospect-Client List" status="addingtolist"/> 
+                            </apex:outputPanel>    
+                        </apex:outputPanel>
+                        
+         <!--  If results are returned from a account search -->                 
+                        <apex:outputPanel rendered="{!AND(isStep1,isMultiId,NOT(isStepVerify),NOT(isStep2))}"
+                                         id="SearchResults">  
+                            <h2 class="section-head">Search Results}</h2>
+                            <apex:outputText rendered="{!NOT(hasSearchResults)}" style="color:BLUE; font-weight: bold;" value="No Prospect-Client records found!" /> 
+                            
+                            <apex:repeat rendered="{!hasSearchResults}" 
+                                         value="{!faccts}" 
+                                         var="rec">
+                                <div class="card-heading">
+                                    <div class="form-group col-xs-12">
+                                        <apex:inputCheckbox tabindex="10" rendered="{!NOT(rec.alreadyRelated)}" disabled="false" value="{!rec.selectedForRelate}" >
+                                        </apex:inputCheckbox>
+                                    </div>
+                                </div>
+                                <div class="card container">
+                                    <ul class="card-detail col-xs-12" style="list-style-type:none">    
+                                        <apex:outputPanel >
+                                            <li> 
+                                                <div class="form-group col-xs-12">
+                                                    <label class="col-xs-6">Prospect-Client Name</label>
+                                                    <apex:outputField styleClass="col-xs-7" value="{!rec.acct.Name}" />
+                                                </div>
+                                            </li>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel >
+                                            <li> 
+                                                <div class="form-group col-xs-12">
+                                                    <label class="col-xs-6">Prospect-Client Number</label>
+                                                    <apex:outputField styleClass="col-xs-7" value="{!rec.acct.AccountNumber}" />
+                                                </div>
+                                            </li>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel >
+                                            <li> 
+                                                <div class="form-group col-xs-12">
+                                                    <label class="col-xs-6">BIS Id</label>
+                                                    <apex:outputField styleClass="col-xs-7" value="{!rec.acct.Bis_ID__c}" />
+                                                </div>
+                                            </li>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel >
+                                            <li> 
+                                                <div class="form-group col-xs-12">
+                                                    <label class="col-xs-6">Zip Code</label>
+                                                    <apex:outputField styleClass="col-xs-7" value="{!rec.acct.ShippingPostalCode}" />
+                                                </div>
+                                            </li>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel >
+                                            <li> 
+                                                <div class="form-group col-xs-12">
+                                                    <label class="col-xs-6">Type</label>
+                                                    <apex:outputField styleClass="col-xs-7" value="{!rec.acct.Type}" />
+                                                </div>
+                                            </li>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel >
+                                            <li> 
+                                                <div class="form-group col-xs-12">
+                                                    <label class="col-xs-6">Prospect-Client Owner</label>
+                                                    <apex:outputField styleClass="col-xs-7" value="{!rec.acct.Owner.Name}" />
+                                                </div>
+                                            </li>
+                                        </apex:outputPanel>
+                                    </ul>
+                                </div>
+                            </apex:repeat>
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                
+                <apex:outputPanel id="Final" >
+                    <apex:outputPanel rendered="{!AND(okayToProceed,isStepLast)}">
+                        <apex:pageMessages />
+                        
+                        <apex:commandButton rendered="{!NOT(isMultiId)}" styleClass="blueButton" value="Return to {!acct.Name}" action="{!returnToAccount}"/>
+                        <apex:commandButton rendered="{!isMultiId}" styleClass="blueButton" value="Return to Opportunity" action="{!returnToOpportunity}"/>
+                        
+                        <apex:outputPanel >
+                            <apex:repeat value="{!copyWrappers}" var="rec">
+                                <div class="card container">
+                                    <ul class="card-detail col-xs-12" style="list-style-type:none">    
+                                        <apex:outputPanel >
+                                            <li> 
+                                                <div class="form-group col-xs-12">
+                                                    <label class="col-xs-6">Prospect-Client Name</label>
+<!--                                                     <a href="/{!rec.acct.Id}">{!rec.acct.Name}</a>
+ -->                                                    <a href="{!URLFOR($Action.Account.View, rec.acct.Id)}">{!rec.acct.Name}</a>
+                                                </div>
+                                            </li>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel >
+                                            <li> 
+                                                <div class="form-group col-xs-12">
+                                                    <label class="col-xs-6">Status</label>
+                                                    <apex:outputText styleClass="col-xs-7" rendered="{!rec.isExisting}" value="Parent Prospect-Client Updated" />
+                                                    <apex:outputText styleClass="col-xs-7" rendered="{!NOT(rec.isExisting)}" value="Prospect-Client Created" />
+                                                </div>
+                                            </li>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel >
+                                            <li> 
+                                                <div class="form-group col-xs-12">
+                                                    <label class="col-xs-6">Contacts</label>
+                                                    <br/>
+                                                    <apex:repeat rendered="{!NOT(rec.isParent)}" value="{!rec.ctcts}" var="ctct" id="ctctRepeat">
+<!--                                                         <a href="/{!ctct.Id}">{!ctct.Name}</a>
+ -->                                                        <a href="{!URLFOR($Action.Contact.View, rec.acct.Id)}">{!ctct.Name}</a>
+
+                                                        <br/>
+                                                    </apex:repeat>
+                                                </div>
+                                            </li>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel >
+                                            <li> 
+                                                <div class="form-group col-xs-12">
+                                                    <label class="col-xs-6">Opportunities</label>
+                                                    <br/>
+                                                    <apex:repeat rendered="{!NOT(rec.isParent)}" value="{!rec.opptyCopyWrappers}" var="opp" id="opptyRepeat">
+<!--                                                         <a href="/{!opp.oppty.Id}">{!opp.oppty.Name}</a>
+ -->                                                        <a href="{!URLFOR($Action.Opportunity.View, opp.oppty.Id)}">{!opp.oppty.Name}</a>
+                                                        <br/>
+                                                    </apex:repeat>
+                                                </div>
+                                            </li>
+                                        </apex:outputPanel>
+                                    </ul>
+                                </div>
+                            </apex:repeat>
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+            </div>
+            <br/>
+            <br/>
+            <br/>
+        </apex:outputPanel>
+    </apex:form>
+    
+</apex:page>

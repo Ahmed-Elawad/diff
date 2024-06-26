@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TAA_Builds_Assigned</fullName>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>OWNER_NAME</columns>
+    <columns>Follow_Up_Date__c</columns>
+    <columns>TAA_Category_2__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Reassign_Category_1__c</field>
+        <operation>equals</operation>
+        <value>TLO Site Build</value>
+    </filters>
+    <filters>
+        <field>CASES.CLOSED</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Do Not Support,On Hold,Refused</value>
+    </filters>
+    <label>TAA: Rebuilds Assigned</label>
+    <sharedTo>
+        <role>TimeAttendanceAccountSpecialist</role>
+        <role>TimeAttendanceBilling</role>
+        <role>TimeAttendanceCoordinator</role>
+        <role>TimeAttendanceInboundRep</role>
+        <role>TimeAttendanceLevel2SupportRep</role>
+        <role>TimeAttendanceManager</role>
+        <role>TimeAttendanceNCSRep</role>
+        <role>TimeAttendancePreSales</role>
+        <role>TimeAttendanceSupervisorAS</role>
+        <role>TimeAttendanceSupervisorInbound</role>
+        <role>TimeAttendanceSupervisorLevel2</role>
+        <role>TimeAttendanceSupervisorOperations</role>
+        <role>TimeAttendanceSupervisorOutbound</role>
+        <role>TimeAttendanceTraining</role>
+    </sharedTo>
+</ListView>

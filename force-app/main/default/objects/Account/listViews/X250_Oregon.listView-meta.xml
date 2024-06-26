@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>X250_Oregon</fullName>
+    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6</booleanFilter>
+    <columns>CORE.USERS.LAST_NAME</columns>
+    <columns>CORE.USERS.FIRST_NAME</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>SalesParent__c</columns>
+    <columns>isParent__c</columns>
+    <columns>ACCOUNT.EMPLOYEES</columns>
+    <columns>Hold_Out__c</columns>
+    <columns>Permanent_Hold_Out_Description__c</columns>
+    <columns>First_Run_Date__c</columns>
+    <columns>ACCOUNT.SITE</columns>
+    <columns>ACCOUNT.ADDRESS1_STATE</columns>
+    <columns>ACCOUNT.PHONE1</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>Bis_ID__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Out_of_Business__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>To_Be_Deleted__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Bis_ID__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>notEqual</operation>
+        <value>Prospect,Prospect - January,HRS Client (Only),Lost Client,Accountant,Bank</value>
+    </filters>
+    <filters>
+        <field>CORE.USERS.ALIAS</field>
+        <operation>equals</operation>
+        <value>scape,jhila,hmulk,jsain,nespo,ncola,kpinelli,marzi,chard</value>
+    </filters>
+    <filters>
+        <field>First_Run_Date__c</field>
+        <operation>lessThan</operation>
+        <value>10/17/2016</value>
+    </filters>
+    <label>Clients over 1 year not owned by CCR</label>
+    <sharedTo>
+        <group>MMS</group>
+    </sharedTo>
+</ListView>

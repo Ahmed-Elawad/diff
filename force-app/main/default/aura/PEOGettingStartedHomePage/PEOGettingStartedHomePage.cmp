@@ -1,0 +1,281 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,force:appHostable,flexipage:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,lightning:isUrlAddressable,lightning:utilityItem,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="public">
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <aura:attribute name="disableContactSupport" type="Boolean" default="false"/>
+    <aura:attribute name="openVideo" type="Boolean" default="false"/>
+    <aura:attribute name="displayURL" type="String" default=""/>
+    <aura:attribute name="year" type="String" default=""/>
+     <aura:attribute name="showStickyNote" type="Boolean" default="true"/>
+    
+    
+    <br/><br/><br/>
+    <br/><br/>
+    <div class="slds-grid slds-wrap" style="color: #202020;">
+        <div class="">
+            <aura:if isTrue="{!$Label.c.PEOUWEdgemaintenance == 'true'}">
+                <c:PEOUW_EdgeMaintanence/>
+                <!--<aura:set attribute="else">
+                    <div class="stickyDiv slds-align_absolute-center">
+                        <div class="stickyInnerDiv">
+                            <div class="slds-float_left">
+                                <span style="font-weight:bold">What's New -</span> We've updated the
+                                Getting Started Portal to make it 
+                                even easier for you! 
+                            </div>
+                            <div class="slds-float_right">
+                                <lightning:icon style="cursor:pointer;" 
+                                                iconName="utility:clear" 
+                                                size="x-small" onclick="{!c.removeStickyNote}" 
+                                                alternativeText="Close!" 
+                                                title="Close"></lightning:icon>
+                            </div>
+                        </div>
+                    </div>
+                </aura:set>-->
+            </aura:if>
+        </div> 
+        <div class="slds-col slds-size_1-of-12"></div>
+        <div class="slds-col slds-size_3-of-12">
+             <div style="font-size: 32px;font-family:'PublicoHeadline-Medium-Web';">
+                <p style="margin-bottom: -15px;">Welcome to the </p>
+                <p>Getting Started Portal</p></div>
+            <div style="font-size:13px;padding:21px 0px 26px 0px; color: #202020;">Here's where you'll provide 
+                important documents and information we need to fine-tune
+                Paychex HR PEO to meet your specific needs.
+            </div>
+            
+            <lightning:button  class="customButton moveleft" 
+                              variant="brand"
+                              label="Start or Continue" 
+                              onclick="{!c.navGetStarted}"/>
+            <!--Let's Get Started-->   
+        </div>
+        <div class="slds-col slds-size_1-of-12"></div>
+        <div class="slds-col slds-size_6-of-12">
+            <a style="width:70%;" >   
+                <img src="{!$Resource.WelcomeImage}" />
+            </a>
+        </div>
+        <div class="slds-col slds-size_1-of-12"></div>
+    </div>
+    <br/><br/>
+    <div style="background-color: #54698d14;">
+       <!-- <h1 style="font-size: 30px;font-family:'PublicoHeadline-Medium-Web';" class="slds-align_absolute-center">What to Expect</h1>
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_1-of-12"/>
+            <div class="slds-col slds-size_10-of-12">
+                <p class="slds-text-align_center">
+                    Watch these short videos on what to do in each section of the Getting Started portal, 
+                    including how to upload required documents. The information you provide is vital to
+                    ensuring Paychex HR PEO is the right fit for you.
+                </p>
+            </div>
+            <div class="slds-col slds-size_1-of-12"/>
+        </div>
+        <br/><br/>
+        <div class="slds-grid slds-gutters" id="cards">
+            <div class="slds-col slds-size_1-of-12"/>
+            <div class="slds-col">
+                <lightning:card>
+                    <a style="width:70%;" onclick="{! c.navToCompInfo }">   
+                        <img src="{!$Resource.WelcomePage + '/Images/Company_Info.PNG'}" />
+                    </a>
+                    <br/><br/>
+                    <h2 class="cardHeader"><b>Company Information</b></h2>
+                    <br/>
+                    <p class="slds-p-horizontal_small">
+                        Share a little about your business so we can broadly determine which key features of Paychex HR PEO make sense for you.
+                        <br/><br/>
+                    </p>
+                </lightning:card>
+            </div>
+            <div class="slds-col">
+                <lightning:card>
+                    <a style="width:70%;" onclick="{! c.navToMedInfo }">   
+                        <img src="{!$Resource.WelcomePage + '/Images/Medical_Info.PNG'}" />
+                    </a>
+                    <br/><br/>
+                    <h2 class="cardHeader"><b>Medical Information</b></h2>
+                    <br/>
+                    <p class="slds-p-horizontal_small">
+                        Tell us about your current medical coverage, so we can recommend health plans to meet your needs. Your information is
+                        secure and can not be associated with individuals.<br/>
+                    </p>
+                </lightning:card>
+            </div> 
+            <div class="slds-col">
+                <lightning:card>
+                    <a style="width:70%;" onclick="{! c.navToWorkersCompInfo }">   
+                        <img src="{!$Resource.WelcomePage + '/Images/Workers_Comp.PNG'}" />
+                    </a>
+                    <br/><br/>
+                    <h2 class="cardHeader"><b>Workers' Comp Information</b></h2>
+                    <br/>
+                    <p class="slds-p-horizontal_small">
+                        Workers' compensation insurance is mandatory for most businesses. Your answers in this section will help us determine the best policy for your business.
+                        <br/>
+                    </p>
+                </lightning:card>
+            </div>
+            <div class="slds-col">
+                <lightning:card>
+                    <a style="width:70%;" onclick="{! c.navToAdditionalInfo }">   
+                        <img src="{!$Resource.WelcomePage + '/Images/Additional_Info.PNG'}" />
+                    </a>
+                    <br/><br/>
+                    <h2 class="cardHeader"><b>Additional Information</b></h2>
+                    <br/>
+                    <p class="slds-p-horizontal_small">
+                        Answer a final few questions and upload any remaining documents, so we have everything to customize Paychex HR PEO to your needs.
+                        <br/><br/>
+                    </p>
+                </lightning:card>
+            </div>
+            <div class="slds-col slds-size_1-of-12"/>
+        </div>-->
+        <aura:if isTrue="{!v.openVideo}">
+           <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" 
+                    aria-modal="true" aria-describedby="modal-content-id-1"   
+                    class="slds-modal slds-fade-in-open">
+               <div class="slds-modal__container">
+                   <header class="slds-modal__header">
+                       <lightning:buttonIcon iconName="utility:close"
+                                             alternativeText="close"
+                                             variant="bare-inverse"
+                                             class="slds-modal__close"
+                                             onclick="{!c.closeModal}"/>
+                   </header>
+                   <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                       <iframe width="820" height="410" src="{!v.displayURL}" autoplay="true"></iframe>
+                       <!--iframe width="420" height="315" src="https://www.youtube.com/embed/oHg5SJYRHA0?autoplay=1" frameborder="0"></iframe-->
+                   </div>
+               </div>
+               
+           </div>
+           <div class="slds-backdrop slds-backdrop_open"></div>
+        </aura:if>
+        <br/><br/>
+        <div class="slds-grid slds-gutters" id="expect">
+             <div class="slds-size_1-of-12"/>
+            <div class="slds-size_5-of-12">
+                <br/>
+                <div style="font-size:32px;" class="sectionHeader">Information and Documents</div>
+                <div style="font-size:13px; padding-top: 22px; color: #202020;">This website will help you provide a few documents
+                    we'll need. Some are required by law and others will help us create a truly custom solution
+                    for your business.</div>
+                <br/>
+                <div style="font-size:13px; color: #202020;" >Here's what to expect:</div>
+                <ol>
+                   <!-- <li>1. Use our <a href="javascript:void(0)" onclick="{!c.infoAndDocChecklist}">
+                        Information and Documents Checklist</a> to make sure you have everything you need.</li>-->
+                    <li style="font-size:13px;">1. Provide your information and required documents</li>
+                    <li style="font-size:13px;">2. We will contact you if any additional information is needed</li>
+                    <li style="font-size:13px;">3. Your Paychex representative will guide you through your personal proposal, including features and pricing</li>
+                </ol>
+                <br/>
+               <!-- <lightning:button 
+                                  class="customButton"
+                                  variant="brand-outline" 
+                                  label="View the Checklist"
+                                  onclick="{!c.infoAndDocChecklist}">
+                </lightning:button>-->
+                
+            </div>
+             <div class="slds-size_1-of-12"/>
+           <!-- <div class="slds-size_2-of-12"/>-->
+            <div class="slds-size_4-of-12">
+                <br/>
+                <img class="image" src="{!$Resource.InformationImage}" alt="What to Expect"/>
+            </div>
+            <div class="slds-size_1-of-12"/>
+        </div>
+        <br/><br/><br/><br/>
+    </div>
+    <br/><br/><br/>
+    <div class="slds-grid slds-gutters" id="help">
+        <div class="slds-size_1-of-12"/>
+        <div class="slds-size_4-of-12">
+            <br/><br/>
+            <div style="font-size:32px;" class="sectionHeader">Need Help?</div>
+            <div style="font-size:13px; padding-top: 22px; color: #202020;">Here are some examples of some of the 
+                required documents. If you require further assistance, please contact our 
+                support team by clicking the button below. Questions submitted after hours 
+                will be answered Monday through Friday, 8:00 a.m. to 5:00 p.m. ET.</div>
+            <br/><br/><br/>
+            <lightning:button class="customButton" 
+                              disabled="{!v.disableContactSupport}" 
+                              variant="brand-outline" 
+                              label="Contact Support" 
+                              onclick="{!c.contactSupport}"/>
+            
+            <lightning:flow aura:id="supportFlow" />
+        </div>
+        <div class="slds-size_1-of-12"/>
+        <div class="slds-size_5-of-12 knowledgeContainer">
+            <!--<img class="image" src="{!$Resource.gettingStartedWhatToExpect}" alt="What to Expect"/>-->
+            <c:PEOGettingStartedKnowledge showPageTitle="true"/>
+        </div>
+        <div class="slds-size_1-of-12"/>
+    </div>
+    <br/><br/><br/>
+    <div style="background-color: #54698d14;">
+        <br/><br/>
+        <h1 style="font-size: 30px;font-family:'PublicoHeadline-Medium-Web';" class="slds-align_absolute-center">Why Paychex HR is Right for Your Business</h1>
+        <br/><br/>
+        <div class="slds-grid slds-gutters" id="cards">
+            <div class="slds-size_1-of-12"/>
+            <div class="slds-col">
+                <lightning:card class="cardHeight">
+                    <div class="cardHeader"><b>Personal HR Advice From <br/>an Expert</b></div>
+                    <br/>
+                    <div class="slds-p-horizontal_small cardData">
+                        Unlike other services with general best-practices and templates, Paychex HR Professionals apply their knowledge, research, and experience to create a specific action plan for your business.
+                        <br/>
+                    </div>
+                </lightning:card>
+            </div>
+            <div class="slds-col">
+                <lightning:card class="cardHeight">
+                    <div class="cardHeader"><b>Connect Payroll, <br/>HR, and Benefits</b></div><br/>
+                    <div class="slds-p-horizontal_small cardData">
+                       Our integrated HR technology and service platform makes it easier to manage the employee experience — from onboarding to retirement — across your entire organization.
+                    </div>
+                </lightning:card>
+            </div>    
+            <div class="slds-col">
+                <lightning:card class="cardHeight">
+                    <div class="cardHeader"><b>Find and Hire Top Talent</b></div><br/>
+                    <div class="slds-p-horizontal_small cardData">
+                        Our hiring services can help you recruit the best fit and hard-to-find candidates, uncover important information about potential employees, and welcome new hires online.
+                        <br/>
+                    </div>
+                </lightning:card>
+            </div>    
+            <div class="slds-col">
+                <lightning:card class="cardHeight">
+                    <div class="cardHeader"><b>Stay Ahead of Complex Regulations</b></div><br/>
+                    <div class="slds-p-horizontal_small cardData">
+                        Our large team of in-house compliance experts proactively monitors employment laws and regulations to help you stay aware of changes that could affect your business.
+                        <br/>
+                    </div>
+                </lightning:card>
+            </div>
+            <div class="slds-size_1-of-12"/>
+        </div>
+        <div class="slds-grid slds-wrap slds-p-top_xx-large">
+            <div class="slds-size_1-of-12"/>
+            <div class=" slds-size_11-of-12 slds-p-top_xx-large">©{!v.year} Paychex Inc.
+                All Rights Reserved
+            </div>  
+            <div class="slds-size_1-of-12"/>
+            <div class="slds-size_11-of-12">
+                <lightning:formattedUrl class="slds-p-around_xx-small" value="https://www.paychex.com/corporate/security/privacy" label="Privacy" target="_blank"/>
+               |<lightning:formattedUrl class="slds-p-around_xx-small" value="https://www.paychex.com/corporate/security" label="Security" target="_blank"/>
+               |<lightning:formattedUrl class="slds-p-around_xx-small" value="https://www.paychex.com/corporate/trademarks" label="Trademarks &amp; Disclaimers" target="_blank"/>
+               |<lightning:formattedUrl class="slds-p-around_xx-small" value="https://www.paychex.com/corporate/legal" label="Legal" target="_blank"/>
+            </div>
+        </div>
+        <br/>
+    </div>
+    <div class="footer">
+    </div>
+</aura:component>

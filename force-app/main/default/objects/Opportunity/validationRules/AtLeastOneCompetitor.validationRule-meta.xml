@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AtLeastOneCompetitor</fullName>
+    <active>true</active>
+    <description>Stops reps from moving to proposal without a competitor selected</description>
+    <errorConditionFormula>AND(
+	OR( $User.Job_Name__c = &apos;Sales Representative&apos;,
+		$User.Sales_Division__c != &apos;Virtual TAA&apos;
+	),
+	NOT(ISPICKVAL(StageName, &apos;Disqualified&apos;)),
+	ISCHANGED(StageName),
+	NOT(BEGINS(PRIORVALUE(StageName), &apos;Sold&apos;)),
+	CompetitorCount__c =0,
+
+	OR(
+		AND(
+			OR(
+				AND(Probability &gt;= 0.50, Probability &lt;= 0.80),
+				(IsWon=false &amp;&amp; IsClosed=True)
+			),
+
+			OR(
+				$RecordType.Name = &apos;Core Opportunity DSA Record Type&apos;
+				,$RecordType.Name = &apos;Core Opportunity Record Type&apos;
+				,$RecordType.Name = &apos;Core Virtual Sales&apos;
+				,$RecordType.Name = &apos;MMS Opportunity (DSA) Record Type&apos;
+				,$RecordType.Name = &apos;MMS Opportunity Record Type&apos;
+			)
+		),
+
+		AND(
+			Probability &gt;= 0.70 || (IsWon=false &amp;&amp; IsClosed=True),
+
+			OR($RecordType.Name = &apos;PC Opportunity DSA Record Type&apos;
+				,$RecordType.Name = &apos;PC Opportunity Record Type&apos;
+			)
+		),
+		
+		AND(
+			Probability &gt;= 0.80 || (IsWon=false &amp;&amp; IsClosed=True),
+
+			OR($RecordType.Name = &apos;ASO Opportunity FSS Record Type&apos;
+			,$RecordType.Name = &apos;ASO Opportunity Record Type&apos;
+			,$RecordType.Name = &apos;PEO Opportunity FSS Record Type&apos;
+			,$RecordType.Name = &apos;PEO Opportunity Record Type&apos;
+			,$RecordType.Name = &apos;HRS 401(k) Opportunity Record Type&apos;
+			,$RecordType.Name = &apos;HRS 401(k) Opportunity FSS Record Type&apos;
+			,$RecordType.Name=&apos;Payment Processing Opportunity&apos;
+			,$RecordType.Name=&apos;Payment Processing (DSA) Opportunity&apos;
+			)
+		)
+	),
+
+	NOT(BEGINS($Profile.Name, &apos;System Administrator&apos;)),
+        NOT(BEGINS($Profile.Name, &apos;Paychex Marketing Admin&apos;)),
+        NOT(BEGINS($Profile.Name, &apos;Sales Enablement&apos;)),
+        NOT(BEGINS($Profile.Name, &apos;System Administrator API-Alteryx&apos;)),
+        NOT($User.Sales_Division__c = &apos;CSSR&apos;)
+)</errorConditionFormula>
+    <errorMessage>you must select at least 1 competitor in the Searchable Competition box before moving to proposal or higher</errorMessage>
+</ValidationRule>

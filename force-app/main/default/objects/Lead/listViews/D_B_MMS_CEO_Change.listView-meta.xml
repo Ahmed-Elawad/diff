@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>D_B_MMS_CEO_Change</fullName>
+    <columns>FULL_NAME</columns>
+    <columns>LEAD.COMPANY</columns>
+    <columns>LEAD.PHONE</columns>
+    <columns>LEAD.STREET</columns>
+    <columns>LEAD.STATE</columns>
+    <columns>LEAD.ZIP</columns>
+    <columns>LEAD.STATUS</columns>
+    <columns>LEAD.EMPLOYEES</columns>
+    <columns>LEAD.CREATED_DATE</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <columns>LEAD.UNREAD</columns>
+    <columns>CORE.USERS.FIRST_NAME</columns>
+    <columns>CORE.USERS.LAST_NAME</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>LEAD.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Already Contacted/Duplicate,Previously Sold,Disqualified</value>
+    </filters>
+    <filters>
+        <field>LEAD.CONVERTED</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>LEAD.CREATED_DATE</field>
+        <operation>greaterOrEqual</operation>
+        <value>5/28/2019 12:00 AM</value>
+    </filters>
+    <filters>
+        <field>LatestCampaignParent__c</field>
+        <operation>equals</operation>
+        <value>D&amp;B CEO Changes</value>
+    </filters>
+    <filters>
+        <field>LatestCampaign__c</field>
+        <operation>equals</operation>
+        <value>CEO Change 9-20,CEO Change 9-6,CEO Change 7-31,CEO Change 7-9,CEO Change 7-2,CEO Change 5-28,CEO Change 1-17</value>
+    </filters>
+    <label>D&amp;B CEO Change</label>
+</ListView>

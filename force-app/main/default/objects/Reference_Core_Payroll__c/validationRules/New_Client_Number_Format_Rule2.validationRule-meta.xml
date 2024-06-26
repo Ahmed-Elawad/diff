@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>New_Client_Number_Format_Rule2</fullName>
+    <active>true</active>
+    <description>Ensures a validation location portion of the New Propsect-Client Number</description>
+    <errorConditionFormula>ISCHANGED(New_Prospect_Client_Number__c) &amp;&amp; NOT( BEGINS($Profile.Name,&quot;System Administrator&quot;)) &amp;&amp; ((NOT( 
+CONTAINS(&quot;8-:11-:12-:13-:14-:15-:16-:17-:18-:20-:21-:23-:24-:25-:26-:27-:28-:29-:30-:31-:&quot; &amp; 
+&quot;32-:33-:34-:35-:36-:37-:38-:39-:40-:41-:42-:44-:45-:46-:47-:48-:49-:50-:51-:52-:&quot; &amp; 
+&quot;53-:54-:55-:56-:57-:58-:60-:61-:62-:63-:64-:65-:66-:67-:68-:69-:70-:71-:72-:75-:76-:79-:&quot; &amp; 
+&quot;80-:81-:82-:83-:84-:85-:86-:87-:88-:89-:90-:91-:95-:901-:902-:903-:904-:912-:913-:915-:919-:&quot; &amp; 
+&quot;940-:942-:943-:944-&quot;, LEFT(New_Prospect_Client_Number__c, FIND(&quot;-&quot;, New_Prospect_Client_Number__c))))) || BEGINS(New_Prospect_Client_Number__c, &quot;2-&quot;) || BEGINS(New_Prospect_Client_Number__c, &quot;3-&quot;) || BEGINS(New_Prospect_Client_Number__c, &quot;4-&quot;) || BEGINS(New_Prospect_Client_Number__c, &quot;5-&quot;) || BEGINS(New_Prospect_Client_Number__c, &quot;6-&quot;) || BEGINS(New_Prospect_Client_Number__c, &quot;7-&quot;) || BEGINS(New_Prospect_Client_Number__c, &quot;9-&quot;))</errorConditionFormula>
+    <errorDisplayField>New_Prospect_Client_Number__c</errorDisplayField>
+    <errorMessage>**** Invalid location number.  Please enter a valid location number ****</errorMessage>
+</ValidationRule>

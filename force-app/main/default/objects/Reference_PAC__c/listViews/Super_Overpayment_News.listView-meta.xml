@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Super_Overpayment_News</fullName>
+    <booleanFilter>1 and 2 and 3 and 4 and 5 and 6 and 7 and 8</booleanFilter>
+    <columns>NAME</columns>
+    <columns>Date_1st_Notice_Received_in_PAC__c</columns>
+    <columns>Initial_Research_Findings_Summary_Log__c</columns>
+    <columns>Prospect_Client_Number__c</columns>
+    <columns>Tax_Agency__c</columns>
+    <columns>Tax_Type__c</columns>
+    <columns>First_Period_Listed__c</columns>
+    <columns>Status__c</columns>
+    <columns>OWNER.ALIAS</columns>
+    <columns>Client_Contact_Email__c</columns>
+    <columns>DSC_Client__c</columns>
+    <columns>Submission_Notes__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>OWNER.ALIAS</field>
+        <operation>contains</operation>
+        <value>PAC Group,PAC MPSC</value>
+    </filters>
+    <filters>
+        <field>Status__c</field>
+        <operation>contains</operation>
+        <value>New Notice Received</value>
+    </filters>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_PAC__c.Reference_PAC_Record_Type</value>
+    </filters>
+    <filters>
+        <field>Ticket_Type__c</field>
+        <operation>equals</operation>
+        <value>Overpayment Issue</value>
+    </filters>
+    <filters>
+        <field>Paychex_PEO_Issue__c</field>
+        <operation>notEqual</operation>
+        <value>Yes</value>
+    </filters>
+    <filters>
+        <field>Additional_Duplicate_To__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Tax_Agency__c</field>
+        <operation>notEqual</operation>
+        <value>IRS - INTERNAL REVENUE SERVICE</value>
+    </filters>
+    <filters>
+        <field>OWNER.ALIAS</field>
+        <operation>notContain</operation>
+        <value>locals,ESR,PAC Group O,PAC Group – PEO,PAC Group Additional/Duplicate</value>
+    </filters>
+    <label>Super-Overpayment News (no IRS)</label>
+    <sharedTo>
+        <roleAndSubordinates>Operating_Risk_and_Risk_Review_Manager</roleAndSubordinates>
+    </sharedTo>
+</ListView>

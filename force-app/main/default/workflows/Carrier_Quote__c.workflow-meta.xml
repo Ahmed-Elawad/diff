@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Carrier_Quote_Proposed_Expiration_Date</fullName>
+        <field>Proposed_Expiration_Date__c</field>
+        <formula>ADDMONTHS(Proposed_Effective_Date__c,12)</formula>
+        <name>Carrier Quote Proposed Expiration Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Proposed Expiration Date</fullName>
+        <actions>
+            <name>Carrier_Quote_Proposed_Expiration_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>default to Proposed Effective Date + 1year</description>
+        <formula>NOT(ISNULL( Proposed_Effective_Date__c ))</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

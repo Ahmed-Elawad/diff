@@ -1,0 +1,27 @@
+<apex:page standardController="Lead" extensions="PaychexLeadReferralInfoController"
+    showHeader="false"
+    sidebar="false"
+    lightningStylesheets="true">
+    <apex:pageBlock rendered="{!displayAmpPage}"> 
+    <apex:outputPanel ID="dontShow" rendered="{!NOT(showPage)}">
+        <apex:form >
+            <apex:commandButton id="SubmitRef" value="Submit PRN Referral" title="Submit PRN Referral" action="{!submitReferral}" />
+            <apex:pageMessages ></apex:pageMessages>
+        </apex:form>
+    </apex:outputPanel>
+
+    <!-- <amp_dev:SObjectAmpReferralPanel recordId="{!Lead.Id}" newAdvocateInviteLookup="{!AccountLookupHelper}"> -->
+    <amp_dev:SObjectAmpReferralPanel recordId="{!Lead.Id}" rendered="{!showPage}"> 
+      <!--  <apex:pageBlockSection collapsible="false"
+            columns="2">
+            <apex:outputPanel >
+                Alternatively, if the person making this referral is a {!$ObjectType.Account.label}
+                not yet enrolled in a {!$ObjectType.amp_dev__Amp_Program__c.label}, you may select and enroll them now.
+            </apex:outputPanel>
+            <apex:inputField label="{!$ObjectType.Account.label}"
+                value="{!AccountLookupHelper.HelperForAccountLookup.amp_dev__Account__c}"/> 
+        </apex:pageBlockSection> -->
+    </amp_dev:SObjectAmpReferralPanel> 
+    
+</apex:pageBlock>    
+</apex:page>

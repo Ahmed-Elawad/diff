@@ -1,0 +1,146 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction" controller="OpptyTeamController">
+    
+    <!--attributes used in this component-->
+    <aura:attribute name="sectionToDisplay" type="String" default="" />
+    <aura:attribute name="options" type="List" default="[
+    	{'label': 'Myself', 'value': 'myself'},
+    	{'label': 'Someone Else', 'value': 'someoneElse'}
+    	]"/>
+    <aura:attribute name="recordId" type="Id" required="true" default="{!v.recordId}"/>
+    <aura:attribute name="searchUser" type="String"/>
+    <aura:attribute name="activeUsers" type="User"/>
+    <aura:attribute name="availableRoles" type="List" default="[]"/>
+    <aura:attribute name="userName" type="String" />
+    <aura:attribute name="msg" type="string"/>
+    <aura:attribute name="roleChosen" type="string" default="" />
+    
+    <!--boolean values to render different parts of the component-->
+    <aura:attribute name="isSearching" type="boolean" default="false" />
+    <aura:attribute name="confirmation" type="boolean" default="false" />
+    <aura:attribute name="showMessage" type="boolean" default="false"/>
+    
+    <!--set and used in the controller-->
+    <aura:attribute name="userId" type="String"/>
+    <aura:attribute name="profileName" type="String"/>
+    <aura:attribute name="teamMemberId" type="Id"/>
+    
+    
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+  
+    <!--who are you making the change for?-->
+    <aura:if isTrue="{!v.sectionToDisplay == 'chooseWho'}">
+       <lightning:radioGroup aura:id="who"
+                          name="radioGroup"
+                          label="Will you be making a change for yourself or someone else?"
+                          options="{!v.options}"
+                          type="radio"
+                          onchange="{! c.handleRadioChange }"
+                          variant="label-hidden"/>
+    	<div class="nextButton">
+    		<lightning:button label="Next" variant="brand" onclick="{!c.handleWho}"/>
+    	</div>
+    </aura:if>
+    
+    <!--If making a change for someone else, display search box-->
+    <aura:if isTrue="{!v.sectionToDisplay == 'displayInputUser'}">
+    <div class="slds-form-element container">
+        <div class="search-container">
+            <lightning:input type="search" class="search-box" placeholder="Search for a User"
+                             value="{!v.searchUser}"/>
+            <div class="nextButton">
+    			<lightning:button label="Search" variant="brand" onclick="{!c.searchForUser}"/>
+    		</div>
+        </div>
+    </div>
+    </aura:if>
+    
+    <!--display search results from entering a user to find-->
+    <aura:if isTrue="{!v.isSearching}">
+        <lightning:radioGroup aura:id="whatUser"
+                              name="radioGroup"
+                              label="Who do you need to make a change for?"
+                              options="{!v.activeUsers}"
+                              onchange="{! c.handleRadioChange }"
+                              type="radio"
+                              variant="label-hidden"/>
+         <div class="nextButton">
+             <lightning:button label="Select User" variant="brand" onclick="{!c.handleUserSelected}"/>     
+         </div> 
+    </aura:if>
+    
+
+    <aura:if isTrue="{!v.sectionToDisplay == 'rolesetOutput'}">
+         <ui:outputText value="{!'This user will be added to the Opportunity Team with the role: ' +v.roleChosen}"/>
+        <div class="nextButton">
+                  <lightning:button label="Add to Opportunity Team" variant="brand" onclick="{!c.addMember}"/>
+             </div>
+    </aura:if>
+    <!--once a user it defined for whom the change is for, display the roles available for that profile-->
+    <aura:if isTrue="{!v.sectionToDisplay == 'displayRoleList'}">
+		<lightning:combobox aura:id="selectItem" name="role" label="Choose the Opportunity Team Role that the user should be assigned."
+                            placeholder="Choose a Team Role"
+                            value="new"
+                            required="true"
+                            dropdownAlignment="right"
+                            variant="standard"
+                            messageWhenValueMissing="You Must Select the Value"
+                            onchange="{!c.setRoleSelected}"
+                            options="{!v.availableRoles}"/>
+        
+       
+             <div class="nextButton">
+                  <lightning:button label="Add to Opportunity Team" variant="brand" onclick="{!c.addMember}"/>
+             </div>
+    </aura:if>  
+    
+
+     <aura:if isTrue="{!v.sectionToDisplay == 'displayConfirmDelete'}">
+         <aura:if isTrue="{!v.userName == undefined}">
+              You are already in this Opportunity Team. Confirm you should be deleted from the Opportunity Team.
+             <aura:set attribute="else">
+                {!v.userName} is already in this Opportunity Team. Confirm they should be deleted from the Opportunity Team.
+             </aura:set>
+         </aura:if>
+             <div class="nextButton">
+                <lightning:button label="Delete from Opportunity Team" variant="brand" onclick="{!c.deleteMember}"/>
+             </div>
+         
+     </aura:if>
+   
+  	<aura:if isTrue="{!v.confirmation }">  
+        <aura:if isTrue="{!v.sectionToDisplay == 'displayUserHasBeenAdded'}"> 
+            <aura:if isTrue="{!v.userName == undefined}">
+              	You have been added to the Opportunity Team with the {!v.roleChosen} role.
+             <aura:set attribute="else">
+                {!v.userName} has been added to the Opportunity Team with the {!v.roleChosen} role.
+             </aura:set>
+         </aura:if>
+       </aura:if>
+    
+        <aura:if isTrue="{!v.sectionToDisplay == 'displayUserHasBeenDeleted'}">
+            <aura:if isTrue="{!v.userName == undefined}">
+              	You have been deleted from the Opportunity Team.
+            <aura:set attribute="else">
+                {!v.userName} has been deleted from the Opportunity Team.
+            </aura:set>
+            </aura:if>
+        </aura:if>
+        <div class="nextButton">
+             <lightning:button label="Ok" variant="brand" onclick="{!c.ok}"/>
+        </div>
+    </aura:if>
+    
+    
+    <aura:if isTrue="{!v.showMessage }">
+        <div aura:id="messageWindow" class="slds-notify slds-notify--toast slds-theme--error">
+        	<span class="slds-assistive-text">Error</span>
+            <div>
+            	<lightning:icon iconName="utility:error" alternativeText="error" variant="bare"/>
+            </div>
+            <div class="slds-col slds-align-middle" style="padding-left: .75rem">
+            	<h2 class="slds-text-heading_small">{!v.msg}</h2>
+            </div>
+        </div>
+     </aura:if>
+    
+</aura:component>

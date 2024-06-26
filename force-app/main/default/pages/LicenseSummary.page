@@ -1,0 +1,237 @@
+<!-- A view of all of the license information
+
+   History
+   -------
+   12/01/2009 Dan Carmen   Created
+   01/26/2010 Dan Carmen   Changes to fields, added budget modification ability. 
+   04/24/2013 Dan Carmen   Modified to use sales org and to remove expense information
+   01/03/2023 Dan Carmen   No longer needed, removed all code - CanBeDeleted
+   01/24/2024 Jidesh  	   Reverted the code since we can use it for SFDC-25004 research
+ -->
+<apex:page controller="LicenseSummaryController"
+           tabStyle="License_Summary__tab"
+           showHeader="true"
+           id="licensePage" lightningStylesheets="true">
+    
+    <style type="text/css">
+        
+    </style>
+  <c:PageMessage />
+
+  <apex:pageMessages />
+
+    <apex:form id="licenseSummaryForm">
+        <!--<apex:inputText value="{!searchKey}" label="Input"/>
+        <apex:commandButton value="Search records" action="{!search}"/>
+        <apex:commandButton value="Clear records" action="{!clear}"/>-->
+        <apex:pageBlock id="showSummaryInfo">
+            
+            <!-- License request information for your organization -->
+                <apex:pageBlockButtons location="top" >
+                    
+                    <!--<apex:outputPanel id="myButtons">
+<apex:commandButton action="{!FirstPage}" title="Beginning" value="<<" disabled="{!disablePrevious}" reRender="myPanel,myButtons"/>
+<apex:commandButton action="{!previous}" title="Previous" value="<" disabled="{!disablePrevious}" reRender="myPanel,myButtons"/>        
+<apex:commandButton action="{!next}" title="Next" value=">" disabled="{!disableNext}" reRender="myPanel,myButtons"/>
+<apex:commandButton action="{!LastPage}" title="End" value=">>" disabled="{!disableNext}" reRender="myPanel,myButtons"/> 
+</apex:outputPanel>-->
+                    <apex:outputPanel id="mySearchButtons">
+                        <div>
+                            <span>
+                                <apex:inputText value="{!searchKey}" label="Input">
+                                    <apex:outputLabel >User License search: </apex:outputLabel>
+                                </apex:inputText>
+                            </span>
+                            <span>
+                                <apex:commandButton value="Search" action="{!search}"/>
+                            </span>
+                            <!--<apex:commandLink image="{!URLFOR('/img/func_icons/util/search16.png')}"
+action="{!search}"  
+Value="SEARCH" > 
+<svg aria-hidden="true" class="slds-icon slds-icon--small">
+<use xmlns:xlink="http://www.w3.org/1999/xlink" 
+xlink:href="/apexpages/slds/latest/assets/icons/standard-sprite/svg/symbols.svg#opportunity">
+</use>
+</svg>
+</apex:commandLink>-->
+                            <span>
+                                <apex:commandButton value="Cancel" action="{!clear}"/>
+                            </span>
+                            <apex:commandButton action="{!getLicenseInfo}" title="Refresh Licence Info" value="Update License Info" reRender="myPanel,myButtons" status="displayRefresh"/> 
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockButtons>
+                <apex:PageBlockSection title="License Information" columns="1">
+                    <apex:actionStatus id="displayRefresh">
+                        <apex:facet name="start"> 
+                            <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+                                &nbsp;
+                            </div>
+                            <div style="position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin: 15% 48%">
+                                <div style="display: inline-block; padding: 2px; background-color: #fff0; width: 150px;">
+                                    <img src="/apexpages/slds/latest/assets/images/spinners/slds_spinner_brand.gif" style="float: left; margin: 10% 1% 1% 1%;width: 50%;" />
+                                    <span style="display: inline-block; padding: 10px 0px;margin-left: -15%;">Refreshing the Data...</span>
+                                </div>
+                            </div>
+                        </apex:facet>
+                    </apex:actionStatus>
+                    <div>
+                        <span style="font-weight: bold;">Click on a License Name to view the details</span>
+                        <span style="margin-left: 64%; font-weight: bold;">Last refreshed on: {!lastRefreshedDate}</span><br/>
+                        <!--<div class='OverUnderBudgetSec' style=''>
+<span style="margin-left: 90%; color: red; font-weight: bold;">Over Budget</span><br/>
+<span style="margin-left: 90%; color: green; font-weight: bold;">Under Budget</span>
+</div>-->
+                    </div>
+                    <apex:outputPanel id="myPanel">
+                        <apex:pageBlockTable value="{!userLicenses}" var="li" cellPadding="4" border="1">
+                            <apex:column headerValue="Name" style="white-space:nowrap;">
+                                <apex:facet name="header"> 
+                                    <apex:commandLink title="Your Help text here" value="Name{!IF(sortExpression=='name',IF(sortDirection='ASC',' ▼ ',' ▲ '),'')}" id="cmdSort" action="{!viewuserLicenses}">
+                                        <apex:param value="name" name="column" assignTo="{!sortExpression}"/>
+                                    </apex:commandLink>
+                                </apex:facet>
+                                <!-- <apex:outputText rendered="{!OR(li.name='Total',NOT(isSystemAdmin),li.isNew)}" value="{!li.name}"/>
+<apex:outputText rendered="{!AND(li.name!='Total',li.isNew)}" value="**"/>-->
+                                <apex:commandLink title="Your Help text here" reRender="userlicenseDetail">{!li.Name}
+                                    <apex:param name="licenseName" value="{!li.Name}"/>
+                                </apex:commandLink>
+                            </apex:column>
+                            <apex:column style="white-space:nowrap;"> 
+                                <apex:facet name="header">
+                                    <apex:commandLink title="Your Help text here" value="License Allocated {!IF(sortExpression=='License_Allocated__c',IF(sortDirection='ASC','▼','▲'),'')}" id="licAllocSort" action="{!viewuserLicenses}">
+                                        <apex:param value="License_Allocated__c" name="column" assignTo="{!sortExpression}"/>
+                                    </apex:commandLink>
+                                </apex:facet>
+                                <apex:outputText value="{!li.License_Allocated__c}"/>
+                            </apex:column>
+                            <apex:column style="white-space:nowrap;"> 
+                                <apex:facet name="header">
+                                    <apex:commandLink title="Your Help text here" value="IT BUDGETED LICENSE {!IF(sortExpression=='IT_Budgeted_License__c',IF(sortDirection='ASC','▼','▲'),'')}" id="itbLicSort" action="{!viewuserLicenses}">
+                                        <apex:param value="IT_Budgeted_License__c" name="column" assignTo="{!sortExpression}"/>
+                                    </apex:commandLink>
+                                </apex:facet>
+                                <apex:outputText value="{!li.IT_Budgeted_License__c}"/>
+                            </apex:column>
+                            <apex:column headerValue="BU Budgeted License"> 
+                                <apex:facet name="header">
+                                    <apex:commandLink title="Your Help text here" value="BU Budgeted License {!IF(sortExpression=='BU_Budgeted_License__c',IF(sortDirection='ASC','▼','▲'),'')}" id="bubLicSort" action="{!viewuserLicenses}">
+                                        <apex:param value="BU_Budgeted_License__c" name="column" assignTo="{!sortExpression}"/>
+                                    </apex:commandLink>
+                                </apex:facet>
+                                <apex:outputText value="{!li.BU_Budgeted_License__c}"/>
+                            </apex:column>
+                            <apex:column headerValue="Over/Under Budget"> 
+                                <apex:facet name="header">
+                                    <apex:commandLink title="Your Help text here" value="Over/Under Budget {!IF(sortExpression=='Above_Or_Under_Budget__c',IF(sortDirection='ASC','▼','▲'),'')}" id="OverUndBudgSort" action="{!viewuserLicenses}">
+                                        <apex:param value="Above_Or_Under_Budget__c" name="column" assignTo="{!sortExpression}"/>
+                                    </apex:commandLink>
+                                </apex:facet>
+                                <apex:outputText rendered="{!li.Above_Or_Under_Budget__c < 0}" style="color: red; font-weight: bold;"  value="{!li.Above_Or_Under_Budget__c* -1}"/>
+                                <apex:outputText rendered="{!li.Above_Or_Under_Budget__c >= 0}" style="color: green; font-weight: bold;" value="{!li.Above_Or_Under_Budget__c}"/>
+                            </apex:column>
+                            <!--<apex:column headerValue="Over/Under Budget"> 
+<apex:outputText rendered="{!li.budgetDiff < 0}" style="color: red; font-weight: bold;"  value="{!li.budgetDiff}"/>
+<apex:outputText rendered="{!li.budgetDiff >= 0}" value="{!li.budgetDiff}"/>
+</apex:column>-->
+                            <!--<apex:column headerValue="Never Logged In"> 
+<apex:outputText value="{!li.neverLoggedIn}"/>
+</apex:column>
+</apex:column>-->
+                            <apex:facet name="footer">Showing Page # {!pageNumber} of {!totalPages}</apex:facet>
+                        </apex:pageBlockTable>
+                        <div class='OverUnderBudgetSec' style=''>
+                            <span style="margin-left: 90%; color: red; font-weight: bold;">֎ Over Budget</span><br/>
+                            <span style="margin-left: 90%; color: green; font-weight: bold;">֎ Under Budget</span>
+                        </div>
+                    </apex:outputPanel>
+                    <!--<apex:pageBlockSectionItem >
+<apex:outputLabel value="Active users without a valid Sales Org"/>
+<apex:outputText value="{!usersWithoutLicense}" />
+</apex:pageBlockSectionItem>usersWithoutCostCenter -->
+                    <!--<apex:pageBlockSectionItem >
+<apex:outputLabel value="Active users without a Cost center"/>
+<apex:outputText value="{!usersWithoutCostCenter}" />
+</apex:pageBlockSectionItem>-->
+                    
+                    <!--<apex:pageBlockSectionItem >
+<apex:outputLabel value="Read Only Users"/>
+<apex:outputText value="{!readOnlyCnt}" />
+</apex:pageBlockSectionItem>
+
+<apex:pageBlockSectionItem >
+<apex:outputLabel value="Percent of Read Only Users against Total"/>
+<apex:outputText value="{!readOnlyPct}" />
+</apex:pageBlockSectionItem>
+
+<apex:pageBlockSectionItem >
+<apex:outputLabel value="Chatter Free Users"/>
+<apex:outputText value="{!chatterFreeCnt}" />
+</apex:pageBlockSectionItem> 
+
+<apex:outputText rendered="{!unsavedChangedExist}" value="** = License Record Does not currently exist - needs to be saved"/>
+<apex:commandButton rendered="{!isSystemAdmin}" action="{!doModifyBudget}" value="Modify Budget Information" styleClass="btn" />
+-->
+                    <!--<apex:commandButton rendered="{!isSystemAdmin}" action="{!doModifyBudget}" value="Modify Budget Information" styleClass="btn" />  -->
+                </apex:PageBlockSection>
+            <apex:pageBlockButtons location="bottom" >
+                <apex:outputPanel id="myButtons">
+                    <apex:commandButton action="{!FirstPage}" title="Beginning" value="<<" disabled="{!disablePrevious}" reRender="myPanel,myButtons"/>
+                    <apex:commandButton action="{!previous}" title="Previous" value="<" disabled="{!disablePrevious}" reRender="myPanel,myButtons"/>        
+                    <apex:commandButton action="{!next}" title="Next" value=">" disabled="{!disableNext}" reRender="myPanel,myButtons"/>
+                    <apex:commandButton action="{!LastPage}" title="End" value=">>" disabled="{!disableNext}" reRender="myPanel,myButtons"/> 
+                </apex:outputPanel>
+            </apex:pageBlockButtons>
+            <!--<apex:pageBlockSection id="licenseDetail" columns="1">
+<apex:pageBlockSectionItem rendered="{!licenseSelected}">
+<apex:outputLabel value="{!selectedLicense.name} Never logged in, created more than 30 days ago"/>
+<apex:outputText value="{!selectedLicense.neverLoggedIn}" />
+</apex:pageBlockSectionItem>
+
+<apex:pageBlockSectionItem rendered="{!licenseSelected}">
+<apex:outputLabel value="{!selectedLicense.name} Not logged in within past 60 days" />
+<apex:outputText value="{!selectedLicense.noLogin60Days}" />
+</apex:pageBlockSectionItem> 
+<apex:detail rendered="{!licenseSelected}" subject="{!detailLicense}" title="true" />
+</apex:pageBlockSection> -->
+      <apex:pageBlockSection id="userlicenseDetail" columns="1">
+         <!-- <apex:detail rendered="{!userLicenseSelected}" subject="{!detailLicense}" title="true" />  -->
+          <apex:detail rendered="true" subject="{!detailLicense}" title="true" />
+      </apex:pageBlockSection>
+  </apex:pageBlock>
+  
+  <!--<apex:pageBlock id="modifyBudgetInfo" rendered="{!modifyBudget}">
+  
+     License request information for your organization 
+      <apex:PageBlockSection title="Modify Budget Information" columns="1">
+          <apex:pageBlockTable value="{!licenses}" var="li" cellPadding="4" border="1">
+              <apex:column headerValue="Name" style="white-space:nowrap;">
+                  <apex:outputText value="{!li.name}" /> 
+              </apex:column>
+              <apex:column headerValue="Budget" style="white-space:nowrap;"> 
+                  <apex:outputText value="{!li.budgetedStr}"/>
+              </apex:column>
+              <apex:column headerValue="Active Licenses"> 
+                  <apex:outputText value="{!li.usedLicenses}"/>
+              </apex:column>
+              <apex:column headerValue="Over/Under Budget"> 
+                  <apex:outputText rendered="{!li.budgetDiff < 0}" style="color: red; font-weight: bold;"  value="{!li.budgetDiff}"/>
+                  <apex:outputText rendered="{!li.budgetDiff >= 0}" value="{!li.budgetDiff}"/>
+              </apex:column>
+              
+              <apex:column headerValue="Budget License Change">
+                  <apex:inputField value="{!li.budgetULR.Licenses_Added__c}"/>
+              </apex:column>
+          </apex:pageBlockTable>
+      </apex:PageBlockSection>
+      <apex:outputPanel >
+          <apex:commandButton action="{!save}" value="Save" styleClass="btn" />
+          <apex:commandButton action="{!saveReturn}" value="Save and Return to Summary" styleClass="btn" />
+          <apex:commandButton action="{!cancel}" value="Cancel and Return to Summary" styleClass="btn" />
+          <br/>
+      </apex:outputPanel>
+
+  </apex:pageBlock>-->
+  </apex:form>
+ 
+</apex:page>

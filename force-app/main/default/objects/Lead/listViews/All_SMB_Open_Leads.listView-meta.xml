@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All_SMB_Open_Leads</fullName>
+    <columns>Owner_District__c</columns>
+    <columns>CORE.USERS.LAST_NAME</columns>
+    <columns>CORE.USERS.FIRST_NAME</columns>
+    <columns>LEAD.STATUS</columns>
+    <columns>LEAD.COMPANY</columns>
+    <columns>FULL_NAME</columns>
+    <columns>LEAD.PHONE</columns>
+    <columns>LEAD.ZIP</columns>
+    <columns>LEAD.EMPLOYEES</columns>
+    <columns>SignificantLead__c</columns>
+    <columns>LEAD.LEAD_SOURCE</columns>
+    <columns>Current_Prior_Method__c</columns>
+    <columns>LEAD.CREATED_DATE</columns>
+    <columns>LEAD.RECORDTYPE</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>LEAD.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Qualified</value>
+    </filters>
+    <filters>
+        <field>LEAD.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Lead.CoreLeadRecordType</value>
+    </filters>
+    <filters>
+        <field>LEAD.STATUS</field>
+        <operation>equals</operation>
+        <value>Not Contacted,Open,Previously Sold,Qualified,Unqualified,New Web,New,Qualified DM,Lost Client</value>
+    </filters>
+    <filters>
+        <field>LEAD.EMPLOYEES</field>
+        <operation>greaterOrEqual</operation>
+        <value>20</value>
+    </filters>
+    <filters>
+        <field>LEAD.EMPLOYEES</field>
+        <operation>lessOrEqual</operation>
+        <value>49</value>
+    </filters>
+    <label>All Open Core Lead Type, 20-49 EEs</label>
+</ListView>

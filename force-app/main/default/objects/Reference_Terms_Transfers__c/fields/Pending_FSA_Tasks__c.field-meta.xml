@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pending_FSA_Tasks__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>IF(NOT (ISBLANK ( Term_Transfer_Stopped__c )) , &quot;Term/Transfer Stopped&quot;&amp;BR()&amp; 
+( 
+IF( Flag_Notes_as_Important__c ==True, &quot;See Termination Milestone Notes&quot;&amp;BR(), &quot;&quot;) 
+) 
+, 
+
+( 
+IF( ISPICKVAL( Discrepancy__c , &quot;Yes&quot;) &amp;&amp; ISBLANK( Discrepancy_Closed_Date__c ) , &quot;Unresolved Paperwork Discrepancy&quot;&amp;BR(), &quot;&quot;) &amp; 
+IF( Effective_Date_of_FSA_Termination__c &gt; Today(), &quot;Future FSA Last Check Date &quot;&amp;BR(), &quot;&quot;) &amp; 
+IF( Effective_Date_of_HRA_Termination__c &gt; Today(), &quot;Future HRA Last Check Date &quot;&amp;BR(), &quot;&quot;) &amp; 
+IF( Effective_Date_of_HSA_Termination__c &gt; Today(), &quot;Future HSA Last Check Date &quot;&amp;BR(), &quot;&quot;) &amp; 
+
+IF(AND((ISPICKVAL( POP_Downgrade__c , &quot;Yes - POP Downgrade&quot;)||ISPICKVAL (POP_Downgrade__c, &quot;Yes - POP Billing Needed&quot;)), ISNULL( POP_Downgrade_Complete__c ))&amp;&amp;(ISPICKVAL(FSA_Termination__c, &quot;No&quot;)||(ISPICKVAL( FSA_Termination__c , &quot;Yes&quot;)&amp;&amp; NOT(ISNULL(FSA_Bill_End_date__c))&amp;&amp;NOT(ISNULL( FSA_Cancel_Date_Entered__c))))&amp;&amp;(ISPICKVAL(HRA_Termination__c, &quot;No&quot;)||(ISPICKVAL( HRA_Termination__c , &quot;Yes&quot;)&amp;&amp; NOT(ISNULL(HRA_Bill_End_Date__c))&amp;&amp;NOT(ISNULL( HRA_Cancel_Date_Entered__c))))&amp;&amp; 
+(ISPICKVAL(HSA_Termination__c, &quot;No&quot;)||(ISPICKVAL( HSA_Termination__c , &quot;Yes&quot;)&amp;&amp;NOT(ISNULL(HSA_Bill_End_Date__c))&amp;&amp;NOT(ISNULL( HSA_Cancel_Date_Entered__c)))), &quot;Pending POP Setup&quot;&amp;BR(), &quot;&quot;) &amp; 
+
+IF( Flag_Notes_as_Important__c ==True, &quot;See Termination Milestone Notes&quot;&amp;BR(), &quot;&quot;) 
+) 
+)</formula>
+    <label>Pending FSA Tasks</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

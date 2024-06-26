@@ -1,0 +1,38 @@
+<aura:component description="ObjectBanner" controller="ObjectBannerAuraService" implements="force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId">
+    <aura:attribute name="objectType" type="String" />
+
+    <aura:attribute name="bannerSettings" type="Object" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+    <div>
+        <div class="banner-container">
+            <aura:if isTrue="{!v.objectType == 'Account'}">
+                <c:AccountBanner accountId="{!v.recordId}" bannerSettings="{!v.bannerSettings}" />
+            </aura:if>
+
+            <aura:if isTrue="{!v.objectType == 'Contact'}">
+                <c:ContactBanner contactId="{!v.recordId}" bannerSettings="{!v.bannerSettings}" />
+            </aura:if>
+            
+            <aura:if isTrue="{!v.objectType == 'Lead'}">
+                <c:LeadBanner leadId="{!v.recordId}" bannerSettings="{!v.bannerSettings}" />
+            </aura:if>
+
+            <aura:if isTrue="{!v.objectType == 'Opportunity'}">
+                <c:OpportunityBanner opportunityId="{!v.recordId}" bannerSettings="{!v.bannerSettings}" />
+            </aura:if>
+
+            <aura:if isTrue="{!v.objectType == 'Referral Contact'}">
+                <c:ReferralContactBanner referralContactId="{!v.recordId}" bannerSettings="{!v.bannerSettings}" />
+            </aura:if>
+
+            <aura:if isTrue="{!v.objectType == 'Referral Account'}">
+                <c:ReferralAccountBanner referralAccountId="{!v.recordId}" bannerSettings="{!v.bannerSettings}" />
+            </aura:if>
+            <aura:if isTrue="{!v.objectType == 'Reference Client Retention'}">
+                <c:ReferenceClientRetentionBanner refClientRetId="{!v.recordId}" />
+            </aura:if>
+        </div>
+    </div>
+</aura:component>

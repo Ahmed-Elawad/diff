@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_TotalBalanceDue_OverpaymentIssue</fullName>
+    <active>true</active>
+    <description>Prevent users from populating the Total Balance Due for Notice when Ticket Type = Overpayment Issue</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;Reference PAC Record Type&quot; ), 
+ NOT(ISNULL(Total_Balance_Due_for_Notice__c)),
+(ISPICKVAL(Ticket_Type__c, &apos;Overpayment Issue&apos;)),
+($Profile.Name &lt;&gt;&quot;System Administrator&quot;) 
+)</errorConditionFormula>
+    <errorDisplayField>Total_Balance_Due_for_Notice__c</errorDisplayField>
+    <errorMessage>You cannot populate the Total Balance Due for Notice when the Ticket Type = ‘Overpayment Issue&apos;.</errorMessage>
+</ValidationRule>

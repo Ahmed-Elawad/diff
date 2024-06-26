@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Core_to_PEO_Core_Hold_Needed</fullName>
+    <columns>NAME</columns>
+    <columns>Branch_Client_Number__c</columns>
+    <columns>Account_Lookup__c</columns>
+    <columns>Implementation_Project_Manager_Name__c</columns>
+    <columns>Loader__c</columns>
+    <columns>Sales_Rep__c</columns>
+    <columns>Contractual_Specialist__c</columns>
+    <columns>Controlled_With__c</columns>
+    <columns>Previous_Client_Number__c</columns>
+    <columns>First_Check__c</columns>
+    <columns>Core_Hold__c</columns>
+    <columns>NEP_Received_Date__c</columns>
+    <columns>Number_of_EEs__c</columns>
+    <columns>Current_Underwriting_Step__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>notEqual</operation>
+        <value>Reference_PEO__c.PEO_Client_Risk_Assessment,Reference_PEO__c.PEO_Existing_Client_Onboarding</value>
+    </filters>
+    <filters>
+        <field>Pass_to_New_Loads__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>notEqual</operation>
+        <value>Cancelled,Waiting for Initial Paperwork</value>
+    </filters>
+    <filters>
+        <field>Previous_Client_Number__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Core_Hold__c</field>
+        <operation>equals</operation>
+    </filters>
+    <label>Core to PEO - Core Hold Needed</label>
+</ListView>

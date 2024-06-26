@@ -1,0 +1,92 @@
+<!-- A wizard to assist in the creation/setup of users in a Sandbox
+
+  History
+  -------
+  02/16/2024 Dan Carmen      Created
+
+
+ -->
+<apex:page controller="SandboxRequest"
+           tabStyle="Add_User__tab"
+           showHeader="true">
+ <center>
+  <apex:image rendered="{!isGuestUser}" url="{!$Resource.Sandbox}" height="137px" width="209px"/>
+  </center>
+   
+  <apex:form id="AddUserForm">
+    <apex:sectionHeader title="{!blockTitle}" />
+     <apex:pageBlock id="AddUserBlock">
+        <apex:pageMessages />
+         
+        <apex:pageBlockSection rendered="{!stepName=='Step1'}" columns="1" id="sandboxList">
+           <apex:pageBlockTable id="sandboxTable" value="{!sandboxes}" var="rec" cellPadding="2" border="1">
+            <apex:column value="{!rec.Name}" />     
+            <apex:column value="{!rec.Description__c}" />                 
+            </apex:pageBlockTable>
+            <apex:actionStatus startText="Setting Sandbox..." id="updatingSandboxOptions"/>
+
+           <apex:pageBlockSectionItem >
+              <apex:outputLabel value="Which sandbox are you requesting for?"/>
+              <apex:selectList value="{!sandboxOption}" title="Available Sandboxes" size="1">
+                 <apex:selectOptions value="{!sandboxOptions}"/>
+              </apex:selectList>
+
+           </apex:pageBlockSectionItem>
+           <apex:inputField required="true" value="{!usrRequest.RequestorEmail__c}"/>
+           <apex:inputField required="true" value="{!usrRequest.NbrOfUsers__c}"/>
+           <apex:commandButton value="Next" action="{!setSelectedSandbox}" rerender="AddUserForm" status="updatingSandboxOptions"/>
+
+        </apex:pageBlockSection>
+
+        <apex:pageBlockSection rendered="{!stepName=='Step2'}" columns="1" id="profileSection">
+           <apex:pageBlockTable id="profileTable" value="{!profileSetups}" var="rec" cellPadding="2" border="1">
+            <apex:column value="{!rec.Name}" />     
+            <apex:column value="{!rec.Description__c}" />                 
+            </apex:pageBlockTable>
+            <apex:actionStatus startText="Setting Options..." id="updatingProfileOptions"/>
+
+           <apex:pageBlockSectionItem >
+              <apex:outputLabel value="Which Profile Option?"/>
+              <apex:selectList value="{!profileOption}" title="Available Sandboxes" size="1">
+                 <apex:selectOptions value="{!profileOptions}"/>
+                    <apex:actionSupport event="onchange" action="{!setSelectedProfile}" rerender="AddUserBlock" status="updatingProfileOptions" />  
+              </apex:selectList>
+
+           </apex:pageBlockSectionItem>
+           <apex:inputField rendered="{!manualRoleProfile}" required="true" value="{!usrRequest.ProfileName__c}" />
+           <apex:inputField rendered="{!manualRoleProfile}" required="true" value="{!usrRequest.RoleName__c}" />
+           <apex:outputPanel >
+             <apex:commandButton value="Next" rendered="{!manualRoleProfile}" action="{!setSelectedProfile}" rerender="AddUserForm" status="updatingSandboxOptions"/>
+             <apex:commandButton value="Start Over" action="{!restart}" immediate="true" rerender="AddUserForm" />
+           </apex:outputPanel>
+        </apex:pageBlockSection>
+
+        <apex:pageBlockSection rendered="{!OR(stepName=='Step3',stepName=='Step4')}" columns="1" id="userEntrySection">
+           <apex:outputText rendered="{!stepName=='Step3'}" value="Enter the email addresses of the users for the sandbox" />
+           <apex:outputText rendered="{!stepName=='Step4'}" value="Verify the information and click Submit Requests" />
+           <apex:pageBlockTable id="userTable" value="{!requests}" var="rec" cellPadding="2" border="1" width="50%">
+              <apex:column headerValue="Sandbox User Email">
+                        <apex:inputField rendered="{!stepName=='Step3'}" required="true" value="{!rec.usrReq.SandboxUserEmail__c}"/>
+                        <apex:outputField rendered="{!stepName=='Step4'}" value="{!rec.usrReq.SandboxUserEmail__c}"/>
+              </apex:column>
+              <apex:column headerValue="Name">
+                  <apex:outputField value="{!rec.ctct.Name}" />
+               </apex:column>
+              <apex:column headerValue="Title">
+                  <apex:outputField value="{!rec.ctct.Title}" />
+               </apex:column>
+
+           </apex:pageBlockTable>
+           <apex:actionStatus startText="Checking Emails..." id="verifyingEmails"/>
+           <apex:actionStatus startText="Submitting requests..." id="submitReqStatus"/>
+           
+           <apex:outputPanel >
+             <apex:commandButton rendered="{!stepName=='Step3'}" value="Next" action="{!verifyEmails}" rerender="AddUserForm" status="verifyingEmails"/>
+             <apex:commandButton rendered="{!stepName=='Step4'}" value="Submit Requests" action="{!submitRequests}" rerender="AddUserForm" status="submitReqStatus"/>
+             <apex:commandButton value="Start Over" action="{!restart}" immediate="true" rerender="AddUserForm" />
+           </apex:outputPanel>
+        </apex:pageBlockSection>
+
+      </apex:pageBlock>
+    </apex:form>
+</apex:page>

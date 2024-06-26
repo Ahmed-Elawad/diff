@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_MainCauseText_populated</fullName>
+    <active>true</active>
+    <description>Force users to populate the Main Cause Text (if Other) field, when the Main Cause value of &quot;Other - Complete Mandatory Text Field&quot; is chosen</description>
+    <errorConditionFormula>AND( 
+($RecordType.Name = &quot;Reference PAC Record Type&quot; ), 
+ ( ISPICKVAL(Main_Cause__c, &apos;Other - Complete Mandatory Text Field&apos;) ),
+ ( ISBLANK(Main_Cause_Text_if_Other__c) ),
+ ($Profile.Name &lt;&gt;&quot;System Administrator&quot;)
+)</errorConditionFormula>
+    <errorDisplayField>Main_Cause_Text_if_Other__c</errorDisplayField>
+    <errorMessage>You must enter a value in the Main Cause Text (if Other) field, when selecting a Main Cause value of &quot;Other - Complete Mandatory Text Field&quot;.</errorMessage>
+</ValidationRule>

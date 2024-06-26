@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PEO_Notice_Type</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND
+(
+ISPICKVAL( Paychex_PEO_Issue__c,&quot;Yes&quot;),
+RecordTypeId =&quot;012700000001kI1&quot;,
+ISPICKVAL( PEO_Notice_Type__c,&quot;&quot;),
+NOT(ISPICKVAL(Status__c,&quot;Pending PAC Review - New Notice Received&quot;)),
+NOT(BEGINS(TEXT(Closure_Code__c),&quot;Withdrawn&quot;))
+)</errorConditionFormula>
+    <errorMessage>PEO Notice Type in PEO Specific Detail Section cannot be blank</errorMessage>
+</ValidationRule>

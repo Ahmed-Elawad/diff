@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Virtual_TAA_Rep_Partner_List</fullName>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>First_Run_Date__c</columns>
+    <columns>Current_Package__c</columns>
+    <columns>ACCOUNT.EMPLOYEES</columns>
+    <columns>ACCOUNT.ADDRESS2_STATE</columns>
+    <columns>ACCOUNT.INDUSTRY</columns>
+    <columns>OpportunityTypes__c</columns>
+    <columns>CORE.USERS.LAST_NAME</columns>
+    <columns>CORE.USERS.FIRST_NAME</columns>
+    <columns>CadenceType__c</columns>
+    <columns>LastCadenceClosedDate__c</columns>
+    <columns>LastCadenceClosedType__c</columns>
+    <columns>ACCOUNT.LAST_ACTIVITY</columns>
+    <filterScope>Team</filterScope>
+    <filters>
+        <field>TAA_Workable__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <filters>
+        <field>CadenceType__c</field>
+        <operation>notContain</operation>
+        <value>TAA</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>equals</operation>
+        <value>FLEX Client,HR Solutions FLEX Client</value>
+    </filters>
+    <filters>
+        <field>National_Account__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Time_and_Attendance__c</field>
+        <operation>notEqual</operation>
+        <value>PST 1000,TLO,TIB,Flex Time Essentials,Flex Time Integrated,Flex Time Non-Integrated</value>
+    </filters>
+    <filters>
+        <field>First_Run_Date__c</field>
+        <operation>lessThan</operation>
+        <value>LAST_N_DAYS:60</value>
+    </filters>
+    <filters>
+        <field>Lead_List__c</field>
+        <operation>contains</operation>
+        <value>T08</value>
+    </filters>
+    <filters>
+        <field>LastCadenceClosedDate__c</field>
+        <operation>lessThan</operation>
+        <value>LAST_N_DAYS:30</value>
+    </filters>
+    <label>My Virtual TAA Partner Client List</label>
+    <sharedTo>
+        <roleAndSubordinatesInternal>VIRTUAL_SALES_DISTRICT_202_RIENHOLTZ_PAY</roleAndSubordinatesInternal>
+        <roleAndSubordinatesInternal>VIRTUAL_SALES_DISTRICT_SHELL</roleAndSubordinatesInternal>
+        <roleAndSubordinatesInternal>VIRTUAL_SALES_DISTRICT_TBD_POLITO</roleAndSubordinatesInternal>
+    </sharedTo>
+</ListView>

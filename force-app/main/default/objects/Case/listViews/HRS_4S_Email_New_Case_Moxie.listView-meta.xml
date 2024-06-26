@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRS_4S_Email_New_Case_Moxie</fullName>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <columns>NAME</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>Last_EMail_Received__c</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>CASES.ORIGIN</columns>
+    <columns>CASES.PRIORITY</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CORE.USERS.ALIAS</field>
+        <operation>equals</operation>
+        <value>,dmoyer,khuck,jmele,jfran,kmatt,dsnell,skrahe,hbouc,ceinb,dbree,spasc</value>
+    </filters>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>notContain</operation>
+        <value>Solved,completed,closed,cancelled,support</value>
+    </filters>
+    <filters>
+        <field>New_E_mail__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <label>HRS 4S Email New Case Moxie</label>
+    <sharedTo>
+        <group>HRS_4S_Email_Employee_Support</group>
+        <role>HRS_4S_New_Case_Rep_I</role>
+        <role>HRS_4S_New_Case_Rep_II</role>
+        <role>HRS_4S_New_Case_Rep_III</role>
+        <role>HRS_4S_New_Case_Supervisor_I</role>
+        <role>HRS_4S_New_Case_Supervisor_II</role>
+        <role>HRS_4S_New_Case_Supervisor_III</role>
+    </sharedTo>
+</ListView>

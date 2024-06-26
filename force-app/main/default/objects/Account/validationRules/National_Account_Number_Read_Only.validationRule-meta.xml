@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>National_Account_Number_Read_Only</fullName>
+    <active>true</active>
+    <description>Makes the field not editable for a number of profiles where the BIS ID is not blank.</description>
+    <errorConditionFormula>AND( 
+ISCHANGED(National_Account_Number__c), 
+NOT(ISNULL(Bis_ID__c)), 
+OR( 
+$Profile.Name = &apos;Core Manager&apos;, 
+$Profile.Name = &apos;Core Manager Admin&apos;, 
+$Profile.Name = &apos;Core Manager Trainer&apos;, 
+$Profile.Name = &apos;Core Sales&apos;, 
+$Profile.Name = &apos;Core Sales Administration&apos;, 
+$Profile.Name = &apos;Core Sales Trainer&apos;, 
+$Profile.Name = &apos;Core Selling Manager&apos;, 
+$Profile.Name = &apos;Core Zone Administration&apos;, 
+$Profile.Name = &apos;HNBF Sales Administration&apos;, 
+$Profile.Name = &apos;HNBF Sales Manager&apos;, 
+$Profile.Name = &apos;HNBF Sales Rep&apos;,  
+$Profile.Name = &apos;HRS PEO-ASO Sales - SB&apos;, 
+$Profile.Name = &apos;HRS Regional Sales Admin - SB&apos;, 
+$Profile.Name = &apos;HRS Sales Administration - SB&apos;, 
+$Profile.Name = &apos;HRS Sales Manager - SB&apos;, 
+$Profile.Name = &apos;HRS Sales Manager Admin - SB&apos;,  
+$Profile.Name = &apos;MMS Manager - SB&apos;, 
+$Profile.Name = &apos;MMS Manager Admin - SB&apos;, 
+$Profile.Name = &apos;MMS Marketing&apos;, 
+$Profile.Name = &apos;MMS Sales - SB&apos;, 
+$Profile.Name = &apos;MMS Sales DSA - SB&apos;, 
+$Profile.Name = &apos;MMS Sales ZSA - SB&apos;, 
+$Profile.Name = &apos;MMS Selling Manager - SB&apos;, 
+$Profile.Name = &apos;MMS Senior Manager - SB&apos;,  
+$Profile.Name = &apos;MSP Manager&apos;, 
+$Profile.Name = &apos;MSP Rep&apos;
+) 
+)</errorConditionFormula>
+    <errorDisplayField>National_Account_Number__c</errorDisplayField>
+    <errorMessage>This field is not editable if the record has a BIS ID.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TerritoryContact__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <inlineHelpText>If a non-Salesforce user is the contact for this territory, link them to the territory here.</inlineHelpText>
+    <label>Territory Contact</label>
+    <lookupFilter>
+        <active>true</active>
+        <errorMessage>Must select a contact linked to the Paychex Inc SA prospect-client record.</errorMessage>
+        <filterItems>
+            <field>Contact.Account.Name</field>
+            <operation>equals</operation>
+            <value>Paychex Inc SA</value>
+        </filterItems>
+        <filterItems>
+            <field>Contact.HR_Person_Id__c</field>
+            <operation>notEqual</operation>
+            <value></value>
+        </filterItems>
+        <infoMessage>Contact must be linked to the Paychex Inc SA prospect-client record.</infoMessage>
+        <isOptional>false</isOptional>
+    </lookupFilter>
+    <referenceTo>Contact</referenceTo>
+    <relationshipLabel>Zip Territories</relationshipLabel>
+    <relationshipName>Zip_Territories</relationshipName>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Service_Support_401k_S125_Minutes_Worked</fullName>
+    <active>true</active>
+    <description>Makes Minutes Worked required if Originating Group is entered and the case is Solved for Service Support 401k/S125 Case Record Type.</description>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)),RecordType.Name = &apos;Service Support 401k/S125 Case&apos;, NOT(ISBLANK(TEXT(x401_k_Reason__c))), ISBLANK(Minutes_Worked__c ), CONTAINS(TEXT(Status),&apos;Solved&apos;) )</errorConditionFormula>
+    <errorMessage>Minutes Worked field is required if Originating Group field is entered</errorMessage>
+</ValidationRule>

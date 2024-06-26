@@ -1,0 +1,190 @@
+<!-- A wizard to create new users in Salesforce by non-System Administrators
+
+   History
+   -------
+   10/20/2009 Dan Carmen   Created
+   01/27/2011 Dan Carmen   Modify for license changes. 
+   01/03/2024 Dan Carmen        Remove User License references
+
+ -->
+<apex:page standardController="User" extensions="NewUserExtension" 
+           showHeader="true"
+           id="thePage">
+
+   <c:PageMessage />
+
+   <apex:sectionHeader title="Create New User"/>
+
+   <apex:pageMessages />
+
+   <!--  If there is an error, do not display anything further  -->
+   <apex:pageBlock id="errorBlock" rendered="{!showErrorBlock}" title="Unable to proceed with New User wizard.">
+   </apex:pageBlock>
+  
+   <!-- user search information -->
+   <apex:pageBlock id="newUserInfoBlock" rendered="{!showNewUserInfoBlock}">
+      <!-- Prompt for information -->
+      <apex:form >
+         <apex:outputPanel id="userSearchResults" >
+            <apex:PageBlockSection rendered="{!NOT(enterAddInfo)}" title="Enter new user information'." columns="1">
+      
+               <apex:inputField required="false" value="{!newUser.Email}" id="userEmailAddress" >
+                  <apex:actionSupport event="onchange" action="{!quickSearch}" rerender="userSearchResults" status="searchEmailStatus">
+                  </apex:actionSupport>
+               </apex:inputField>
+               <apex:inputField required="false" value="{!newUser.FirstName}" />
+               <apex:inputField required="false" value="{!newUser.LastName}" />
+               <apex:inputField value="{!newUser.Non_Paychex_Employee__c}" />
+
+               <apex:outputPanel >
+                  <apex:commandButton action="{!performSearch}" value="Search" styleClass="btn" status="searchingStatus"/>
+                  <apex:actionStatus startText="Searching on Email Address..." id="searchEmailStatus"/>
+                  <apex:actionStatus startText="Searching..." id="searchingStatus"/>
+               </apex:outputPanel>
+            </apex:PageBlockSection>         
+      
+    
+            <!--  If results are returned from a user search --> 
+            <apex:PageBlockSection rendered="{!hasUserSearchResults}" title="The following matches were found on the User record. If an existing record matches the record you are creating, select it to Edit the record." columns="1">
+               <apex:outputText value="Click Use to edit the existing record, or Copy to copy the information to a new User record." />
+               <apex:pageBlockTable value="{!foundUsers}" var="user" cellPadding="4" border="1">
+                  <apex:column headervalue="Record Action">
+                     <apex:commandLink action="{!handleRecordAction}" >Use 
+                        <apex:param name="type" value="useUser"/>
+                        <apex:param name="recId" value="{!user.id}"/>
+                     </apex:commandLink>
+                     &nbsp;
+                     <apex:commandLink action="{!handleRecordAction}">Copy
+                        <apex:param name="type" value="copyUser"/>
+                        <apex:param name="recId" value="{!user.id}"/>
+                     </apex:commandLink>
+                  </apex:column>
+                  <apex:column headerValue="Is Active?"> 
+                     <apex:outputField value="{!user.IsActive}"/>
+                  </apex:column>
+                  <apex:column headerValue="First Name"> 
+                     <apex:outputField value="{!user.FirstName}"/>
+                  </apex:column>
+                  <apex:column headerValue="Last Name"> 
+                     <apex:outputField value="{!user.LastName}" />
+                  </apex:column>
+                  <apex:column headerValue="Email"> 
+                     <apex:outputField value="{!user.Email}" />
+                  </apex:column>
+                  <apex:column headerValue="Username"> 
+                     <apex:outputField value="{!user.Username}" />
+                  </apex:column>
+                  <apex:column headerValue="Sales Org" style="white-space:nowrap;"> 
+                     <apex:outputField value="{!user.Sales_Org__c}" />
+                  </apex:column>
+                  <apex:column headerValue="License Type" style="white-space:nowrap;"> 
+                     <apex:outputField value="{!user.License_Type__c}" />
+                  </apex:column>
+               </apex:pageBlockTable>
+            </apex:PageBlockSection>
+
+            <!--  If results are returned from a user search -->
+            <apex:PageBlockSection rendered="{!hasContactSearchResults}" title="The following matches were found on the Contact record. If an existing record matches the record you are creating, select it to Edit the record." columns="1">
+               <apex:outputText value="Click Copy to copy the information to a new User record." />
+               <apex:pageBlockTable value="{!foundContacts}" var="contact" cellPadding="4" border="1">
+                  <apex:column headervalue="Record Action">
+                     <apex:commandLink action="{!handleRecordAction}" >Copy 
+                        <apex:param name="type" value="copyContact"/>
+                        <apex:param name="recId" value="{!contact.id}"/>
+                     </apex:commandLink>
+                  </apex:column>
+                  <apex:column headerValue="First Name"> 
+                     <apex:outputField value="{!contact.FirstName}"/>
+                  </apex:column>
+                  <apex:column headerValue="Last Name"> 
+                     <apex:outputField value="{!contact.LastName}" />
+                  </apex:column>
+                  <apex:column headerValue="Email"> 
+                     <apex:outputField value="{!contact.Email}" />
+                  </apex:column>
+                  <apex:column headerValue="City" style="white-space:nowrap;"> 
+                     <apex:outputField value="{!contact.MailingCity}" />
+                  </apex:column>
+                  <apex:column headerValue="Supervisor" style="white-space:nowrap;"> 
+                     <apex:outputField value="{!contact.Supervisor__c}" />
+                  </apex:column>
+               </apex:pageBlockTable>
+            </apex:PageBlockSection>
+         </apex:outputPanel>
+      </apex:form>
+    
+   </apex:pageBlock>
+  
+   <apex:pageBlock id="continueWithNew" rendered="{!hasSearchResults}">
+      <apex:form >
+         <apex:outputPanel >
+            <apex:commandButton action="{!continueWithoutSearched}" value="Click here to continue without using any of the search results" styleClass="btn"  />
+         </apex:outputPanel>
+      </apex:form> 
+   </apex:pageBlock>
+  
+  
+   <apex:form >
+  
+      <!--  enter the additional information for a user -->
+      <apex:pageBlock id="enterAddlInfo" rendered="{!enterAddInfo}" >
+         <apex:PageBlockSection columns="2" title="Enter User Information">
+        
+            <apex:inputField value="{!newUser.FirstName}" />
+            <apex:outputText value="" />
+        
+            <apex:inputField value="{!newUser.LastName}" />
+            <apex:outputText value="" />
+        
+            <apex:outputField value="{!newUser.Alias}" />
+            <apex:outputText value="" />
+
+            <apex:inputField value="{!newUser.Email}" />
+            <apex:outputText value="" />
+
+            <apex:inputField value="{!newUser.Username}" />
+            <apex:outputText value="" />
+        
+            <apex:outputField value="{!newUser.CommunityNickname}" />
+            <apex:outputText value="" />
+
+            <apex:outputField value="{!newUser.ManagerId}" />
+            <apex:outputText value="" />
+
+            <apex:outputField value="{!newUser.Title}" />
+            <apex:outputField value="{!newUser.Street}" />
+
+            <apex:outputField value="{!newUser.Department}" />
+            <apex:outputField value="{!newUser.City}" />
+        
+            <apex:inputField value="{!newUser.EmployeeNumber}" />
+            <apex:outputField value="{!newUser.State}" />
+        
+         </apex:PageBlockSection>
+
+
+       <apex:actionRegion >
+         <apex:pageBlockSection rendered="{!enterAddInfo}" id="salesInfo">
+            <apex:inputField value="{!newUser.Sales_Org__c}" />
+            <apex:outputField value="{!newUser.PostalCode}" />
+
+            <apex:outputText value="" />
+            <apex:outputField value="{!newUser.Phone}" />
+               
+            <apex:inputField value="{!newUser.Cost_Center__c}" id="costCenter" >
+               <apex:actionSupport event="onchange" action="{!checkOrganization}" rerender="salesInfo"/>
+            </apex:inputField>
+            <apex:outputField value="{!newUser.District__c}" />
+            <apex:outputField value="{!newUser.Areatxt__c}" />
+
+            <apex:outputField value="{!newUser.Zone__c}" />
+         </apex:pageBlockSection>
+        </apex:actionRegion>
+         <apex:outputPanel >
+            <apex:commandButton action="{!saveAndContinue}" value="Continue" styleClass="btn"/>
+             <apex:commandButton action="{!cancel}" value="Cancel" styleClass="btn"/>
+         </apex:outputPanel>
+      </apex:pageBlock> 
+   </apex:form>
+  
+</apex:page>

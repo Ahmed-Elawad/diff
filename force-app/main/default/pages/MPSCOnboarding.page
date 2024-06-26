@@ -1,0 +1,77 @@
+<apex:page standardController="Reference_MPSC__c"  extensions="MPSCOnboardingController" >
+    <apex:form > 
+       <apex:outputText rendered="false" value="{!Reference_MPSC__c.Case_Lookup__r.AccountId}" /><!--Do not remove this. This hidden value is used to reduce a query-->
+       <apex:pageBlock >
+           <apex:pageblockSection columns="1" title="Open Onboarding" >
+              <apex:dataTable width="100%" columns="10"   rendered="{!IF((refCollection.size == 0),FALSE,TRUE)}" 
+                              value="{!refCollection}" var="refData" style="white-space:nowrap;color:#4a4a56;font-size:.95em;" >
+               <apex:column headerValue="Product" >
+                  <apex:outputText value="{!refData.product}" /> <!-- Product -->
+               </apex:column>
+               <apex:column headerValue="Current Step" >
+                  <apex:outputText value="{!refData.status}" /> <!-- Status -->
+               </apex:column>
+               <apex:column headerValue="Owner Name" >
+                  <apex:outputText value="{!refData.ownerName}" /> <!-- OwnerName -->
+               </apex:column>
+               <apex:column headerValue="Contact Name" >
+                  <apex:outputText value="{!refData.ContactName}" /> <!-- ContactName -->
+               </apex:column>
+               <apex:column headerValue="Contact Phone" >
+                  <apex:outputText value="{!refData.ContactPhone}" /> <!-- ContactPhone -->
+               </apex:column>
+               <apex:column headerValue="Contact Email" >
+                  <apex:outputText value="{!refData.ContactEmail}" /> <!-- ContactEmail -->
+               </apex:column>
+               <apex:column headerValue="Date Opened" >
+                  <apex:outputText value="{!refData.CreatedDate}" /> <!-- Date Opened -->
+               </apex:column>
+               <apex:column headerValue="Date Closed" >
+                  <apex:outputText value="{!refData.formattedClosedDate}" /> <!-- Date Closed -->
+               </apex:column>
+               <apex:column headerValue="Case Number" >
+                  <apex:outputText value="{!refData.caseNumber}" /> <!-- Case Number -->
+               </apex:column>
+               <apex:column headerValue="Rec Link" >
+                  <apex:outputLink target="_blank" value="/{!refData.Id}" >{!refData.refName}</apex:outputLink>  <!-- ID and ReferenceNumber -->
+               </apex:column>
+            </apex:dataTable>
+        </apex:pageBlockSection>
+        <apex:pageblockSection columns="1" title="Completed Onboarding" rendered="{!IF((refGradCollection.size == 0),FALSE,TRUE)}" >
+            <apex:dataTable width="100%" columns="10"  
+                  value="{!refGradCollection}" var="refData" style="white-space:nowrap;color:#4a4a56;font-size:.95em;" >
+               <apex:column headerValue="Product" >
+                  <apex:outputText value="{!refData.product}" /> <!-- Product -->
+               </apex:column>
+               <apex:column headerValue="Current Step" >
+                  <apex:outputText value="{!refData.status}" /> <!-- Status -->
+               </apex:column>
+               <apex:column headerValue="Owner Name" >
+                  <apex:outputText value="{!refData.ownerName}" /> <!-- OwnerName -->
+               </apex:column>
+               <apex:column headerValue="Contact Name" >
+                  <apex:outputText value="{!refData.ContactName}" /> <!-- ContactName -->
+               </apex:column>
+               <apex:column headerValue="Contact Phone" >
+                  <apex:outputText value="{!refData.ContactPhone}" /> <!-- ContactPhone -->
+               </apex:column>
+               <apex:column headerValue="Contact Email" >
+                  <apex:outputText value="{!refData.ContactEmail}" /> <!-- ContactEmail -->
+               </apex:column>
+               <apex:column headerValue="Date Opened" >
+                  <apex:outputText value="{!refData.CreatedDate}" /> <!-- Date Opened -->
+               </apex:column>
+               <apex:column headerValue="Date Closed" >
+                  <apex:outputText value="{!refData.formattedClosedDate}" /> <!-- Date Closed -->
+               </apex:column>
+               <apex:column headerValue="Case Number" >
+                  <apex:outputText value="{!refData.caseNumber}" /> <!-- Case Number -->
+               </apex:column>
+               <apex:column headerValue="Rec Link" >
+                  <apex:outputLink target="_blank" value="/{!refData.Id}" >{!refData.refName}</apex:outputLink>  <!-- ID and ReferenceNumber -->
+               </apex:column>
+          </apex:dataTable>
+         </apex:pageblocksection>
+       </apex:pageBlock>   
+   </apex:form>
+</apex:page>

@@ -1,0 +1,765 @@
+<!-- Used to create an opportunity.
+
+   History
+   -------
+   12/13/2010 Dan Carmen   Created
+   03/01/2011 Dan Carmen   Added in logic for the other sales forces. 
+   12/9/2011  Carrie Marciano   added Auto_Create_Follow_up__c on MMS
+   10/29/2012 Dan Carmen   Added Referring Employee field
+   08/16/2013 Justin Stouffer Added MSP Opportunity Section
+   04/06/2016 Justin Stouffer   Added in logic to display differently in Salesforce1.
+   11/22/2016 Justin Stouffer Added Check Date Field.
+   03/03/2017 Jacob Hinds    Adding existing opportunity stuff
+   05/01/2017 Saketh Mysa    Add Opportunity fields in HRS Opportunity Section
+   12/20/2017 Dan Carmen        Added functionality for selecting the Opportunity Type
+   03/13/2018 Jacob Hinds    Added PEO Sales Org
+   09/30/2019 Dan Carmen     Adding Current Payroll Method field
+   04/30/2020 Saketh Mysa     US 34010746 Updates
+   11/16/2020 Brandon Vidro     APR0109214 - Added Other Competition field
+   10/20/2021 Dan Carmen        Add Product of Interest
+   01/03/2022 Jermaine Stukes   Updated HNBF fields
+   01/14/2022 Eric Porter       Commented out Primary Competition Level 2
+   03/30/2022 Susmitha Somavarapu Local Competitor Error Resolution (APR0132939)
+   05/12/2023 Rohit Ranjan APR0148368: Removed Payroll_Unit__c Checkbox Reference
+ -->
+<apex:component >
+    <apex:attribute name="oppty" description="The Opportunity"
+        type="Opportunity" required="true" />
+    <apex:attribute name="acct" description="The Account" type="Account"
+        required="true" />
+    <apex:attribute name="ctct" description="The Contact" type="Contact"
+        required="true" />
+    <apex:attribute name="isCore" description="Is this a core opportunity"
+        type="Boolean" required="true" />
+    <apex:attribute name="isMMS" description="Is this an MMS opportunity"
+        type="Boolean" required="true" />
+    <apex:attribute name="isHRS" description="Is this an HRS opportunity"
+        type="Boolean" required="true" />
+    <apex:attribute name="isAncillary"
+        description="Is this an ancillary opportunity" type="Boolean"
+        required="true" />
+    <apex:attribute name="isMSP" description="Is this an MSP opportunity"
+        type="Boolean" required="true" />
+    <apex:attribute name="isPEO" description="Is this a PEO opportunity"
+        type="Boolean" required="true" />
+    <apex:attribute name="isTAA" description="Is this a TAA opportunity"
+        type="Boolean" required="true" />
+        
+    
+    <!-- Start Added by Saketh -->
+    <!-- <apex:attribute name="isHNB" description="Is this a HNB opportunity"
+        type="Boolean" required="true" /> -->
+    <apex:attribute name="isPC" description="Is this a PNC opportunity"
+        type="Boolean" required="true" />
+    <apex:attribute name="isMS" description="Is this a MerchantService opportunity"
+        type="Boolean" required="true" />
+    <apex:attribute name="isESR" description="Is this a ESR opportunity"
+        type="Boolean" required="true" />
+    <apex:attribute name="isPBA" description="Is this a PBA opportunity"
+        type="Boolean" required="true" /> 
+    <apex:attribute name="isHNB" description="Is this a HNB opportunity"
+        type="Boolean" required="true" />
+    <!-- End Added by Saketh -->
+    
+    <!-- Updated For myStaffingPro -->
+    <apex:attribute name="prodName" description="The name of the product"
+        type="String" required="true" />
+    <apex:attribute name="salesOrg" description="The sales org of the rep"
+        type="String" required="true" />
+    <apex:attribute name="isSF1" description="Is this SalesForce 1"
+        type="Boolean" required="false" default="false" />
+    <apex:attribute name="companySelected"
+        description="Has a Company been selected from the picklist?"
+        type="Boolean" required="true" />
+    <apex:attribute name="existingOpps"
+        description="Existing Opportunities for the table"
+        type="ExistingOpptyWrapper[]" required="true" default="false" />
+    <apex:attribute name="storeSelectedOppty"
+        description="Controller Method to Call" type="ApexPages.Action"
+        required="true" default="false" />
+    <apex:attribute name="createOppty"
+        description="Controller Method to Call" type="Boolean" required="true"
+        default="false" />
+    <apex:attribute name="hasExistingOpps"
+        description="If there are existing opptys, show table" type="Boolean"
+        required="true"/>
+    <apex:attribute name="eventSubject"
+        description="Event Subject" type="String"
+        required="false" default="false" />
+    <apex:attribute name="eventDescription"
+        description="Event Description" type="String"
+        required="false" default="false" />
+    <apex:attribute name="allowCreateOpp" type="Boolean"
+        description="Is the user allowed to create an opportunity?"
+        required="false" default="true" />
+    <apex:attribute name="existingOppMsg" type="String"
+        description="The title printed on the section for existing opportunities"
+        required="false" default="Do You Want to Log Your EUP Against an Existing Opportunity?" />
+   
+   
+    <apex:outputPanel id="createOpptyContainer">
+        <apex:outputPanel rendered="{!NOT($User.UIThemeDisplayed == 'Theme4t')}">
+            <apex:outputPanel rendered="{!createOppty}">
+                <!--  Core Opportunity -->
+                <apex:outputPanel rendered="{!isCore}"
+                    id="createOpptyCore"> <!-- rendered="{!AND(isCore,NOT(isAncillary))}" -->
+                    <div class="slds-section slds-is-open">
+                        <h3 class="slds-section__title">
+                            <button aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action">
+                                <span class="slds-truncate banner-lightning" title="Section Title">
+                                    New {!prodName} Opportunity
+                                    <span class="titleSeparatingColon">:</span>
+                                </span>
+                            </button>
+                        </h3>
+
+                        <div class="slds-grid slds-wrap">
+
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Opportunity Name</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.name}"  id="opportunity-name-1"/>
+                            </div>
+
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Opportunity Type</label>
+                                <div class="slds-form-element__static">
+                                    <apex:outputField value="{!oppty.OpportunityType__c}" />
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Run-Effective Date</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.CloseDate}" id="close-date-1"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display"><abbr class="slds-required">*</abbr>Lead Source</label>
+                                <apex:inputField styleClass="slds-input required-opp-meeting-input" value="{!oppty.LeadSource}" id="lead-source-1"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Check Date</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Check_Date__c}" />
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Level 2</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Level_2__c}" id="level2-1"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Payroll Current-Prior Method</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Payroll_Current_Prior_Method__c}" id="payroll-prior-method-1" />
+                            </div>
+                           
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Referral Contact</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Referral_Contact__c}"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Local Competitors</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Local_Competitors__c}"/>
+                            </div>
+                             <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Referral Account</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Referral_Account__c}"/>
+                            </div>
+                            <!-- <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Primary Competition</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Primary_Competition__c}" id="primary-competition-1"/>
+                            </div> -->
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Auto Create Follow-up</label>
+                                <apex:inputField value="{!oppty.Auto_Create_Follow_up__c}"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Client Referral</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Client_Referral__c}"  />
+                            </div>
+                             <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Referring Employee</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Referring_Employee__c}" />
+                            </div>
+                            
+                            
+                            
+                            
+                            
+                        </div>
+                    </div>
+                </apex:outputPanel>
+
+                <!--  MMS Opportunity -->
+                <apex:outputPanel rendered="{!isMMS}" id="createOpptyMMS"> <!-- rendered="{!AND(isMMS,NOT(isAncillary))}" -->
+                    <div class="slds-section slds-is-open">
+                        <h3 class="slds-section__title">
+                            <button aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action">
+                                <span class="slds-truncate banner-lightning" title="Section Title">
+                                    New {!prodName} Opportunity
+                                    <span class="titleSeparatingColon">:</span>
+                                </span>
+                            </button>
+                        </h3>
+
+                        <div class="slds-grid slds-wrap">
+
+
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display"><abbr class="slds-required">*</abbr>Opportunity Name</label>
+                                <apex:inputField styleClass="slds-input required-opp-meeting-input" value="{!oppty.name}"  id="opportunity-name-3"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Opportunity Type</label>
+                                <div class="slds-form-element__static">
+                                    <apex:outputField value="{!oppty.OpportunityType__c}" />
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display"><abbr class="slds-required">*</abbr>Lead Source</label>
+                                <apex:inputField styleClass="slds-input required-opp-meeting-input" value="{!oppty.LeadSource}" id="lead-source-3"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Payroll Current-Prior Method</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Payroll_Current_Prior_Method__c}" id="payroll-prior-method-3" />
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Level 2</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Level_2__c}" id="level2-3"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Referral Account</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Referral_Account__c}"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Referral Contact</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Referral_Contact__c}"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Client Referral</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Client_Referral__c}"  />
+                            </div>
+                            <!-- <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Primary Competition</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Primary_Competition__c}" id="primary-competition-3"/>
+                            </div> -->
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display"><abbr class="slds-required">*</abbr>Run-Effective Date</label>
+                                <apex:inputField styleClass="slds-input required-opp-meeting-input" value="{!oppty.CloseDate}"  id="close-date-3"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Local Competitors</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Local_Competitors__c}"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Core Conversion Reason</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Core_Conversion_Reason__c}"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Core Branch-Client Number</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Core_Branch_Client_Number__c}"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Auto Create Follow-up</label>
+                                <apex:inputField value="{!oppty.Auto_Create_Follow_up__c}"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Referring Employee</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Referring_Employee__c}" />
+                            </div>
+                      <!--      <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Payroll Unit</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Payroll_Unit__c}" />
+                            </div> -->
+                       </div>
+                    </div>
+                </apex:outputPanel>
+
+                <!--  MSP Opportunity -->
+                <!-- Updated For myStaffingPro -->
+                <apex:outputPanel rendered="{!isMSP}" id="createOpptyMsp" title="New {!prodName} Opportunity">
+                    <div class="slds-section slds-is-open">
+                        <h3 class="slds-section__title">
+                            <button aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action">
+                                <span class="slds-truncate banner-lightning" title="Section Title">
+                                    New {!prodName} Opportunity
+                                    <span class="titleSeparatingColon">:</span>
+                                </span>
+                            </button>
+                        </h3>
+
+                        <div class="slds-grid slds-wrap">
+
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display"><abbr class="slds-required">*</abbr>Opportunity Name</label>
+                                <apex:inputField styleClass="slds-input required-opp-meeting-input" value="{!oppty.name}" id="opportunity-name-5" />
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Opportunity Type</label>
+                                <div class="slds-form-element__static">
+                                    <apex:outputField value="{!oppty.OpportunityType__c}" />
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display"><abbr class="slds-required">*</abbr>Lead Source</label>
+                                <apex:inputField styleClass="slds-input required-opp-meeting-input" value="{!oppty.LeadSource}"  id="lead-source-5"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Referring Employee</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Referring_Employee__c}" />
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Level 2</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Level_2__c}" id="level2-5"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display"><abbr class="slds-required">*</abbr>Run-Effective Date</label>
+                                <apex:inputField styleClass="slds-input required-opp-meeting-input" value="{!oppty.CloseDate}"  id="close-date-5"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Local Competitors</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Local_Competitors__c}"/>
+                            </div>
+                             <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Client Referral</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Client_Referral__c}"/>
+                            </div>
+                        </div>
+                    </div>
+                </apex:outputPanel>
+
+                <!--  HRS Opportunity -->
+                <apex:outputPanel rendered="{!isHRS}" id="createOpptyHRS" title="New {!prodName} Opportunity" >
+                    <div class="slds-section slds-is-open">
+                        <h3 class="slds-section__title">
+                            <button aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action">
+                                <span class="slds-truncate banner-lightning" title="Section Title">
+                                    New {!prodName} Opportunity
+                                    <span class="titleSeparatingColon">:</span>
+                                </span>
+                            </button>
+                        </h3>
+
+                        <div class="slds-grid slds-wrap">
+
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display"><abbr class="slds-required">*</abbr>Opportunity Name</label>
+                                <apex:inputField styleClass="slds-input required-opp-meeting-input" value="{!oppty.name}" id="opportunity-name-6"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Opportunity Type</label>
+                                <div class="slds-form-element__static">
+                                   <apex:outputField value="{!oppty.OpportunityType__c}" />
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display"><abbr class="slds-required">*</abbr>Run-Effective Date</label>
+                                <apex:inputField styleClass="slds-input required-opp-meeting-input" value="{!oppty.CloseDate}"  id="close-date-6"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display"><abbr class="slds-required">*</abbr>Lead Source</label>
+                                <apex:inputField styleClass="slds-input required-opp-meeting-input" value="{!oppty.LeadSource}" id="lead-source-6" />
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">DM</label>
+                                <apex:inputField value="{!oppty.DM__c}"  />
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Level 2</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Level_2__c}" id="level2-6"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Non-DM</label>
+                                <apex:inputField value="{!oppty.Non_DM__c}"  />
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Referral Contact</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Referral_Contact__c}"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Referring Employee</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Referring_Employee__c}" />
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Product of Interest</label>
+                                <apex:inputField styleClass="slds-input" value="{!ctct.Products__c}" id="hrsProducts"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Local Competitors</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Local_Competitors__c}"/>
+                            </div>
+                             <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Client Referral</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Client_Referral__c}"/>
+                            </div>
+                            <!-- <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display"><abbr class="slds-required">*</abbr>Payroll Platform</label>
+                                <apex:inputField styleClass="slds-input required-opp-meeting-input" value="{!oppty.Payroll_Platform__c}"  id="Payroll-Platform-6"/>
+                            </div> -->
+                        </div>
+                    </div>
+                </apex:outputPanel>
+                
+                <!--  PEO Opportunity -->
+                <apex:outputPanel rendered="{!isPEO}" id="createOpptyPEO" title="New {!prodName} Opportunity" >
+                    <div class="slds-section slds-is-open">
+                        <h3 class="slds-section__title">
+                            <button aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action">
+                                <span class="slds-truncate banner-lightning" title="Section Title">
+                                    New {!prodName} Opportunity
+                                    <span class="titleSeparatingColon">:</span>
+                                </span>
+                            </button>
+                        </h3>
+
+                        <div class="slds-grid slds-wrap">
+
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display"><abbr class="slds-required">*</abbr>Opportunity Name</label>
+                                <apex:inputField styleClass="slds-input required-opp-meeting-input" value="{!oppty.name}" id="opportunity-name-7"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Opportunity Type</label>
+                                <div class="slds-form-element__static">
+                                   <apex:outputField value="{!oppty.OpportunityType__c}" />
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display"><abbr class="slds-required">*</abbr>Run-Effective Date</label>
+                                <apex:inputField styleClass="slds-input required-opp-meeting-input" value="{!oppty.CloseDate}"  id="close-date-7"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display"><abbr class="slds-required">*</abbr>Lead Source</label>
+                                <apex:inputField styleClass="slds-input required-opp-meeting-input" value="{!oppty.LeadSource}" id="lead-source-7" />
+                            </div>
+                           <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Level 2</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Level_2__c}" id="level2-7"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">DM</label>
+                                <apex:inputField value="{!oppty.DM__c}"  />
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Non-DM</label>
+                                <apex:inputField value="{!oppty.Non_DM__c}"  />
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Referral Contact</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Referral_Contact__c}"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Referring Employee</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Referring_Employee__c}" />
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display"><abbr class="slds-required">*</abbr>Payroll Platform</label>
+                                <apex:inputField styleClass="slds-input required-opp-meeting-input" value="{!oppty.Payroll_Platform__c}"  id="Payroll-Platform-7"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <!-- <label class="slds-form-element__label block-display"><abbr class="slds-required">*</abbr>Payroll Current Prior Method</label> -->
+                                <label class="slds-form-element__label block-display">Payroll Current Prior Method</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Payroll_Current_Prior_Method__c}"  id="PCPM-7"/> <!-- styleClass="slds-input required-opp-meeting-input" -->
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display"><abbr class="slds-required">*</abbr>Current Payroll Method</label>
+                                <apex:inputField styleClass="slds-input required-opp-meeting-input" value="{!oppty.CurrentPayrollMethod__c}"  id="PCPM-8"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Local Competitors</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Local_Competitors__c}"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Client Referral</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Client_Referral__c}"/>
+                            </div>
+                            <!-- <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display" ><abbr class="slds-required">*</abbr>Client Referral</label>
+                                <apex:inputField styleClass="slds-input " value="{!oppty.Client_Referral__c}"/>
+                            </div> -->
+                        </div>
+                    </div>
+                </apex:outputPanel>
+                
+                <!--  TAA, PNC, ESR, PBA Opportunity -->
+                <apex:outputPanel rendered="{!OR(isTAA,isPC,isESR,isPBA)}"
+                    id="createOpptyTAAPNCESRPBA"> <!-- rendered="{!AND(isTAA,isPC,isESR,isPBA)}" -->
+                    <div class="slds-section slds-is-open">
+                        <h3 class="slds-section__title">
+                            <button aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action">
+                                <span class="slds-truncate banner-lightning" title="Section Title">
+                                    New {!prodName} Opportunity
+                                    <span class="titleSeparatingColon">:</span>
+                                </span>
+                            </button>
+                        </h3>
+
+                        <div class="slds-grid slds-wrap">
+
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Opportunity Name</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.name}"  id="opportunity-name-8"/>
+                            </div>
+
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Opportunity Type</label>
+                                <!-- <div class="slds-form-element__static"> -->
+                                    <apex:inputField styleClass="slds-input" value="{!oppty.OpportunityType__c}" html-disabled="true"/>
+                                <!-- </div> -->
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Run-Effective Date</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.CloseDate}" id="close-date-8"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Opportunity SubType</label>
+                                <!-- <div class="slds-form-element__static"> -->
+                                    <apex:inputField styleClass="slds-input" value="{!oppty.HNBF_Sales_Type__c}" />
+                                <!-- </div> -->
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display"><abbr class="slds-required">*</abbr>Lead Source</label>
+                                <apex:inputField styleClass="slds-input required-opp-meeting-input" value="{!oppty.LeadSource}" id="lead-source-8"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Check Date</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Check_Date__c}" />
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Level 2</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Level_2__c}" id="level2-8"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Referral Contact</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Referral_Contact__c}"/>
+                            </div>
+                            <!-- <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Primary Competition</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Primary_Competition__c}" id="primary-competition-8"/>
+                            </div> -->
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Client Referral</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Client_Referral__c}"  />
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Payroll Current-Prior Method</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Payroll_Current_Prior_Method__c}" id="payroll-prior-method-8" />
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Local Competitors</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Local_Competitors__c}"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Referring Employee</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Referring_Employee__c}" />
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Auto Create Follow-up</label>
+                                <apex:inputField value="{!oppty.Auto_Create_Follow_up__c}"/>
+                            </div>
+                        </div>
+                    </div>
+                </apex:outputPanel>
+                
+                <!--  MS Opportunity -->
+                <apex:outputPanel rendered="{!isMS}"
+                    id="createOpptyMS">
+                    <div class="slds-section slds-is-open">
+                        <h3 class="slds-section__title">
+                            <button aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action">
+                                <span class="slds-truncate banner-lightning" title="Section Title">
+                                    New {!prodName} Opportunity
+                                    <span class="titleSeparatingColon">:</span>
+                                </span>
+                            </button>
+                        </h3>
+
+                        <div class="slds-grid slds-wrap">
+
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Opportunity Name</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.name}"  id="opportunity-name-9"/>
+                            </div>
+
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Opportunity Type</label>
+                                <!-- <div class="slds-form-element__static"> -->
+                                    <apex:inputField styleClass="slds-input" value="{!oppty.OpportunityType__c}" html-disabled="true"/>
+                                <!-- </div> -->
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Run-Effective Date</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.CloseDate}" id="close-date-9"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Opportunity SubType</label>
+                                <!--<div class="slds-form-element__static"> -->
+                                    <apex:inputField styleClass="slds-input" value="{!oppty.HNBF_Sales_Type__c}" />
+                                <!-- </div> -->
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display"><abbr class="slds-required">*</abbr>Lead Source</label>
+                                <apex:inputField styleClass="slds-input required-opp-meeting-input" value="{!oppty.LeadSource}" id="lead-source-9"/>
+                            </div>
+                            <!-- <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Check Date</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Check_Date__c}" />
+                            </div> -->
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Level 2</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Level_2__c}" id="level2-9"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Referral Contact</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Referral_Contact__c}"/>
+                            </div>
+                            <!-- <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Primary Competition</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Primary_Competition__c}" id="primary-competition-9"/>
+                            </div> -->
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Client Referral</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Client_Referral__c}"  />
+                            </div>
+                            <!-- <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Payroll Current-Prior Method</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Payroll_Current_Prior_Method__c}" id="payroll-prior-method-9" />
+                            </div> -->
+                            <!-- <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Local Competitors</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Local_Competitors__c}"/>
+                            </div> -->
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Referring Employee</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Referring_Employee__c}" />
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Auto Create Follow-up</label>
+                                <apex:inputField value="{!oppty.Auto_Create_Follow_up__c}"/>
+                            </div>
+                        </div>
+                    </div>
+                </apex:outputPanel>
+                
+                <!--  HNB Opportunity -->
+                <apex:outputPanel rendered="{!isHNB}" id="createOpptyHNB" title="New {!prodName} Opportunity" >
+                    <div class="slds-section slds-is-open">
+                        <h3 class="slds-section__title">
+                            <button aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action">
+                                <span class="slds-truncate banner-lightning" title="Section Title">
+                                    New {!prodName} Opportunity
+                                    <span class="titleSeparatingColon">:</span>
+                                </span>
+                            </button>
+                        </h3>
+
+                        <div class="slds-grid slds-wrap">
+
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display"><abbr class="slds-required">*</abbr>Opportunity Name</label>
+                                <apex:inputField styleClass="slds-input required-opp-meeting-input" value="{!oppty.name}" id="opportunity-name-10"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Opportunity Type</label>
+                                <!-- <div class="slds-form-element__static"> -->
+                                   <apex:inputField styleClass="slds-input" value="{!oppty.OpportunityType__c}" html-disabled="true"/>
+                                <!-- </div> -->
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display"><abbr class="slds-required">*</abbr>Run-Effective Date</label>
+                                <apex:inputField styleClass="slds-input required-opp-meeting-input" value="{!oppty.CloseDate}"  id="close-date-10"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Opportunity SubType</label>
+                                <!--<div class="slds-form-element__static"> -->
+                                    <apex:inputField styleClass="slds-input" value="{!oppty.HNBF_Sales_Type__c}" />
+                                <!-- </div> -->
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display"><abbr class="slds-required">*</abbr>Lead Source</label>
+                                <apex:inputField styleClass="slds-input required-opp-meeting-input" value="{!oppty.LeadSource}" id="lead-source-10" />
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">DM</label>
+                                <apex:inputField value="{!oppty.DM__c}"  />
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Level 2</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Level_2__c}" id="level2-10"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Referral Contact</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Referral_Contact__c}"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Non-DM</label>
+                                <apex:inputField value="{!oppty.Non_DM__c}"  />
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Referring Employee</label>
+                                <apex:inputField styleClass="lookup-input-slds" value="{!oppty.Referring_Employee__c}" />
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Payroll Current-Prior Method</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Payroll_Current_Prior_Method__c}" />
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">Local Competitors</label>
+                                <apex:inputField styleClass="slds-input" value="{!oppty.Local_Competitors__c}"/>
+                            </div>
+                            <!-- <div class="slds-col slds-size_1-of-2 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display"><abbr class="slds-required">*</abbr>Payroll Platform</label>
+                                <apex:inputField styleClass="slds-input required-opp-meeting-input" value="{!oppty.Payroll_Platform__c}"  id="Payroll-Platform-10"/>
+                            </div> -->
+                        </div>
+                    </div>
+                </apex:outputPanel>
+                
+                <!--  HRS Opportunity 401 products-->
+                <apex:outputPanel rendered="{!AND(isHRS, salesOrg=='HRS')}"
+                    id="createOpptyHRS_ProdsHRS" >
+                    <h3 class="slds-text-heading_small slds-m-bottom_medium slds-p-horizontal_large">
+                        Products Presented
+                    </h3>
+                    <div class="slds-grid slds-wrap">
+                        <apex:repeat value="{!$ObjectType.Opportunity.FieldSets.X401_Products}" var="prod">
+                            <div class="slds-col slds-size_1-of-3 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">{!prod.label}</label>
+                                <apex:inputField value="{!oppty[prod]}" />
+                            </div>
+                        </apex:repeat>
+                    </div>
+                </apex:outputPanel>
+                
+                <!--  HRS Opportunity PEO/ASO products-->
+                <apex:outputPanel rendered="{!AND(isHRS, salesOrg=='PAS')}"
+                    id="createOpptyHRS_ProdsPEO" >
+                    <h3 class="slds-text-heading_small slds-m-bottom_medium slds-p-horizontal_large">
+                        Products Presented
+                    </h3>
+                    <div class="slds-grid slds-wrap">
+                        <apex:repeat value="{!$ObjectType.Opportunity.FieldSets.PEO_ASO_Products}" var="prod">
+                            <div class="slds-col slds-size_1-of-3 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">{!prod.label}</label>
+                                <apex:inputField value="{!oppty[prod]}" />
+                            </div>
+                        </apex:repeat>
+                    </div>
+                </apex:outputPanel>
+
+                <!--  HRS Opportunity HNBF products-->
+                <apex:outputPanel rendered="{!AND(isHRS, salesOrg=='HNBF')}"
+                    id="createOpptyHRS_ProdsHNBF" >
+                    <h3 class="slds-text-heading_small slds-m-bottom_medium slds-p-horizontal_large">
+                        Products Presented
+                    </h3>
+                    <div class="slds-grid slds-wrap">
+                        <apex:repeat value="{!$ObjectType.Opportunity.FieldSets.HNBF_Products}" var="prod">
+                            <div class="slds-col slds-size_1-of-3 slds-p-horizontal_large">
+                                <label class="slds-form-element__label block-display">{!prod.label}</label>
+                                <apex:inputField value="{!oppty[prod]}" />
+                            </div>
+                        </apex:repeat>
+                    </div>
+                </apex:outputPanel>
+            </apex:outputPanel>
+        </apex:outputPanel>
+    </apex:outputPanel>
+</apex:component>

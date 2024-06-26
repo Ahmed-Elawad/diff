@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>HRE_Client_At_Risk_Auto_Email</name>
+        <label>Reference_HRE_CHB_Onboarding__c.HRE_Client_At_Risk_Auto_Email</label>
+        <locationX>50</locationX>
+        <locationY>455</locationY>
+        <actionName>Reference_HRE_CHB_Onboarding__c.HRE_Client_At_Risk_Auto_Email</actionName>
+        <actionType>emailAlert</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>Reference_HRE_CHB_Onboarding__c.HRE_Client_At_Risk_Auto_Email</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>57.0</apiVersion>
+    <decisions>
+        <name>HRE_Client_At_Risk_Email_to_Sales</name>
+        <label>HRE Client At Risk Email to Sales</label>
+        <locationX>182</locationX>
+        <locationY>335</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Email_to_Sales_Rep</name>
+            <conditionLogic>1 AND 2 AND 3 AND 4 AND (5 OR 6 OR 7)</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Welcome_Call_Complete_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Sales_Rep__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Sales_Rep__r.IsActive</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Client_At_Risk_Email_To_Sales__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Welcome_Call_Complete_Date__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Sales_Rep__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Client_At_Risk_Email_To_Sales__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>HRE_Client_At_Risk_Auto_Email</targetReference>
+            </connector>
+            <label>Email to Sales Rep</label>
+        </rules>
+    </decisions>
+    <description>Migrated from the: HRE Client At Risk Email to Sales workflow rule
+Workflow rule description: &quot;</description>
+    <environments>Default</environments>
+    <label>HRE Client At Risk Email to Sales</label>
+    <migratedFromWorkflowRuleName>HRE Client At Risk Email to Sales</migratedFromWorkflowRuleName>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>HRE_Client_At_Risk_Email_to_Sales</targetReference>
+        </connector>
+        <object>Reference_HRE_CHB_Onboarding__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

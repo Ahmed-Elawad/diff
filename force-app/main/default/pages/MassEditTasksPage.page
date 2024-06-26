@@ -1,0 +1,82 @@
+<!-- 
+ * MassEditTasksPage.
+ *
+ * History
+ * -------
+ * 10/14/2015 Justin Stouffer   Created
+ * 11/16/2018 Josh Cartwright - added outcome for lightning project 
+ *
+ *
+ -->
+ <apex:page tabStyle="Zip_Code_Lookup__tab" controller="MassEditTasksController" lightningStylesheets="true" standardStylesheets="true">
+ 
+    <apex:actionStatus id="status">
+        <apex:facet name="start">
+        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+            &nbsp;
+        </div>
+        <div style="position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin: 15% 45%">
+            <div style="display: inline-block; padding: 2px; background-color: #fff; width: 125px;">
+                <img src="/img/loading.gif" style="float: left; margin: 8px;" />
+                <span style="display: inline-block; padding: 10px 0px;">Please Wait...</span>
+            </div>
+        </div>
+        </apex:facet>
+    </apex:actionStatus>
+    <apex:form >
+        <apex:pageMessages id="theMessage"/>
+        <apex:pageBlock title="Task Mass Editor" rendered="{!tasksSelected}" >
+            <apex:pageBlockButtons location="Bottom" >
+                <apex:commandButton action="{!setTaskValues}" value="Set Values to All Tasks Below" reRender="TaskTable,theMessage" status="status" />
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection showHeader="TRUE" title="Mass Editor" >
+                <apex:inputField value="{!emptyTask.subject}" required="FALSE" rendered="{!$ObjectType.Task.Fields.subject.updateable}" style="width: 300px"/>
+                <apex:inputField value="{!emptyTask.status}" required="FALSE"  rendered="{!$ObjectType.Task.Fields.status.updateable}"/>
+                <apex:inputField value="{!emptyTask.Lead_Source_WAR_Call_Type__c}" required="FALSE" rendered="{!$ObjectType.Task.Fields.Lead_Source_WAR_Call_Type__c.updateable}"/>
+                <apex:inputField value="{!emptyTask.ActivityDate}" required="FALSE" rendered="{!$ObjectType.Task.Fields.ActivityDate.updateable}"/>
+
+                <apex:inputField value="{!emptyTask.type}" required="FALSE" rendered="{!$ObjectType.Task.Fields.type.updateable}"/>
+
+                <apex:inputField value="{!emptyTask.Priority}" required="FALSE" rendered="{!$ObjectType.Task.Fields.Priority.updateable}"/>
+
+                <apex:inputField value="{!emptyTask.Description}" required="FALSE" rendered="{!$ObjectType.Task.Fields.Description.updateable}" style="width: 300px; height: 100px"/>
+
+                <apex:inputCheckbox value="{!appendComment}" label="Append Comment?"/>
+
+                <apex:inputField value="{!emptyTask.OwnerId}" required="FALSE" rendered="{!AND($ObjectType.Task.Fields.OwnerId.updateable,AssignedTask)}"/>
+
+                <apex:inputField value="{!emptyTask.CPE_Topic__c}" required="FALSE" rendered="{!$ObjectType.Task.Fields.CPE_Topic__c.updateable}"/>
+                <apex:inputField value="{!emptyTask.TAP_Topic__c}" required="FALSE" rendered="{!$ObjectType.Task.Fields.TAP_Topic__c.updateable}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:pageBlock id="TaskTable" title="Selected Tasks">
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!commitChanges}" value="Save Changes" />
+                <apex:commandButton action="{!commitChangesandReturn}" value="Save Changes and Return" />
+                <apex:commandButton action="{!cancel}" value="Cancel" immediate="true" html-formnovalidate="formnovalidate" />
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection showHeader="TRUE" >
+                <apex:outputText >You have selected {!numberOfSelected} tasks to update!</apex:outputText>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection showHeader="TRUE" title="Tasks" columns="1" >
+                <apex:pageBlockTable value="{!listOfTasks}" var="tsk">
+                    <apex:column headerValue="Task"><apex:outputLink value="/{!tsk.id}" target="New">Open</apex:outputLink></apex:column>
+                    <apex:column headerValue="Name" rendered="{!$ObjectType.Task.Fields.WhoId.accessible}" ><apex:outputField value="{!tsk.WhoId}"/></apex:column>
+                    <apex:column headerValue="Assigned To" rendered="{!AND($ObjectType.Task.Fields.OwnerId.updateable,AssignedTask)}"><apex:inputField value="{!tsk.OwnerId}"/></apex:column>
+                    <apex:column headerValue="Related To" rendered="{!$ObjectType.Task.Fields.WhatId.accessible}"><apex:outputField value="{!tsk.WhatId}"/></apex:column>
+                    <apex:column headerValue="Subject" rendered="{!$ObjectType.Task.Fields.subject.updateable}"><apex:inputField value="{!tsk.subject}"/></apex:column>
+                    <apex:column headerValue="Status" rendered="{!$ObjectType.Task.Fields.status.updateable}"><apex:inputField value="{!tsk.status}"/></apex:column>
+                    <apex:column headerValue="Due Date" rendered="{!$ObjectType.Task.Fields.ActivityDate.updateable}"><apex:inputField value="{!tsk.ActivityDate}"/></apex:column>
+                    <apex:column headerValue="Priority" rendered="{!$ObjectType.Task.Fields.Priority.updateable}"><apex:inputField value="{!tsk.Priority}"/></apex:column>
+                    <apex:column headerValue="Type" rendered="{!$ObjectType.Task.Fields.type.updateable}"><apex:inputField value="{!tsk.type}"/></apex:column>
+                    <apex:column headerValue="Call Type" rendered="{!$ObjectType.Task.Fields.Lead_Source_WAR_Call_Type__c.updateable}"><apex:inputField value="{!tsk.Lead_Source_WAR_Call_Type__c}"/></apex:column>
+                    <apex:column headerValue="CPE Topic" rendered="{!$ObjectType.Task.Fields.CPE_Topic__c.updateable}" ><apex:inputField value="{!tsk.CPE_Topic__c}"/></apex:column>
+                    <apex:column headerValue="TAP Topic" rendered="{!$ObjectType.Task.Fields.TAP_Topic__c.updateable}"><apex:inputField value="{!tsk.TAP_Topic__c}"/></apex:column>
+                    <apex:column headerValue="Comments" rendered="{!$ObjectType.Task.Fields.Description.updateable}"  ><apex:inputField value="{!tsk.Description}"/></apex:column>
+                    <apex:column headerValue="Outcome" rendered="{!$ObjectType.Task.Fields.Outcome__c.updateable}"  ><apex:inputField value="{!tsk.Outcome__c}"/></apex:column>
+
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

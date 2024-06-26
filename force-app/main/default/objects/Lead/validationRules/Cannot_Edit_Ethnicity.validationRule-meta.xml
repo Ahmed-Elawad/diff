@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cannot_Edit_Ethnicity</fullName>
+    <active>true</active>
+    <description>Can&apos;t change the ethnicity field if it has HA1,2,3,4,5 as a value. Case 18514675</description>
+    <errorConditionFormula>AND(ISCHANGED(Ethnicity__c),OR(ISPICKVAL(PRIORVALUE(Ethnicity__c),&apos;HA1&apos;),ISPICKVAL(PRIORVALUE(Ethnicity__c),&apos;HA2&apos;),ISPICKVAL(PRIORVALUE(Ethnicity__c),&apos;HA3&apos;),ISPICKVAL(PRIORVALUE(Ethnicity__c),&apos;HA4&apos;),ISPICKVAL(PRIORVALUE(Ethnicity__c),&apos;HA5&apos;)))</errorConditionFormula>
+    <errorDisplayField>Ethnicity__c</errorDisplayField>
+    <errorMessage>This field cannot be edited if it has a value of HA1,HA2,HA3,HA4,HA5.</errorMessage>
+</ValidationRule>

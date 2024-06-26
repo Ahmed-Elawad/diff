@@ -1,0 +1,379 @@
+<!-- 
+    Created By: Mendel Guillaume - BlackTab Group
+    Date Created: 2015-05-11
+    Description: Displays list of appointments grouped by Date or Time (Today)
+ -->
+<apex:page docType="html-5.0" standardStylesheets="false" controller="MyAppointmentsUpdateController">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <apex:includeScript value="{!$Resource.jQuery2_0_3}" />  
+    <apex:stylesheet value="{!URLFOR($Resource.Salesforce1Bootstrap, 'bootstrap-sf1-010-beta15/dist/css/bootstrap-namespaced.css')}"/> 
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        .bootstrap-sf1 {margin-left: auto; margin-right: auto; width: 98%;}
+        .content {  margin-left: auto; margin-right: auto;}
+        .button-row{padding: 0px 10px 10px 10px;}
+        .button-row button {margin-top: 20px;}
+        .reason select {
+          display: block;
+          width: 100%;
+          height: 34px;
+          padding: 6px 14px;
+          font-size: 14px;
+          line-height: 1.42857143;
+          color: #000000;
+          background-color: #ffffff;
+          background-image: none;
+          border: 1px solid #cfd0d2;
+          border-radius: 4px;
+          -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+          -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+          -o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+          transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+        }
+        .iphone-container{margin-left: auto; margin-right: auto; width: 100%; height: 500px;overflow-x:hidden;overflow-y: scroll;-webkit-overflow-scrolling: touch;-webkit-transform: translated(0%,0px,0px); padding: 15px; margin-bottom: 0px !important;}
+    </style>
+        <div id="divContainer" class="bootstrap-sf1" >
+            <div class="page-header page-header-compact context-c-alarmclock"  style="{!IF(opp.Id == null, 'display: none', '')}">
+                <h1>{!opp.Name} <span class="pull-right s1utility s1utility-reply" onclick="returnHome();"></span>
+                <span class="page-header-label">{!appointment.Subject}</span></h1>
+            </div>
+            <div class="page-header page-header-compact context-c-alarmclock" style="{!IF(opp.Id != null, 'display: none', '')}">
+                <h1>{!appointment.Subject} <span class="pull-right s1utility s1utility-reply" onclick="returnHome();"></span>
+                <span class="page-header-label">&nbsp;</span></h1>
+            </div>
+            <div class="content">
+            <apex:form >
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-4  button-row">
+                        <div class="">
+                            *Required fields
+                        </div>    
+                        <input id="oppId" type="hidden" value="{!opp.Id}" />
+                        <div class="form-horizontal">
+                            <div id="divPayrollMethod" class="form-group" style="{!IF(opp.Id == null, 'display: none', '')}">
+                                <label class="col-sm-3 control-label">Payroll Current-Prior Method*</label>
+                                <div class="col-sm-9">
+                                    <apex:inputField html-data-name="payrollMethod" label="" value="{!opp.Payroll_Current_Prior_Method__c}" styleClass="form-control"/>
+                                </div>
+                            </div>
+                            <!-- <div id="divPrimaryCompetition" class="form-group" style="{!IF(opp.Id == null, 'display: none', '')}">
+                                <label class="col-sm-3 control-label">Primary Competition*</label>
+                                <div class="col-sm-9">
+                                    <apex:inputField html-data-name="primaryCompetition" label="" value="{!opp.Primary_Competition__c}" styleClass="form-control"/>
+                                </div>
+                            </div> -->
+                            <div class="form-group" style="{!IF(opp.Id == null, 'display: none', '')}">
+                                <label class="col-sm-3 control-label">Local Competitors</label>
+                                <div class="col-sm-9">
+                                    <apex:inputField html-data-name="localCompetitors" label="" value="{!opp.Local_Competitors__c}" styleClass="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Outcome</label>
+                                <div class="col-sm-9">
+                                    <apex:inputField html-data-name="outcome" label="" value="{!appointment.Outcome__c}" styleClass="form-control"/>
+                                </div>
+                            </div>
+                            <div id="divStage" class="form-group" style="{!IF(opp.Id == null, 'display: none', '')}">
+                                <label class="col-sm-3 control-label">Status*</label>
+                                <div class="col-sm-9">
+                                    <apex:inputField html-data-name="stage" label="" value="{!opp.StageName}" styleClass="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-group" style="{!IF(opp.Id == null, 'display: none', '')}">
+                                <label class="col-sm-3 control-label">Reason Won/Lost</label>
+                                <div class="col-sm-9 reason">
+                                    <apex:inputField html-data-name="reasonWonLost" label="" value="{!opp.Reason_Not_Sold__c}" styleClass="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-group" style="{!IF(opp.Id == null, 'display: none', '')}">
+                                <label class="col-sm-3 control-label">Won/Lost Comments</label>
+                                <div class="col-sm-9">
+                                    <apex:inputField html-data-name="wonLostComments" label="" value="{!opp.Comment_to_NSS__c}" styleClass="form-control"/>
+                                </div>
+                            </div>
+                            <div  id="divCloseDate" class="form-group" style="{!IF(opp.Id == null, 'display: none', '')}">
+                                <label class="col-sm-3 control-label">Run-Effective Date*</label>
+                                <div class="col-sm-9">
+                                    <apex:inputField html-data-name="closeDate" label="" value="{!opp.CloseDate}" styleClass="form-control" showDatePicker="false" type="date"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Description</label>
+                                <div class="col-sm-9">
+                                    <apex:inputField html-data-name="description" label="" value="{!appointment.Description}" styleClass="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-group" style="{!IF(opp.Id == null, 'display: none', '')}">
+                                <label class="col-sm-3 control-label">Employees Paid Per Payroll</label>
+                                <div class="col-sm-9">
+                                    <apex:inputField html-data-name="employeesPaid" label="" value="{!opp.Employees_Paid_Per_Payroll__c}" styleClass="form-control"/>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Location</label>
+                                <div class="col-sm-9">
+                                    <apex:inputField html-data-name="location" label="" value="{!appointment.Location}" styleClass="form-control"/>
+                                </div>
+                            </div>
+                            <div id="divStartDate" class="form-group">
+                                <label class="col-sm-3 control-label">Start*</label>
+                                <div class="col-sm-9">
+                                    <apex:inputField html-data-name="startDate" label="" value="{!appointment.StartDateTime}" styleClass="form-control" showDatePicker="false" type="datetime-local"/>
+                                </div>
+                            </div>
+                            <div id="divEndDate" class="form-group">
+                                <label class="col-sm-3 control-label">End*</label>
+                                <div class="col-sm-9">
+                                    <apex:inputField html-data-name="endDate" label="" value="{!appointment.EndDateTime}" styleClass="form-control" showDatePicker="false" type="datetime-local"/>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </apex:form>
+                 <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-4  button-row">
+                        <div class="text-center button-row">
+                                <button id="btnSaving" class="btn btn-default" onclick="return false;" style="display: none;" disabled="disabled">Saving...</button>
+                                <button id="btnSave" class="btn btn-default" onclick="save(false); return false;">Save</button>&nbsp;&nbsp;
+                                <button id="btnSaveAndCreate" class="btn btn-default" onclick="save(true); return false;" style="{!IF(opp.Id == null, 'display: none', '')}">Save And Go To Opportunity</button>
+                            </div>
+                    </div>
+                 </div>
+            </div>
+        </div>
+        
+        <script> 
+            (function(){try{var a=navigator.userAgent; 
+                if((a.indexOf('Salesforce')!=-1)&&(a.indexOf('iPhone')!=-1||a.indexOf('iPad')!=-1)&&(a.indexOf('OS/8')!=-1||a.indexOf('OS 8')!=-1)&&(a.indexOf('Safari')==-1)){ 
+                var s=document.createElement('style'); 
+                s.innerHTML="html,html body{overflow: auto;-webkit-overflow-scrolling:touch;}body{position:absolute;left:0;right:0;top:0;bottom:0;}"; 
+                document.getElementsByTagName('head')[0].appendChild(s);}}catch(e){}})(); 
+        </script>
+        
+       <script type="text/javascript">
+            var validationError = '';
+            var sf1 = false;
+            
+            if((typeof sforce != 'undefined') && (sforce != null)) 
+            {
+                sf1 = true;
+                
+                /*if(navigator.userAgent.indexOf('iPad') < 0 && navigator.userAgent.indexOf('iPhone') >= 0)
+                {
+                    //iPhone overflow scroll
+                    $('.content').addClass('iphone-container');
+                }*/
+            }
+            
+            function Opportunity()
+            {
+                this.Id = null;
+                this.StageName = null;
+                //this.CloseDate = null;
+                this.Employees_Paid_Per_Payroll__c = null;
+                this.Comment_to_NSS__c = null;
+                this.Reason_Not_Sold__c = null;
+                this.Local_Competitors__c = null;
+                //this.Primary_Competition__c = null;
+                this.Payroll_Current_Prior_Method__c = null;
+            }
+            
+            function Event()
+            {
+                this.Id = null;
+                this.Outcome__c = null;
+                this.Description = null;
+                this.Location = null;
+                //this.StartDateTime = null;
+                //this.EndDateTime = null;
+            }
+            
+            function returnHome()
+            {
+                ({!$User.UIThemeDisplayed == 'Theme3'}) ? window.parent.location.href='/home/home.jsp' : sforce.one.navigateToURL('#/home');
+            }
+            
+            function save(newEvent)
+            {
+                try
+                {
+                    clearHighlight();
+                    
+                    $('#btnSave').attr('style', 'display:none;');
+                    
+                    if('{!opp.Id}' != '')
+                    {
+                        $('#btnSaveAndCreate').attr('style', 'display:none;');
+                    }
+                    
+                    $('#btnSaving').attr('style', 'display:inline-block;');
+                    
+                    var opp1 = new Opportunity();
+                    var appointment1 = new Event();
+                    var closeDate = $('input[data-name=closeDate]').val();
+                    var endDate = $('input[data-name=endDate]').val();
+                    var startDate = $('input[data-name=startDate]').val();
+                    var oppValid = true;
+                    var eventValid = true;
+                    var employeesPerPayroll =  $('input[data-name=employeesPaid]').val();
+                    
+                   // alert(startDate);
+                  //  alert(Date.parse(startDate));
+                   
+                    if('{!opp.Id}' != '')
+                    {
+                        if($('select[data-name=payrollMethod] option:selected').val() == '')
+                        {
+                            oppValid = false;
+                            highlight('#divPayrollMethod');
+                        }
+                        if($('select[data-name=primaryCompetition] option:selected').val() == '')
+                        {
+                            oppValid = false;
+                            highlight('#divPrimaryCompetition');
+                        }
+                        if(closeDate == '')
+                        {
+                            highlight('#divCloseDate');
+                            oppValid = false;
+                        }
+                        //alert($('.reason > span > select option:selected').val());
+                        
+                        opp1.Id = '{!opp.Id}';
+                        opp1.StageName = $('select[data-name=stage] option:selected').val();
+                        //opp1.CloseDate = closeDate == '' ? null : Date.parse(closeDate);
+                        //opp1.Employees_Paid_Per_Payroll__c = $('input[data-name=employeesPaid]').val();
+                        opp1.Comment_to_NSS__c = $('textarea[data-name=wonLostComments]').val();
+                        opp1.Reason_Not_Sold__c = $('.reason > span > select option:selected').val();
+                        opp1.Local_Competitors__c = $('input[data-name=localCompetitors]').val();
+                        //opp1.Primary_Competition__c = $('select[data-name=primaryCompetition] option:selected').val();
+                        opp1.Payroll_Current_Prior_Method__c = $('select[data-name=payrollMethod] option:selected').val();
+                    }
+                    
+                    appointment1.Id = '{!appointment.Id}';
+                    appointment1.Outcome__c = $('select[data-name=outcome] option:selected').val();
+                    appointment1.Description = $('textarea[data-name=description]').val();
+                    appointment1.Location = $('input[data-name=location]').val();
+                    
+                    //appointment1.StartDateTime = startDate == '' ? null : Date.parse(startDate);
+                    //appointment1.EndDateTime = endDate == '' ? null : Date.parse(endDate);
+                    
+                    if(startDate == '')
+                    {
+                        highlight('#divStartDate');
+                        eventValid = false;
+                    }
+                    
+                    if(endDate == '')
+                    {
+                        highlight('#divEndDate');
+                        eventValid = false;
+                    }
+                    
+                    if(!oppValid || !eventValid)
+                    {
+                        throw 'Please fill all required fields';
+                    }
+                   
+                    Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.MyAppointmentsUpdateController.updateOppAndEventWithDates}',
+                    opp1, appointment1, closeDate, startDate, endDate, employeesPerPayroll,
+                    function(result, event)
+                    {
+                        $('#btnSaving').attr('style', 'display:none;');
+                        $('#btnSave').attr('style', 'display:inline-block;');
+                           
+                        if('{!opp.Id}' != '')
+                        {
+                            $('#btnSaveAndCreate').attr('style', 'display:inline-block;');
+                        }
+                
+                        var decoded = $('<div/>').html(result.message).text();
+    
+                        if(result.success)
+                        {
+                            if(sf1) 
+                            {
+                                if(newEvent)
+                                {
+                                    sforce.one.navigateToSObject('{!opp.Id}','detail');
+                                }
+                                else
+                                {
+                                    sforce.one.navigateToURL('/apex/MyAppointmentsList?type={!appointmentType}', false);
+                                }
+                            }
+                            else 
+                            {
+                                if(newEvent)
+                                {
+                                    window.location = '/{!opp.Id}';
+                                }
+                                else
+                                {
+                                    window.location = '/apex/MyAppointmentsList?type={!appointmentType}';
+                                }
+                            }
+                        }
+                        else 
+                        {
+                            alert(decoded);
+                        }
+                    });
+                }
+               catch(e)
+               {
+                    $('#btnSaving').attr('style', 'display:none;');
+                    $('#btnSave').attr('style', 'display:inline-block;');
+                       
+                    if('{!opp.Id}' != '')
+                    {
+                        $('#btnSaveAndCreate').attr('style', 'display:inline-block;');
+                    }
+                    
+                    alert(e);
+               }
+               
+              /* $('#btnSaving').attr('style', 'display:none;');
+               $('#btnSave').attr('style', 'display:inline-block;');
+               
+                if('{!opp.Id}' != '')
+                {
+                    $('#btnSaveAndCreate').attr('style', 'display:inline-block;');
+                }*/
+            }
+            
+            function clearHighlight()
+            {
+                $('#divPayrollMethod').removeClass('has-error');
+                $('#divPrimaryCompetition').removeClass('has-error');
+                $('#divStage').removeClass('has-error');
+                $('#divCloseDate').removeClass('has-error');
+                $('#divStartDate').removeClass('has-error');
+                $('#divEndDate').removeClass('has-error');
+            }
+            
+            function highlight(id)
+            {
+                $(id).addClass('has-error');
+            }
+            
+            //Workaround to prevent auto focus of editable field
+            function setFocusOnLoad() {}           
+            
+            (function(){try{var a=navigator.userAgent; 
+                if((a.indexOf('Salesforce')!=-1)&&(a.indexOf('iPhone')!=-1||a.indexOf('iPad')!=-1)&&(a.indexOf('OS/7')!=-1||a.indexOf('OS/8')!=-1||a.indexOf('OS 8')!=-1)&&(a.indexOf('Safari')==-1)){ 
+                var s=document.createElement('style'); 
+                s.innerHTML="html,html body{overflow: auto;-webkit-overflow-scrolling:touch;}body{position:absolute;left:0;right:0;top:0;bottom:0;}"; 
+                document.getElementsByTagName('head')[0].appendChild(s);}}catch(e){}})(); 
+        </script>
+</apex:page>

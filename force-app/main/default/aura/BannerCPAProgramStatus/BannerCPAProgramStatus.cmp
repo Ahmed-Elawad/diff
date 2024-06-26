@@ -1,0 +1,44 @@
+<aura:component >
+	<aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="status" type="String" />
+    <aura:attribute name="tier" type="String" />
+    
+    <div class="box" title="Partner Status" >
+        <div class="banner-header slds-align_absolute-center">
+            <h4 class="slds-item_label slds-text-color_weak slds-truncate slds-text-align_center">Accountant Program Status</h4>
+        </div>
+        <div class="banner-body">
+            <div class="slds-item_detail slds-truncate slds-align_absolute-center column" title="Partner Status">
+                <aura:if isTrue="{!v.status == 'Invited'}">
+                    <span>{!v.status}</span>
+                    <img src="{!$Resource.CPA_Referral_account_banner_Invited}" style="width:50px;height:inherit"/>
+                    
+                </aura:if>
+                <aura:if isTrue="{!v.status == 'Enrolled'}"> 
+                    <span>{!v.status}</span>
+                    <aura:if isTrue="{!v.tier == 'Core'}">
+                        <img src="{!$Resource.CPA_Referral_account_banner_Core}" style="width:65px;height:inherit"/>
+                    </aura:if>
+                    <aura:if isTrue="{!v.tier == 'Signature'}">
+                        <img src="{!$Resource.CPA_Referral_account_banner_Signature	}" style="width:65px;height:inherit"/>
+                    </aura:if>
+                    <aura:if isTrue="{!v.tier == 'Elite'}">
+                        <img src="{!$Resource.CPA_Referral_account_banner_Elite}" style="width:65px;height:inherit"/>
+                    </aura:if>
+                    <aura:if isTrue="{!v.tier == null}">
+                        <lightning:icon iconName="action:approval"/>
+                    </aura:if>
+                </aura:if>
+                <aura:if isTrue="{!v.status == 'No Longer In Program'}">
+                    <span>{!v.status}</span>
+                    <lightning:icon iconName="action:close" alternativeText="{!v.status}" title="{!v.status}" />
+                </aura:if>
+               
+                  <aura:if isTrue= "{!v.status == null}">
+                    <span>Not Invited</span>
+                  	<img src="{!$Resource.CPA_Referral_account_banner_null}"/>
+                </aura:if>
+            </div>
+        </div>
+    </div>
+</aura:component>

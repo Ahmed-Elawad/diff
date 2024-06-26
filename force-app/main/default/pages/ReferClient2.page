@@ -1,0 +1,316 @@
+<!--
+History
+
+03/20/2023  Vinay       Added code to generate personal URL that reps can share
+                        (copied to clip board on click of a button).
+-->
+<apex:page controller="ReferClientCtrl" showHeader="false" sidebar="false">
+
+    <apex:form >       
+                <apex:outputpanel id="TestPopup1" rendered="{!isShowModelPopup1}">
+                    <div class="demo-only demo-only--sizing slds-grid slds-wrap"  style="overflow:hidden; width:100%;height:680px;background:#F2F4F7">
+                <style>
+                     @font-face{
+                        font-family: 'GraphikRegular';
+                        src: url("{!URLFOR($Resource.PaychexFont, '/Font_Graphik-Publico-Web/Graphik-Regular-Web.woff')}") format('woff'); ;
+                    }
+                    @font-face{
+                        font-family: 'PublicoBanner';
+                        src: url("{!URLFOR($Resource.PaychexFont, '/Font_Graphik-Publico-Web/PublicoBanner-Bold-Web.woff')}") format('woff'); ;
+                    }
+                    body {font-family: Arial, Helvetica, sans-serif; background-color:#f2f4f7}
+                    input[type=text], input[type=password] {
+                        width: 80%;
+                        padding: 12px 20px;
+                        margin: 8px 0;
+                        box-sizing: border-box;
+                    }
+                
+                    textarea:focus, input:focus{
+                        outline: none;
+                    }
+                </style> 
+                <script type="text/javascript">
+                    let errors = '';
+                    function FirstNameGrab() {
+                    var inputText = document.getElementById('partRefFirstName');
+                        console.log(inputText);
+                        alert('inputText: '+inputText);
+                    }
+                // function validate(){
+                //     var errorOutput = document.querySelector("[id$='errorDiv']");
+                    
+                //     validateEmail();
+                //     if(errors){
+                //         errorOutput.value = errors;
+                //         return errors;
+                //     }else{
+                //         return '';
+                //     }
+                // }
+                function validateEmail(){
+                    var inputEmail = document.querySelector("[id$='partRefEmail']");
+                    var errorOutput = document.querySelector("[id$='errorDiv']");
+                    var saveButton = document.querySelector("[id$='theButton']");
+
+
+                    //var inputEmail = document.getElementById('');
+                        console.log(inputEmail);
+                    if(!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(inputEmail.value)))
+                        {
+                        // if(errors){
+                        //     errors+= 'The email entered is invalid. Please enter a valid email address. \n';
+                        // }else{
+                            errors = 'The email entered is invalid. Please enter a valid email address. \n';
+                        // }
+                        //confirm('The email entered is invalid. Please enter a valid email address.');
+                        //inputEmail.value = '';
+                        //validated = false;
+                        console.log('invalid email');
+                        console.log(errors);
+                        errorOutput.innerText = errors;
+                       saveButton.disabled = true;
+                        return errors;
+                        }else{
+                            errorOutput.innerText = '';
+                            errors = '';
+                            saveButton.disabled = false;
+                        }
+                }
+                function validateInviteCPAEmail() {
+                    var inputEmail = document.querySelector("[id$='cpaInviteEmail']");
+                    var errorOutput = document.querySelector("[id$='errorDiv1']");
+                    var saveButton = document.querySelector("[id$='inviteCPAButton']");
+
+                    if(!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(inputEmail.value))) {
+                        errors = 'The email entered is invalid. Please enter a valid email address. \n';
+                        errorOutput.innerText = errors;
+                        saveButton.disabled = true;
+                        return errors;
+                    }else{
+                        errorOutput.innerText = '';
+                        errors = '';
+                        saveButton.disabled = false;
+                    }
+                }
+                
+                </script>
+                        <div style="width:550px; text-align: left; padding-left:240px; padding-top:10px;">
+                            <apex:pageMessages />
+                        </div>
+                        <div style="margin-left:40px; ">   
+                            <div class="slds-size_1-of-2" style="margin-bottom:25px;padding-top: 32px; float:left; width:20%" >
+                                <div class="slds-box" style="margin-right:70px; margin-left:70px;width:670px;height:650px;background:white; border-radius:2%;">                                     
+                                    <div style="margin-left: 0px;padding-top: 26px;"> 
+                                        <apex:outputpanel id="TestPopup2">                                                               
+                                            <header style="padding-left: 40px; padding-right:40px;font-size: 29px;font-weight: bold;margin-bottom:15px;font-family: 'PublicoBanner'; border-radius:12px;">Tell Us About Your Business  
+                                            </header>
+
+                                        </apex:outputpanel>    
+                                        <apex:actionRegion >
+                                            <div id="errorDiv" style="padding-left: 40px; color:red;"></div>
+                                            <!-- <apex:outputText value="{!JSStart}errors{!JSEnd}" escape="false"></apex:outputText> -->
+                                        </apex:actionRegion>                           
+                                            <div class="slds-grid" style="padding-left: 40px; padding-right:40px; border:1px #c4c4c4 ">
+                                                <div style="float:left;width:50%; " >
+                                                    <label for="uname1" style="font-size:14px"><b>First Name</b></label>
+                                                    <br/>
+                                                    <apex:actionRegion >
+                                                        <apex:inputText label="First Name"  id="partRefFirstName" value="{!FirstName}"  style="height:50px; border-radius:6px; width:90%;margin-right:0px;">
+                                                        </apex:inputText>
+                                                    </apex:actionRegion>
+
+                                                </div>         
+                                                <div style="float:right; border:1px #c4c4c4; width:50%;">
+                                                    <label for="uname2" style="font-size:14px"><b>Last Name</b></label>
+                                                    <br/>
+                                                    <apex:actionRegion >
+                                                    <apex:inputText id="partRefLastName"  value="{!LastName}" style="height:50px; border-radius:6px; width:100%; padding-left:5%;" >
+                                                    </apex:inputText>   
+                                                </apex:actionRegion>
+               
+                                            </div>
+                                            <br/>
+                                            <div style="clear:both;"></div>
+                                            </div>
+                                               
+                                            <br/>
+                                            <div style="padding-left: 40px; padding-right:40px; border:1px #c4c4c4;">
+                                                <label for="uname" style="font-size:14px"><b>Email Address</b></label>
+                                                <br />
+                                                <apex:inputText id="partRefEmail" onblur="validateEmail()"  value="{!Email}" style="width:100%;height:50px;border-radius:6px;" >
+                                                </apex:inputText>
+                                                <br/>  
+                                            </div>
+                                            <br/>
+
+                                            <div style="padding-left: 40px; padding-right:40px;">         
+                                                <label for="uname" style="font-size:14px; border:1px #c4c4c4"><b>Company Name</b></label>
+                                                <br />
+                                                <apex:inputText id="partRefCompanyName"  value="{!Company}" style="width:100%;height:50px; border-radius:6px;"  />
+                                                <br/>
+                                            </div>
+                                            <br/>
+
+                                            <div style="padding-left: 40px; padding-right:40px;">              
+                                                <label for="uname" style="font-size:14px; border:1px #c4c4c4"><b>Phone Number</b></label>
+                                                <br />
+                                                <apex:inputText id="partRefPhone"   value="{!Phone}" style="height:50px; border-radius:6px; width:45%;"  />
+                                                <br />
+                                            </div>
+                                            <br/>
+
+
+                                            <div style="padding-left: 40px; padding-right:40px;">        
+                                                <label for="uname" style="font-size:14px; border:1px #c4c4c4"><b>Zip</b></label>
+                                                <br />
+                                                <apex:inputText id="partRefZip"  value="{!PostalCode}" style="width:25%;height:50px; border-radius:6px;"  />
+                                                <br/>  
+                                            </div>
+                                            <br/>
+
+                                          
+                                        <div style="padding-left:40px; padding-right:40px;">   
+                                            <apex:commandButton action="{!save}" onclick="this.onclick=function(){return false;}" value="Accept Referral" id="theButton" style="width:170px;height:45px; border-radius:6px;border-radius:25px;background:#0059a2;color:white; font-size:16px;"/>
+                                        </div>
+
+                                        
+                                    </div>   
+                                </div> 
+                            </div>
+                            <div style="padding-left: 800px; width:45%; padding-top: 32px;">       
+                                <div class="slds-box" > 
+                                    <b><img src="{!URLFOR($Resource.ReferaClient)}" style="width:375px;height:189px;display: block; padding-bottom:10px;"/></b> 
+                                    <br/>
+                                    <p style="width:375px;margin-top:-16px; line-height: 1.5em;">
+                                        <br/>
+                                        <apex:outputText escape="false" style="    " value="{!$Label.ReferClientSubtitle2}"></apex:outputText>
+                                        <br/>   
+                                        <b>
+                                            <apex:outputText escape="false" style="    " value="{!$Label.ReferClientSubtitle3}"></apex:outputText>
+                                        </b>
+                                        <br/>
+                                        <apex:outputText escape="false" style="    " value="{!$Label.ReferClientSubtitle4}"></apex:outputText>   
+                                    </p>
+                                    <apex:outputPanel rendered="{!isDisplayedOnCPAPortal}">
+                                        <apex:image id="link" value="{!$Resource.CPA_URL_Link_Icon}" width="15" height="15" alt="LinkIcon"></apex:image>
+
+                                        &nbsp;
+                                        <apex:commandLink action="{!handlePersonalLink}" value="Get Personal URL" style="font-size:14px; font-weight: bold;">
+                                        </apex:commandLink>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!isAdminCPA}">
+                                        <br/><br/>
+                                        <apex:outputText value="You are currently registered as an administrator for your firm.
+                                        To add another member of your firm as an account administrator - "></apex:outputText>
+                                        <apex:commandLink action="{!inviteCPAWindow}" value="click here" style="font-size:14px; font-weight: bold;">
+                                        </apex:commandLink>
+                                    </apex:outputPanel>
+                                    <!-- <apex:outputPanel rendered="{!showLinkIcon}"> -->
+                                        <!-- <a href = "{!customURL}" > -->
+                                            <!-- <apex:image id="link" value="{!$Resource.CPA_URL_Link_Icon}" width="15" height="15" alt="LinkIcon"></apex:image> -->
+                                        <!-- </a> -->
+                                    <!-- </apex:outputPanel> -->
+                                </div>
+                            </div>
+                        </div> 
+                    </div>  
+                </apex:outputpanel>
+                <apex:outputpanel id="TestPopup4" rendered="{!isShowModelPopup2}">  
+                    <div style="border: 1px solid black;width: 360px; height: 169px; margin-left: 482px; margin-top: 170px;padding: 7px;">      
+                        <p style="font-size:23px;margin-top: 10px;font-weight: bold;font-family: 'GraphikRegular' ">{!$Label.ReferClientthankmain}</p>            
+                        <p style="width:342px;margin-top:-16px;">{!$Label.ReferClientthanksub}</p><br/>
+                        <apex:outputpanel rendered="{!isDisplayedOnCPAPortal == true}">             
+                            <span> <apex:commandButton action="{!$Site.BaseUrl}/s/referaclient" value="Refer Again" id="theButton12" style="width:145px;height:35px;border-radius:25px;background:#0059a2;color:white;"/> </span>   
+                            <span> <apex:commandButton action="{!$Site.BaseUrl}/s/myaccountstatus" value="Home" id="theButton1" style="width:145px;height:35px;border-radius:25px;background:white;color:#0059a2;"/> </span>
+                        </apex:outputpanel>
+                        <apex:outputpanel rendered="{!isDisplayedOnCPAPortal == false}">
+                            <br/>
+                            <br/>
+                            <span> <button onclick="window.close();" style="width:145px;height:35px;border-radius:25px;background:#0059a2;color:white;">Close</button></span>   
+                        </apex:outputpanel>
+                    </div>
+                </apex:outputpanel>
+                <apex:inputtextarea Id="holdtext" STYLE="display:none;"></apex:inputtextarea>
+                <apex:outputpanel id="personalURLPopup" rendered="{!showPersonalURLPopup}">  
+                    <div style="border: 1px solid black;width: 360px; height: 169px; margin-left: 422px; margin-top: 80px;padding: 7px;">      
+                        <p style="font-size:23px;margin-top: 10px;font-weight: bold;font-family: 'GraphikRegular' ">Personalize Your Approach</p>            
+                        <p style="width:342px;margin-top:-16px;">Want to take a more personalized approach? Create a personalized URL that
+                            you can share with your professional network, so that they can learn more about Paychex solutions and services.</p><br/>           
+                            <apex:commandbutton onclick="clipBoard()"  rerender="copytext" value="Generate URL" style="width:145px;height:35px;border-radius:25px;background:#0059a2;color:white;"/> 
+                        </div>
+                        <script> 
+                            function clipBoard() {
+                                navigator.clipboard.writeText('{!customURL}');
+                                alert('URL Copied to clipboard!');
+                                history.back();
+                            }
+                            
+                        </script>               
+                </apex:outputpanel>
+                <apex:outputpanel id="inviteCPAPopup" rendered="{!showInviteCPAPopup}">  
+                <div style="width:550px; text-align: left; padding-left:240px; padding-top:10px;">
+                    <apex:pageMessages />
+                </div>
+                <div style="margin-left:40px; ">   
+                    <div class="slds-size_1-of-2" style="margin-bottom:25px;padding-top: 32px; float:left; width:20%" >
+                        <div class="slds-box" style="margin-right:70px; margin-left:70px;width:670px;height:650px;background:white; border-radius:2%;">                                     
+                            <div style="margin-left: 0px;padding-top: 26px;"> 
+                                <apex:outputpanel >                                                               
+                                    <header style="padding-left: 40px; padding-right:40px;font-size: 29px;font-weight: bold;margin-bottom:15px;font-family: 'PublicoBanner'; border-radius:12px;">Invite CPA   
+                                    </header>
+                                </apex:outputpanel>    
+                                <apex:actionRegion >
+                                    <div id="errorDiv1" style="padding-left: 40px; color:red;"></div>
+                                    <!-- <apex:outputText value="{!JSStart}errors{!JSEnd}" escape="false"></apex:outputText> -->
+                                </apex:actionRegion>                           
+                                    <div class="slds-grid" style="padding-left: 40px; padding-right:40px; border:1px #c4c4c4 ">
+                                        <div style="float:left;width:50%; " >
+                                            <label style="font-size:14px"><b>First Name</b></label>
+                                            <br/>
+                                            <apex:actionRegion >
+                                                <apex:inputText value="{!cpaInviteFirstName}" style="height:50px; border-radius:6px; width:90%;margin-right:0px;">
+                                                </apex:inputText>
+                                            </apex:actionRegion>
+
+                                        </div>         
+                                        <div style="float:right; border:1px #c4c4c4; width:50%;">
+                                            <label style="font-size:14px"><b>Last Name</b></label>
+                                            <br/>
+                                            <apex:actionRegion >
+                                            <apex:inputText value="{!cpaInviteLastName}" style="height:50px; border-radius:6px; width:100%; padding-left:5%;" >
+                                            </apex:inputText>   
+                                        </apex:actionRegion>
+       
+                                    </div>
+                                    <br/>
+                                    <div style="clear:both;"></div>
+                                    </div>
+                                       
+                                    <br/>
+                                    <div style="padding-left: 40px; padding-right:40px; border:1px #c4c4c4;">
+                                        <label for="cpaInviteEmail" style="font-size:14px"><b>Email Address</b></label>
+                                        <br />
+                                        <apex:inputText id="cpaInviteEmail" onblur="validateInviteCPAEmail()" value="{!cpaInviteEmail}" style="width:100%;height:50px;border-radius:6px;" >
+                                        </apex:inputText>
+                                        <br/>  
+                                    </div>
+                                    <br/>
+
+                                    <div style="padding-left: 40px; padding-right:40px;">              
+                                        <label for="cpaInvitePhone" style="font-size:14px; border:1px #c4c4c4"><b>Phone Number</b></label>
+                                        <br />
+                                        <apex:inputText id="cpaInvitePhone" value="{!cpaInvitePhone}" style="height:50px; border-radius:6px; width:45%;"  />
+                                        <br />
+                                    </div>
+                                    <br/>                           
+                                <div style="padding-left:40px; padding-right:40px;">   
+                                    <apex:commandButton action="{!handleInviteCPA}" onclick="this.onclick=function(){return false;}" value="Invite CPA" id="inviteCPAButton" style="width:170px;height:45px; border-radius:6px;border-radius:25px;background:#0059a2;color:white; font-size:16px;"/>
+                                </div>
+                            </div>   
+                        </div> 
+                    </div>
+                    </div>
+                </apex:outputpanel>
+            </apex:form>       
+</apex:page>

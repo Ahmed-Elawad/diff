@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Rejection_Reason_Required</fullName>
+    <active>true</active>
+    <description>Rejection Reason is required when Exception Outcome is Rejected</description>
+    <errorConditionFormula>AND(NOT(CONTAINS($Profile.Name,&apos;System Admin&apos;)),ISBLANK(Rejection_Reason__c),ISPICKVAL( Exception_Outcome__c,&apos;Rejected&apos;))</errorConditionFormula>
+    <errorDisplayField>Rejection_Reason__c</errorDisplayField>
+    <errorMessage>Rejection Reason is required when Exception Outcome is Rejected</errorMessage>
+</ValidationRule>

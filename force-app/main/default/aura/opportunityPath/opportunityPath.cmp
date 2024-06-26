@@ -1,0 +1,272 @@
+<aura:component controller="EZOnboardingRegistration" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="EZOnboardingEvent" event="c:EZOnboardingEvent" action="{!c.checkProgress}"/>
+    <aura:attribute name="csoTracking" type="CSO_Tracking__c"/>
+    <aura:attribute name="ContactList" type="List"/>
+    <aura:attribute name="csoOpportunity" type="Opportunity"/>
+    <aura:attribute name="opptyId" type="String"/>
+    <aura:attribute name="opptyOwnerId" type="String"/>
+    <aura:attribute name="acctId" type="String"/>
+    <aura:attribute name="currentUserId" type="String"/>
+    <aura:attribute name="hasCsoException" type="Boolean" default="false"/>
+    <aura:attribute name="addException" type="Boolean" default="false"/>
+    <aura:attribute name="boolTrue" type="Boolean" default="true"/>
+    <aura:attribute name="boolFalse" type="Boolean" default="false"/>
+    <aura:attribute name="pending" type="String" default="Pending"/>
+    <aura:attribute name="showEZButton" type="Boolean" default="false"/>
+    <aura:attribute name="onboardingComplete" type="Boolean" default="false"/>
+    <aura:attribute name="hasPrimaryQuote" type="Boolean" default="false"/>
+    <aura:attribute name="docusignComplete" type="Boolean" default="false"/>
+    <aura:attribute name="oppStageIsWon" type="Boolean" default="false"/>
+    <aura:attribute name="exceptionDetailRequired" type="Boolean" default="false"/>
+    <aura:handler event="force:refreshView" action="{!c.doInit}" />
+    <aura:attribute name="showException" type="Boolean" default="true"/>
+    <aura:attribute name="exceptionMessage" type="String"/>
+    
+    <aura:attribute name="showEZ" type="Boolean" default="false"/>
+    <aura:attribute name="showProgress" type="Boolean" default="false"/>
+    <aura:attribute name="disableEZ" type="Boolean" default="false"/>
+    <aura:attribute name="hideAttachmentFields" type="Boolean"/>
+    <aura:attribute name="nextStepMsg1" type="String"/>
+    <aura:attribute name="showResendUser" type="Boolean" default="false"/>
+    <aura:attribute name="isPrimaryOpp" type="Boolean" default="true"/>
+    <aura:attribute name="notPrimaryMsg" type="String"/>
+    
+    <aura:attribute name="showCSO" type="Boolean" default="false" />
+    
+    <aura:attribute name="showEnterprise" type="Boolean" default="false" />
+    <aura:attribute name="primaryQuoteName" type="String" />
+    <aura:attribute name="packageName" type="String" />
+    <aura:attribute name="packageProducts" type="String" />
+    <aura:attribute name="subscriptionTitle" type="String" />
+    <aura:attribute name="ossNextStep" type="String" />
+    <!-- is the main quote a subscription quote? -->
+    <aura:attribute name="eligibleForNewBill" type="Boolean" default="false" />
+    <aura:attribute name="showNewClientButton" type="Boolean" default="false"/>
+    <!-- give the option to modify the quote -->
+    <aura:attribute name="modifyQuote" type="Boolean" default="false"/>
+    <aura:attribute name="showQuotes" type="Boolean" default="false"/>
+    <aura:attribute name="hasOtherQuotes" type="Boolean" default="false"/>
+    <aura:attribute name="quoteOptions" type="String"/>
+    <aura:attribute name="selectedQuote" type="String"/>
+    <aura:attribute name="showVerifyProdMsg" type="Boolean" default="false"/>
+    <!-- the header for a success message -->
+    <aura:attribute name="entHeaderSuccess" type="String"/>
+    <!-- if there's an error message in the process -->
+    <aura:attribute name="errorMsg" type="String"/>
+    <aura:attribute name="tempMsg" type="String"/>
+
+
+    <!--Spinner Info-->
+    <aura:attribute name="showSpinner" type="Boolean" default="false" />
+    <aura:if isTrue="{!v.showSpinner}">
+        <lightning:spinner />
+    </aura:if>
+    <aura:method name="ezParentMethod" action="{!c.checkProgress}" access="public">
+        <aura:attribute name="showProgress" type="Boolean" default="false"/> 
+    </aura:method>
+    <aura:handler name="closeForm" event="c:CloseRegistrationModal" action="{!c.closeModal}"/>
+  <aura:if isTrue="{!and(v.isPrimaryOpp==false,v.showCSO)}">
+      <div class="slds-text-heading_small slds-align_absolute-center slds-box" style="font-weight: bold; color:red">{!v.notPrimaryMsg}</div><br/>
+  </aura:if>
+  <aura:if isTrue="{!v.showEnterprise}">
+     <div class="slds-card slds-p-around_xx-small">
+
+       <div class="slds-text-heading_medium slds-align_absolute-center slds-box"  style="background-color:#f3f3f3">Client Setup And Onboarding</div>
+         <div class="slds-box slds-m-around_xx-small">
+           <aura:if isTrue="{!v.entHeaderSuccess != null}">
+             <div class="slds-text-heading_small">{!v.entHeaderSuccess} <lightning:icon iconName="utility:success" title="Eligible for New Billing" variant="Success" size="small"/></div><br />          
+           </aura:if>
+           <aura:if isTrue="{!v.errorMsg != null}">
+              <div class="slds-text-body_small" style="color:red"><b>{!v.errorMsg}</b></div>
+           </aura:if>
+           <aura:if isTrue="{!v.ossNextStep != null}">
+              <div class="slds-text-body_small"><b>Next Step: </b>{!v.ossNextStep}</div>
+           </aura:if>
+             
+           <aura:if isTrue="{!v.showNewClientButton}">
+               <br/><lightning:button variant="neutral" label="Setup New Client" title="newClient" onclick="{!c.callSetupNewClient}" /><br />
+           </aura:if>
+
+           <aura:if isTrue="{!v.showQuotes}">
+              <br/><div class="slds-text-body_small"><b>Primary Quote: </b>{!v.primaryQuoteName}
+               <br/><b>Payroll Package: </b>{!v.packageName}
+               <br/><b>Options: </b>{!v.packageProducts}
+               <aura:if isTrue="{!v.modifyQuote}">
+                  <br/><lightning:button variant="neutral" label="Modify Quote Options" title="modifyQuote" onclick="{!c.navigateToQuote}" />
+               </aura:if>
+               <aura:if isTrue="{!v.showVerifyProdMsg}">
+                  <br/><div class="slds-text-body_small" style="color:red"><b>Action Required: </b>Verify accuracy of final product selection to be sent to billing</div>
+               </aura:if>
+               </div>
+               <aura:if isTrue="{!v.hasOtherQuotes}">
+                   <br/><div class="slds-text-body_small">
+                        <lightning:select aura:id="chooseQuote" name="chooseQuote" label="Set Another Quote As Primary"
+                            value="{!v.selectedQuote}">
+                            <aura:iteration items="{!v.quoteOptions}" var="quo">
+                                <option text="{!quo.label}" value="{!quo.value}" />
+                            </aura:iteration>
+
+                        </lightning:select>
+                        <br/><lightning:button variant="neutral" label="Change Primary Quote" title="changePrimary" onclick="{!c.changePrimaryQuote}" /><br />
+                   </div>
+               </aura:if>
+
+             </aura:if>
+         </div>
+     </div>
+  </aura:if>  
+
+  <aura:if isTrue="{!v.showCSO}">
+    <div class="slds-card slds-p-around_xx-small">
+        <div class="slds-text-heading_medium slds-align_absolute-center slds-box"  style="background-color:#f3f3f3">
+            {!!v.csoTracking.RegistrationStarted__c ? 'Client Setup And Onboarding' : v.onboardingComplete ? 'Onboarding Complete' : 'Onboarding In-Progress'}<br/>
+        </div>
+        <aura:if isTrue="{!v.csoTracking.RegistrationStarted__c}">
+                 <div class="slds-box slds-m-around_xx-small"> 
+                    <c:CSOProgressBar recId="{!v.recordId}"/>
+               </div>
+                 <aura:if isTrue="{!v.showResendUser}">
+                    <lightning:button variant="neutral" label="Resend User Registration" title="resendUserReg" onclick="{!c.resendUserRegistration}" />
+                 </aura:if>
+            <aura:set attribute="else">
+                <div class="slds-box slds-m-around_xx-small">  
+                    <aura:if isTrue="{!and(and(v.csoTracking.Account_Eligible__c,v.hasCsoException == false), v.csoTracking.Opportunity_Eligible__c)}">
+                        <div class="slds-text-heading_small"><b>Onboarding Path: </b><lightning:icon iconName="utility:success" title="Client Onboarding Eligibility" variant="Success" size="small"/>Easy Setup Eligible</div><br />
+                        <aura:if isTrue="{!v.exceptionMessage != null}">
+                            <div class="slds-text-heading_small" style="color:blue"><b>{!v.exceptionMessage}</b></div>
+                        </aura:if>
+                         <aura:if isTrue="{!!v.showEZButton}">
+                            <br/><div class="slds-text-body_small">{!v.nextStepMsg1}</div>
+                        </aura:if>
+                           <aura:if isTrue="{!v.addException}">
+                               <br/>
+                                    <lightning:recordEditForm recordId="{!v.csoTracking.Id}" objectApiName="CSO_Tracking__c" onsubmit="{!c.handleSubmit}"  >
+                                        <lightning:messages />
+
+                                        <lightning:inputField fieldName="CsoExceptionList__c" required="false"/>
+                                        <div class="slds-text-body_small"><b>Exception Justification: Easy Setup is the primary onboarding method for eligible sales and exceptions should only be requested if the sale could be at risk. All exceptions are subject to review with delays expected.</b><br/></div>
+                                        <lightning:inputField fieldName="CsoExceptionDetail__c" required="true"/>
+                                        <div><lightning:button class="slds-m-top_small" variant="brand" type="submit" name="update" label="Submit Exception" />
+                                            <lightning:button label="Cancel" aura:id="cancel" name="cancel" onclick="{!c.processCancelRequest}" />
+                                        </div>
+                                        <div class="slds-hidden">
+                                            <lightning:inputField fieldName="Product_Bundle__c" required="true"/>
+                                            <lightning:inputField fieldName="ExceptionStatus__c" value="{!v.pending}"/>
+                                            <lightning:inputField fieldName="ExceptionRequestUser__c" value="{!v.currentUserId}"/>
+                                        </div>
+                                        
+                                    </lightning:recordEditForm>
+
+                                <aura:set attribute="else"> <div class="slds-m-top_x-small slds-border_top"/><br />
+
+                                <aura:if isTrue="{!v.showException}">
+                                    <lightning:button variant="neutral" label="Add Exception" title="addException" onclick="{!c.displayExceptionScreen}" />
+                                </aura:if>
+                             
+                                <aura:if isTrue="{!v.showEZButton}">
+                                    <lightning:button variant="neutral" label="Easy Setup Registration" title="ezOnboarding" onclick="{!c.callEZOnboarding}" /><br />
+                                </aura:if>
+                                
+                                <aura:if isTrue="{!v.showEZ}">
+                                    <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open">
+                                        <div class="slds-modal__container">
+                                            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse">
+                                                <span class="slds-assistive-text">Cancel and close</span>
+                                            </button>
+                                            <div class="slds-modal__header">
+                                                <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Easy Setup Registration Form</h1>
+                                            </div>
+                                            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                                <c:EZOnboardingRegistration parent="{!this}" ContactList="{!v.ContactList}"  recId="{!v.opptyId}" csoTrackingRec="{!v.csoTracking}" accountId="{!v.acctId}" opportunityObj="{!v.csoOpportunity}" hasSignedQuote="{!v.docusignComplete}" hideAttachments="{!v.hideAttachmentFields}" />
+                                            </div>
+                                            <div class="slds-modal__footer">
+                                            </div>
+                                        </div>
+                                    </section>
+                                    <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+                                </aura:if>
+                                
+                            </aura:set>
+                        </aura:if>
+                    </aura:if>   
+                    <aura:if isTrue="{!(or(v.hasCsoException, or(!v.csoTracking.Opportunity_Eligible__c,!v.csoTracking.Account_Eligible__c)))}">   
+                        <aura:if isTrue="{!and(v.hasCsoException==false,and(v.csoTracking.Account_Eligible__c,!v.csoTracking.Opportunity_Eligible__c))}">
+                            <div class="slds-text-heading_small"><b>Onboarding Path: </b>Potentially Eligible for Easy Setup</div>
+                            <br/><div class="slds-text-body_small">Next Step: Create a quote to check product-level eligibility for Easy Setup</div>
+                            <aura:set attribute="else">
+                                <div class="slds-text-heading_small">
+                                    <b>Onboarding Path: </b>Traditional (PACO) Onboarding
+                                    </div>
+                                <div class="slds-text-heading_small slds-m-top_x-small slds-border_top">
+                                    <aura:if isTrue="{!v.csoTracking.CSOOnlyProds__c != null}">
+                                        <br/>
+                                        <div class="slds-text-heading_small" style="color:red"><b>There are products on your quote that can only be used in Easy Setup Submissions.<br/>{!v.csoTracking.CSOOnlyProds__c} <br/> Action needed: Modify your quote to remove Assisted Setup.</b><br/></div>
+                                    </aura:if>
+                                    <aura:if isTrue="{!!v.csoTracking.Account_Eligible__c}">
+                                        <aura:if isTrue="{!v.csoTracking.AccountKnockout__c}">
+                                            <br/>
+                                            <b>Account Detail:</b><br/>
+                                            <li>{!v.csoTracking.AccountKnockoutDetail__c}</li>
+                                        </aura:if>
+                                        <aura:if isTrue="{!v.csoTracking.CsoException__c}">
+                        <aura:if isTrue="{!v.exceptionMessage != null}">
+                            <div class="slds-text-heading_small" style="color:blue"><b>{!v.exceptionMessage}</b></div>
+                        </aura:if>
+                                            <br/>
+                                            <b>CSO Exception:</b><br/>
+                                            <li>{!v.csoTracking.CsoExceptionList__c}</li>
+                                            <br/><b>Additional Detail:</b><br/>
+                                            <li>{!v.csoTracking.CsoExceptionDetail__c}</li>
+                                            <br/>
+                                        </aura:if>
+                                    </aura:if>
+                                    <aura:if isTrue="{!!v.csoTracking.Opportunity_Eligible__c}">
+                                        <aura:if isTrue="{!v.csoTracking.OpportunityEligibilityDetail__c != null}">
+                                            <br/>
+                                            <b>Opportunity Detail:</b><br/>
+                                            <li>{!v.csoTracking.OpportunityEligibilityDetail__c}</li>
+                                        </aura:if>
+                                        
+                                        <aura:if isTrue="{!v.csoTracking.ProductKnockout__c}">
+                                            <b>Product Detail:</b><br/>
+                                            <li>{!v.csoTracking.ProductKnockoutMessage__c}</li>
+                                        </aura:if>
+                                    </aura:if>
+                                </div><br/>
+                                <lightning:recordEditForm recordId="{!v.opptyId}" objectApiName="Opportunity" onsubmit="{!c.handleValidationSubmit}" onsuccess="{!c.doInit}">
+                                    <div class="slds-align_absolute-center">
+                                        <aura:if isTrue="{!v.csoTracking.CsoException__c}">
+                                            <lightning:button variant="neutral" label="Clear Exception" title="Clear Exception" onclick="{!c.removeExcep}" />
+                                        </aura:if>
+                                        <lightning:button variant="neutral" type="submit" name="update" label="Re-Check Eligibility" />
+                                    </div>
+                                    <div class="slds-hide">
+                                        <lightning:inputField fieldName="Id" value="{!v.csoTracking.Opportunity__c}"/>
+                                        <lightning:inputField fieldName="Evaluate_Client_Validation__c" value="{!v.boolTrue}"/>
+                                        <lightning:inputField fieldName="AccountId" value="{!v.csoTracking.Opportunity__r.AccountId}"/>
+                                    </div>
+                                </lightning:recordEditForm>
+                            </aura:set>
+                        </aura:if>                       
+          <aura:if isTrue="{!v.csoTracking.RequiredFlds__c != null}">
+              <br/><div class="slds-text-body_small"><b>Needed for Client Registration: </b> {!v.csoTracking.RequiredFlds__c}</div>
+          </aura:if>
+          <aura:if isTrue="{!v.csoTracking.InitialValidationDetail__c != null}">
+              <br/><div class="slds-text-body_small"><b>Client Validation Detail: </b> {!v.csoTracking.InitialValidationDetail__c}</div>
+          </aura:if>
+          <aura:if isTrue="{!v.csoTracking.UserValidationDetail__c != null}">
+              <br/><div class="slds-text-body_small"><b>User Validation Detail: </b> {!v.csoTracking.UserValidationDetail__c}</div>
+          </aura:if>
+          <aura:if isTrue="{!v.csoTracking.RegistrationDetail__c != null}">
+              <br/><div class="slds-text-body_small"><b>Registration Detail: </b> {!v.csoTracking.RegistrationDetail__c}</div>
+          </aura:if>
+                    </aura:if>  
+                </div>
+            </aura:set>
+        </aura:if>
+
+    </div>
+ </aura:if>
+
+</aura:component>

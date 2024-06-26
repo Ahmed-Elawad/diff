@@ -1,0 +1,50 @@
+<aura:component controller='NavigateToPEOUWFormsComponent' implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction">
+    
+    <aura:html tag="style">
+        .cuf-content {
+            padding: 0 0rem !important;
+        	background-color: #F2F4F7;
+        }
+        .slds-p-around--medium {
+            padding: 0rem !important;
+        }       
+        .slds-modal__content{
+            height:unset !important;
+            max-height:unset !important; 
+        	background-color: #F2F4F7;
+        }
+        .slds-modal__container{
+            width: 90% !important;
+            max-width: 95% !important;
+            padding-bottom:2%;
+        	padding-top:2%;
+        } 
+        .slds-modal__content:last-child {
+        	box-shadow: unset;
+        }
+    </aura:html>
+    
+    <aura:handler name='init' value='{!this}' action='{!c.myAction}' />
+    
+    <aura:attribute name='allowAccess' type='Boolean' />
+    <aura:attribute name='recordId' type='String' />
+    <aura:attribute name='loading' type='Boolean' default='true' />
+    
+    <aura:if isTrue='{!v.loading}'>
+        <lightning:spinner aura:id="loadingSpinner" 
+                           alternativeText="Loading forms" 
+                           size="large" />
+        <aura:set attribute='else'>
+            <aura:if isTrue='{!v.allowAccess}'>
+                <br/><br/><br/>
+                <c:PEOUWcommunityForms recordId='{!v.recordId}' />
+                <aura:set attribute='else'>
+                    <br/><br/>
+                    You do not have access to this functionality. Please contact your admin for support.
+                    <br/>
+                    <br/>
+                </aura:set>
+            </aura:if>
+        </aura:set>
+    </aura:if>
+</aura:component>

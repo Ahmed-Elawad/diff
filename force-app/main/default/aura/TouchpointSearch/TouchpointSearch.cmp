@@ -1,0 +1,11 @@
+<aura:component controller="WorkQueueController" implements="force:hasRecordId,force:lightningQuickAction,lightning:isUrlAddressable,force:appHostable,flexipage:availableForAllPageTypes" >
+    <aura:attribute name="openTouchpoint" type="object"/>
+    <aura:attribute name="recordLoaded" type="Boolean" default="false" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="eventUpdate" type="Boolean" default="false" />
+    <aura:attribute name="device" type="string"/>
+    <aura:handler name="updateTouchpoint" event="c:UpdateDisplayTouchpoint" action="{!c.handleComponentEvent}"/>
+    <aura:if isTrue="{!v.recordLoaded}"> 
+        <c:Cadence_Touchpoint_Detail cadenceTouchpoint="{!v.openTouchpoint}" device="{!v.device}" navigatedFromParent="true" />
+    </aura:if>
+</aura:component>

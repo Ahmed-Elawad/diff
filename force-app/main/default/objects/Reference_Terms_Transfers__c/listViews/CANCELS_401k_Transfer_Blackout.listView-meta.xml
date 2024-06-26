@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CANCELS_401k_Transfer_Blackout</fullName>
+    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6</booleanFilter>
+    <columns>NAME</columns>
+    <columns>Prospect_Client_Name__c</columns>
+    <columns>SunGard_Number__c</columns>
+    <columns>Child_Company__c</columns>
+    <columns>Suggested_Blackout_Date__c</columns>
+    <columns>Lost_Code_Entered_by_Rep__c</columns>
+    <columns>Enter_Lost_Code__c</columns>
+    <columns>Estimated_Week_of_Liquidation__c</columns>
+    <columns>SDBA_Instructions_Included__c</columns>
+    <columns>NPR__c</columns>
+    <columns>Notes__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Reference_Terms_Transfers__c.X401k_Transfer</value>
+    </filters>
+    <filters>
+        <field>Current_Step__c</field>
+        <operation>equals</operation>
+        <value>In Process</value>
+    </filters>
+    <filters>
+        <field>Suggested_Blackout_Date__c</field>
+        <operation>lessThan</operation>
+        <value>NEXT_WEEK</value>
+    </filters>
+    <filters>
+        <field>SDBA_Balance_Issue__c</field>
+        <operation>notEqual</operation>
+        <value>Yes</value>
+    </filters>
+    <filters>
+        <field>Enter_Lost_Code__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Wire_Sent__c</field>
+        <operation>equals</operation>
+    </filters>
+    <label>*CANCELS: 401k Transfer - Blackout</label>
+    <sharedTo>
+        <role>HRS4SCPRRepresentative</role>
+        <role>HRS4SCPRSupervisor</role>
+        <role>HRS4SClientChangesRepresentativeI</role>
+        <role>HRS4SClientChangesSupervisorI</role>
+        <role>HRS4SClientRetentionRepresentative</role>
+        <role>HRS_4S_Client_Retention_Supervisor</role>
+        <role>HRS_4S_LDPS_Representative_II</role>
+    </sharedTo>
+</ListView>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>My_CPAs_No_Activity_Last_90_days</fullName>
+    <columns>Referral_Account__c</columns>
+    <columns>NAME</columns>
+    <columns>Phone__c</columns>
+    <columns>Street_Address_1__c</columns>
+    <columns>Street_Address_2__c</columns>
+    <columns>Zip_Code__c</columns>
+    <columns>LAST_ACTIVITY</columns>
+    <columns>Preferred_Method__c</columns>
+    <columns>Email__c</columns>
+    <columns>Referral_Type__c</columns>
+    <columns>AICPA_Enrolled__c</columns>
+    <columns>Referral_Source_Credentials__c</columns>
+    <columns>Referral_ID__c</columns>
+    <columns>Birthday__c</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>Referral_Type__c</field>
+        <operation>contains</operation>
+        <value>CPA</value>
+    </filters>
+    <filters>
+        <field>LAST_ACTIVITY</field>
+        <operation>notEqual</operation>
+        <value>LAST_90_DAYS</value>
+    </filters>
+    <filters>
+        <field>End_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>No_Longer_With_Company__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <label>My CPAs - No Activity Last 90 days</label>
+    <sharedTo>
+        <group>CORE</group>
+        <group>MMS</group>
+        <group>Sales_Strategy_Team</group>
+    </sharedTo>
+</ListView>

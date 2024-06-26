@@ -1,0 +1,550 @@
+<!-- Manage the assignment groups.
+
+   History
+   -------
+   08/11/2011 Dan Carmen        Created.
+   10/08/2015 Jacob Hinds       Added Scheduler
+   12/11/2018 Lynn Michels      removing timeout
+ -->
+<apex:page controller="ManageAsgnGroupsController"
+           tabStyle="Manage_Assignment_Groups__tab"
+           id="ManageAssignmentGroupsPage"
+           docType="html-5.0">
+   <style type="text/css">
+        .timeWidth { width: 100px; }
+    </style>
+<script type="text/javascript">
+   /*window.onload = startTimeout;
+    function startTimeout(){
+        console.log('start Timer');
+        setTimeout(function(){ 
+            var page = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock');
+            var blockDiv = document.createElement('div');
+            blockDiv.className = 'overlay';
+            blockDiv.style.width = '100%';
+            blockDiv.style.height = '100%';
+            blockDiv.style.zIndex = '1000';
+            blockDiv.style.backgroundColor = 'black';
+            blockDiv.style.opacity = '.5';
+            blockDiv.setAttribute('id','blockDiv');
+            blockDiv.style.position = 'fixed';
+            blockDiv.style.top = '0px';
+            blockDiv.style.left = '0px';
+            page.appendChild(blockDiv);
+            console.log(blockDiv);
+            setTimeout( function(){ 
+                if(!alert('To Ensure Data Accuracy, Please Refresh the Page to Continue!')){
+                  if({!$User.UIThemeDisplayed == 'Theme3'}){ 
+                    window.location.reload();
+                  }else{
+                    document.location.reload(true);
+                  }
+                } 
+              }, 1);
+         }, 420000);   
+    }*/
+    /*
+    function checkTimes(obj){
+        var i = obj.id.substring(79,80);
+        if(obj.id.substring(79,81) > 9){
+            i = obj.id.substring(79,81);
+        }
+        console.log(obj);
+        var start;
+        var breakStart;
+        var breakEnd;
+        var end;
+        var day;
+        //for id < 10
+        if(obj.id.substring(81,84)=='end')
+        {
+            if(obj.id.substring(84,89) == 'Break'){
+                day = obj.id.substring(89);
+                start = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':start'+day);
+                breakStart = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':startBreak'+day);
+                breakEnd = obj;
+                end = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':end'+day);
+            }
+            else{
+                day = obj.id.substring(84);
+                start = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':start'+day);
+                breakStart = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':startBreak'+day);
+                breakEnd = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':endBreak'+day);
+                end = obj;
+            }
+            
+        }
+        else if(obj.id.substring(81,86)=='start'){
+            if(obj.id.substring(86,91)=='Break'){
+                day = obj.id.substring(91);
+                start = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':start'+day);
+                breakStart = obj;
+                breakEnd = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':endBreak'+day);
+                end = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':end'+day);
+            }
+            else{
+                day = obj.id.substring(86);
+                start = obj;
+                breakStart = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':startBreak'+day);
+                breakEnd = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':endBreak'+day);
+                end = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':end'+day);
+            }
+            
+        }
+        //for id >= 10
+        else if(obj.id.substring(82,85)=='end')
+        {
+            if(obj.id.substring(85,90) == 'Break'){
+                day = obj.id.substring(90);
+                start = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':start'+day);
+                breakStart = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':startBreak'+day);
+                breakEnd = obj;
+                end = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':end'+day);
+            }
+            else{
+                day = obj.id.substring(85);
+                start = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':start'+day);
+                breakStart = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':startBreak'+day);
+                breakEnd = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':endBreak'+day);
+                end = obj;
+            }
+            
+        }
+        else if(obj.id.substring(82,87)=='start'){
+            if(obj.id.substring(87,92)=='Break'){
+                day = obj.id.substring(92);
+                start = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':start'+day);
+                breakStart = obj;
+                breakEnd = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':endBreak'+day);
+                end = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':end'+day);
+            }
+            else{
+                day = obj.id.substring(87);
+                start = obj;
+                breakStart = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':startBreak'+day);
+                breakEnd = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':endBreak'+day);
+                end = document.getElementById('ManageAssignmentGroupsPage:form:groupBlock:groupMembersSchedule:schedulerTable:'+i+':end'+day);
+            }
+            
+        }
+        else{
+            alert('Something went wrong');
+        }
+        console.log('Start: '+start.value+' BreakStart: '+breakStart.value+' BreakEnd: '+breakEnd.value+' End: '+end.value);
+        if(start.value == '' && (end.value != '' || breakStart.value !='' || breakEnd.value != '')){
+            end.value = '';
+            breakStart.value = '';
+            breakEnd.value = '';
+        }
+        else if(breakStart.value == '' && breakEnd.value != ''){
+            breakEnd.value = '';
+            end.value = '';
+        }
+        else if(end.value != '' && breakEnd.value == ''){
+            end.value = '';
+        }
+    }
+    */
+</script>
+
+  <apex:form id="form">
+ <!-- ************************  No Groups found  ************************ -->
+
+      <apex:pageBlock rendered="{!NOT(hasGroups)}">
+         <apex:pageMessages />
+         <th>No Assignment Groups were found that {!curUser.Name} can Manage!</th> 
+      </apex:pageBlock>
+
+ <!-- ************************  Groups were found to manage ************************ -->
+
+      <apex:pageBlock rendered="{!hasGroups}" title="Welcome, {!curUser.Name}!" id="groupBlock" >
+         <apex:pageMessages />
+            <apex:pageBlockSection >
+               <apex:pageBlockSectionItem >
+                  <apex:outputLabel value="Select an Assignment Group"/>
+                  <apex:outputPanel >
+                     <apex:selectList value="{!selectedGroupId}"
+                                      title="Select an Assignment Group"
+                                      size="1" >
+                        <apex:selectOptions value="{!groupOptions}"/>
+                        <apex:actionSupport event="onchange" action="{!changeGroup}" rerender="groupBlock" status="groupChangeStatus"/>
+                     </apex:selectList>
+                  </apex:outputPanel>
+                  
+               </apex:pageBlockSectionItem>
+               <apex:actionStatus startText="Changing Group..." id="groupChangeStatus"/>
+         </apex:pageBlockSection>
+         
+         <apex:pageBlockSection rendered="{!AND(hasQueue,NOT(manageSelfOnly))}" title="Assigned Queues">
+               <apex:pageBlockTable value="{!selectedGroup.Assignment_Group_Queues__r}" var="queue" cellPadding="4" border="1">
+               
+                  <apex:column headerValue="Name" style="white-space:nowrap;">
+                     <apex:outputField value="{!queue.Name}" />
+                  </apex:column>
+                  
+                  <apex:column headerValue="Queue Id" >
+                     <apex:outputField value="{!queue.QueueId__c}" />
+                  </apex:column>
+                  
+                  <apex:column headerValue="Is Queue Active?" >
+                     <apex:outputField value="{!queue.Active__c}" />
+                  </apex:column>
+                  
+                  <apex:column headerValue="Is Queue Valid?" >
+                     <apex:outputField value="{!queue.Valid_Queue__c}" />
+                  </apex:column>
+                  
+              </apex:pageBlockTable>
+         </apex:pageBlockSection>
+         
+         
+         <apex:pageBlockSection rendered="{!AND(OR(isWeighted,useScheduler),NOT(manageSelfOnly))}" title="Additional Information">
+            <apex:inputField id="Delegate" value="{!selectedGroup.Round_Robin_Delegate__c}"/>
+            <apex:pageBlockSectionItem />
+            <apex:inputField rendered="{!useScheduler}" value="{!selectedGroup.ScheduleAllHours__c}" />
+            <apex:inputField rendered="{!useScheduler}" value="{!selectedGroup.Weekend_Always_On__c}" />
+            <apex:inputField rendered="{!useScheduler}" type="time" value="{!selectedGroup.Weekday_Start__c}" />
+            <apex:inputField rendered="{!useScheduler}" type="time" value="{!selectedGroup.Weekend_Start__c}" />
+            <apex:inputField rendered="{!useScheduler}" type="time" value="{!selectedGroup.Weekday_End__c}" />
+            <apex:inputField rendered="{!useScheduler}" type="time" value="{!selectedGroup.Weekend_End__c}" />
+            <apex:commandButton action="{!saveGroupChanges}" value="Save Changes" status="saveGroupStatus" />
+            <apex:actionStatus startText="Saving..." id="saveGroupStatus"/>
+
+         </apex:pageBlockSection>
+         
+         <apex:pageBlockSection rendered="{!hasMembers}" title="Group Members" id="groupMembersSection" columns="1">
+               <apex:outputPanel >
+	               <apex:inputCheckbox value="{!selectAll}" title="Select All">
+	                  <apex:actionSupport event="onclick" action="{!selectAllMembers}" rerender="groupMembersSection" >
+	                  </apex:actionSupport>
+	               </apex:inputCheckbox>
+	               Select All
+	               &nbsp;
+	               <apex:commandLink rendered="{!NOT(manageSelfOnly)}" action="{!processAllSelected}" value="Delete Selected" immediate="false" rerender="groupMembersSection" status="deleteSelectedStatus" title="Delete the Selected Records">
+	                  <apex:param name="actionType" value="delete"/>
+	               </apex:commandLink>
+	               &nbsp;
+	               <apex:commandLink rendered="{!NOT(manageSelfOnly)}" action="{!processAllSelected}" value="Toggle Active Indicator" immediate="false" rerender="groupMembersSection" status="inactivateSelectedStatus" title="Toggle the Active indicator between True and False for the Selected Records">
+	                  <apex:param name="actionType" value="active"/>
+	               </apex:commandLink>
+	               &nbsp;
+	               <apex:commandLink rendered="{!NOT(manageSelfOnly)}" action="{!processAllSelected}" value="Toggle Manage Self" immediate="false" rerender="groupMembersSection" status="activateSelectedStatus" title="Toggle the Manage Self checkbox for the Selected Records">
+	                  <apex:param name="actionType" value="manageSelf"/>
+	               </apex:commandLink>
+	               &nbsp;
+	               <apex:commandLink rendered="{!OR(isSystemAdmin,isManager)}" action="{!processAllSelected}" value="Toggle Manage Group" immediate="false" rerender="groupMembersSection" status="activateSelectedStatus" title="Toggle the Manage Group checkbox for the Selected Records">
+	                  <apex:param name="actionType" value="manageGroup"/>
+	               </apex:commandLink>
+	               &nbsp;
+	               <apex:pageBlockSectionItem rendered="{!useManagerFilter}">
+		               <apex:outputLabel value="Filter by Manager: "/>
+		               <apex:selectList size="1" value="{!managerFilterId}"> 
+				       		<apex:selectOptions value="{!managerIdList}"/>
+				       		<apex:actionSupport event="onchange" action="{!changeManager}" rerender="groupBlock" status="managerChangeStatus"/>
+				       </apex:selectList>
+			       </apex:pageBlockSectionItem>
+			       &nbsp;
+			       <apex:actionStatus startText="Updating Filter..." id="managerChangeStatus"/>
+               </apex:outputPanel>
+               
+               <apex:pageBlockTable value="{!memberList}" var="grp" cellPadding="4" border="1" width="80%">
+               
+                  <apex:column width="15%">
+                      <apex:facet name="header">Action</apex:facet>
+                      <apex:inputCheckbox disabled="false" value="{!grp.selected}" />
+                      &nbsp;
+                      <apex:commandLink rendered="{!NOT(manageSelfOnly)}" action="{!processOneRecord}" value="Del" immediate="false" rerender="groupMembersSection,groupMembersSchedule" title="Delete this group member">
+                           <apex:param name="actionType" value="delete"/>
+                           <apex:param name="memberId" value="{!grp.groupMember.Id}"/>
+                      </apex:commandLink>
+                      &nbsp;
+                      <apex:commandLink action="{!processOneRecord}" value="Active" immediate="false" rerender="groupMembersSection" title="Toggle the Active indicator between True and False">
+                           <apex:param name="actionType" value="active"/>
+                           <apex:param name="memberId" value="{!grp.groupMember.Id}"/>
+                      </apex:commandLink>
+                      &nbsp;
+                      <apex:commandLink rendered="{!NOT(manageSelfOnly)}" action="{!processOneRecord}" value="Mng Slf" immediate="false" rerender="groupMembersSection" title="Toggle the Manage Self checkbox">
+                           <apex:param name="actionType" value="manageSelf"/>
+                           <apex:param name="memberId" value="{!grp.groupMember.Id}"/>
+                      </apex:commandLink>
+                      &nbsp;
+                      <apex:commandLink rendered="{!OR(isSystemAdmin,isManager)}" action="{!processOneRecord}" value="Mng Grp" immediate="false" rerender="groupMembersSection" title="Toggle the Manage Group checkbox">
+                           <apex:param name="actionType" value="manageGroup"/>
+                           <apex:param name="memberId" value="{!grp.groupMember.Id}"/>
+                      </apex:commandLink>
+                     &nbsp;
+                     <apex:selectList rendered="{!AND(isWeighted,NOT(manageSelfOnly))}" value="{!grp.groupMember.Weighting_Level__c}" title="Change Weighting Level" size="1" >
+                        <apex:selectOptions value="{!weightingOptions}"/>
+                        <apex:actionSupport event="onchange" action="{!processOneRecord}" rerender="groupMembersSection">
+                            <apex:param name="actionType" value="changeWeight"/>
+                            <apex:param name="memberId" value="{!grp.groupMember.Id}"/>
+                        </apex:actionSupport>
+                     </apex:selectList>
+                      
+                  </apex:column>
+                  
+                  <apex:column headerValue="Name" style="white-space:nowrap;">
+                     <apex:outputField value="{!grp.groupMember.User__c}" />
+                  </apex:column>
+                  <apex:column rendered="{!useManagerFilter}" headerValue="Manager Name" style="white-space:nowrap;">
+                     <apex:outputField value="{!grp.groupMember.User__r.Manager.Name}" />
+                  </apex:column>
+                  <apex:column headerValue="Active" >
+                     <apex:outputField value="{!grp.groupMember.Active__c}" />
+                  </apex:column>
+                  <apex:column headerValue="User Active" >
+                     <apex:outputField value="{!grp.groupMember.User_Active__c}" />
+                  </apex:column>
+                  <apex:column headerValue="Status" >
+                     <apex:outputField value="{!grp.groupMember.Status__c}" />
+                  </apex:column>
+                  <apex:column rendered="{!NOT(manageSelfOnly)}" headerValue="Manage Self?" >
+                     <apex:outputField value="{!grp.groupMember.Manage_Self__c}" />
+                  </apex:column>
+                  <apex:column rendered="{!NOT(manageSelfOnly)}" headerValue="Manage Group?" >
+                     <apex:outputField value="{!grp.groupMember.Manage_Group__c}" />
+                  </apex:column>
+                  <apex:column rendered="{!AND(isWeighted,NOT(manageSelfOnly))}" headerValue="Weighting Level" style="white-space:nowrap;">
+                     <apex:outputField value="{!grp.groupMember.Weighting_Level__c}" />
+                  </apex:column>
+                  
+              </apex:pageBlockTable>
+              <apex:outputPanel >
+                 <apex:actionStatus startText="Deleting Selected Members..." id="deleteSelectedStatus"/>
+                 <apex:actionStatus startText="Inactivating Selected Members..." id="inactivateSelectedStatus"/>
+                 <apex:actionStatus startText="Activating Selected Members..." id="activateSelectedStatus"/>
+              </apex:outputPanel>
+         </apex:pageBlockSection>
+         
+     <!-- ************************ RoundRobinSetting was found and UseScheduler is set to True ************************ -->
+     
+         <apex:pageBlockSection rendered="{!useScheduler}" title="Group Member Schedule" id="groupMembersSchedule" columns="1">
+         <apex:pageMessages id="schedulerMessage"/>
+               <apex:commandButton action="{!saveSchedule}" value="Save Schedule" rerender="groupMembersSchedule,schedulerMessage" status="saveScheduleStatus" />
+               <apex:actionStatus startText="Saving Schedule..." id="saveScheduleStatus"/>
+             <!--
+               <apex:pageBlockTable value="{!memberList}" var="grp" cellPadding="4" border="1" id="schedulerTable">
+                   <apex:column headerValue="Name" id="name" style="white-space:nowrap;">
+                      <apex:outputField value="{!grp.groupMember.User__c}" />
+                   </apex:column>
+                   <apex:column headerValue="Monday" style="white-space:nowrap;">
+                      <apex:selectList size="1" id="startMonday" value="{!grp.monday1}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                      <apex:outputLabel value="to"/>
+                      <apex:selectList size="1" id="startBreakMonday" value="{!grp.monday2}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                      <br/>
+                      <apex:selectList size="1" id="endBreakMonday" value="{!grp.monday3}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                      <apex:outputLabel value="to"/>
+                      <apex:selectList size="1" id="endMonday" value="{!grp.monday4}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                   </apex:column>
+                   <apex:column headerValue="Tuesday" style="white-space:nowrap;">
+                      <apex:selectList size="1" id="startTuesday" value="{!grp.tuesday1}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                      <apex:outputLabel value="to"/>
+                      <apex:selectList size="1" id="startBreakTuesday" value="{!grp.tuesday2}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                      <br/>
+                      <apex:selectList size="1" id="endBreakTuesday" value="{!grp.tuesday3}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                      <apex:outputLabel value="to"/>
+                      <apex:selectList size="1" id="endTuesday" value="{!grp.tuesday4}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                   </apex:column>
+                   <apex:column headerValue="Wednesday" style="white-space:nowrap;">
+                      <apex:selectList size="1" id="startWednesday" value="{!grp.wednesday1}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                      <apex:outputLabel value="to"/>
+                      <apex:selectList size="1" id="startBreakWednesday" value="{!grp.wednesday2}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                      <br/>
+                      <apex:selectList size="1" id="endBreakWednesday" value="{!grp.wednesday3}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                      <apex:outputLabel value="to"/>
+                      <apex:selectList size="1" id="endWednesday" value="{!grp.wednesday4}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                   </apex:column>
+                   <apex:column headerValue="Thursday" style="white-space:nowrap;">
+                      <apex:selectList size="1" id="startThursday" value="{!grp.thursday1}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                      <apex:outputLabel value="to"/>
+                      <apex:selectList size="1" id="startBreakThursday" value="{!grp.thursday2}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                      <br/>
+                      <apex:selectList size="1" id="endBreakThursday" value="{!grp.thursday3}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                      <apex:outputLabel value="to"/>
+                      <apex:selectList size="1" id="endThursday" value="{!grp.thursday4}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                   </apex:column>
+                   <apex:column headerValue="Friday" style="white-space:nowrap;">
+                      <apex:selectList size="1" id="startFriday" value="{!grp.friday1}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                      <apex:outputLabel value="to"/>
+                      <apex:selectList size="1" id="startBreakFriday" value="{!grp.friday2}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                      <br/>
+                      <apex:selectList size="1" id="endBreakFriday" value="{!grp.friday3}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                      <apex:outputLabel value="to"/>
+                      <apex:selectList size="1" id="endFriday" value="{!grp.friday4}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                   </apex:column>
+                   <apex:column headerValue="Saturday" style="white-space:nowrap;">
+                      <apex:selectList size="1" id="startSaturday" value="{!grp.saturday1}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                      <apex:outputLabel value="to"/>
+                      <apex:selectList size="1" id="startBreakSaturday" value="{!grp.saturday2}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                      <br/>
+                      <apex:selectList size="1" id="endBreakSaturday" value="{!grp.saturday3}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                      <apex:outputLabel value="to"/>
+                      <apex:selectList size="1" id="endSaturday" value="{!grp.saturday4}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                   </apex:column>
+                   <apex:column headerValue="Sunday" style="white-space:nowrap;">
+                      <apex:selectList size="1" id="startSunday" value="{!grp.sunday1}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                      <apex:outputLabel value="to"/>
+                      <apex:selectList size="1" id="startBreakSunday" value="{!grp.sunday2}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                      <br/>
+                      <apex:selectList size="1" id="endBreakSunday" value="{!grp.sunday3}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                      <apex:outputLabel value="to"/>
+                      <apex:selectList size="1" id="endSunday" value="{!grp.sunday4}" onchange="checkTimes(this)">
+                         <apex:selectOptions value="{!times}"/>
+                      </apex:selectList>
+                   </apex:column>  
+              </apex:pageBlockTable>
+             -->
+               <apex:pageBlockTable value="{!memberList}" var="grp" cellPadding="4" border="1" id="schedulerTable2">
+                   <apex:column headerValue="Name" id="name" style="white-space:nowrap;">
+                      <apex:outputField value="{!grp.groupMember.User__c}" />
+                   </apex:column>
+                   <apex:column headerValue="Monday" style="white-space:nowrap;">
+                      <apex:inputField type="time" value="{!grp.groupMember.Monday_1__c}" />
+                      <apex:outputLabel value="to"/>
+                      <apex:inputField type="time" value="{!grp.groupMember.Monday_2__c}" />
+                      <br/>
+                      <apex:inputField type="time" value="{!grp.groupMember.Monday_3__c}" />
+                      <apex:outputLabel value="to"/>
+                      <apex:inputField type="time" value="{!grp.groupMember.Monday_4__c}" />
+                   </apex:column>
+                   <apex:column headerValue="Tuesday" style="white-space:nowrap;">
+                      <apex:inputField type="time" value="{!grp.groupMember.Tuesday_1__c}" />
+                      <apex:outputLabel value="to"/>
+                      <apex:inputField type="time" value="{!grp.groupMember.Tuesday_2__c}" />
+                      <br/>
+                      <apex:inputField type="time" value="{!grp.groupMember.Tuesday_3__c}" />
+                      <apex:outputLabel value="to"/>
+                      <apex:inputField type="time" value="{!grp.groupMember.Tuesday_4__c}" />
+                   </apex:column>
+                   <apex:column headerValue="Wednesday" style="white-space:nowrap;">
+                      <apex:inputField type="time" value="{!grp.groupMember.Wednesday_1__c}" />
+                      <apex:outputLabel value="to"/>
+                      <apex:inputField type="time" value="{!grp.groupMember.Wednesday_2__c}" />
+                      <br/>
+                      <apex:inputField type="time" value="{!grp.groupMember.Wednesday_3__c}" />
+                      <apex:outputLabel value="to"/>
+                      <apex:inputField type="time" value="{!grp.groupMember.Wednesday_4__c}" />
+                   </apex:column>
+                   <apex:column headerValue="Thursday" style="white-space:nowrap;">
+                      <apex:inputField type="time" value="{!grp.groupMember.Thursday_1__c}" />
+                      <apex:outputLabel value="to"/>
+                      <apex:inputField type="time" value="{!grp.groupMember.Thursday_2__c}" />
+                      <br/>
+                      <apex:inputField type="time" value="{!grp.groupMember.Thursday_3__c}" />
+                      <apex:outputLabel value="to"/>
+                      <apex:inputField type="time" value="{!grp.groupMember.Thursday_4__c}" />
+                   </apex:column>
+                   <apex:column headerValue="Friday" style="white-space:nowrap;">
+                      <apex:inputField type="time" value="{!grp.groupMember.Friday_1__c}" />
+                      <apex:outputLabel value="to"/>
+                      <apex:inputField type="time" value="{!grp.groupMember.Friday_2__c}" />
+                      <br/>
+                      <apex:inputField type="time" value="{!grp.groupMember.Friday_3__c}" />
+                      <apex:outputLabel value="to"/>
+                      <apex:inputField type="time" value="{!grp.groupMember.Friday_4__c}" />
+                   </apex:column>
+                   <apex:column headerValue="Saturday" style="white-space:nowrap;">
+                      <apex:inputField type="time" value="{!grp.groupMember.Saturday_1__c}" />
+                      <apex:outputLabel value="to"/>
+                      <apex:inputField type="time" value="{!grp.groupMember.Saturday_2__c}" />
+                      <br/>
+                      <apex:inputField type="time" value="{!grp.groupMember.Saturday_3__c}" />
+                      <apex:outputLabel value="to"/>
+                      <apex:inputField type="time" value="{!grp.groupMember.Saturday_4__c}" />
+                   </apex:column>
+                   <apex:column headerValue="Sunday" style="white-space:nowrap;">
+                      <apex:inputField type="time" value="{!grp.groupMember.Sunday_1__c}" />
+                      <apex:outputLabel value="to"/>
+                      <apex:inputField type="time" value="{!grp.groupMember.Sunday_2__c}" />
+                      <br/>
+                      <apex:inputField type="time" value="{!grp.groupMember.Sunday_3__c}" />
+                      <apex:outputLabel value="to"/>
+                      <apex:inputField type="time" value="{!grp.groupMember.Sunday_4__c}" />
+                   </apex:column>  
+              </apex:pageBlockTable>
+
+              <apex:commandButton action="{!saveSchedule}" value="Save Schedule" rerender="groupMembersSchedule,schedulerMessage" status="saveScheduleStatus" />
+         </apex:pageBlockSection>
+         
+         <apex:pageBlockSection rendered="{!useScheduler}" title="Copy Schedule" id="copySchedule" columns="2">
+         	   <apex:pageBlockSectionItem >
+               		<apex:outputText value="Copy the current schedule of the user(s) to any other Group they are a member of"/>
+               </apex:pageBlockSectionItem>
+             <apex:pageBlockSectionItem />
+         	   <apex:pageBlockSectionItem >
+               		<apex:outputLabel value="Copy Schedule for"/>
+               		<apex:selectList size="1" value="{!selectedCopyMember}"> 
+			          	<apex:selectOptions value="{!memberCopyList}"/>
+			        </apex:selectList>
+               </apex:pageBlockSectionItem>
+               <apex:commandButton action="{!copySchedule}" value="Copy Schedule" rerender="groupMembersSchedule,copyMessage,copySchedule" status="copyScheduleStatus" />
+               <apex:pageBlockSectionItem />
+               <apex:actionStatus startText="Copying Schedule..." id="copyScheduleStatus"/>
+         </apex:pageBlockSection>
+         
+         <apex:pageBlockSection rendered="{!AND(hasGroups,NOT(manageSelfOnly))}" id="addNewMemberSection" title="Add New Group Member" columns="2">
+            <apex:pageBlockSectionItem >
+               <apex:outputLabel value="New Group Member Name"/>
+               <apex:inputField value="{!newMember.User__c}" />
+            </apex:pageBlockSectionItem>
+
+            <apex:commandButton action="{!addNewMember}" value="Add New Member" rerender="groupBlock" status="addNewMemberStatus"/>
+            <apex:actionStatus startText="Adding new Group Member..." id="addNewMemberStatus"/>
+         </apex:pageBlockSection>
+      </apex:pageBlock>
+  </apex:form>
+</apex:page>

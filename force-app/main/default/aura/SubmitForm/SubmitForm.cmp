@@ -1,0 +1,87 @@
+<aura:component controller="CommunityFileUploadController" implements="force:appHostable,forceCommunity:availableForAllPageTypes" access="global" >
+    
+    <aura:attribute name="routeToStrategicAccount" type="Boolean" default="false"/>
+    <aura:attribute name="strategicAccountUser" type="User"/>
+    <aura:attribute name="submittedAnalyst" type="String"/>
+    <aura:attribute name="finishButtonClicked" type="Boolean" default="false"/>
+    <aura:attribute name="PEOCheckListData" type="PEO_Onboarding_Checklist__c"/>
+    <aura:attribute name="parentPEOChecklist" type="Object"/>
+    <aura:attribute name="currentPEOChecklist" type="Object"/>
+    <aura:attribute name="accountList" type="Account[]"/>
+    <aura:attribute name="docsAssigned" type="Boolean" default="true"/>
+    <aura:attribute name="commUser" type="User"/>
+    <aura:attribute name="currentRunningUser" type="User"/>
+    <aura:attribute name="parentRecId" type="Id"/>
+    <aura:attribute name='needCovidQuestionnaire' type='boolean' />
+    <aura:attribute name='hasIndustrySpecific' type='Boolean' />
+    <aura:attribute name='industryStruct' type='map' />
+    
+    <aura:attribute name='submitOperationInProgress' type='Boolean' default="false"/>
+    <aura:attribute name="disableFinishButton" type="Boolean" default="false"/>
+    <aura:attribute name='progressRate' type='Integer' default='0' />
+    <aura:attribute name='saveOperationInProgress' type='Boolean' />
+    <aura:handler name="init" value="{!this}" action="{!c.checkSubmissionStatus}"/>
+    
+    <div class="slds-p-around_x-small">
+        <lightning:card >
+            <div aura:id="toggle0" style="padding:20px 20px 20px 20px">
+                <aura:if isTrue="{!v.routeToStrategicAccount}">
+                    <div class="slds-text-heading_small"><b>This Business is linked to a Strategic Account and will be routed to your assigned NBSC Partner - {!v.strategicAccountUser.Name}.</b></div>
+                    <aura:set attribute="else">
+                        <div class="slds-text-heading_small">When all required documents have been uploaded, click the button below to submit them for review. </div>
+                    </aura:set>
+                </aura:if> 
+                
+                <div style="height:10px"></div>
+                <div class="slds-grid">
+                    <div class="slds-col"> 
+                        <lightning:select aura:id="Platform" 
+                                          label="Platform" 
+                                          name="Platform__c"
+                                          value='{!v.PEOCheckListData.Platform__c}'
+                                          required="true"
+                                          >
+                            <option value=''></option>
+                            <option value='Paychex PEO'>Paychex PEO</option>
+                            <option value='Oasis'>Oasis</option>
+                        </lightning:select>
+                    </div>
+                    <div class="slds-col" style="padding:0px 0px 0px 50px">
+                        <label class="slds-form-element__label" style="margin-right: 0.5rem;">Discrepancy to Sales Rep</label>
+                        
+                        <lightning:helptext content="Please check this box if you want your Sales Analyst or NBSC to communicate all discrepancies directly to you. If you do not check this box your Sales Analyst or NBSC will share discrepancies directly with the prospect with you CC'd."></lightning:helptext>
+                        <lightning:input name="Communication_Method"
+                                         type="checkbox"
+                                         checked="{!v.PEOCheckListData.Discrepancy_Communication_Method__c}"
+                                         label="Discrepancy Communication Method"
+                                         variant="label-hidden"/>
+                    </div>
+                </div>
+                <lightning:textarea name="Sales_Notes" value="{!v.PEOCheckListData.PEO_Sales_Notes__c}" label="Sales Notes" />
+                <!--aura:if isTrue="{!v.parentPEOChecklist.Are_you_working_with_a_Broker__c =='Yes'}">
+                    <lightning:input name="Primary_Broker_Name__c"
+                                     label='Primary Broker Name'
+                                     value='{!v.parentPEOChecklist.Primary_Broker_Name__c}' />
+                    <lightning:input name="Primary_Agent_Name__c"
+                                     label='Primary Agent Name'
+                                     value='{!v.parentPEOChecklist.Primary_Agent_Name__c}' />
+                    <lightning:textArea name="Broker_Notes__c"
+                                        label='Broker Notes'
+                                        value='{!v.parentPEOChecklist.Broker_Notes__c}' />
+                </aura:if-->
+            </div>
+            <div aura:id="toggle1" class="slds-hide" style="padding:0px 0px 0px 20px">
+                The Documents are currently submitted to the following analyst: {!v.submittedAnalyst}
+            </div>
+            <div style="height:25px"></div>
+            <div aura:id="disablebuttonidTag">
+                <div class="slds-text-align_left slds-p-around_x-small" style="padding:0px 0px 0px 20px">
+                    <lightning:button aura:id="disablebuttonid" variant="success" label="Finish" title="Finish" onclick="{!c.submitDocuments}" disabled="{!v.disableFinishButton}"/>
+                    <aura:if isTrue="{!v.submitOperationInProgress}">
+                        <lightning:progressRing value="{!v.progressRate}" variant="active-step" direction="drain"/>
+                    </aura:if>
+                </div>
+            </div>
+        </lightning:card>
+    </div>
+</aura:component>

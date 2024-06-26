@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TAA_Task_Comment_Restriction_Rule</fullName>
+    <active>true</active>
+    <description>To not allow someone to modify comments once they have been added</description>
+    <errorConditionFormula>AND((AND((not isnull(CreatedDate)), $Profile.Name &lt;&gt; &quot;System Administrator&quot;,  $Profile.Name &lt;&gt; &quot;System Administrator API&quot;, $Profile.Name &lt;&gt;&quot;Relational Junction Data Admin&quot;,  $Profile.Name &lt;&gt;&quot;2008-09 Operations Administration&quot;,not($User.Id =   OwnerId))),(OR(($RecordType.Name = &quot;2008-09 Time Attendance Onboarding Task Record Type&quot;), ($RecordType.Name = &quot;2008-09 TAA Onboarding Task Record Type&quot;))))</errorConditionFormula>
+    <errorMessage>You can not edit tasks.</errorMessage>
+</ValidationRule>

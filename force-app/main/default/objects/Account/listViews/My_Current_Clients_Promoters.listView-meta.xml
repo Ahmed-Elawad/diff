@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>My_Current_Clients_Promoters</fullName>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ACCOUNT.ACCOUNT_NUMBER</columns>
+    <columns>Do_Not_Call_Flag__c</columns>
+    <columns>Email_Opt_Out_Flag__c</columns>
+    <columns>ACCOUNT.PHONE1</columns>
+    <columns>ACCOUNT.ADDRESS1_STREET</columns>
+    <columns>ACCOUNT.ADDRESS1_CITY</columns>
+    <columns>ACCOUNT.ADDRESS1_ZIP</columns>
+    <columns>ACCOUNT.EMPLOYEES</columns>
+    <columns>Frequency__c</columns>
+    <columns>ACCOUNT.INDUSTRY</columns>
+    <columns>Client_Satisfaction_Rating__c</columns>
+    <columns>Likely_to_Refer__c</columns>
+    <columns>First_Run_Date__c</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>contains</operation>
+        <value>Client</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>notEqual</operation>
+        <value>Lost Client,HRS Client (Only)</value>
+    </filters>
+    <filters>
+        <field>Lost_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Out_of_Business__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Client_Satisfaction_Rating__c</field>
+        <operation>equals</operation>
+        <value>Promoter</value>
+    </filters>
+    <label>My Current Clients - Promoters</label>
+    <sharedTo>
+        <group>CORE</group>
+        <group>MMS</group>
+    </sharedTo>
+</ListView>

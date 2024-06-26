@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Client_push_Needs_Original_Check_Date</fullName>
+    <active>false</active>
+    <errorConditionFormula>AND( 
+OR( 
+
+RecordTypeId=&quot;012700000001jeX&quot;, 
+RecordTypeId=&quot;012700000001kKx&quot;, 
+RecordTypeId=&quot;0120g000000l3qD&quot;, 
+RecordTypeId=&quot;0120g000000grzo&quot;),  
+Client_Push__c = TRUE, 
+ISBLANK ( Updated_First_Check_Date__c ))</errorConditionFormula>
+    <errorDisplayField>of_EEs_at_Turnover__c</errorDisplayField>
+    <errorMessage>Original check date must be populated if Client Push is checked.</errorMessage>
+</ValidationRule>

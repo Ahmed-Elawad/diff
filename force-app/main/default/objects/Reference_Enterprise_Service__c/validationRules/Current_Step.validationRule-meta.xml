@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Current_Step</fullName>
+    <active>true</active>
+    <errorConditionFormula>ISPICKVAL( Current_Step__c , &quot;(5 of 12) Internal Brief of Findings/Concerns&quot;)&amp;&amp;
+
+OR(
+ISBLANK( Number_of_Terms__c ),
+ISBLANK( Active_EEs_by_ID__c ),
+ISBLANK( Terminated_EEs_by_ID__c ),
+ISBLANK( Peak_Volume_Check_Count__c ),
+ISBLANK( Normal_Number_of_Checks_per_Payroll__c ),
+ISBLANK (Text( Rate_of_EE_Turnover__c ))
+)</errorConditionFormula>
+    <errorDisplayField>Number_of_Terms__c</errorDisplayField>
+    <errorMessage>Employee Detail section is required when &quot;Current Step&quot; is selected as &quot;	(5 of 12) Internal Brief of Findings/Concerns&quot;
+Except the field &quot;Number of Active EEs&quot;</errorMessage>
+</ValidationRule>

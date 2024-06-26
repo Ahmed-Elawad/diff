@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Exception_Outcome_Approved</fullName>
+    <active>true</active>
+    <description>Round Robin is Required when Exception Outcome is Approved</description>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),$RecordType.Name=&apos;MPSC Exception&apos;,ISPICKVAL(Exception_Outcome__c,&apos;Approved&apos;),ISBLANK(TEXT( Round_Robin__c )))</errorConditionFormula>
+    <errorMessage>Round Robin is Required when Exception Outcome is Approved</errorMessage>
+</ValidationRule>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reason_Won_Lost_Required</fullName>
+    <active>true</active>
+    <description>Makes Reason Lost Required when an opportunity is saved with &quot;Lost&quot;, &quot;No Decision&quot; or &quot;Disqualified&quot;</description>
+    <errorConditionFormula>AND(
+NOT(BEGINS($Profile.Name, &quot;System Admin&quot;)),
+ISCHANGED( StageName),
+ISPICKVAL( Reason_Not_Sold__c ,&quot;&quot;),
+OR(ISPICKVAL( StageName ,&quot;Lost&quot;),ISPICKVAL( StageName ,&quot;No Decision&quot;), ISPICKVAL( StageName ,&quot;Disqualified&quot;)))</errorConditionFormula>
+    <errorDisplayField>Reason_Not_Sold__c</errorDisplayField>
+    <errorMessage>Reason Lost is required when the opportunity is Lost, No Decision or Disqualified.</errorMessage>
+</ValidationRule>

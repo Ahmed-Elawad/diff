@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SignificantContactEmailBounceReason__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>IF(ISBLANK( LeadId__c),
+IF(ISBLANK( ContactId__r.EmailBouncedReason ),ContactId__r.Email_Verification__c , ContactId__r.EmailBouncedReason )
+,IF(ISBLANK( LeadId__r.EmailBouncedReason ),LeadId__r.Email_Verification__c , LeadId__r.EmailBouncedReason))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>SignificantContactEmailBounceReason</label>
+    <required>false</required>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

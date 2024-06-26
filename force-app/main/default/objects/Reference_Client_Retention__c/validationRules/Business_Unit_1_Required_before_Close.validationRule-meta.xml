@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Business_Unit_1_Required_before_Close</fullName>
+    <active>true</active>
+    <description>using Label.Client_Retention_Status to enforce that Business Unit 1 is populated</description>
+    <errorConditionFormula>AND(NOT( OR(BEGINS($Profile.Name,&apos;System Admin&apos;),BEGINS($Profile.Name,&apos;Non SSO - 2008-09 HRS 4S Operations B&apos;)) ),
+ISCHANGED(Current_Step__c),
+ISBLANK(TEXT(Business_Unit_1__c)),
+OR(
+    CONTAINS($Label.Client_Retention_Status, TEXT(Current_Step__c)),
+    ISPICKVAL(Current_Step__c, &apos;Sent to 2nd Level Support Team&apos;)
+)
+)</errorConditionFormula>
+    <errorMessage>You must populate the Business Unit 1 field for this Current Step value.</errorMessage>
+</ValidationRule>

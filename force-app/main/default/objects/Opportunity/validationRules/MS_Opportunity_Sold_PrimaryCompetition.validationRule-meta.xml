@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MS_Opportunity_Sold_PrimaryCompetition</fullName>
+    <active>false</active>
+    <description>If the status is set to Sold for a Merchant Services (Payment Processing) Opportunity, the Primary Competition field is required.</description>
+    <errorConditionFormula>AND( 
+OR($RecordType.Name=&apos;Payment Processing Opportunity&apos;, $RecordType.Name=&apos;Payment Processing (DSA) Opportunity&apos;), 
+NOT(BEGINS($Profile.Name,&apos;System Administrator&apos;)), 
+ISPICKVAL(StageName,&apos;Sold&apos;), 
+ISPICKVAL(Primary_Competition__c, &apos;&apos;) ,
+NOT( ISPICKVAL(OpportunityType__c,&apos;Referral&apos;))
+)</errorConditionFormula>
+    <errorDisplayField>Primary_Competition__c</errorDisplayField>
+    <errorMessage>You must populate the Primary Competition field before setting the Opportunity Status to Sold.</errorMessage>
+</ValidationRule>

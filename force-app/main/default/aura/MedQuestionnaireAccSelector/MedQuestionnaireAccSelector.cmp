@@ -1,0 +1,101 @@
+<aura:component controller="CommunityMedicalQuestionnaireController" implements="force:appHostable" access="global">
+
+    <aura:handler name="init" value="{!this}" action="{!c.getChecklistAndQuestionnaire}"/>
+    <aura:attribute name="ReadOnly" type="Boolean" default="true" />
+    <aura:attribute name='readOnlyMsg' type='String' />
+    <aura:attribute name='User' type='User' />
+    <aura:attribute name="AccountList" type="Account[]" />
+	<aura:attribute name='makeReadOnly' type='Boolean' />
+    
+    <!-- Auto Save -->
+    <aura:registerEvent name='autoSave' type='c:CommunityFormsAutoSave' />
+    
+    <aura:attribute name="parentPEOChecklist" type="Object" />
+    <aura:attribute name='parentQuestionnaire' type='Map' />
+    <aura:attribute name="currentPEOChecklist" type="Object" />
+    <aura:attribute name='currentQuestionnaire' type='Map' />
+    <aura:attribute name='parentAccountId' type='String' />
+    <aura:attribute name='CommunityUser' type='boolean' />
+    <aura:attribute name='contentLoaded' type='boolean' default="false"/>
+    <aura:attribute name='isParentRec' type='boolean' default="false"/>
+    <aura:attribute name='parentFormNeedsSaving' type='boolean' default="false"/>
+    <aura:attribute name='formNeedsSaving' type='boolean' default="false"/>
+    <aura:attribute name='parentAKNSelected' type='boolean' default="false"/>
+    <aura:attribute name='selectedTab' type='String'/>  
+    <aura:attribute name="tabType" type="String"/>
+    <aura:attribute name="fewEmp" type="Boolean" default="false" />
+    <aura:attribute name='tablist' type='String[]' />
+    <aura:attribute name='chkRefreshFunc' type='Object' />
+    <aura:attribute name="medicalPrequal" type="Boolean" default="false" />
+    
+    <aura:attribute name='activeLabel' type='String'/>
+    
+    <!-- <div>
+        <div>
+            <h1 class="tabHeader_title" >{!v.activeLabel}</h1>
+            <h3 class='tabHeader_supportText'>Please add or update any of the information below.</h3>
+        </div>
+    </div>
+    <lightning:tabset variant="{!v.scoped}" selectedTabId="{!v.selectedTab}">
+        
+        <aura:iteration items="{!v.AccountList}" var="acc" indexVar="index">
+            <lightning:tab label="{!acc.Name}" id="{!acc.Id}" onactive="{!c.getChecklistAndQuestionnaire}">
+                <aura:if isTrue="{! v.contentLoaded }">
+                    <c:MedicalQuestionnaire fewEmp = "{!v.fewEmp}" 
+                                            commUser='{!v.CommunityUser}' 
+                                            accList="{!v.AccountList}"  
+                                            readOnly='{! or(v.ReadOnly, v.makeReadOnly) }' 
+                                            readOnlyString='{!v.readOnlyMsg}'
+                                            parentMedQuestionnaire="{!v.parentQuestionnaire}" 
+                                            aknSelected="{!v.parentAKNSelected}" 
+                                            parentNeedsSaving="{!v.parentFormNeedsSaving}" 
+                                            isParentAccount="{!v.isParentRec}" 
+                                            user='{!v.User}' 
+                                            peoChecklist="{!v.currentPEOChecklist}" 
+                                            questionnaire='{!v.currentQuestionnaire}'  
+                                            needsSaving="{!v.formNeedsSaving}"
+                                            selectedParentTab='{!v.selectedTab}' 
+                                            parentTabList='{!v.tablist}' 
+                                            tabStyle="{!v.tabType}"
+                                            parentAcctId="{!v.parentAccountId}"
+                                            activeLabel='{!v.activeLabel}'
+                                            getUpdatedChecklsit='{!v.chkRefreshFunc}'
+                                            medPrequal="{!v.medicalPrequal}"/>
+                    <aura:set attribute="else">
+                        <lightning:spinner alternativeText="Loading" />
+                    </aura:set>
+                </aura:if>
+            </lightning:tab>
+        </aura:iteration>
+        <lightning:tab label="Acknowledgement" id="acknowledgement" onactive="{!c.getChecklistAndQuestionnaire}">
+            <aura:if isTrue="{! v.contentLoaded }">
+                <c:MedicalQuestionnaire fewEmp = "{!v.fewEmp}" 
+                                        commUser='{!v.CommunityUser}' 
+                                        accList="{!v.AccountList}"  
+                                        readOnly='{! or(v.ReadOnly, v.makeReadOnly) }' 
+                                        readOnlyString='{!v.readOnlyMsg}'
+                                        parentMedQuestionnaire="{!v.parentQuestionnaire}" 
+                                        aknSelected="{!v.parentAKNSelected}" 
+                                        parentNeedsSaving="{!v.parentFormNeedsSaving}" 
+                                        isParentAccount="{!v.isParentRec}" 
+                                        user='{!v.User}' 
+                                        peoChecklist="{!v.currentPEOChecklist}" 
+                                        questionnaire='{!v.currentQuestionnaire}'  
+                                        needsSaving="{!v.formNeedsSaving}"
+                                        selectedParentTab='{!v.selectedTab}' 
+                                        parentTabList='{!v.tablist}' 
+                                        tabStyle="{!v.tabType}"
+                                        parentAcctId="{!v.parentAccountId}"
+                                        activeLabel='{!v.activeLabel}'
+                                        getUpdatedChecklsit='{!v.chkRefreshFunc}'
+                                        acknowledgementNeeded='true'/>
+                <aura:set attribute="else">
+                    <lightning:spinner alternativeText="Loading" />
+                </aura:set>
+            </aura:if>
+        </lightning:tab>
+            
+    </lightning:tabset> -->
+            
+
+</aura:component>

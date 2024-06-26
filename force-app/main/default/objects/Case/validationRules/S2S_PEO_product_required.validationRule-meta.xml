@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>S2S_PEO_product_required</fullName>
+    <active>true</active>
+    <description>Verify if PEO client, PEO is selected as the product. Conversely, if non-PEO client, PEO is not allowed as the product</description>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&apos;System Administrator&apos;)),RecordType.Name =&quot;Sales2Service Case&quot;,
+OR(
+AND(ISPICKVAL(Product__c, &quot;PEO&quot;),NOT(OR(ISPICKVAL(Account.Type, &quot;PEO Client&quot;),Account.Payroll_Branch_Nbr__c =741,BEGINS(Account.Other_PEO_Client_Number__c,&apos;0741&apos;)))),
+AND(ISPICKVAL(Product__c, &quot;Payroll&quot;),OR(ISPICKVAL(Account.Type, &quot;PEO Client&quot;),Account.Payroll_Branch_Nbr__c =741 ))))</errorConditionFormula>
+    <errorMessage>Be sure to select the appropriate product. For PEO payroll issues, select PEO and select Payroll for everyone else. Not to be used for Prism PEO.</errorMessage>
+</ValidationRule>

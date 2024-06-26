@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Agency_Case_Require_Disp_1</fullName>
+    <active>true</active>
+    <description>If the Product is COBRA you must enter a value in Disposition 1</description>
+    <errorConditionFormula>ISPICKVAL(Product__c, &quot;COBRA&quot;) &amp;&amp; 
+ISPICKVAL(Disposition_1__c, &quot;&quot;) &amp;&amp; 
+RecordType.Name =&quot;Service Support Agency Case&quot; &amp;&amp; 
+Not(CONTAINS($Profile.Name,&quot;System Admin&quot;))</errorConditionFormula>
+    <errorDisplayField>Disposition_1__c</errorDisplayField>
+    <errorMessage>when the product on the case is COBRA, require a value in disposition 1</errorMessage>
+</ValidationRule>

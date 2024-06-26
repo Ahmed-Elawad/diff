@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Returned_Reasons_cannot_be_deleted</fullName>
+    <active>true</active>
+    <description>Return Reason Category and Return Reasons cannot be deleted once they are set</description>
+    <errorConditionFormula>AND(NOT(BEGINS($Profile.Name,&apos;System Admin&apos;)),
+OR( 
+AND(ISCHANGED( Project_Training_Issue_Reason__c ),NOT(ISBLANK(PRIORVALUE(Project_Training_Issue_Reason__c))),ISBLANK(TEXT(Project_Training_Issue_Reason__c))), 
+AND(ISCHANGED( Return_Reasons__c ),NOT(ISBLANK(PRIORVALUE( Return_Reasons__c ))),ISBLANK(TEXT( Return_Reasons__c )))))</errorConditionFormula>
+    <errorDisplayField>Project_Training_Issue_Reason__c</errorDisplayField>
+    <errorMessage>Return Reason Category and Return Reasons cannot be deleted once they are set</errorMessage>
+</ValidationRule>

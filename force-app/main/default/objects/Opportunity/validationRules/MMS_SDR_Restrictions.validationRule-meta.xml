@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MMS_SDR_Restrictions</fullName>
+    <active>true</active>
+    <description>MMS SDRs should only edit MMS Opps under certain conditions</description>
+    <errorConditionFormula>AND( $Profile.Name = &apos;MMS SDR&apos;,
+$RecordType.Name = &apos;MMS Opportunity Record Type&apos;,
+NOT(ISNEW()),
+ISCHANGED(Probability),
+OR(PRIORVALUE(Probability)&lt; 0.20,Probability &gt;= 0.80))</errorConditionFormula>
+    <errorMessage>The status update of Create Qualified, Sold or greater must be updated by the selling rep. Please work with the opportunity owner to make this update.</errorMessage>
+</ValidationRule>

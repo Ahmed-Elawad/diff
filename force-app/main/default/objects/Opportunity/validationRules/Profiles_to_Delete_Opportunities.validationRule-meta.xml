@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Profiles_to_Delete_Opportunities</fullName>
+    <active>true</active>
+    <description>Only the following profiles can mark oppties to be deleted:
+Core Sales Administration (DSA) 
+Core Zone Administration (ZSA) 
+MMS Sales ZSA (DSA and ZSA) 
+HRS Sales Administration (DSA) 
+HRS Regional Sales Admin (ZSA)
+NSS Core/HRS Profile (VirtSales)</description>
+    <errorConditionFormula>(NOT(BEGINS($Profile.Name,&quot;System Administrator&quot;)) &amp;&amp;
+NOT(BEGINS($Profile.Name,&quot;Core Sales Administration&quot;)) &amp;&amp;
+NOT(BEGINS($Profile.Name,&quot;Core Zone Administration&quot;)) &amp;&amp;
+$Profile.Name &lt;&gt; &quot;MMS Sales ZSA&quot; &amp;&amp;
+$Profile.Name &lt;&gt; &quot;MMS Sales ZSA - SB&quot; &amp;&amp;
+$Profile.Name &lt;&gt; &quot;MMS Sales DSA - SB&quot; &amp;&amp;
+$Profile.Name &lt;&gt; &quot;HNBF Sales Administration&quot; &amp;&amp;
+NOT(BEGINS($Profile.Name, &quot;HRS Sales Administration&quot;)) &amp;&amp;
+$Profile.Name &lt;&gt; &quot;HRS Regional Sales Admin - SB&quot;   &amp;&amp;
+$Profile.Name &lt;&gt; &quot;2008-09 Operations Administration&quot; &amp;&amp;
+$Profile.Name &lt;&gt; &quot;NSS Manager Admin&quot;   &amp;&amp;
+$Profile.Name &lt;&gt; &quot;Bank Channel Manager&quot; )  &amp;&amp;
+$Profile.Name &lt;&gt; &quot;Sales Data Steward&quot;&amp;&amp;
+$Profile.Name &lt;&gt; &quot;Salesforce Support&quot;&amp;&amp;
+ISCHANGED(To_Be_Deleted__c) &amp;&amp; To_Be_Deleted__c</errorConditionFormula>
+    <errorDisplayField>To_Be_Deleted__c</errorDisplayField>
+    <errorMessage>**** Only DSAs, FSSs, RAs and ZAs can mark Opportunites to be deleted. ****</errorMessage>
+</ValidationRule>

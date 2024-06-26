@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>On_Delay_Case_Days_Excluding_Weekends_2__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <externalId>false</externalId>
+    <formula>If(ISNULL(On_Delay_End_2__c),
+
+(today() - datevalue(On_Delay_Start_2__c) - 2*( floor((today() - DATE(1985, 6, 24))/7) - floor((datevalue(On_Delay_Start_2__c) - DATE(1985, 6, 24))/7))),
+
+(datevalue(On_Delay_End_2__c) - datevalue(On_Delay_Start_2__c) - 2*( floor((datevalue(On_Delay_End_2__c) - DATE(1985, 6, 24))/7) - floor((datevalue(On_Delay_Start_2__c) - DATE(1985, 6, 24))/7))))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>On Delay Case Days Excluding Weekends 2</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <securityClassification>Internal</securityClassification>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

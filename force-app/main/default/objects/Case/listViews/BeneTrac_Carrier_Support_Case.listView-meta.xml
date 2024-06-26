@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BeneTrac_Carrier_Support_Case</fullName>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>BeneTrac_Category_1__c</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>CASES.CREATED_DATE</columns>
+    <columns>CASES.PRIORITY</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <filterScope>Queue</filterScope>
+    <filters>
+        <field>CASES.STATUS</field>
+        <operation>equals</operation>
+        <value>In Progress,New,On Hold,Pending</value>
+    </filters>
+    <label>BeneTrac Carrier Support</label>
+    <queue>BeneTrac_Carrier_Support</queue>
+    <sharedTo>
+        <group>BeneTrac_Carrier_Support</group>
+        <group>BeneTrac_Client_Service</group>
+        <group>BeneTrac_EDI</group>
+        <group>BeneTrac_Tech_Ops</group>
+        <role>BeneTrac_Ops</role>
+        <role>BeneTrac_Ops_Supervisor</role>
+        <role>BeneTrac_Sales_Ops_Support_Manager</role>
+        <role>HROnlineBeneTracCoordinator</role>
+    </sharedTo>
+</ListView>

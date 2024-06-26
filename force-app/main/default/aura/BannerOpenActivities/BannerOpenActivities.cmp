@@ -1,0 +1,33 @@
+<aura:component description="BannerOpenActivities">
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="openActivities" type="Object" />
+    <aura:attribute name="lastActivityDate" type="Date" />
+    <aura:attribute name="displayDate" type="String" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler name="change" value="{!v.lastActivityDate}" action="{!c.updateDisplayDate}"/>
+
+    <div class="box" title="Activity">
+        <div class="banner-header slds-align_absolute-center">
+            <h4 class="slds-item_label slds-text-color_weak slds-truncate slds-text-align_center">Open Activities</h4>
+        </div>
+        <div class="banner-body">
+            <div class="{!'slds-item_detail slds-truncate slds-align_absolute-center column ' + (not(empty(v.recordId)) ? ' clickable-banner-item' : '') }" title="Open Activities" onclick="{!c.navigateToActivityTab}">
+                <img src="{!$Resource.BannerIcons + '/LightningIcons/task.png'}" />
+                <span>
+                    <aura:if isTrue="{!v.openActivities.length > 0}">
+                        {!v.openActivities.length}
+                        <aura:set attribute="else">
+                            <aura:if isTrue="{!v.lastActivityDate}">
+                                {!v.displayDate}
+                                <aura:set attribute="else">
+                                    No Activities
+                                </aura:set>
+                            </aura:if>
+                        </aura:set>
+                    </aura:if>
+                </span>
+            </div>
+        </div>
+    </div>
+</aura:component>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HRG_SpanBndQtyOrBndQty_whenTORBndOnly</fullName>
+    <active>true</active>
+    <description>C24 - if Type of Request = &apos;Binders Only&apos;, then either the Binder Quantity or Spanish Binder Quantity field must be populated.</description>
+    <errorConditionFormula>AND(
+ ISNULL(Binder_Quantity__c),
+ ISNULL(Spanish_Binder_Quantity__c),
+ (ISPICKVAL(Type_of_Request__c, &apos;Binders Only&apos;))
+)</errorConditionFormula>
+    <errorDisplayField>Type_of_Request__c</errorDisplayField>
+    <errorMessage>Either the Binder Quantity or Spanish Binder Quantity field must be populated when selecting &apos;Binders Only&apos; for the Type of Request field.</errorMessage>
+</ValidationRule>
